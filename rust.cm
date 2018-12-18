@@ -1,0 +1,17 @@
+(* rust.cm Build project *)
+Library
+    structure Parser
+is
+    datatypes.sml (* Lot of datatypes *)
+    convert.sml (* encoding helper *)
+    rust.lex (* Lexer rules. *)
+    rust.grm (* Parser rules. *)
+    glue.sml (* Build the parser *)
+    (* tokens.sig *)
+    (* tokens.sml *)   (* test for tokens *)
+    errormsg.sml
+    compiler.sml (* Lex, parse, panic... *)
+    $/basis.cm (* SML/NJ’s Basis Library. *)
+    $/smlnj-lib.cm
+    $/ml-yacc-lib.cm (* Code written by Lucent. *)
+    $smlnj/compiler/compiler.cm (* Structure Compiler. *)

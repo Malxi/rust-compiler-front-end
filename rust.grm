@@ -1,0 +1,42 @@
+(* rust.yacc *)
+%%
+%term EOF
+    | AS | BREAK | CONST | CONTINUE | CRATE | ELSE | ENUM | EXTERN     
+        | FALSE | FN | FOR | IF | IMPL | IN | LET | LOOP | MATCH | MOD | MOVE
+        | MUT | PUB | REF | RETURN | SELFVALUE | SELFTYPE | STATIC | STRUCT 
+        | SUPER | TRAIT | TRUE | TYPE | UNSAFE | USE | WHERE | WHILE | DYN
+    | ABSTRACT | BECOME | BOX | DO | FINAL | MACRO | OVERRIDE
+        | PRIV | TYPEOF | UNSIZED | VIRTUAL | YIELD
+        | ASYNC | AWAIT | TRY
+    | UNION | STATICLIFETIME
+    | IDENT of string
+    | CHAR_LIT of int 
+        | STR_LIT of string | RAW_STR_LIT of string
+        | BYTE_LIT of int | BYTE_STR_LIT of string | RAW_BYTE_STR_LIT of string
+        | INTEGER_LIT of LargeInt.int | TUPLE_INDEX of int 
+        | FLOAT_LIT of real
+    | LIFETIME of string
+    | PLUS | MINUS | STAR | SLASH | PERCENT | CARET 
+        | NOT | AND | OR | ANDAND | OROR | SHL | SHR
+        | PLUSEQ | MINUSEQ | STAREQ | SLASHEQ | PERCENTEQ | CARETEQ | ANDEQ | OREQ
+        | SHLEQ | SHREQ | EQ | EQEQ
+        | NE | GT | LT | GE | LE
+        | AT | UNDERSCORE | DOT | DOTDOT | DOTDOTDOT | DOTDOTEQ
+        | COMMA | SEMI | COLON | PATHSEP | RARROW | FATARROW | POUND | DOLLAR | QUESTION
+        | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
+%nonterm exp | program
+%pos int
+%eop EOF
+%noshift EOF
+%name Rust
+%keyword AS BREAK CONST CONTINUE CRATE ELSE ENUM EXTERN
+        FALSE FN FOR IF IMPL IN LET LOOP MATCH MOD MOVE
+        MUT PUB REF RETURN SELFVALUE SELFTYPE STATIC STRUCT
+        SUPER TRAIT TRUE TYPE UNSAFE USE WHERE WHILE
+        ABSTRACT BECOME BOX DO FINAL MACRO OVERRIDE
+        PRIV TYPEOF UNSIZED VIRTUAL YIELD
+%verbose
+
+%%
+program :                           ()
+exp     :                  ()
