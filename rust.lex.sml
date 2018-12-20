@@ -163,19 +163,17 @@ val col = ErrorMsg.col
 val eolpos = ref 0
 
 datatype comments = InnerBlock | OuterBlock | CommonBlock;
-val stateStack:comments list ref = ref []
-fun statePush(state:comments) = stateStack := state::(!stateStack)
-fun statePop(state:comments):bool = case (!stateStack) of
+val stateStack:(comments*int) list ref = ref []
+fun statePush(state, pos) = stateStack := (state, pos)::(!stateStack)
+fun statePop(state):bool = case (!stateStack) of
                     (nil) => false
-                    | (h::t) => if h = state then (stateStack := t;true) else false
+                    | ((h, _)::t) => if h = state then (stateStack := t;true) else false
 
 fun error(p1, p2) = ErrorMsg.error p1
 fun lexLog(pos, msg) = ErrorMsg.lexLog (pos, msg)
 
 val lsharp = ref 0
 val rsharp = ref 0
-
-fun eof(fileName:string) = let val pos = hd(!col) in Tokens.EOF(pos, pos) end
 
 val strList = ref (nil:char list)
 val strpos = ref (0:int)
@@ -256,6 +254,24 @@ fun toFloat(text:string) = case Real.fromString(text) of
                             SOME v => v
                             | _ => 0.0
 
+
+fun eof(fileName:string) = 
+    let 
+        val pos = hd(!col)
+    in 
+        (
+            case !stateStack of
+            (nil) => ()
+            | ((h, cpos)::t) => 
+                ErrorMsg.error cpos "Comment block unclosed."
+        );
+        (
+            if not (!lsharp = !rsharp) then
+                    ErrorMsg.error (!strpos) "String unclosed."
+            else ()
+        );
+        Tokens.EOF(pos, pos)
+    end
 
 
       end
@@ -1582,7 +1598,7 @@ fun yyAction9 (strm, lastMatch : yymatch) = (yystrm := strm;
       (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue()))
 fun yyAction10 (strm, lastMatch : yymatch) = (yystrm := strm; (continue()))
 fun yyAction11 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (lexLog(yypos, "INNER_BLOCK_DOC"); YYBEGIN INNER_BLOCK_DOC; statePush(InnerBlock); continue()))
+      (lexLog(yypos, "INNER_BLOCK_DOC"); YYBEGIN INNER_BLOCK_DOC; statePush(InnerBlock, yypos); continue()))
 fun yyAction12 (strm, lastMatch : yymatch) = (yystrm := strm;
       (
                                         (
@@ -1593,16 +1609,16 @@ fun yyAction12 (strm, lastMatch : yymatch) = (yystrm := strm;
                                         (
                                             case (!stateStack) 
                                                 of (nil) => YYBEGIN INITIAL
-                                                | (CommonBlock::t) => YYBEGIN BLOCK_COMMENT
-                                                | (InnerBlock::t) => YYBEGIN INNER_BLOCK_DOC
-                                                | (OuterBlock::t) => YYBEGIN OUTER_BLOCK_DOC
+                                                | ((CommonBlock, _)::t) => YYBEGIN BLOCK_COMMENT
+                                                | ((InnerBlock, _)::t) => YYBEGIN INNER_BLOCK_DOC
+                                                | ((OuterBlock, _)::t) => YYBEGIN OUTER_BLOCK_DOC
                                         );
                                         continue()
                                     ))
 fun yyAction13 (strm, lastMatch : yymatch) = (yystrm := strm;
       (lexLog(yypos, "BLOCK_COMMENT"); continue()))
 fun yyAction14 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (lexLog(yypos, "OUTER_BLOCK_DOC"); YYBEGIN OUTER_BLOCK_DOC; statePush(OuterBlock); continue()))
+      (lexLog(yypos, "OUTER_BLOCK_DOC"); YYBEGIN OUTER_BLOCK_DOC; statePush(OuterBlock, yypos); continue()))
 fun yyAction15 (strm, lastMatch : yymatch) = (yystrm := strm;
       (
                                         (
@@ -1611,16 +1627,16 @@ fun yyAction15 (strm, lastMatch : yymatch) = (yystrm := strm;
                                             else ()
                                         );
                                         (
-                                            case (!stateStack) 
+                                           case (!stateStack) 
                                                 of (nil) => YYBEGIN INITIAL
-                                                | (CommonBlock::t) => YYBEGIN BLOCK_COMMENT
-                                                | (InnerBlock::t) => YYBEGIN INNER_BLOCK_DOC
-                                                | (OuterBlock::t) => YYBEGIN OUTER_BLOCK_DOC
+                                                | ((CommonBlock, _)::t) => YYBEGIN BLOCK_COMMENT
+                                                | ((InnerBlock, _)::t) => YYBEGIN INNER_BLOCK_DOC
+                                                | ((OuterBlock, _)::t) => YYBEGIN OUTER_BLOCK_DOC
                                         );
                                         continue()
                                     ))
 fun yyAction16 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (lexLog(yypos, "BLOCK_COMMENT"); YYBEGIN BLOCK_COMMENT; statePush(CommonBlock); continue()))
+      (lexLog(yypos, "BLOCK_COMMENT"); YYBEGIN BLOCK_COMMENT; statePush(CommonBlock, yypos); continue()))
 fun yyAction17 (strm, lastMatch : yymatch) = (yystrm := strm;
       (
                                          (
@@ -1631,9 +1647,9 @@ fun yyAction17 (strm, lastMatch : yymatch) = (yystrm := strm;
                                         (
                                             case (!stateStack) 
                                                 of (nil) => YYBEGIN INITIAL
-                                                | (CommonBlock::t) => YYBEGIN BLOCK_COMMENT
-                                                | (InnerBlock::t) => YYBEGIN INNER_BLOCK_DOC
-                                                | (OuterBlock::t) => YYBEGIN OUTER_BLOCK_DOC
+                                                | ((CommonBlock, _)::t) => YYBEGIN BLOCK_COMMENT
+                                                | ((InnerBlock, _)::t) => YYBEGIN INNER_BLOCK_DOC
+                                                | ((OuterBlock, _)::t) => YYBEGIN OUTER_BLOCK_DOC
 
                                         );
                                         continue()

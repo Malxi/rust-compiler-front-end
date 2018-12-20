@@ -12,9 +12,10 @@ In sml interactive system
 + Float (needs a convert function)
 + Punctuation
 + Delimiter
++ Comments
 
 ### Processing
-+ Comments
+
 
 
 ## Syntax
