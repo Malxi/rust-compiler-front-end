@@ -1,12 +1,7 @@
 (* rust.lex *)
-(* 
-    points:
-    handle comments
-    handle strings
-    error handling
-    end-of-file handling
-    ...
-    %term EOF
+(*
+    Token list, for automatic completion.
+    EOF
     | AS | BREAK | CONST | CONTINUE | CRATE | ELSE | ENUM | EXTERN     
         | FALSE | FN | FOR | IF | IMPL | IN | LET | LOOP | MATCH | MOD | MOVE
         | MUT | PUB | REF | RETURN | SELFVALUE | SELFTYPE | STATIC | STRUCT 
@@ -16,14 +11,12 @@
         | ASYNC | AWAIT | TRY
     | UNION | STATICLIFETIME
     | IDENT of string
-    | CHAR_LIT of char 
+    | CHAR_LIT of int 
         | STR_LIT of string | RAW_STR_LIT of string
         | BYTE_LIT of int | BYTE_STR_LIT of string | RAW_BYTE_STR_LIT of string
-        | INTEGER_LIT of int | DEC_LIT of int | TUPLE_INDEX of int 
-        | BIN_LIT of int | OCT_LIT of int | HEX_LIT of int 
-        | FLOAT_LIT of int | FLOAT_EXPONENT of int
-    | INTEGER_SUFFIX of string | FLOAT_SUFFIX of string
-    | LIFETIME_TOKEN | LIFETIME_OR_LABEL
+        | INTEGER_LIT of LargeInt.int | TUPLE_INDEX of int 
+        | FLOAT_LIT of real
+    | LIFETIME of string
     | PLUS | MINUS | STAR | SLASH | PERCENT | CARET 
         | NOT | AND | OR | ANDAND | OROR | SHL | SHR
         | PLUSEQ | MINUSEQ | STAREQ | SLASHEQ | PERCENTEQ | CARETEQ | ANDEQ | OREQ
@@ -32,6 +25,25 @@
         | AT | UNDERSCORE | DOT | DOTDOT | DOTDOTDOT | DOTDOTEQ
         | COMMA | SEMI | COLON | PATHSEP | RARROW | FATARROW | POUND | DOLLAR | QUESTION
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
+*)
+(* 
+    points:
+    handle comments
+    handle strings
+    error handling
+    end-of-file handling
+    ...
+*)
+(*
+    Input format: utf-8.
+    Identifier: raw_identifier is not supported.
+    Whitespace: Not include Characters 
+                U+0085 (next line) 
+                U+200E (left-to-right mark) 
+                U+200F (right-to-left mark)
+                U+2028 (line separator)
+                U+2029 (paragraph separator)
+    isolatedCR: A \r not followed by a \n, for some reasons, which is hard to be represented.
 *)
 (* user declarations *)
 open Convert
@@ -45,6 +57,14 @@ type arg = lexarg
 val lin = ErrorMsg.lin
 val col = ErrorMsg.col
 val eolpos = ref 0
+
+datatype comments = InnerBlock | OuterBlock | CommonBlock;
+val stateStack:comments list ref = ref []
+fun statePush(state:comments) = stateStack := state::(!stateStack)
+fun statePop(state:comments):bool = case (!stateStack) of
+                    (nil) => false
+                    | (h::t) => if h = state then (stateStack := t;true) else false
+
 fun error(p1, p2) = ErrorMsg.error p1
 fun lexLog(pos, msg) = ErrorMsg.lexLog (pos, msg)
 
@@ -79,7 +99,7 @@ fun toChar(text:string) =
         c
     end
 
-fun escape(text:string) = 
+fun escape(text:string, pos:int) = 
     let
         val chs = String.explode text
 
@@ -121,7 +141,7 @@ fun escape(text:string) =
     in
         case chs of
         (#"\092"::t) => convert(t)
-        | _ => 0
+        | _ => (ErrorMsg.error pos ("illegal escape " ^ text);0)
     end
 
 fun toInteger(text:string) = case LargeInt.fromString(text) of 
@@ -137,8 +157,9 @@ fun toFloat(text:string) = case Real.fromString(text) of
 %header (functor RustLexFun(structure Tokens: Rust_TOKENS));
 %arg (fileName:string);
 %reject
-%s LINE_COMMENT LIFE_OR_CHAR STR R_STR R_STR_BEGIN R_STR_BODY 
-   R_STR_END BYTE BYTE_STR BR_STR BR_STR_BEGIN BR_STR_BODY BR_STR_END SUFFIX;
+%s LINE_COMMENT BLOCK_COMMENT INNER_LINE_DOC INNER_BLOCK_DOC OUTER_LINE_DOC OUTER_BLOCK_DOC
+    LIFE_OR_CHAR STR R_STR R_STR_BEGIN R_STR_BODY 
+    R_STR_END BYTE BYTE_STR BR_STR BR_STR_BEGIN BR_STR_BODY BR_STR_END SUFFIX;
 
 alpha = [a-zA-z0-9];
 ident = [a-zA-Z_][a-zA-Z0-9_]*;
@@ -168,16 +189,89 @@ ascii_escape = (\\([r t n 0 \\])|\\(x([0-7]{hex_digit})));
 byte_escape = (\\([r t n 0 \\])|\\(x({hex_digit}{2})));
 unicode_escape = (\\("u{"({hex_digit}_*){1,6}"}"));
 str_continue = (\\"\n");
-isolatedCR = (\\[^' \034 r t n 0 \\]);
+isolatedCR = (\r[^\n]);
 ws = [\ \t];
 eol = ("\013\010"|"\010"|"\013");
 
 %%
-<INITIAL>{eol}             => (lin := !lin+1; col := yypos :: !col; continue());
-<INITIAL>{ws}*             => (continue());
-<INITIAL>"//"              => (lexLog(yypos, yytext); YYBEGIN LINE_COMMENT; continue());
-<LINE_COMMENT>.            => (YYBEGIN; continue());
-<LINE_COMMENT>{eol}        => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());
+<INITIAL>{eol}                    => (lin := !lin+1; col := yypos :: !col; continue());
+<INITIAL>{ws}*                    => (continue());
+
+<INITIAL>"//!"                    => (lexLog(yypos, "INNER_LINE_DOC"); YYBEGIN INNER_LINE_DOC; continue());
+<INNER_LINE_DOC>{eol}             => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());
+<INNER_LINE_DOC>.                 => (continue());
+
+<INITIAL>"///"                    => (lexLog(yypos, "OUTER_LINE_DOC"); YYBEGIN OUTER_LINE_DOC; continue());
+<OUTER_LINE_DOC>{eol}             => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());
+<OUTER_LINE_DOC>.                 => (continue());
+
+<INITIAL>("//"|"////")            => (lexLog(yypos, "LINE_COMMENT"); YYBEGIN LINE_COMMENT; continue());
+<LINE_COMMENT>"\n"                => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());   
+<LINE_COMMENT>.                   => (continue());
+
+<INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>"/*!"                    
+=> (lexLog(yypos, "INNER_BLOCK_DOC"); YYBEGIN INNER_BLOCK_DOC; statePush(InnerBlock); continue());
+<INNER_BLOCK_DOC>"*/"             => (
+                                        (
+                                            if not (statePop(InnerBlock)) then
+                                                ErrorMsg.error yypos "INNER_BLOCK_DOC does not match."
+                                            else ()
+                                        );
+                                        (
+                                            case (!stateStack) 
+                                                of (nil) => YYBEGIN INITIAL
+                                                | (CommonBlock::t) => YYBEGIN BLOCK_COMMENT
+                                                | (InnerBlock::t) => YYBEGIN INNER_BLOCK_DOC
+                                                | (OuterBlock::t) => YYBEGIN OUTER_BLOCK_DOC
+                                        );
+                                        continue()
+                                    );
+<INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>("/**/"|"/***/")                     
+=> (lexLog(yypos, "BLOCK_COMMENT"); continue());
+
+<INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>"/**"                    
+=> (lexLog(yypos, "OUTER_BLOCK_DOC"); YYBEGIN OUTER_BLOCK_DOC; statePush(OuterBlock); continue());
+<OUTER_BLOCK_DOC>"*/"             => (
+                                        (
+                                            if not (statePop(OuterBlock)) then
+                                                ErrorMsg.error yypos "OUTER_BLOCK_DOC does not match."
+                                            else ()
+                                        );
+                                        (
+                                            case (!stateStack) 
+                                                of (nil) => YYBEGIN INITIAL
+                                                | (CommonBlock::t) => YYBEGIN BLOCK_COMMENT
+                                                | (InnerBlock::t) => YYBEGIN INNER_BLOCK_DOC
+                                                | (OuterBlock::t) => YYBEGIN OUTER_BLOCK_DOC
+                                        );
+                                        continue()
+                                    );
+
+<INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>("/*"|"/***")                     
+=> (lexLog(yypos, "BLOCK_COMMENT"); YYBEGIN BLOCK_COMMENT; statePush(CommonBlock); continue());
+<BLOCK_COMMENT>"*/"               => (
+                                         (
+                                            if not (statePop(CommonBlock)) then
+                                                ErrorMsg.error yypos "BLOCK_COMMENT does not match."
+                                            else ()
+                                        );
+                                        (
+                                            case (!stateStack) 
+                                                of (nil) => YYBEGIN INITIAL
+                                                | (CommonBlock::t) => YYBEGIN BLOCK_COMMENT
+                                                | (InnerBlock::t) => YYBEGIN INNER_BLOCK_DOC
+                                                | (OuterBlock::t) => YYBEGIN OUTER_BLOCK_DOC
+
+                                        );
+                                        continue()
+                                    );
+<BLOCK_COMMENT>{eol}               => (lin := !lin+1; col := yypos :: !col; continue());
+<INNER_BLOCK_DOC>{eol}             => (lin := !lin+1; col := yypos :: !col; continue());  
+<OUTER_BLOCK_DOC>{eol}             => (lin := !lin+1; col := yypos :: !col; continue());  
+<BLOCK_COMMENT>.                   => (continue());
+<INNER_BLOCK_DOC>.                 => (continue());
+<OUTER_BLOCK_DOC>.                 => (continue());  
+
 
 <SUFFIX>{ident}            => (YYBEGIN INITIAL; continue());
 <SUFFIX>(.|\n)             => (YYBEGIN INITIAL; REJECT());
@@ -237,7 +331,7 @@ eol = ("\013\010"|"\010"|"\013");
 <INITIAL>"try"             => (lexLog(yypos, yytext); Tokens.TRY(yypos, yypos+size yytext));
 <INITIAL>"union"           => (lexLog(yypos, yytext); Tokens.UNION(yypos, yypos+size yytext));
 
-<INITIAL>{ident}           => (lexLog(yypos, yytext); Tokens.IDENT(yytext, yypos, yypos+size yytext));
+<INITIAL>{ident}           => (lexLog(yypos, "<Identifier> "^yytext); Tokens.IDENT(yytext, yypos, yypos+size yytext));
 
 <INITIAL>"'"                        => (YYBEGIN LIFE_OR_CHAR; lexLog(yypos, "<Char>"); continue());
 <INITIAL>"static"                   => (YYBEGIN INITIAL; lexLog(yypos, yytext); Tokens.STATICLIFETIME(yypos, yypos+size yytext));
@@ -245,11 +339,11 @@ eol = ("\013\010"|"\010"|"\013");
                                         (* lifetime_token or loop_label *)
                                         Tokens.LIFETIME(yytext, yypos, yypos-1+size yytext); continue());
 <LIFE_OR_CHAR>{quote_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'")), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue());
 <LIFE_OR_CHAR>{ascii_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'")), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue());
 <LIFE_OR_CHAR>{unicode_escape}"'"   => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'")), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue());
 <LIFE_OR_CHAR>."'"                  => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
                                         Tokens.CHAR_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos-1+size yytext); continue());
 <LIFE_OR_CHAR>[\128-\255]{2,4}"'"   => (YYBEGIN INITIAL; lexLog(yypos, yytext);
@@ -257,16 +351,15 @@ eol = ("\013\010"|"\010"|"\013");
 
 <INITIAL>"\""              => (YYBEGIN STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<String>"); continue());
 <STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.STR_LIT(strMake(), !strpos, yypos); continue());           
-<STR>{quote_escape}        => (strAppend(Char.chr(escape(yytext))); continue());
-<STR>{ascii_escape}        => (strAppend(Char.chr(escape(yytext))); continue());
+<STR>{quote_escape}        => (strAppend(Char.chr(escape(yytext, yypos))); continue());
+<STR>{ascii_escape}        => (strAppend(Char.chr(escape(yytext, yypos))); continue());
 <STR>{unicode_escape}      => (
                                 (* here is a bug. This will raise a exception 
                                 when unicode point is bigger than 255 *)
-                                strAppend(Char.chr(escape(yytext))); 
+                                strAppend(Char.chr(escape(yytext, yypos))); 
                                 continue()
                             );
 <STR>{str_continue}        => (lexLog(yypos, "String \\n"); lin := !lin+1; col := yypos :: !col; continue());
-<STR>{isolatedCR}          => (ErrorMsg.error yypos ("illegal escape[STR] " ^ yytext); continue());
 <STR>\n                    => (strAppend(toChar(yytext)); lin := !lin+1; col := yypos :: !col; continue());
 <STR>.                     => (strAppend(toChar(yytext)); continue());
 
@@ -318,12 +411,12 @@ eol = ("\013\010"|"\010"|"\013");
 <BYTE>"\\\''"              => (
                                 YYBEGIN INITIAL; 
                                 lexLog(yypos, yytext); 
-                                Tokens.BYTE_LIT(escape(strip(yytext, #"'")), yypos, yypos+size yytext)
+                                Tokens.BYTE_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos+size yytext)
                             );
 <BYTE>{byte_escape}"'"     => (
                                 YYBEGIN INITIAL; 
                                 lexLog(yypos, yytext); 
-                                Tokens.BYTE_LIT(escape(strip(yytext, #"'")), yypos, yypos+size yytext)
+                                Tokens.BYTE_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos+size yytext)
                             );
 <BYTE>{ascii_char}"'"      => (
                                 YYBEGIN INITIAL; 
@@ -336,10 +429,9 @@ eol = ("\013\010"|"\010"|"\013");
 <INITIAL>"b\""                  => (YYBEGIN BYTE_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Byte string>"); continue());
 <BYTE_STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.BYTE_STR_LIT(strMake(), !strpos, yypos); continue());           
 <BYTE_STR>{ascii_str}           => (strAppend(toChar(yytext)); continue());
-<BYTE_STR>"\\\""                => (strAppend(Char.chr(escape(yytext))); continue());
-<BYTE_STR>{byte_escape}         => (strAppend(Char.chr(escape(yytext))); continue());
+<BYTE_STR>"\\\""                => (strAppend(Char.chr(escape(yytext, yypos))); continue());
+<BYTE_STR>{byte_escape}         => (strAppend(Char.chr(escape(yytext, yypos))); continue());
 <BYTE_STR>{str_continue}        => (lexLog(yypos, "String \\n"); lin := !lin+1; col := yypos :: !col; continue());
-<BYTE_STR>{isolatedCR}          => (ErrorMsg.error yypos ("illegal escape[BYTE_STR] " ^ yytext); continue());
 <BYTE_STR>"\n"                  => (strAppend(toChar(yytext)); lin := !lin+1; col := yypos :: !col; continue());
 <BYTE_STR>.                     => (strAppend(toChar(yytext)); continue());
 
@@ -408,56 +500,56 @@ eol = ("\013\010"|"\010"|"\013");
                                 Tokens.FLOAT_LIT(toFloat(yytext), yypos, yypos+size yytext)
                             );
 
-<INITIAL>"<<="             => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.SHLEQ(yypos, yypos+size yytext));
-<INITIAL>">>="             => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.SHREQ(yypos, yypos+size yytext));
-<INITIAL>"..."             => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.DOTDOTDOT(yypos, yypos+size yytext));
-<INITIAL>"..="             => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.DOTDOTEQ(yypos, yypos+size yytext));
+<INITIAL>"<<="             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHLEQ(yypos, yypos+size yytext));
+<INITIAL>">>="             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHREQ(yypos, yypos+size yytext));
+<INITIAL>"..."             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTDOT(yypos, yypos+size yytext));
+<INITIAL>"..="             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTEQ(yypos, yypos+size yytext));
 
-<INITIAL>"&&"              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.ANDAND(yypos, yypos+size yytext));
-<INITIAL>"||"              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.OROR(yypos, yypos+size yytext));
-<INITIAL>"<<"              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.SHL(yypos, yypos+size yytext));
-<INITIAL>">>"              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.SHR(yypos, yypos+size yytext));
-<INITIAL>"+="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.PLUSEQ(yypos, yypos+size yytext));
-<INITIAL>"-="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.MINUSEQ(yypos, yypos+size yytext));
-<INITIAL>"*="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.STAREQ(yypos, yypos+size yytext));
-<INITIAL>"/="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.SLASHEQ(yypos, yypos+size yytext));
-<INITIAL>"%="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.PERCENTEQ(yypos, yypos+size yytext));
-<INITIAL>"^="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.CARETEQ(yypos, yypos+size yytext));
-<INITIAL>"&="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.ANDEQ(yypos, yypos+size yytext));
-<INITIAL>"|="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.OREQ(yypos, yypos+size yytext));
-<INITIAL>"=="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.EQEQ(yypos, yypos+size yytext));
-<INITIAL>"!="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.NE(yypos, yypos+size yytext));
-<INITIAL>">="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.GE(yypos, yypos+size yytext));
-<INITIAL>"<="              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.LE(yypos, yypos+size yytext));
-<INITIAL>"->"              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.RARROW(yypos, yypos+size yytext));
-<INITIAL>"=>"              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.FATARROW(yypos, yypos+size yytext));
-<INITIAL>".."              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.DOTDOT(yypos, yypos+size yytext));
-<INITIAL>"::"              => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.PATHSEP(yypos, yypos+size yytext));
-<INITIAL>"."               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.DOT(yypos, yypos+size yytext));
-<INITIAL>"+"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.PLUS(yypos, yypos+size yytext));
-<INITIAL>"-"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.MINUS(yypos, yypos+size yytext)); 
-<INITIAL>"*"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.STAR(yypos, yypos+size yytext));
-<INITIAL>"/"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.SLASH(yypos, yypos+size yytext));
-<INITIAL>"%"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.PERCENT(yypos, yypos+size yytext));
-<INITIAL>"^"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.CARET(yypos, yypos+size yytext));
-<INITIAL>"!"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.NOT(yypos, yypos+size yytext));
-<INITIAL>"&"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.AND(yypos, yypos+size yytext));
-<INITIAL>"|"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.OR(yypos, yypos+size yytext));
-<INITIAL>"="               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.EQ(yypos, yypos+size yytext));
-<INITIAL>">"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.GT(yypos, yypos+size yytext));
-<INITIAL>"<"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.LE(yypos, yypos+size yytext));
-<INITIAL>"@"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.AT(yypos, yypos+size yytext));
-<INITIAL>","               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.COMMA(yypos, yypos+size yytext));
-<INITIAL>";"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.SEMI(yypos, yypos+size yytext));
-<INITIAL>":"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.COLON(yypos, yypos+size yytext));
-<INITIAL>"#"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.POUND(yypos, yypos+size yytext));
-<INITIAL>"$"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.DOLLAR(yypos, yypos+size yytext));
-<INITIAL>"?"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.QUESTION(yypos, yypos+size yytext));
-<INITIAL>"{"               => (lexLog(yypos, "<Delimiter>"^yytext); Tokens.LBRACE(yypos, yypos+size yytext));
-<INITIAL>"}"               => (lexLog(yypos, "<Delimiter>"^yytext); Tokens.RBRACE(yypos, yypos+size yytext));
-<INITIAL>"["               => (lexLog(yypos, "<Delimiter>"^yytext); Tokens.LBRACKET(yypos, yypos+size yytext));
-<INITIAL>"]"               => (lexLog(yypos, "<Delimiter>"^yytext); Tokens.RBRACKET(yypos, yypos+size yytext));
-<INITIAL>"("               => (lexLog(yypos, "<Delimiter>"^yytext); Tokens.LPARENT(yypos, yypos+size yytext));
-<INITIAL>")"               => (lexLog(yypos, "<Delimiter>"^yytext); Tokens.RPARENT(yypos, yypos+size yytext));
+<INITIAL>"&&"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.ANDAND(yypos, yypos+size yytext));
+<INITIAL>"||"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OROR(yypos, yypos+size yytext));
+<INITIAL>"<<"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHL(yypos, yypos+size yytext));
+<INITIAL>">>"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHR(yypos, yypos+size yytext));
+<INITIAL>"+="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PLUSEQ(yypos, yypos+size yytext));
+<INITIAL>"-="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.MINUSEQ(yypos, yypos+size yytext));
+<INITIAL>"*="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAREQ(yypos, yypos+size yytext));
+<INITIAL>"/="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SLASHEQ(yypos, yypos+size yytext));
+<INITIAL>"%="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PERCENTEQ(yypos, yypos+size yytext));
+<INITIAL>"^="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.CARETEQ(yypos, yypos+size yytext));
+<INITIAL>"&="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.ANDEQ(yypos, yypos+size yytext));
+<INITIAL>"|="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OREQ(yypos, yypos+size yytext));
+<INITIAL>"=="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.EQEQ(yypos, yypos+size yytext));
+<INITIAL>"!="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NE(yypos, yypos+size yytext));
+<INITIAL>">="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GE(yypos, yypos+size yytext));
+<INITIAL>"<="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext));
+<INITIAL>"->"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.RARROW(yypos, yypos+size yytext));
+<INITIAL>"=>"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.FATARROW(yypos, yypos+size yytext));
+<INITIAL>".."              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOT(yypos, yypos+size yytext));
+<INITIAL>"::"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PATHSEP(yypos, yypos+size yytext));
+<INITIAL>"."               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOT(yypos, yypos+size yytext));
+<INITIAL>"+"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PLUS(yypos, yypos+size yytext));
+<INITIAL>"-"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.MINUS(yypos, yypos+size yytext)); 
+<INITIAL>"*"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAR(yypos, yypos+size yytext));
+<INITIAL>"/"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SLASH(yypos, yypos+size yytext));
+<INITIAL>"%"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PERCENT(yypos, yypos+size yytext));
+<INITIAL>"^"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.CARET(yypos, yypos+size yytext));
+<INITIAL>"!"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NOT(yypos, yypos+size yytext));
+<INITIAL>"&"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AND(yypos, yypos+size yytext));
+<INITIAL>"|"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OR(yypos, yypos+size yytext));
+<INITIAL>"="               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.EQ(yypos, yypos+size yytext));
+<INITIAL>">"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GT(yypos, yypos+size yytext));
+<INITIAL>"<"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext));
+<INITIAL>"@"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AT(yypos, yypos+size yytext));
+<INITIAL>","               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COMMA(yypos, yypos+size yytext));
+<INITIAL>";"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SEMI(yypos, yypos+size yytext));
+<INITIAL>":"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COLON(yypos, yypos+size yytext));
+<INITIAL>"#"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.POUND(yypos, yypos+size yytext));
+<INITIAL>"$"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOLLAR(yypos, yypos+size yytext));
+<INITIAL>"?"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.QUESTION(yypos, yypos+size yytext));
+<INITIAL>"{"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.LBRACE(yypos, yypos+size yytext));
+<INITIAL>"}"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.RBRACE(yypos, yypos+size yytext));
+<INITIAL>"["               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.LBRACKET(yypos, yypos+size yytext));
+<INITIAL>"]"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.RBRACKET(yypos, yypos+size yytext));
+<INITIAL>"("               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.LPARENT(yypos, yypos+size yytext));
+<INITIAL>")"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.RPARENT(yypos, yypos+size yytext));
 
 <INITIAL>.                 => (ErrorMsg.error yypos ("illegal character[INITIAL] " ^ yytext); continue());
