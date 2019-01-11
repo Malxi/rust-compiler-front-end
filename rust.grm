@@ -1,4 +1,5 @@
 (* rust.yacc *)
+open DataTypes
 %%
 %term EOF
     | AS | BREAK | CONST | CONTINUE | CRATE | ELSE | ENUM | EXTERN     
@@ -24,7 +25,9 @@
         | AT | UNDERSCORE | DOT | DOTDOT | DOTDOTDOT | DOTDOTEQ
         | COMMA | SEMI | COLON | PATHSEP | RARROW | FATARROW | POUND | DOLLAR | QUESTION
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
-%nonterm crate
+        | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
+        | SHEBANG of string
+%nonterm crate of Crate
         | path | simple_path | simple_path_segment| simple_path_expansion| exp | program
 %pos int
 %eop EOF
@@ -39,4 +42,4 @@
 %verbose
 
 %%
-program:crate                                                             ()
+crate: SHEBANG                  (Crate (Shebang (SHEBANG)))

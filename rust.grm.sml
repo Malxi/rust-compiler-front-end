@@ -9,6 +9,7 @@ struct
 structure Header = 
 struct
 (* rust.yacc *)
+open DataTypes
 
 end
 structure LrTable = Token.LrTable
@@ -16,15 +17,15 @@ structure Token = Token
 local open LrTable in 
 val table=let val actionRows =
 "\
-\\001\000\000\000\
 \\001\000\001\000\000\000\000\000\
+\\001\000\119\000\003\000\000\000\
 \\005\000\000\000\
 \"
 val actionRowNumbers =
-"\000\000\002\000\001\000"
+"\001\000\002\000\000\000"
 val gotoT =
 "\
-\\001\000\001\000\007\000\002\000\000\000\
+\\001\000\002\000\000\000\
 \\000\000\
 \\000\000\
 \"
@@ -92,6 +93,9 @@ type arg = unit
 structure MlyValue = 
 struct
 datatype svalue = VOID | ntVOID of unit ->  unit
+ | SHEBANG of unit ->  (string)
+ | OUTER_DOC_COMMENT of unit ->  (string)
+ | INNER_DOC_COMMENT of unit ->  (string)
  | LIFETIME of unit ->  (string) | FLOAT_LIT of unit ->  (real)
  | TUPLE_INDEX of unit ->  (int)
  | INTEGER_LIT of unit ->  (LargeInt.int)
@@ -99,9 +103,10 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | BYTE_STR_LIT of unit ->  (string) | BYTE_LIT of unit ->  (int)
  | RAW_STR_LIT of unit ->  (string) | STR_LIT of unit ->  (string)
  | CHAR_LIT of unit ->  (int) | IDENT of unit ->  (string)
+ | crate of unit ->  (Crate)
 end
 type svalue = MlyValue.svalue
-type result = unit
+type result = Crate
 end
 structure EC=
 struct
@@ -242,6 +247,9 @@ fn (T 0) => "EOF"
   | (T 113) => "RBRACKET"
   | (T 114) => "LPARENT"
   | (T 115) => "RPARENT"
+  | (T 116) => "INNER_DOC_COMMENT"
+  | (T 117) => "OUTER_DOC_COMMENT"
+  | (T 118) => "SHEBANG"
   | _ => "bogus-term"
 local open Header in
 val errtermvalue=
@@ -272,17 +280,18 @@ val actions =
 fn (i392,defaultPos,stack,
     (()):arg) =>
 case (i392,stack)
-of  ( 0, ( ( _, ( MlyValue.ntVOID crate1, crate1left, crate1right)) ::
- rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-crate1 = crate1 ()
- in ()
-end; ()))
- in ( LrTable.NT 6, ( result, crate1left, crate1right), rest671)
+of  ( 0, ( ( _, ( MlyValue.SHEBANG SHEBANG1, SHEBANG1left, 
+SHEBANG1right)) :: rest671)) => let val  result = MlyValue.crate (fn _
+ => let val  (SHEBANG as SHEBANG1) = SHEBANG1 ()
+ in (Crate (Shebang (SHEBANG)))
+end)
+ in ( LrTable.NT 0, ( result, SHEBANG1left, SHEBANG1right), rest671)
+
 end
 | _ => raise (mlyAction i392)
 end
 val void = MlyValue.VOID
-val extract = fn a => (fn MlyValue.ntVOID x => x
+val extract = fn a => (fn MlyValue.crate x => x
 | _ => let exception ParseInternal
 	in raise ParseInternal end) a ()
 end
@@ -523,5 +532,11 @@ fun LPARENT (p1,p2) = Token.TOKEN (ParserData.LrTable.T 114,(
 ParserData.MlyValue.VOID,p1,p2))
 fun RPARENT (p1,p2) = Token.TOKEN (ParserData.LrTable.T 115,(
 ParserData.MlyValue.VOID,p1,p2))
+fun INNER_DOC_COMMENT (i,p1,p2) = Token.TOKEN (ParserData.LrTable.T 
+116,(ParserData.MlyValue.INNER_DOC_COMMENT (fn () => i),p1,p2))
+fun OUTER_DOC_COMMENT (i,p1,p2) = Token.TOKEN (ParserData.LrTable.T 
+117,(ParserData.MlyValue.OUTER_DOC_COMMENT (fn () => i),p1,p2))
+fun SHEBANG (i,p1,p2) = Token.TOKEN (ParserData.LrTable.T 118,(
+ParserData.MlyValue.SHEBANG (fn () => i),p1,p2))
 end
 end

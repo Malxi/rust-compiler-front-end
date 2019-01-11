@@ -192,7 +192,7 @@ pub mod outer_module {
         // any other type:
 
         /*   /* */  /** */  /*! */  */
-        /*!  /* */  /** */  /*! */  */
+        /*! 233 /* */  /** */  /*! dsdas */  */
         /**  /* */  /** */  /*! */  */
         pub mod dummy_item {}
     }

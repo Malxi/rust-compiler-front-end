@@ -1,7 +1,7 @@
 (* rust.lex *)
 (*
     Token list, for automatic completion.
-    EOF
+    %term EOF
     | AS | BREAK | CONST | CONTINUE | CRATE | ELSE | ENUM | EXTERN     
         | FALSE | FN | FOR | IF | IMPL | IN | LET | LOOP | MATCH | MOD | MOVE
         | MUT | PUB | REF | RETURN | SELFVALUE | SELFTYPE | STATIC | STRUCT 
@@ -25,6 +25,8 @@
         | AT | UNDERSCORE | DOT | DOTDOT | DOTDOTDOT | DOTDOTEQ
         | COMMA | SEMI | COLON | PATHSEP | RARROW | FATARROW | POUND | DOLLAR | QUESTION
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
+        | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
+        | SHEBANG
 *)
 (* 
     points:
@@ -57,6 +59,7 @@ type arg = lexarg
 val lin = ErrorMsg.lin
 val col = ErrorMsg.col
 val eolpos = ref 0
+fun incLine(pos) = (lin := !lin+1; col := pos::(!col))
 
 datatype comments = InnerBlock | OuterBlock | CommonBlock;
 val stateStack:(comments*int) list ref = ref []
@@ -64,6 +67,9 @@ fun statePush(state, pos) = stateStack := (state, pos)::(!stateStack)
 fun statePop(state):bool = case (!stateStack) of
                     (nil) => false
                     | ((h, _)::t) => if h = state then (stateStack := t;true) else false
+val doc = ref ""
+val docPos = ref 0
+fun docInit(pos) = if null(!stateStack) then (doc:="";docPos:=pos;()) else (doc:=(!doc);docPos:=(!docPos);())
 
 fun error(p1, p2) = ErrorMsg.error p1
 fun lexLog(pos, msg) = ErrorMsg.lexLog (pos, msg)
@@ -209,45 +215,78 @@ str_continue = (\\"\n");
 isolatedCR = (\r[^\n]);
 ws = [\ \t];
 eol = ("\013\010"|"\010"|"\013");
+bom = ("\239\189\191");
+shebang = ("#!"[^\091 \n][^\n]*);
 
 %%
-<INITIAL>{eol}                    => (lin := !lin+1; col := yypos :: !col; continue());
+<INITIAL>{eol}                    => (incLine(yypos); continue());
 <INITIAL>{ws}*                    => (continue());
 
-<INITIAL>"//!"                    => (lexLog(yypos, "INNER_LINE_DOC"); YYBEGIN INNER_LINE_DOC; continue());
-<INNER_LINE_DOC>{eol}             => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());
-<INNER_LINE_DOC>.                 => (continue());
+<INITIAL>{bom}                    => (
+                                        (if not (!lin = 1) then
+                                            ErrorMsg.error yypos ("Unexpected utf8 bom [INITIAL] " ^ yytext)
+                                        else ());
+                                        continue()
+                                    );
+<INITIAL>{shebang}                => (lexLog(yypos, "Shebang: "^yytext); Tokens.SHEBANG(yytext, yypos, yypos+ size yytext));
 
-<INITIAL>"///"                    => (lexLog(yypos, "OUTER_LINE_DOC"); YYBEGIN OUTER_LINE_DOC; continue());
-<OUTER_LINE_DOC>{eol}             => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());
-<OUTER_LINE_DOC>.                 => (continue());
+<INITIAL>"//!"                    => (lexLog(yypos, "INNER_LINE_DOC"); docInit(yypos); YYBEGIN INNER_LINE_DOC; continue());
+<INNER_LINE_DOC>{eol}             => (
+                                        lexLog(yypos, "INNER_DOC_COMMENT: "^(!doc)); 
+                                        YYBEGIN INITIAL; 
+                                        incLine(yypos);
+                                        Tokens.INNER_DOC_COMMENT(!doc, !docPos, yypos)
+                                    );
+<INNER_LINE_DOC>.                 => (doc:=(!doc)^yytext; continue());
+
+<INITIAL>"///"                    => (lexLog(yypos, "OUTER_LINE_DOC"); docInit(yypos); YYBEGIN OUTER_LINE_DOC; continue());
+<OUTER_LINE_DOC>{eol}             => (
+                                        lexLog(yypos, "OUTER_DOC_COMMENT: "^(!doc)); 
+                                        YYBEGIN INITIAL;
+                                        incLine(yypos);
+                                        Tokens.OUTER_DOC_COMMENT(!doc, !docPos, yypos)
+                                    );
+<OUTER_LINE_DOC>.                 => (doc:=(!doc)^yytext; continue());
 
 <INITIAL>("//"|"////")            => (lexLog(yypos, "LINE_COMMENT"); YYBEGIN LINE_COMMENT; continue());
-<LINE_COMMENT>"\n"                => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());   
+<LINE_COMMENT>"\n"                => (YYBEGIN INITIAL; incLine(yypos);  continue());   
 <LINE_COMMENT>.                   => (continue());
 
 <INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>"/*!"                    
-=> (lexLog(yypos, "INNER_BLOCK_DOC"); YYBEGIN INNER_BLOCK_DOC; statePush(InnerBlock, yypos); continue());
-<INNER_BLOCK_DOC>"*/"             => (
-                                        (
-                                            if not (statePop(InnerBlock)) then
-                                                ErrorMsg.error yypos "INNER_BLOCK_DOC does not match."
-                                            else ()
-                                        );
-                                        (
-                                            case (!stateStack) 
-                                                of (nil) => YYBEGIN INITIAL
-                                                | ((CommonBlock, _)::t) => YYBEGIN BLOCK_COMMENT
-                                                | ((InnerBlock, _)::t) => YYBEGIN INNER_BLOCK_DOC
-                                                | ((OuterBlock, _)::t) => YYBEGIN OUTER_BLOCK_DOC
-                                        );
-                                        continue()
+                                    => (lexLog(yypos, "INNER_BLOCK_DOC"); 
+                                    docInit(yypos);
+                                    YYBEGIN INNER_BLOCK_DOC; 
+                                    statePush(InnerBlock, yypos); 
+                                    continue()
                                     );
+<INNER_BLOCK_DOC>"*/"             => (
+                                    (
+                                        if not (statePop(InnerBlock)) then
+                                            ErrorMsg.error yypos "INNER_BLOCK_DOC does not match."
+                                        else ()
+                                    );
+                                    (
+                                        case (!stateStack) 
+                                            of (nil) => ((lexLog(yypos, "INNER_DOC_COMMENT: "^(!doc))); YYBEGIN INITIAL)
+                                            | ((CommonBlock, _)::t) => YYBEGIN BLOCK_COMMENT
+                                            | ((InnerBlock, _)::t) => YYBEGIN INNER_BLOCK_DOC
+                                            | ((OuterBlock, _)::t) => YYBEGIN OUTER_BLOCK_DOC
+                                    );
+                                    if null(!stateStack) then 
+                                    Tokens.INNER_DOC_COMMENT(!doc, !docPos, yypos)
+                                    else continue()
+                                );
 <INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>("/**/"|"/***/")                     
 => (lexLog(yypos, "BLOCK_COMMENT"); continue());
 
 <INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>"/**"                    
-=> (lexLog(yypos, "OUTER_BLOCK_DOC"); YYBEGIN OUTER_BLOCK_DOC; statePush(OuterBlock, yypos); continue());
+                                    => (
+                                    lexLog(yypos, "OUTER_BLOCK_DOC"); 
+                                    docInit(yypos); 
+                                    YYBEGIN OUTER_BLOCK_DOC; 
+                                    statePush(OuterBlock, yypos);
+                                    continue()
+                                    );
 <OUTER_BLOCK_DOC>"*/"             => (
                                         (
                                             if not (statePop(OuterBlock)) then
@@ -256,12 +295,14 @@ eol = ("\013\010"|"\010"|"\013");
                                         );
                                         (
                                            case (!stateStack) 
-                                                of (nil) => YYBEGIN INITIAL
+                                                of (nil) => ((lexLog(yypos, "OUTER_DOC_COMMENT: "^(!doc))); YYBEGIN INITIAL)
                                                 | ((CommonBlock, _)::t) => YYBEGIN BLOCK_COMMENT
                                                 | ((InnerBlock, _)::t) => YYBEGIN INNER_BLOCK_DOC
                                                 | ((OuterBlock, _)::t) => YYBEGIN OUTER_BLOCK_DOC
                                         );
-                                        continue()
+                                        if null(!stateStack) then 
+                                            Tokens.OUTER_DOC_COMMENT(!doc, !docPos, yypos)
+                                        else continue()
                                     );
 
 <INITIAL, INNER_BLOCK_DOC, BLOCK_COMMENT, OUTER_BLOCK_DOC>("/*"|"/***")                     
@@ -282,12 +323,12 @@ eol = ("\013\010"|"\010"|"\013");
                                         );
                                         continue()
                                     );
-<BLOCK_COMMENT>{eol}               => (lin := !lin+1; col := yypos :: !col; continue());
-<INNER_BLOCK_DOC>{eol}             => (lin := !lin+1; col := yypos :: !col; continue());  
-<OUTER_BLOCK_DOC>{eol}             => (lin := !lin+1; col := yypos :: !col; continue());  
+<BLOCK_COMMENT>{eol}               => (incLine(yypos);  continue());
+<INNER_BLOCK_DOC>{eol}             => (doc:=(!doc)^yytext; incLine(yypos);  continue());  
+<OUTER_BLOCK_DOC>{eol}             => (doc:=(!doc)^yytext; incLine(yypos);  continue());  
 <BLOCK_COMMENT>.                   => (continue());
-<INNER_BLOCK_DOC>.                 => (continue());
-<OUTER_BLOCK_DOC>.                 => (continue());  
+<INNER_BLOCK_DOC>.                 => (doc:=(!doc)^yytext; continue());
+<OUTER_BLOCK_DOC>.                 => (doc:=(!doc)^yytext; continue());  
 
 
 <SUFFIX>{ident}            => (YYBEGIN INITIAL; continue());
@@ -376,13 +417,13 @@ eol = ("\013\010"|"\010"|"\013");
                                 strAppend(Char.chr(escape(yytext, yypos))); 
                                 continue()
                             );
-<STR>{str_continue}        => (lexLog(yypos, "String \\n"); lin := !lin+1; col := yypos :: !col; continue());
-<STR>\n                    => (strAppend(toChar(yytext)); lin := !lin+1; col := yypos :: !col; continue());
+<STR>{str_continue}        => (lexLog(yypos, "String \\n"); incLine(yypos);  continue());
+<STR>\n                    => (strAppend(toChar(yytext)); incLine(yypos);  continue());
 <STR>.                     => (strAppend(toChar(yytext)); continue());
 
 <INITIAL>"r\""             => (YYBEGIN R_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Raw string>"); continue());
 <R_STR>"\""                => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.RAW_STR_LIT(strMake(), !strpos, yypos));
-<R_STR>"\n"                => (lin := !lin+1; col := yypos :: !col; strAppend(toChar yytext); continue());
+<R_STR>"\n"                => (incLine(yypos);  strAppend(toChar yytext); continue());
 <R_STR>.                   => (strAppend(toChar yytext); continue());
 
 <INITIAL>"r#"              => (
@@ -396,7 +437,7 @@ eol = ("\013\010"|"\010"|"\013");
                             );
 <R_STR_BEGIN>"#"           => (lsharp := !lsharp+1; continue());
 <R_STR_BEGIN>"\""          => (YYBEGIN R_STR_BODY; continue());
-<R_STR_BEGIN>"\n"          => (lin := !lin+1; col := yypos :: !col; 
+<R_STR_BEGIN>"\n"          => (incLine(yypos);  
                                 ErrorMsg.error yypos ("illegal character[R_STR_BEGIN] " ^ yytext);
                                 continue());
 <R_STR_BEGIN>.           => (ErrorMsg.error yypos ("illegal character[R_STR_BEGIN] " ^ yytext); continue());
@@ -413,7 +454,7 @@ eol = ("\013\010"|"\010"|"\013");
                                     (YYBEGIN R_STR_END;
                                     continue())
                             );
-<R_STR_BODY>"\n"         => (lin := !lin+1; col := yypos :: !col; strAppend(toChar yytext); continue());
+<R_STR_BODY>"\n"         => (incLine(yypos);  strAppend(toChar yytext); continue());
 <R_STR_BODY>.            => (strAppend(toChar yytext); continue());
 <R_STR_END>"#"           => (
                                 strAppend(toChar yytext);
@@ -449,7 +490,7 @@ eol = ("\013\010"|"\010"|"\013");
                                 lexLog(yypos, yytext);
                                 Tokens.BYTE_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos+size yytext)
                             );
-<BYTE>"\n'"                 => (YYBEGIN INITIAL; lin := !lin+1; col := yypos :: !col; continue());
+<BYTE>"\n'"                 => (YYBEGIN INITIAL; incLine(yypos);  continue());
 <BYTE>."'"                  => (YYBEGIN INITIAL; ErrorMsg.error yypos ("illegal character[BYTE] " ^ yytext); continue());
 
 <INITIAL>"b\""                  => (YYBEGIN BYTE_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Byte string>"); continue());
@@ -457,20 +498,20 @@ eol = ("\013\010"|"\010"|"\013");
 <BYTE_STR>{ascii_str}           => (strAppend(toChar(yytext)); continue());
 <BYTE_STR>"\\\""                => (strAppend(Char.chr(escape(yytext, yypos))); continue());
 <BYTE_STR>{byte_escape}         => (strAppend(Char.chr(escape(yytext, yypos))); continue());
-<BYTE_STR>{str_continue}        => (lexLog(yypos, "String \\n"); lin := !lin+1; col := yypos :: !col; continue());
-<BYTE_STR>"\n"                  => (strAppend(toChar(yytext)); lin := !lin+1; col := yypos :: !col; continue());
+<BYTE_STR>{str_continue}        => (lexLog(yypos, "String \\n"); incLine(yypos);  continue());
+<BYTE_STR>"\n"                  => (strAppend(toChar(yytext)); incLine(yypos);  continue());
 <BYTE_STR>.                     => (strAppend(toChar(yytext)); continue());
 
 <INITIAL>"br\""           => (YYBEGIN BR_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Raw byte string>"); continue());
 <BR_STR>"\""              => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.RAW_BYTE_STR_LIT(strMake(), !strpos, yypos));
-<BR_STR>"\n"              => (lin := !lin+1; col := yypos :: !col; strAppend(toChar yytext); continue());
+<BR_STR>"\n"              => (incLine(yypos);  strAppend(toChar yytext); continue());
 <BR_STR>{ascii}           => (strAppend(toChar yytext); continue());
 <BR_STR>.                 => (ErrorMsg.error yypos ("illegal character[BR_STR] " ^ yytext); continue());
 
 <INITIAL>"br#"            => (YYBEGIN BR_STR_BEGIN; lsharp := 1; rsharp := 0; lexLog(yypos, "<Raw byte string(#)>"); continue());
 <BR_STR_BEGIN>"#"         => (lsharp := !lsharp+1; continue());
 <BR_STR_BEGIN>"\""        => (YYBEGIN BR_STR_BODY; continue());
-<BR_STR_BEGIN>"\n"        => (lin := !lin+1; col := yypos :: !col; 
+<BR_STR_BEGIN>"\n"        => (incLine(yypos);  
                                      ErrorMsg.error yypos ("illegal character[BR_STR_BEGIN] " ^ yytext);
                                     continue());
 <BR_STR_BEGIN>.           => (ErrorMsg.error yypos ("illegal character[BR_STR_BEGIN] " ^ yytext); continue());
@@ -486,7 +527,7 @@ eol = ("\013\010"|"\010"|"\013");
                                     (YYBEGIN BR_STR_END;
                                     continue())
                             );
-<BR_STR_BODY>"\n"         => (lin := !lin+1; col := yypos :: !col; strAppend(toChar yytext); continue());
+<BR_STR_BODY>"\n"         => (incLine(yypos);  strAppend(toChar yytext); continue());
 <BR_STR_BODY>{ascii}      => (strAppend(toChar yytext); continue());
 <BR_STR_BODY>.            => (ErrorMsg.error yypos ("illegal character[BR_STR_BODY] " ^ yytext); continue());
 <BR_STR_END>"#"           => (

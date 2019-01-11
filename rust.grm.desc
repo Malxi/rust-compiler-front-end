@@ -1,18 +1,18 @@
 
 state 0:
 
-	program : . crate 
+	crate : . SHEBANG 
 
+	SHEBANG	shift 1
 
-	crate	goto 1
-	program	goto 2
+	crate	goto 2
 
 	.	error
 
 
 state 1:
 
-	program : crate .  (reduce by rule 0)
+	crate : SHEBANG .  (reduce by rule 0)
 
 
 
@@ -27,5 +27,5 @@ state 2:
 
 	.	error
 
-1 of 4 action table entries left after compaction
-2 goto table entries
+2 of 5 action table entries left after compaction
+1 goto table entries

@@ -1,4 +1,4 @@
-structure Parser : sig val parse : string -> unit  end =
+structure Parser : sig val parse : string -> DataTypes.Crate  end =
 struct
     fun parse fileName =
     let 
