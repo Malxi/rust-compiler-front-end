@@ -16,18 +16,20 @@ structure Token = Token
 local open LrTable in 
 val table=let val actionRows =
 "\
+\\001\000\000\000\
 \\001\000\001\000\000\000\000\000\
-\\004\000\000\000\
+\\005\000\000\000\
 \"
 val actionRowNumbers =
-"\001\000\000\000"
+"\000\000\002\000\001\000"
 val gotoT =
 "\
-\\002\000\001\000\000\000\
+\\001\000\001\000\007\000\002\000\000\000\
+\\000\000\
 \\000\000\
 \"
-val numstates = 2
-val numrules = 2
+val numstates = 3
+val numrules = 1
 val s = ref "" and index = ref 0
 val string_to_int = fn () => 
 let val i = !index
@@ -270,11 +272,12 @@ val actions =
 fn (i392,defaultPos,stack,
     (()):arg) =>
 case (i392,stack)
-of  ( 0, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ())
- in ( LrTable.NT 1, ( result, defaultPos, defaultPos), rest671)
-end
-|  ( 1, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ())
- in ( LrTable.NT 0, ( result, defaultPos, defaultPos), rest671)
+of  ( 0, ( ( _, ( MlyValue.ntVOID crate1, crate1left, crate1right)) ::
+ rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
+crate1 = crate1 ()
+ in ()
+end; ()))
+ in ( LrTable.NT 6, ( result, crate1left, crate1right), rest671)
 end
 | _ => raise (mlyAction i392)
 end

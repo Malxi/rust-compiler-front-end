@@ -1,18 +1,25 @@
-1 rule not reduced
-
-warning: rule <exp : > will never be reduced
 
 state 0:
 
-	program : .  (reduce by rule 0)
+	program : . crate 
 
 
-	program	goto 1
+	crate	goto 1
+	program	goto 2
+
+	.	error
+
+
+state 1:
+
+	program : crate .  (reduce by rule 0)
+
+
 
 	.	reduce by rule 0
 
 
-state 1:
+state 2:
 
 
 	EOF	accept
@@ -20,5 +27,5 @@ state 1:
 
 	.	error
 
-1 of 3 action table entries left after compaction
-1 goto table entries
+1 of 4 action table entries left after compaction
+2 goto table entries

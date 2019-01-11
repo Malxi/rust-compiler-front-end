@@ -270,6 +270,7 @@ fun eof(fileName:string) =
                     ErrorMsg.error (!strpos) "String unclosed."
             else ()
         );
+        lexLog(pos, "EOF");
         Tokens.EOF(pos, pos)
     end
 
@@ -2104,7 +2105,15 @@ fun yyAction100 (strm, lastMatch : yymatch) = let
         yystrm := strm; (strAppend(toChar yytext); continue())
       end
 fun yyAction101 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (YYBEGIN R_STR_BEGIN; lsharp := 1; rsharp := 0; lexLog(yypos, "<Raw string(#)>"); continue()))
+      (
+                                YYBEGIN R_STR_BEGIN;
+                                strList:=nil; 
+                                strpos:=yypos;
+                                lsharp := 1; 
+                                rsharp := 0; 
+                                lexLog(yypos, "<Raw string(#)>"); 
+                                continue()
+                            ))
 fun yyAction102 (strm, lastMatch : yymatch) = (yystrm := strm;
       (lsharp := !lsharp+1; continue()))
 fun yyAction103 (strm, lastMatch : yymatch) = (yystrm := strm;
@@ -2125,6 +2134,7 @@ fun yyAction105 (strm, lastMatch : yymatch) = let
       end
 fun yyAction106 (strm, lastMatch : yymatch) = (yystrm := strm;
       (
+                                lexLog(yypos, "<Raw string(#) end>");
                                 app strAppend [#"\"", #"#"];
                                 rsharp := 1;
                                 if !rsharp = !lsharp then

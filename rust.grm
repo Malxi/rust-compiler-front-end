@@ -24,7 +24,8 @@
         | AT | UNDERSCORE | DOT | DOTDOT | DOTDOTDOT | DOTDOTEQ
         | COMMA | SEMI | COLON | PATHSEP | RARROW | FATARROW | POUND | DOLLAR | QUESTION
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
-%nonterm exp | program
+%nonterm crate
+        | path | simple_path | simple_path_segment| simple_path_expansion| exp | program
 %pos int
 %eop EOF
 %noshift EOF
@@ -38,5 +39,4 @@
 %verbose
 
 %%
-program :                           ()
-exp     :                  ()
+program:crate                                                             ()

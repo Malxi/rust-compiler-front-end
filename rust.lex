@@ -166,6 +166,7 @@ fun eof(fileName:string) =
                     ErrorMsg.error (!strpos) "String unclosed."
             else ()
         );
+        lexLog(pos, "EOF");
         Tokens.EOF(pos, pos)
     end
 %%
@@ -384,7 +385,15 @@ eol = ("\013\010"|"\010"|"\013");
 <R_STR>"\n"                => (lin := !lin+1; col := yypos :: !col; strAppend(toChar yytext); continue());
 <R_STR>.                   => (strAppend(toChar yytext); continue());
 
-<INITIAL>"r#"              => (YYBEGIN R_STR_BEGIN; lsharp := 1; rsharp := 0; lexLog(yypos, "<Raw string(#)>"); continue());
+<INITIAL>"r#"              => (
+                                YYBEGIN R_STR_BEGIN;
+                                strList:=nil; 
+                                strpos:=yypos;
+                                lsharp := 1; 
+                                rsharp := 0; 
+                                lexLog(yypos, "<Raw string(#)>"); 
+                                continue()
+                            );
 <R_STR_BEGIN>"#"           => (lsharp := !lsharp+1; continue());
 <R_STR_BEGIN>"\""          => (YYBEGIN R_STR_BODY; continue());
 <R_STR_BEGIN>"\n"          => (lin := !lin+1; col := yypos :: !col; 
@@ -392,6 +401,7 @@ eol = ("\013\010"|"\010"|"\013");
                                 continue());
 <R_STR_BEGIN>.           => (ErrorMsg.error yypos ("illegal character[R_STR_BEGIN] " ^ yytext); continue());
 <R_STR_BODY>"\"#"        => (
+                                lexLog(yypos, "<Raw string(#) end>");
                                 app strAppend [#"\"", #"#"];
                                 rsharp := 1;
                                 if !rsharp = !lsharp then

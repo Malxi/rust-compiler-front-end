@@ -2,6 +2,10 @@
 In sml interactive system
 + compile: CM.make "rust.cm"
 + run parser: Parser.parse "test.rs"
+
+## Record
++ To modify lex comments datatype
+
 ## lex
 ### Finished
 + Keywords

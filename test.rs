@@ -223,6 +223,9 @@ pub mod outer_module {
     /* The next one isn't allowed because outer doc comments
        require an item that will receive the doc */
     /// Where is my item?
-    /*
+    /**/
 
 }
+
+// This is a example in raw-string-literal-ambiguity.md
+r#"233"#"#
