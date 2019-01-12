@@ -17,7 +17,7 @@ open DataTypes
         | INTEGER_LIT of LargeInt.int | TUPLE_INDEX of int 
         | FLOAT_LIT of real
     | LIFETIME of string
-    | PLUS | MINUS | STAR | SLASH | PERCENT | CARET 
+    | PLUS | MINUS | STAR | SLASH | PERCENT | CARET
         | NOT | AND | OR | ANDAND | OROR | SHL | SHR
         | PLUSEQ | MINUSEQ | STAREQ | SLASHEQ | PERCENTEQ | CARETEQ | ANDEQ | OREQ
         | SHLEQ | SHREQ | EQ | EQEQ
@@ -27,8 +27,12 @@ open DataTypes
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG of string
-%nonterm crate of Crate
-        | path | simple_path | simple_path_segment| simple_path_expansion| exp | program
+%nonterm crate of Crate | inner_attrs of InnerAttribute list | items
+        | inner_attr of InnerAttribute | meta_item of MetaItem 
+        | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner 
+        | lit_exp of LiteralExpression
+        | path | simple_path of SimplePath | simple_path_segment of string | simple_path_expansion of string list
+        | exp | program
 %pos int
 %eop EOF
 %noshift EOF
@@ -42,4 +46,34 @@ open DataTypes
 %verbose
 
 %%
-crate: SHEBANG                  (Crate (Shebang (SHEBANG)))
+crate: SHEBANG inner_attrs items                                (Crate (Shebang (SOME SHEBANG), inner_attrs))
+        | inner_attrs items                                     (Crate (Shebang (NONE), inner_attrs))
+inner_attrs: inner_attr inner_attrs                             (inner_attr::inner_attrs)
+            |                                                   ([])
+items:                                                          ()
+
+inner_attr: POUND NOT LBRACKET meta_item RBRACKET               (InnerAttribute meta_item)
+meta_item: simple_path                                          (AttrName simple_path)
+            | simple_path EQ lit_exp                            (AttrKVPair(simple_path, lit_exp))
+            | simple_path LPARENT RPARENT                       (AttrSubs(simple_path, NONE))
+            | simple_path LPARENT meta_seq RPARENT              (AttrSubs(simple_path, SOME(meta_seq)))
+meta_seq: meta_item_inner meta_seq_expansion COMMA              (MetaSeq(meta_item_inner::meta_seq_expansion))
+            | meta_item_inner meta_seq_expansion                (MetaSeq(meta_item_inner::meta_seq_expansion))
+meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
+                    meta_seq_expansion                          (meta_item_inner::meta_seq_expansion)
+                    |                                           ([])
+meta_item_inner: meta_item                                      (MetaItem(meta_item))
+                | lit_exp                                       (MetaLit(lit_exp))
+
+lit_exp:                                                        (LiteralExpression("literal"))
+
+simple_path: PATHSEP simple_path_segment simple_path_expansion  (SimplePath(simple_path_segment::simple_path_expansion))
+            | simple_path_segment simple_path_expansion         (SimplePath(simple_path_segment::simple_path_expansion))
+simple_path_segment: IDENT                                      (IDENT)
+                    | SUPER                                     ("super")
+                    | SELFVALUE                                 ("self")
+                    | CARET                                     ("crate")
+                    | DOLLAR CARET                              ("$crate")
+simple_path_expansion: PATHSEP simple_path_segment 
+                        simple_path_expansion                   (simple_path_segment::simple_path_expansion)
+                    |                                           ([])
