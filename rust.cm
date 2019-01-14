@@ -8,6 +8,7 @@ is
     rust.grm (* Parser rules. *)
     glue.sml (* Build the parser *)
     errormsg.sml
+    print.sml (* print ast *)
     compiler.sml (* Lex, parse, panic... *)
     $/basis.cm (* SML/NJ’s Basis Library. *)
     $/smlnj-lib.cm

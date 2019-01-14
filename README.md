@@ -5,6 +5,11 @@ In sml interactive system
 
 ## Record
 + To modify lex comments datatype
++ Literal parse in lex or yacc?
+
+## Tools
++ convert for encoding and decoding
++ printAST for printing abstract syntax tree
 
 ## lex
 ### Finished
@@ -19,7 +24,8 @@ In sml interactive system
 + Comments
 
 ## Syntax
-### Processing
+### Finished
 + Crate
 + Attribute
-
+### Processing
++ Literal expression

@@ -1,4 +1,4 @@
-structure Parser : sig val parse : string -> DataTypes.Crate  end =
+structure Parser : sig val parse : string -> unit end =
 struct
     fun parse fileName =
     let 
@@ -12,7 +12,7 @@ struct
         val (absyn, _) = RustParser.parse(30, lexer, parseError, ())
     in
         TextIO.closeIn file;
-        absyn
+        PrintAST.print(TextIO.stdOut, absyn)
     end
     handle LrParser.ParseError => raise ErrorMsg.Error
 end

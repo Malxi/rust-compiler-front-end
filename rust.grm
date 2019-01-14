@@ -65,7 +65,7 @@ meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
 meta_item_inner: meta_item                                      (MetaItem(meta_item))
                 | lit_exp                                       (MetaLit(lit_exp))
 
-lit_exp:                                                        (LiteralExpression("literal"))
+lit_exp:STR_LIT                                                 (LiteralExpression(STR_LIT))
 
 simple_path: PATHSEP simple_path_segment simple_path_expansion  (SimplePath(simple_path_segment::simple_path_expansion))
             | simple_path_segment simple_path_expansion         (SimplePath(simple_path_segment::simple_path_expansion))
