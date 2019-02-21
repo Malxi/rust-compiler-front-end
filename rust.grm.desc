@@ -1,6 +1,22 @@
-1 shift/reduce conflict
+5 reduce/reduce conflicts
+8 shift/reduce conflicts
+1 rule not reduced
 
-error:  state 12: shift/reduce conflict (shift LPARENT, reduce by rule 6)
+warning: rule <macro_item : > will never be reduced
+error:  state 0: shift/reduce conflict (shift POUND, reduce by rule 9)
+error:  state 1: shift/reduce conflict (shift POUND, reduce by rule 9)
+error:  state 2: reduce/reduce conflict between rule 11 and rule 3 on EOF
+error:  state 2: shift/reduce conflict (shift POUND, reduce by rule 11)
+error:  state 3: shift/reduce conflict (shift POUND, reduce by rule 9)
+error:  state 6: reduce/reduce conflict between rule 11 and rule 3 on EOF
+error:  state 6: shift/reduce conflict (shift POUND, reduce by rule 11)
+error:  state 7: shift/reduce conflict (shift POUND, reduce by rule 11)
+error:  state 8: reduce/reduce conflict between rule 7 and rule 6 on POUND
+error:  state 8: reduce/reduce conflict between rule 7 and rule 6 on EOF
+error:  state 11: reduce/reduce conflict between rule 11 and rule 3 on EOF
+error:  state 11: shift/reduce conflict (shift POUND, reduce by rule 11)
+error:  state 21: shift/reduce conflict (shift LPARENT, reduce by rule 14)
+error:  state 0: shift/reduce conflict (shift POUND, reduce by rule 9)
 
 state 0:
 
@@ -10,12 +26,13 @@ state 0:
 	POUND	shift 4
 	SHEBANG	shift 3
 
-	crate	goto 45
+	crate	goto 56
 	inner_attrs	goto 2
 	inner_attr	goto 1
 
-	.	reduce by rule 3
+	.	reduce by rule 9
 
+error:  state 1: shift/reduce conflict (shift POUND, reduce by rule 9)
 
 state 1:
 
@@ -26,18 +43,26 @@ state 1:
 	inner_attrs	goto 5
 	inner_attr	goto 1
 
-	.	reduce by rule 3
+	.	reduce by rule 9
 
+error:  state 2: reduce/reduce conflict between rule 11 and rule 3 on EOF
+error:  state 2: shift/reduce conflict (shift POUND, reduce by rule 11)
 
 state 2:
 
 	crate : inner_attrs . items 
 
+	EOF	reduce by rule 3
+	POUND	shift 10
 
-	items	goto 6
+	items	goto 9
+	outer_attrs	goto 8
+	outer_attr	goto 7
+	item	goto 6
 
-	.	reduce by rule 4
+	.	error
 
+error:  state 3: shift/reduce conflict (shift POUND, reduce by rule 9)
 
 state 3:
 
@@ -45,17 +70,17 @@ state 3:
 
 	POUND	shift 4
 
-	inner_attrs	goto 7
+	inner_attrs	goto 11
 	inner_attr	goto 1
 
-	.	reduce by rule 3
+	.	reduce by rule 9
 
 
 state 4:
 
 	inner_attr : POUND . NOT LBRACKET meta_item RBRACKET 
 
-	NOT	shift 8
+	NOT	shift 12
 
 
 	.	error
@@ -63,14 +88,60 @@ state 4:
 
 state 5:
 
-	inner_attrs : inner_attr inner_attrs .  (reduce by rule 2)
+	inner_attrs : inner_attr inner_attrs .  (reduce by rule 8)
 
 
 
-	.	reduce by rule 2
+	.	reduce by rule 8
 
+error:  state 6: reduce/reduce conflict between rule 11 and rule 3 on EOF
+error:  state 6: shift/reduce conflict (shift POUND, reduce by rule 11)
 
 state 6:
+
+	items : item . items 
+
+	EOF	reduce by rule 3
+	POUND	shift 10
+
+	items	goto 13
+	outer_attrs	goto 8
+	outer_attr	goto 7
+	item	goto 6
+
+	.	error
+
+error:  state 7: shift/reduce conflict (shift POUND, reduce by rule 11)
+
+state 7:
+
+	outer_attrs : outer_attr . outer_attrs 
+
+	POUND	shift 10
+
+	outer_attrs	goto 14
+	outer_attr	goto 7
+
+	.	reduce by rule 11
+
+error:  state 8: reduce/reduce conflict between rule 7 and rule 6 on POUND
+error:  state 8: reduce/reduce conflict between rule 7 and rule 6 on EOF
+
+state 8:
+
+	item : outer_attrs . vis_item 
+	item : outer_attrs . macro_item 
+
+	EOF	reduce by rule 6
+	POUND	reduce by rule 6
+
+	vis_item	goto 16
+	macro_item	goto 15
+
+	.	error
+
+
+state 9:
 
 	crate : inner_attrs items .  (reduce by rule 1)
 
@@ -79,27 +150,98 @@ state 6:
 	.	reduce by rule 1
 
 
-state 7:
+state 10:
+
+	outer_attr : POUND . LBRACKET meta_item RBRACKET 
+
+	LBRACKET	shift 17
+
+
+	.	error
+
+error:  state 11: reduce/reduce conflict between rule 11 and rule 3 on EOF
+error:  state 11: shift/reduce conflict (shift POUND, reduce by rule 11)
+
+state 11:
 
 	crate : SHEBANG inner_attrs . items 
 
+	EOF	reduce by rule 3
+	POUND	shift 10
 
-	items	goto 9
+	items	goto 18
+	outer_attrs	goto 8
+	outer_attr	goto 7
+	item	goto 6
 
-	.	reduce by rule 4
+	.	error
 
 
-state 8:
+state 12:
 
 	inner_attr : POUND NOT . LBRACKET meta_item RBRACKET 
 
-	LBRACKET	shift 10
+	LBRACKET	shift 19
 
 
 	.	error
 
 
-state 9:
+state 13:
+
+	items : item items .  (reduce by rule 2)
+
+
+
+	.	reduce by rule 2
+
+
+state 14:
+
+	outer_attrs : outer_attr outer_attrs .  (reduce by rule 10)
+
+
+
+	.	reduce by rule 10
+
+
+state 15:
+
+	item : outer_attrs macro_item .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 16:
+
+	item : outer_attrs vis_item .  (reduce by rule 4)
+
+
+
+	.	reduce by rule 4
+
+
+state 17:
+
+	outer_attr : POUND LBRACKET . meta_item RBRACKET 
+
+	SELFVALUE	shift 28
+	SUPER	shift 27
+	IDENT	shift 26
+	CARET	shift 25
+	PATHSEP	shift 24
+	DOLLAR	shift 23
+
+	meta_item	goto 22
+	simple_path	goto 21
+	simple_path_segment	goto 20
+
+	.	error
+
+
+state 18:
 
 	crate : SHEBANG inner_attrs items .  (reduce by rule 0)
 
@@ -108,396 +250,415 @@ state 9:
 	.	reduce by rule 0
 
 
-state 10:
+state 19:
 
 	inner_attr : POUND NOT LBRACKET . meta_item RBRACKET 
 
-	SELFVALUE	shift 19
-	SUPER	shift 18
-	IDENT	shift 17
-	CARET	shift 16
-	PATHSEP	shift 15
-	DOLLAR	shift 14
-
-	meta_item	goto 13
-	simple_path	goto 12
-	simple_path_segment	goto 11
-
-	.	error
-
-
-state 11:
-
-	simple_path : simple_path_segment . simple_path_expansion 
-
-	PATHSEP	shift 21
-
-	simple_path_expansion	goto 20
-
-	.	reduce by rule 25
-
-error:  state 12: shift/reduce conflict (shift LPARENT, reduce by rule 6)
-
-state 12:
-
-	meta_item : simple_path .  (reduce by rule 6)
-	meta_item : simple_path . EQ lit_exp 
-	meta_item : simple_path . LPARENT RPARENT 
-	meta_item : simple_path . LPARENT meta_seq RPARENT 
-
-	EQ	shift 23
-	LPARENT	shift 22
-
-
-	.	reduce by rule 6
-
-
-state 13:
-
-	inner_attr : POUND NOT LBRACKET meta_item . RBRACKET 
-
-	RBRACKET	shift 24
-
-
-	.	error
-
-
-state 14:
-
-	simple_path_segment : DOLLAR . CARET 
-
+	SELFVALUE	shift 28
+	SUPER	shift 27
+	IDENT	shift 26
 	CARET	shift 25
+	PATHSEP	shift 24
+	DOLLAR	shift 23
 
-
-	.	error
-
-
-state 15:
-
-	simple_path : PATHSEP . simple_path_segment simple_path_expansion 
-
-	SELFVALUE	shift 19
-	SUPER	shift 18
-	IDENT	shift 17
-	CARET	shift 16
-	DOLLAR	shift 14
-
-	simple_path_segment	goto 26
+	meta_item	goto 29
+	simple_path	goto 21
+	simple_path_segment	goto 20
 
 	.	error
-
-
-state 16:
-
-	simple_path_segment : CARET .  (reduce by rule 22)
-
-
-
-	.	reduce by rule 22
-
-
-state 17:
-
-	simple_path_segment : IDENT .  (reduce by rule 19)
-
-
-
-	.	reduce by rule 19
-
-
-state 18:
-
-	simple_path_segment : SUPER .  (reduce by rule 20)
-
-
-
-	.	reduce by rule 20
-
-
-state 19:
-
-	simple_path_segment : SELFVALUE .  (reduce by rule 21)
-
-
-
-	.	reduce by rule 21
 
 
 state 20:
 
-	simple_path : simple_path_segment simple_path_expansion .  (reduce by rule 18)
+	simple_path : simple_path_segment . simple_path_expansion 
 
+	PATHSEP	shift 31
 
+	simple_path_expansion	goto 30
 
-	.	reduce by rule 18
+	.	reduce by rule 33
 
+error:  state 21: shift/reduce conflict (shift LPARENT, reduce by rule 14)
 
 state 21:
 
-	simple_path_expansion : PATHSEP . simple_path_segment simple_path_expansion 
+	meta_item : simple_path .  (reduce by rule 14)
+	meta_item : simple_path . EQ lit_exp 
+	meta_item : simple_path . LPARENT RPARENT 
+	meta_item : simple_path . LPARENT meta_seq RPARENT 
 
-	SELFVALUE	shift 19
-	SUPER	shift 18
-	IDENT	shift 17
-	CARET	shift 16
-	DOLLAR	shift 14
+	EQ	shift 33
+	LPARENT	shift 32
 
-	simple_path_segment	goto 27
 
-	.	error
+	.	reduce by rule 14
 
 
 state 22:
 
-	meta_item : simple_path LPARENT . RPARENT 
-	meta_item : simple_path LPARENT . meta_seq RPARENT 
+	outer_attr : POUND LBRACKET meta_item . RBRACKET 
 
-	SELFVALUE	shift 19
-	SUPER	shift 18
-	IDENT	shift 17
-	STR_LIT	shift 33
-	CARET	shift 16
-	PATHSEP	shift 15
-	DOLLAR	shift 14
-	RPARENT	shift 32
+	RBRACKET	shift 34
 
-	meta_item	goto 31
-	meta_seq	goto 30
-	meta_item_inner	goto 29
-	lit_exp	goto 28
-	simple_path	goto 12
-	simple_path_segment	goto 11
 
 	.	error
 
 
 state 23:
 
-	meta_item : simple_path EQ . lit_exp 
+	simple_path_segment : DOLLAR . CARET 
 
-	STR_LIT	shift 33
+	CARET	shift 35
 
-	lit_exp	goto 34
 
 	.	error
 
 
 state 24:
 
-	inner_attr : POUND NOT LBRACKET meta_item RBRACKET .  (reduce by rule 5)
+	simple_path : PATHSEP . simple_path_segment simple_path_expansion 
 
+	SELFVALUE	shift 28
+	SUPER	shift 27
+	IDENT	shift 26
+	CARET	shift 25
+	DOLLAR	shift 23
 
+	simple_path_segment	goto 36
 
-	.	reduce by rule 5
+	.	error
 
 
 state 25:
 
-	simple_path_segment : DOLLAR CARET .  (reduce by rule 23)
+	simple_path_segment : CARET .  (reduce by rule 30)
 
 
 
-	.	reduce by rule 23
+	.	reduce by rule 30
 
 
 state 26:
 
-	simple_path : PATHSEP simple_path_segment . simple_path_expansion 
+	simple_path_segment : IDENT .  (reduce by rule 27)
 
-	PATHSEP	shift 21
 
-	simple_path_expansion	goto 35
 
-	.	reduce by rule 25
+	.	reduce by rule 27
 
 
 state 27:
 
-	simple_path_expansion : PATHSEP simple_path_segment . simple_path_expansion 
+	simple_path_segment : SUPER .  (reduce by rule 28)
 
-	PATHSEP	shift 21
 
-	simple_path_expansion	goto 36
 
-	.	reduce by rule 25
+	.	reduce by rule 28
 
 
 state 28:
 
-	meta_item_inner : lit_exp .  (reduce by rule 15)
+	simple_path_segment : SELFVALUE .  (reduce by rule 29)
 
 
 
-	.	reduce by rule 15
+	.	reduce by rule 29
 
 
 state 29:
 
-	meta_seq : meta_item_inner . meta_seq_expansion COMMA 
-	meta_seq : meta_item_inner . meta_seq_expansion 
+	inner_attr : POUND NOT LBRACKET meta_item . RBRACKET 
 
-	LPARENT	shift 38
+	RBRACKET	shift 37
 
-	meta_seq_expansion	goto 37
 
-	.	reduce by rule 13
+	.	error
 
 
 state 30:
 
-	meta_item : simple_path LPARENT meta_seq . RPARENT 
-
-	RPARENT	shift 39
+	simple_path : simple_path_segment simple_path_expansion .  (reduce by rule 26)
 
 
-	.	error
+
+	.	reduce by rule 26
 
 
 state 31:
 
-	meta_item_inner : meta_item .  (reduce by rule 14)
+	simple_path_expansion : PATHSEP . simple_path_segment simple_path_expansion 
 
+	SELFVALUE	shift 28
+	SUPER	shift 27
+	IDENT	shift 26
+	CARET	shift 25
+	DOLLAR	shift 23
 
+	simple_path_segment	goto 38
 
-	.	reduce by rule 14
+	.	error
 
 
 state 32:
 
-	meta_item : simple_path LPARENT RPARENT .  (reduce by rule 8)
+	meta_item : simple_path LPARENT . RPARENT 
+	meta_item : simple_path LPARENT . meta_seq RPARENT 
 
+	SELFVALUE	shift 28
+	SUPER	shift 27
+	IDENT	shift 26
+	STR_LIT	shift 44
+	CARET	shift 25
+	PATHSEP	shift 24
+	DOLLAR	shift 23
+	RPARENT	shift 43
 
+	meta_item	goto 42
+	meta_seq	goto 41
+	meta_item_inner	goto 40
+	lit_exp	goto 39
+	simple_path	goto 21
+	simple_path_segment	goto 20
 
-	.	reduce by rule 8
+	.	error
 
 
 state 33:
 
-	lit_exp : STR_LIT .  (reduce by rule 16)
+	meta_item : simple_path EQ . lit_exp 
 
+	STR_LIT	shift 44
 
+	lit_exp	goto 45
 
-	.	reduce by rule 16
+	.	error
 
 
 state 34:
 
-	meta_item : simple_path EQ lit_exp .  (reduce by rule 7)
+	outer_attr : POUND LBRACKET meta_item RBRACKET .  (reduce by rule 13)
 
 
-
-	.	reduce by rule 7
-
-
-state 35:
-
-	simple_path : PATHSEP simple_path_segment simple_path_expansion .  (reduce by rule 17)
-
-
-
-	.	reduce by rule 17
-
-
-state 36:
-
-	simple_path_expansion : PATHSEP simple_path_segment simple_path_expansion .  (reduce by rule 24)
-
-
-
-	.	reduce by rule 24
-
-
-state 37:
-
-	meta_seq : meta_item_inner meta_seq_expansion . COMMA 
-	meta_seq : meta_item_inner meta_seq_expansion .  (reduce by rule 11)
-
-	COMMA	shift 40
-
-
-	.	reduce by rule 11
-
-
-state 38:
-
-	meta_seq_expansion : LPARENT . COMMA meta_item_inner RPARENT meta_seq_expansion 
-
-	COMMA	shift 41
-
-
-	.	error
-
-
-state 39:
-
-	meta_item : simple_path LPARENT meta_seq RPARENT .  (reduce by rule 9)
-
-
-
-	.	reduce by rule 9
-
-
-state 40:
-
-	meta_seq : meta_item_inner meta_seq_expansion COMMA .  (reduce by rule 10)
-
-
-
-	.	reduce by rule 10
-
-
-state 41:
-
-	meta_seq_expansion : LPARENT COMMA . meta_item_inner RPARENT meta_seq_expansion 
-
-	SELFVALUE	shift 19
-	SUPER	shift 18
-	IDENT	shift 17
-	STR_LIT	shift 33
-	CARET	shift 16
-	PATHSEP	shift 15
-	DOLLAR	shift 14
-
-	meta_item	goto 31
-	meta_item_inner	goto 42
-	lit_exp	goto 28
-	simple_path	goto 12
-	simple_path_segment	goto 11
-
-	.	error
-
-
-state 42:
-
-	meta_seq_expansion : LPARENT COMMA meta_item_inner . RPARENT meta_seq_expansion 
-
-	RPARENT	shift 43
-
-
-	.	error
-
-
-state 43:
-
-	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT . meta_seq_expansion 
-
-	LPARENT	shift 38
-
-	meta_seq_expansion	goto 44
 
 	.	reduce by rule 13
 
 
-state 44:
+state 35:
 
-	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT meta_seq_expansion .  (reduce by rule 12)
+	simple_path_segment : DOLLAR CARET .  (reduce by rule 31)
+
+
+
+	.	reduce by rule 31
+
+
+state 36:
+
+	simple_path : PATHSEP simple_path_segment . simple_path_expansion 
+
+	PATHSEP	shift 31
+
+	simple_path_expansion	goto 46
+
+	.	reduce by rule 33
+
+
+state 37:
+
+	inner_attr : POUND NOT LBRACKET meta_item RBRACKET .  (reduce by rule 12)
 
 
 
 	.	reduce by rule 12
 
 
+state 38:
+
+	simple_path_expansion : PATHSEP simple_path_segment . simple_path_expansion 
+
+	PATHSEP	shift 31
+
+	simple_path_expansion	goto 47
+
+	.	reduce by rule 33
+
+
+state 39:
+
+	meta_item_inner : lit_exp .  (reduce by rule 23)
+
+
+
+	.	reduce by rule 23
+
+
+state 40:
+
+	meta_seq : meta_item_inner . meta_seq_expansion COMMA 
+	meta_seq : meta_item_inner . meta_seq_expansion 
+
+	LPARENT	shift 49
+
+	meta_seq_expansion	goto 48
+
+	.	reduce by rule 21
+
+
+state 41:
+
+	meta_item : simple_path LPARENT meta_seq . RPARENT 
+
+	RPARENT	shift 50
+
+
+	.	error
+
+
+state 42:
+
+	meta_item_inner : meta_item .  (reduce by rule 22)
+
+
+
+	.	reduce by rule 22
+
+
+state 43:
+
+	meta_item : simple_path LPARENT RPARENT .  (reduce by rule 16)
+
+
+
+	.	reduce by rule 16
+
+
+state 44:
+
+	lit_exp : STR_LIT .  (reduce by rule 24)
+
+
+
+	.	reduce by rule 24
+
+
 state 45:
+
+	meta_item : simple_path EQ lit_exp .  (reduce by rule 15)
+
+
+
+	.	reduce by rule 15
+
+
+state 46:
+
+	simple_path : PATHSEP simple_path_segment simple_path_expansion .  (reduce by rule 25)
+
+
+
+	.	reduce by rule 25
+
+
+state 47:
+
+	simple_path_expansion : PATHSEP simple_path_segment simple_path_expansion .  (reduce by rule 32)
+
+
+
+	.	reduce by rule 32
+
+
+state 48:
+
+	meta_seq : meta_item_inner meta_seq_expansion . COMMA 
+	meta_seq : meta_item_inner meta_seq_expansion .  (reduce by rule 19)
+
+	COMMA	shift 51
+
+
+	.	reduce by rule 19
+
+
+state 49:
+
+	meta_seq_expansion : LPARENT . COMMA meta_item_inner RPARENT meta_seq_expansion 
+
+	COMMA	shift 52
+
+
+	.	error
+
+
+state 50:
+
+	meta_item : simple_path LPARENT meta_seq RPARENT .  (reduce by rule 17)
+
+
+
+	.	reduce by rule 17
+
+
+state 51:
+
+	meta_seq : meta_item_inner meta_seq_expansion COMMA .  (reduce by rule 18)
+
+
+
+	.	reduce by rule 18
+
+
+state 52:
+
+	meta_seq_expansion : LPARENT COMMA . meta_item_inner RPARENT meta_seq_expansion 
+
+	SELFVALUE	shift 28
+	SUPER	shift 27
+	IDENT	shift 26
+	STR_LIT	shift 44
+	CARET	shift 25
+	PATHSEP	shift 24
+	DOLLAR	shift 23
+
+	meta_item	goto 42
+	meta_item_inner	goto 53
+	lit_exp	goto 39
+	simple_path	goto 21
+	simple_path_segment	goto 20
+
+	.	error
+
+
+state 53:
+
+	meta_seq_expansion : LPARENT COMMA meta_item_inner . RPARENT meta_seq_expansion 
+
+	RPARENT	shift 54
+
+
+	.	error
+
+
+state 54:
+
+	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT . meta_seq_expansion 
+
+	LPARENT	shift 49
+
+	meta_seq_expansion	goto 55
+
+	.	reduce by rule 21
+
+
+state 55:
+
+	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT meta_seq_expansion .  (reduce by rule 20)
+
+
+
+	.	reduce by rule 20
+
+
+state 56:
 
 
 	EOF	accept
@@ -505,5 +666,5 @@ state 45:
 
 	.	error
 
-43 of 98 action table entries left after compaction
-31 goto table entries
+50 of 126 action table entries left after compaction
+48 goto table entries

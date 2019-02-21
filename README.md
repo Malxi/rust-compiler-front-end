@@ -6,6 +6,7 @@ In sml interactive system
 ## Record
 + To modify lex comments datatype
 + Literal parse in lex or yacc?
++ Add a suffix option for literals
 
 ## Tools
 + convert for encoding and decoding

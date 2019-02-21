@@ -27,12 +27,14 @@ open DataTypes
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG of string
-%nonterm crate of Crate | inner_attrs of InnerAttribute list | items
-        | inner_attr of InnerAttribute | meta_item of MetaItem 
+%nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
+        | outer_attrs of OuterAttribute list
+        | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
         | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner 
         | lit_exp of LiteralExpression
         | path | simple_path of SimplePath | simple_path_segment of string | simple_path_expansion of string list
         | exp | program
+        | item of Item | vis_item of VisItem | macro_item of MarcoItem
 %pos int
 %eop EOF
 %noshift EOF
@@ -46,13 +48,25 @@ open DataTypes
 %verbose
 
 %%
-crate: SHEBANG inner_attrs items                                (Crate (Shebang (SOME SHEBANG), inner_attrs))
-        | inner_attrs items                                     (Crate (Shebang (NONE), inner_attrs))
+crate: SHEBANG inner_attrs items                                (Crate (Shebang (SOME SHEBANG), inner_attrs, items))
+        | inner_attrs items                                     (Crate (Shebang (NONE), inner_attrs, items))
+
+items: item items                                               (item::items)
+        |                                                       ([])
+
+item: outer_attrs vis_item                                      (Item (outer_attrs, SOME(vis_item), NONE))
+        | outer_attrs macro_item                                (Item (outer_attrs, NONE, SOME(macro_item)))
+
+vis_item:                                                       (VisItem "vis_item")
+macro_item:                                                     (MarcoItem "macro_item")
+
 inner_attrs: inner_attr inner_attrs                             (inner_attr::inner_attrs)
             |                                                   ([])
-items:                                                          ()
+outer_attrs: outer_attr outer_attrs                             (outer_attr::outer_attrs)
+            |                                                   ([])
 
 inner_attr: POUND NOT LBRACKET meta_item RBRACKET               (InnerAttribute meta_item)
+outer_attr: POUND LBRACKET meta_item RBRACKET                   (OuterAttribute meta_item)
 meta_item: simple_path                                          (AttrName simple_path)
             | simple_path EQ lit_exp                            (AttrKVPair(simple_path, lit_exp))
             | simple_path LPARENT RPARENT                       (AttrSubs(simple_path, NONE))
