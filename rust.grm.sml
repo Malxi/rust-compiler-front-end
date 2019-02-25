@@ -466,11 +466,11 @@ end)
 rest671)
 end
 |  ( 6, ( rest671)) => let val  result = MlyValue.vis_item (fn _ => (
-VisItem "vis_item"))
+VisItem))
  in ( LrTable.NT 18, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 7, ( rest671)) => let val  result = MlyValue.macro_item (fn _ =>
- (MarcoItem "macro_item"))
+ (MarcoItem))
  in ( LrTable.NT 19, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 8, ( ( _, ( MlyValue.inner_attrs inner_attrs1, _, 
