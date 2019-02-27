@@ -35,6 +35,7 @@ open DataTypes
         | path | simple_path of SimplePath | simple_path_segment of string | simple_path_expansion of string list
         | exp | program
         | item of Item | vis_item of VisItem | macro_item of MarcoItem
+        | visibility of Visibility | item_type of ItemType
 %pos int
 %eop EOF
 %noshift EOF
@@ -57,7 +58,17 @@ items: item items                                               (item::items)
 item: outer_attrs vis_item                                      (Item (outer_attrs, SOME(vis_item), NONE))
         | outer_attrs macro_item                                (Item (outer_attrs, NONE, SOME(macro_item)))
 
-vis_item:                                                       (VisItem)
+vis_item: item_type                                             (VisItem(NONE, item_type))
+        | visibility item_type                                  (VisItem(SOME(visibility), item_type))
+
+visibility: PUB                                                 (DefaultVis)
+        | PUB LPARENT CARET RPARENT                             (CrateVis)
+        | PUB LPARENT SELFVALUE RPARENT                         (SelfVis)
+        | PUB LPARENT SUPER RPARENT                             (SuperVis)
+        | PUB LPARENT IN simple_path RPARENT                    (InVis (simple_path))
+
+item_type:                                                      (Function)
+
 macro_item:                                                     (MarcoItem)
 
 inner_attrs: inner_attr inner_attrs                             (inner_attr::inner_attrs)

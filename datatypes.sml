@@ -11,22 +11,23 @@ sig
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of string list
     and Item = Item of (OuterAttribute list * VisItem option * MarcoItem option)
-    and VisItem = VisItem
-    and Visibility = CrateVis | SelfVis | SuperVis | InVis of SimplePath
-    and Module = Module of (string * InnerAttribute option * Item option)
-    and ExternCrate = ExternCrate of (string * string option)
-    and UseDeclaration = UseDeclaration of UseTree
+    and VisItem = VisItem of (Visibility option * ItemType)
+    and ItemType = 
+        Module of (string * InnerAttribute option * Item option)
+        | ExternCrate of (string * string option)
+        | UseDeclaration of UseTree 
+        | Function
+        | TypeAlias of {ident:string, generic:string, whereClause:string, typ: string}
+        | Struct
+        | Enumeration
+        | Union
+        | ConstantItem
+        | StaticItem
+        | Trait
+        | Implementation
+        | ExternBlock
+    and Visibility = DefaultVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseSingle of SimplePath list | UseMultiple of (SimplePath list * UseTree list) | UseAlias of (SimplePath * string)
-    and Functions = Functions
-    and TypeAlias = TypeAlias of {ident:string, generic:string, whereClause:string, typ: string}
-    and Struct = Struct
-    and Enumeration = Enumeration
-    and Union = Union
-    and ConstantItem = ConstantItem
-    and StaticItem = StaticItem
-    and Trait = Trait
-    and Implementation = Implementation
-    and ExternBlock = ExternBlock
     and MarcoItem = MarcoItem
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
@@ -48,22 +49,23 @@ struct
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of string list
     and Item = Item of (OuterAttribute list * VisItem option * MarcoItem option)
-    and VisItem = VisItem
-    and Visibility = CrateVis | SelfVis | SuperVis | InVis of SimplePath
-    and Module = Module of (string * InnerAttribute option * Item option)
-    and ExternCrate = ExternCrate of (string * string option)
-    and UseDeclaration = UseDeclaration of UseTree
+    and VisItem = VisItem of (Visibility option * ItemType)
+    and ItemType = 
+        Module of (string * InnerAttribute option * Item option)
+        | ExternCrate of (string * string option)
+        | UseDeclaration of UseTree 
+        | Function
+        | TypeAlias of {ident:string, generic:string, whereClause:string, typ: string}
+        | Struct
+        | Enumeration
+        | Union
+        | ConstantItem
+        | StaticItem
+        | Trait
+        | Implementation
+        | ExternBlock
+    and Visibility = DefaultVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseSingle of SimplePath list | UseMultiple of (SimplePath list * UseTree list) | UseAlias of (SimplePath * string)
-    and Functions = Functions
-    and TypeAlias = TypeAlias of {ident: string, generic:string, whereClause: string, typ: string}
-    and Struct = Struct
-    and Enumeration = Enumeration
-    and Union = Union
-    and ConstantItem = ConstantItem
-    and StaticItem = StaticItem
-    and Trait = Trait
-    and Implementation = Implementation
-    and ExternBlock = ExternBlock
     and MarcoItem = MarcoItem
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
