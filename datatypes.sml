@@ -10,7 +10,7 @@ sig
     and LiteralExpression = LiteralExpression of string
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of string list
-    and Item = Item of (OuterAttribute list * VisItem option * MarcoItem option)
+    and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility option * ItemType)
     and ItemType = 
         Module of (string * InnerAttribute option * Item option)
@@ -48,7 +48,7 @@ struct
     and LiteralExpression = LiteralExpression of string
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of string list
-    and Item = Item of (OuterAttribute list * VisItem option * MarcoItem option)
+    and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility option * ItemType)
     and ItemType = 
         Module of (string * InnerAttribute option * Item option)

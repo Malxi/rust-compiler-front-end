@@ -2,7 +2,9 @@ signature Rust_TOKENS =
 sig
 type ('a,'b) token
 type svalue
-val SHEBANG: (string) *  'a * 'a -> (svalue,'a) token
+val LOWER_THAN_LPARENT:  'a * 'a -> (svalue,'a) token
+val SHEBANG_LINE: (string) *  'a * 'a -> (svalue,'a) token
+val SHEBANG:  'a * 'a -> (svalue,'a) token
 val OUTER_DOC_COMMENT: (string) *  'a * 'a -> (svalue,'a) token
 val INNER_DOC_COMMENT: (string) *  'a * 'a -> (svalue,'a) token
 val RPARENT:  'a * 'a -> (svalue,'a) token

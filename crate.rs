@@ -1,4 +1,4 @@
-#!/usr/bin/env rustx
+//#!/usr/bin/env rustx
 // Specify the crate name.
 #![crate_name = "projx"]
 

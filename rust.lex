@@ -80,7 +80,7 @@ val rsharp = ref 0
 val strList = ref (nil:char list)
 val strpos = ref (0:int)
 fun strAppend(s:char) = strList := s::(!strList)
-fun strMake() = (implode(rev(!strList)) before strList := nil)
+fun strMake() = (implode(rev(!strList)))
 fun strPop(nil, _) = nil 
     | strPop(h::t, 0) = h :: t 
     | strPop(h::t, n) = strPop(t, n-1)
@@ -172,7 +172,7 @@ fun eof(fileName:string) =
                     ErrorMsg.error (!strpos) "String unclosed."
             else ()
         );
-        lexLog(pos, "EOF");
+        lexLog(pos, "Tokens.EOF");
         Tokens.EOF(pos, pos)
     end
 %%
@@ -182,7 +182,8 @@ fun eof(fileName:string) =
 %reject
 %s LINE_COMMENT BLOCK_COMMENT INNER_LINE_DOC INNER_BLOCK_DOC OUTER_LINE_DOC OUTER_BLOCK_DOC
     LIFE_OR_CHAR STR R_STR R_STR_BEGIN R_STR_BODY 
-    R_STR_END BYTE BYTE_STR BR_STR BR_STR_BEGIN BR_STR_BODY BR_STR_END SUFFIX;
+    R_STR_END BYTE BYTE_STR BR_STR BR_STR_BEGIN BR_STR_BODY BR_STR_END SUFFIX
+    POUND SHEBANG_OR_ATTR;
 
 alpha = [a-zA-z0-9];
 ident = [a-zA-Z_][a-zA-Z0-9_]*;
@@ -216,7 +217,7 @@ isolatedCR = (\r[^\n]);
 ws = [\ \t];
 eol = ("\013\010"|"\010"|"\013");
 bom = ("\239\189\191");
-shebang = ("#!"[^\091 \n][^\n]*);
+shebang_line = ("#!"([^\[\n])*\n);
 
 %%
 <INITIAL>{eol}                    => (incLine(yypos); continue());
@@ -228,7 +229,23 @@ shebang = ("#!"[^\091 \n][^\n]*);
                                         else ());
                                         continue()
                                     );
-<INITIAL>{shebang}                => (lexLog(yypos, "Shebang: "^yytext); Tokens.SHEBANG(yytext, yypos, yypos+ size yytext));
+<INITIAL>{shebang_line}           => (
+                                    (* 
+                                        Shebang line should occur at the first line.
+                                        If not, just continue and report message.
+                                    *)
+                                    if (!lin = 1) then(
+                                        lin := !lin + 1;
+                                        lexLog(yypos, "<Shebang line>: "^yytext);
+                                        Tokens.SHEBANG_LINE(strip(yytext, #"\n"), yypos, yypos+size yytext)
+                                    )
+                                    else (
+                                        lin := !lin + 1;
+                                        ErrorMsg.error yypos "Illegal Shebang line.";
+                                        continue()
+                                    )
+                                    );
+<INITIAL>"#!"                     => (lexLog(yypos, "Token.SHEBANG"); Tokens.SHEBANG(yypos, yypos+ size yytext));
 
 <INITIAL>"//!"                    => (lexLog(yypos, "INNER_LINE_DOC"); docInit(yypos); YYBEGIN INNER_LINE_DOC; continue());
 <INNER_LINE_DOC>{eol}             => (
@@ -389,7 +406,7 @@ shebang = ("#!"[^\091 \n][^\n]*);
 <INITIAL>"try"             => (lexLog(yypos, yytext); Tokens.TRY(yypos, yypos+size yytext));
 <INITIAL>"union"           => (lexLog(yypos, yytext); Tokens.UNION(yypos, yypos+size yytext));
 
-<INITIAL>{ident}           => (lexLog(yypos, "<Identifier> "^yytext); Tokens.IDENT(yytext, yypos, yypos+size yytext));
+<INITIAL>{ident}           => (lexLog(yypos, "Tokens.IDENT "^yytext); Tokens.IDENT(yytext, yypos, yypos+size yytext));
 
 <INITIAL>"'"                        => (YYBEGIN LIFE_OR_CHAR; lexLog(yypos, "<Char>"); continue());
 <INITIAL>"static"                   => (YYBEGIN INITIAL; lexLog(yypos, yytext); Tokens.STATICLIFETIME(yypos, yypos+size yytext));
@@ -408,7 +425,7 @@ shebang = ("#!"[^\091 \n][^\n]*);
                                         Tokens.CHAR_LIT(decodeChar(strip(yytext, #"'"), UTF8), yypos, yypos-1+size yytext); continue());
 
 <INITIAL>"\""              => (YYBEGIN STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<String>"); continue());
-<STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.STR_LIT(strMake(), !strpos, yypos); continue());           
+<STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos, "Tokens.STR_LIT "^strMake()); Tokens.STR_LIT(strMake(), !strpos, yypos));           
 <STR>{quote_escape}        => (strAppend(Char.chr(escape(yytext, yypos))); continue());
 <STR>{ascii_escape}        => (strAppend(Char.chr(escape(yytext, yypos))); continue());
 <STR>{unicode_escape}      => (
@@ -494,7 +511,7 @@ shebang = ("#!"[^\091 \n][^\n]*);
 <BYTE>."'"                  => (YYBEGIN INITIAL; ErrorMsg.error yypos ("illegal character[BYTE] " ^ yytext); continue());
 
 <INITIAL>"b\""                  => (YYBEGIN BYTE_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Byte string>"); continue());
-<BYTE_STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.BYTE_STR_LIT(strMake(), !strpos, yypos); continue());           
+<BYTE_STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.BYTE_STR_LIT(strMake(), !strpos, yypos));           
 <BYTE_STR>{ascii_str}           => (strAppend(toChar(yytext)); continue());
 <BYTE_STR>"\\\""                => (strAppend(Char.chr(escape(yytext, yypos))); continue());
 <BYTE_STR>{byte_escape}         => (strAppend(Char.chr(escape(yytext, yypos))); continue());
@@ -598,25 +615,25 @@ shebang = ("#!"[^\091 \n][^\n]*);
 <INITIAL>"*"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAR(yypos, yypos+size yytext));
 <INITIAL>"/"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SLASH(yypos, yypos+size yytext));
 <INITIAL>"%"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PERCENT(yypos, yypos+size yytext));
+<INITIAL>"#"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.POUND(yypos, yypos+ size yytext));
 <INITIAL>"^"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.CARET(yypos, yypos+size yytext));
 <INITIAL>"!"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NOT(yypos, yypos+size yytext));
 <INITIAL>"&"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AND(yypos, yypos+size yytext));
 <INITIAL>"|"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OR(yypos, yypos+size yytext));
-<INITIAL>"="               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.EQ(yypos, yypos+size yytext));
+<INITIAL>"="               => (lexLog(yypos, "Tokens.EQ "^yytext); Tokens.EQ(yypos, yypos+size yytext));
 <INITIAL>">"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GT(yypos, yypos+size yytext));
 <INITIAL>"<"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext));
 <INITIAL>"@"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AT(yypos, yypos+size yytext));
 <INITIAL>","               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COMMA(yypos, yypos+size yytext));
 <INITIAL>";"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SEMI(yypos, yypos+size yytext));
 <INITIAL>":"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COLON(yypos, yypos+size yytext));
-<INITIAL>"#"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.POUND(yypos, yypos+size yytext));
 <INITIAL>"$"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOLLAR(yypos, yypos+size yytext));
-<INITIAL>"?"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.QUESTION(yypos, yypos+size yytext));
-<INITIAL>"{"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.LBRACE(yypos, yypos+size yytext));
-<INITIAL>"}"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.RBRACE(yypos, yypos+size yytext));
-<INITIAL>"["               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.LBRACKET(yypos, yypos+size yytext));
-<INITIAL>"]"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.RBRACKET(yypos, yypos+size yytext));
-<INITIAL>"("               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.LPARENT(yypos, yypos+size yytext));
-<INITIAL>")"               => (lexLog(yypos, "<Delimiter> "^yytext); Tokens.RPARENT(yypos, yypos+size yytext));
+<INITIAL>"?"               => (lexLog(yypos, "Tokens.QUESTION "^yytext); Tokens.QUESTION(yypos, yypos+size yytext));
+<INITIAL>"{"               => (lexLog(yypos, "Tokens.LBRACE "^yytext); Tokens.LBRACE(yypos, yypos+size yytext));
+<INITIAL>"}"               => (lexLog(yypos, "Tokens.RBRACE"^yytext); Tokens.RBRACE(yypos, yypos+size yytext));
+<INITIAL>"["               => (lexLog(yypos, "Tokens.LBRACKET "^yytext); Tokens.LBRACKET(yypos, yypos+size yytext));
+<INITIAL>"]"               => (lexLog(yypos, "Tokens.RBRACKET "^yytext); Tokens.RBRACKET(yypos, yypos+size yytext));
+<INITIAL>"("               => (lexLog(yypos, "Tokens.LPARENT "^yytext); Tokens.LPARENT(yypos, yypos+size yytext));
+<INITIAL>")"               => (lexLog(yypos, "Tokens.RPARENT "^yytext); Tokens.RPARENT(yypos, yypos+size yytext));
 
 <INITIAL>.                 => (ErrorMsg.error yypos ("illegal character[INITIAL] " ^ yytext); continue());

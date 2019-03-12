@@ -7,6 +7,7 @@ sig
     val sourceStream: TextIO.instream ref
     val error: int -> string -> unit
     val lexLog: int * string -> unit
+    val yaccLog: string -> unit
     val debug: bool
     exception Error
     val impossiable: string -> 'a (* raises Errors *)
@@ -60,6 +61,16 @@ struct
                 print msg;
                 print "\n"
             end
+        else
+            ()
+
+    fun yaccLog(msg) = 
+        if debug then(
+            print "grammar";
+            print ":";
+            print msg;
+            print "\n"
+        )
         else
             ()
 

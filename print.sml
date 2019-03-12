@@ -26,7 +26,7 @@ struct
             fun Crate(A.Crate(shebang, innerAttrs, items), d) = 
                     (indent d; outln "Crate ("; Shebang(shebang, d+1); outln ","; 
                     outList (d+1) InnerAttribute innerAttrs;
-                    outList (d+1) Item items;
+                    (* outList (d+1) Item items;*)
                     outln "\n)")
             and Shebang(A.Shebang(SOME s), d) = (indent d; out("Shebang ("^s^")"))
                 | Shebang(A.Shebang(NONE), d) = (indent d; out("Shebang (NONE)"))
@@ -53,8 +53,10 @@ struct
                     (indent d; out "MetaItemInner ("; MetaItem(metaItem, d);out ")")
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
-            and Item(A.Item(item), d) = 
-                (indent d; out "Item("; out ")")
+            and Item(A.VisItemType(item), d) = 
+                (indent d; out "VisItemType("; out ")")
+                | Item(A.MarcoItemType(item), d) = 
+                (indent d; out "MarcoItemType("; out ")")
         in
             Crate(ast, 0)
         end

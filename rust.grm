@@ -1,5 +1,7 @@
 (* rust.yacc *)
 open DataTypes
+fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
+
 %%
 %term EOF
     | AS | BREAK | CONST | CONTINUE | CRATE | ELSE | ENUM | EXTERN     
@@ -26,7 +28,8 @@ open DataTypes
         | COMMA | SEMI | COLON | PATHSEP | RARROW | FATARROW | POUND | DOLLAR | QUESTION
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
-        | SHEBANG of string
+        | SHEBANG | SHEBANG_LINE of string
+        | LOWER_THAN_LPARENT
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
@@ -46,17 +49,20 @@ open DataTypes
         SUPER TRAIT TRUE TYPE UNSAFE USE WHERE WHILE
         ABSTRACT BECOME BOX DO FINAL MACRO OVERRIDE
         PRIV TYPEOF UNSIZED VIRTUAL YIELD
+
+%nonassoc LOWER_THAN_LPARENT
+%nonassoc LPARENT
 %verbose
 
 %%
-crate: SHEBANG inner_attrs items                                (Crate (Shebang (SOME SHEBANG), inner_attrs, items))
-        | inner_attrs items                                     (Crate (Shebang (NONE), inner_attrs, items))
+crate: SHEBANG_LINE inner_attrs items                          (Crate (Shebang (SOME SHEBANG_LINE), inner_attrs, items))
+        | inner_attrs items                                    (Crate (Shebang (NONE), inner_attrs, items))
 
-items: item items                                               (item::items)
-        |                                                       ([])
+items: item items                                              (item::items)
+        |                                                      ([])
 
-item: outer_attrs vis_item                                      (Item (outer_attrs, SOME(vis_item), NONE))
-        | outer_attrs macro_item                                (Item (outer_attrs, NONE, SOME(macro_item)))
+item: outer_attrs vis_item                                      (VisItemType (outer_attrs, vis_item))
+        (* | macro_item                                            (MarcoItemType (macro_item)) *)
 
 vis_item: item_type                                             (VisItem(NONE, item_type))
         | visibility item_type                                  (VisItem(SOME(visibility), item_type))
@@ -67,38 +73,41 @@ visibility: PUB                                                 (DefaultVis)
         | PUB LPARENT SUPER RPARENT                             (SuperVis)
         | PUB LPARENT IN simple_path RPARENT                    (InVis (simple_path))
 
-item_type:                                                      (Function)
+item_type:ANDAND                                                      (Function)
 
 macro_item:                                                     (MarcoItem)
 
-inner_attrs: inner_attr inner_attrs                             (inner_attr::inner_attrs)
+inner_attrs: inner_attr inner_attrs                             (yaccLog("inner_attrs"); inner_attr::inner_attrs)
             |                                                   ([])
-outer_attrs: outer_attr outer_attrs                             (outer_attr::outer_attrs)
+outer_attrs: outer_attr outer_attrs                             (yaccLog("outer_attrs"); outer_attr::outer_attrs)
             |                                                   ([])
 
-inner_attr: POUND NOT LBRACKET meta_item RBRACKET               (InnerAttribute meta_item)
+inner_attr: SHEBANG LBRACKET meta_item RBRACKET                 (yaccLog("inner_attr"); InnerAttribute(meta_item))
 outer_attr: POUND LBRACKET meta_item RBRACKET                   (OuterAttribute meta_item)
-meta_item: simple_path                                          (AttrName simple_path)
-            | simple_path EQ lit_exp                            (AttrKVPair(simple_path, lit_exp))
-            | simple_path LPARENT RPARENT                       (AttrSubs(simple_path, NONE))
-            | simple_path LPARENT meta_seq RPARENT              (AttrSubs(simple_path, SOME(meta_seq)))
+
+meta_item: simple_path EQ lit_exp                               (AttrKVPair(simple_path, lit_exp))
+        | simple_path LPARENT meta_seq RPARENT                  (AttrSubs(simple_path, SOME(meta_seq)))
+        | simple_path LPARENT RPARENT                           (AttrSubs(simple_path, NONE))
+        | simple_path %prec LOWER_THAN_LPARENT                  (AttrName simple_path)
+
 meta_seq: meta_item_inner meta_seq_expansion COMMA              (MetaSeq(meta_item_inner::meta_seq_expansion))
             | meta_item_inner meta_seq_expansion                (MetaSeq(meta_item_inner::meta_seq_expansion))
+            
 meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
                     meta_seq_expansion                          (meta_item_inner::meta_seq_expansion)
                     |                                           ([])
 meta_item_inner: meta_item                                      (MetaItem(meta_item))
                 | lit_exp                                       (MetaLit(lit_exp))
 
-lit_exp:STR_LIT                                                 (LiteralExpression(STR_LIT))
+lit_exp:STR_LIT                                                 (yaccLog("lit_exp "^STR_LIT); LiteralExpression(STR_LIT))
 
 simple_path: PATHSEP simple_path_segment simple_path_expansion  (SimplePath(simple_path_segment::simple_path_expansion))
             | simple_path_segment simple_path_expansion         (SimplePath(simple_path_segment::simple_path_expansion))
+simple_path_expansion: PATHSEP simple_path_segment 
+                        simple_path_expansion                   (simple_path_segment::simple_path_expansion)
+                    |                                           ([])
 simple_path_segment: IDENT                                      (IDENT)
                     | SUPER                                     ("super")
                     | SELFVALUE                                 ("self")
                     | CARET                                     ("crate")
                     | DOLLAR CARET                              ("$crate")
-simple_path_expansion: PATHSEP simple_path_segment 
-                        simple_path_expansion                   (simple_path_segment::simple_path_expansion)
-                    |                                           ([])
