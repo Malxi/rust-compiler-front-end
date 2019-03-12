@@ -64,16 +64,18 @@ items: item items                                              (item::items)
 item: outer_attrs vis_item                                      (VisItemType (outer_attrs, vis_item))
         (* | macro_item                                            (MarcoItemType (macro_item)) *)
 
-vis_item: item_type                                             (VisItem(NONE, item_type))
-        | visibility item_type                                  (VisItem(SOME(visibility), item_type))
+vis_item: item_type                                             (VisItem(DefaultVis, item_type))
+        | visibility item_type                                  (VisItem(visibility, item_type))
 
-visibility: PUB                                                 (DefaultVis)
+visibility: PUB                                                 (PubVis)
         | PUB LPARENT CARET RPARENT                             (CrateVis)
         | PUB LPARENT SELFVALUE RPARENT                         (SelfVis)
         | PUB LPARENT SUPER RPARENT                             (SuperVis)
         | PUB LPARENT IN simple_path RPARENT                    (InVis (simple_path))
 
-item_type:ANDAND                                                      (Function)
+item_type: IDENT                                                (Function)
+        | MOD IDENT SEMI                                        (Module (IDENT, NONE))
+        | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
 
 macro_item:                                                     (MarcoItem)
 

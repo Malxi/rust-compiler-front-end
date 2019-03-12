@@ -11,9 +11,9 @@ sig
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of string list
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
-    and VisItem = VisItem of (Visibility option * ItemType)
+    and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
-        Module of (string * InnerAttribute option * Item option)
+        Module of (string * ModuleBody option)
         | ExternCrate of (string * string option)
         | UseDeclaration of UseTree 
         | Function
@@ -26,7 +26,8 @@ sig
         | Trait
         | Implementation
         | ExternBlock
-    and Visibility = DefaultVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
+    and ModuleBody = ModuleBody of InnerAttribute list * Item list
+    and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseSingle of SimplePath list | UseMultiple of (SimplePath list * UseTree list) | UseAlias of (SimplePath * string)
     and MarcoItem = MarcoItem
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
@@ -49,9 +50,9 @@ struct
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of string list
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
-    and VisItem = VisItem of (Visibility option * ItemType)
+    and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
-        Module of (string * InnerAttribute option * Item option)
+        Module of (string * ModuleBody option)
         | ExternCrate of (string * string option)
         | UseDeclaration of UseTree 
         | Function
@@ -64,7 +65,8 @@ struct
         | Trait
         | Implementation
         | ExternBlock
-    and Visibility = DefaultVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
+    and ModuleBody = ModuleBody of InnerAttribute list * Item list
+    and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseSingle of SimplePath list | UseMultiple of (SimplePath list * UseTree list) | UseAlias of (SimplePath * string)
     and MarcoItem = MarcoItem
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 

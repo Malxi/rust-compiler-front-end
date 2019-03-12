@@ -20,93 +20,105 @@ local open LrTable in
 val table=let val actionRows =
 "\
 \\001\000\001\000\000\000\000\000\
-\\001\000\001\000\075\000\022\000\089\000\075\000\089\000\108\000\012\000\000\000\
-\\001\000\015\000\046\000\025\000\045\000\029\000\044\000\071\000\043\000\000\000\
-\\001\000\022\000\021\000\075\000\020\000\000\000\
-\\001\000\025\000\032\000\029\000\031\000\055\000\030\000\057\000\054\000\
-\\071\000\029\000\105\000\028\000\109\000\027\000\000\000\
-\\001\000\025\000\032\000\029\000\031\000\055\000\030\000\057\000\054\000\
-\\071\000\029\000\105\000\028\000\109\000\027\000\116\000\053\000\000\000\
-\\001\000\025\000\032\000\029\000\031\000\055\000\030\000\071\000\029\000\
-\\105\000\028\000\109\000\027\000\000\000\
-\\001\000\025\000\032\000\029\000\031\000\055\000\030\000\071\000\029\000\
-\\109\000\027\000\000\000\
-\\001\000\057\000\054\000\000\000\
-\\001\000\071\000\041\000\000\000\
-\\001\000\075\000\020\000\000\000\
-\\001\000\102\000\067\000\000\000\
+\\001\000\001\000\082\000\019\000\098\000\022\000\098\000\055\000\098\000\
+\\108\000\012\000\000\000\
+\\001\000\001\000\082\000\019\000\098\000\022\000\098\000\055\000\098\000\
+\\108\000\012\000\112\000\082\000\000\000\
+\\001\000\015\000\048\000\025\000\047\000\029\000\046\000\071\000\045\000\000\000\
+\\001\000\019\000\098\000\022\000\098\000\055\000\098\000\108\000\012\000\
+\\112\000\082\000\000\000\
+\\001\000\019\000\022\000\022\000\021\000\055\000\020\000\000\000\
+\\001\000\019\000\022\000\055\000\020\000\000\000\
+\\001\000\025\000\033\000\029\000\032\000\055\000\031\000\057\000\058\000\
+\\071\000\030\000\105\000\029\000\109\000\028\000\000\000\
+\\001\000\025\000\033\000\029\000\032\000\055\000\031\000\057\000\058\000\
+\\071\000\030\000\105\000\029\000\109\000\028\000\116\000\057\000\000\000\
+\\001\000\025\000\033\000\029\000\032\000\055\000\031\000\071\000\030\000\
+\\105\000\029\000\109\000\028\000\000\000\
+\\001\000\025\000\033\000\029\000\032\000\055\000\031\000\071\000\030\000\
+\\109\000\028\000\000\000\
+\\001\000\055\000\036\000\000\000\
+\\001\000\057\000\058\000\000\000\
+\\001\000\071\000\043\000\000\000\
+\\001\000\102\000\073\000\000\000\
+\\001\000\103\000\050\000\111\000\049\000\000\000\
+\\001\000\112\000\074\000\000\000\
 \\001\000\113\000\014\000\000\000\
-\\001\000\113\000\022\000\000\000\
-\\001\000\114\000\040\000\000\000\
-\\001\000\114\000\047\000\000\000\
-\\001\000\116\000\057\000\000\000\
-\\001\000\116\000\058\000\000\000\
-\\001\000\116\000\059\000\000\000\
-\\001\000\116\000\064\000\000\000\
-\\001\000\116\000\065\000\000\000\
+\\001\000\113\000\023\000\000\000\
+\\001\000\114\000\042\000\000\000\
+\\001\000\114\000\051\000\000\000\
+\\001\000\116\000\061\000\000\000\
+\\001\000\116\000\062\000\000\000\
+\\001\000\116\000\063\000\000\000\
 \\001\000\116\000\069\000\000\000\
-\\072\000\000\000\
-\\073\000\000\000\
-\\074\000\000\000\
-\\076\000\000\000\
-\\077\000\000\000\
-\\078\000\000\000\
-\\079\000\115\000\034\000\000\000\
+\\001\000\116\000\070\000\000\000\
+\\001\000\116\000\076\000\000\000\
+\\079\000\000\000\
 \\080\000\000\000\
 \\081\000\000\000\
-\\082\000\000\000\
 \\083\000\000\000\
 \\084\000\000\000\
-\\086\000\000\000\
-\\087\000\119\000\006\000\000\000\
-\\087\000\119\000\006\000\120\000\005\000\000\000\
+\\085\000\000\000\
+\\086\000\115\000\035\000\000\000\
+\\087\000\000\000\
 \\088\000\000\000\
-\\089\000\108\000\012\000\000\000\
+\\089\000\000\000\
 \\090\000\000\000\
 \\091\000\000\000\
 \\092\000\000\000\
 \\093\000\000\000\
-\\094\000\000\000\
-\\095\000\089\000\039\000\115\000\038\000\000\000\
-\\096\000\000\000\
-\\097\000\102\000\066\000\000\000\
-\\098\000\000\000\
-\\099\000\115\000\063\000\000\000\
+\\095\000\000\000\
+\\096\000\119\000\006\000\000\000\
+\\096\000\119\000\006\000\120\000\005\000\000\000\
+\\097\000\000\000\
+\\098\000\108\000\012\000\000\000\
+\\099\000\000\000\
 \\100\000\000\000\
 \\101\000\000\000\
 \\102\000\000\000\
 \\103\000\000\000\
-\\104\000\000\000\
+\\104\000\089\000\041\000\115\000\040\000\000\000\
 \\105\000\000\000\
-\\106\000\105\000\037\000\000\000\
+\\106\000\102\000\072\000\000\000\
 \\107\000\000\000\
-\\108\000\000\000\
+\\108\000\115\000\068\000\000\000\
 \\109\000\000\000\
 \\110\000\000\000\
 \\111\000\000\000\
+\\112\000\000\000\
+\\113\000\000\000\
+\\114\000\000\000\
+\\115\000\105\000\039\000\000\000\
+\\116\000\000\000\
+\\117\000\000\000\
+\\118\000\000\000\
+\\119\000\000\000\
+\\120\000\000\000\
 \"
 val actionRowNumbers =
-"\036\000\035\000\001\000\035\000\
-\\012\000\034\000\001\000\038\000\
-\\003\000\023\000\013\000\001\000\
-\\006\000\024\000\037\000\026\000\
-\\010\000\025\000\033\000\028\000\
-\\006\000\022\000\055\000\044\000\
-\\014\000\009\000\007\000\059\000\
-\\056\000\057\000\058\000\027\000\
-\\002\000\015\000\053\000\007\000\
-\\005\000\008\000\039\000\060\000\
-\\055\000\016\000\017\000\018\000\
-\\006\000\040\000\055\000\050\000\
-\\048\000\019\000\049\000\043\000\
-\\051\000\041\000\052\000\029\000\
-\\031\000\030\000\020\000\054\000\
-\\046\000\011\000\042\000\032\000\
-\\045\000\004\000\021\000\048\000\
-\\047\000\000\000"
+"\043\000\042\000\001\000\042\000\
+\\017\000\041\000\002\000\045\000\
+\\005\000\028\000\018\000\001\000\
+\\009\000\029\000\044\000\031\000\
+\\006\000\030\000\038\000\033\000\
+\\011\000\009\000\027\000\062\000\
+\\051\000\019\000\013\000\010\000\
+\\066\000\063\000\064\000\065\000\
+\\032\000\003\000\015\000\020\000\
+\\060\000\010\000\008\000\012\000\
+\\046\000\067\000\062\000\021\000\
+\\022\000\023\000\009\000\042\000\
+\\039\000\047\000\062\000\057\000\
+\\055\000\024\000\056\000\050\000\
+\\058\000\048\000\059\000\034\000\
+\\036\000\035\000\025\000\004\000\
+\\061\000\053\000\014\000\049\000\
+\\037\000\016\000\052\000\007\000\
+\\040\000\026\000\055\000\054\000\
+\\000\000"
 val gotoT =
 "\
-\\001\000\069\000\002\000\002\000\005\000\001\000\000\000\
+\\001\000\076\000\002\000\002\000\005\000\001\000\000\000\
 \\002\000\005\000\005\000\001\000\000\000\
 \\003\000\009\000\004\000\008\000\006\000\007\000\018\000\006\000\000\000\
 \\002\000\011\000\005\000\001\000\000\000\
@@ -117,45 +129,23 @@ val gotoT =
 \\019\000\017\000\021\000\016\000\022\000\015\000\000\000\
 \\000\000\
 \\000\000\
-\\003\000\021\000\004\000\008\000\006\000\007\000\018\000\006\000\000\000\
-\\007\000\024\000\013\000\023\000\014\000\022\000\000\000\
+\\003\000\022\000\004\000\008\000\006\000\007\000\018\000\006\000\000\000\
+\\007\000\025\000\013\000\024\000\014\000\023\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
-\\022\000\031\000\000\000\
-\\000\000\
-\\000\000\
-\\000\000\
-\\007\000\033\000\013\000\023\000\014\000\022\000\000\000\
-\\000\000\
-\\015\000\034\000\000\000\
-\\000\000\
-\\000\000\
-\\000\000\
-\\014\000\040\000\000\000\
+\\022\000\032\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
+\\007\000\035\000\013\000\024\000\014\000\023\000\000\000\
+\\000\000\
+\\015\000\036\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
-\\000\000\
-\\014\000\046\000\000\000\
-\\007\000\050\000\008\000\049\000\010\000\048\000\011\000\047\000\
-\\013\000\023\000\014\000\022\000\000\000\
-\\011\000\053\000\000\000\
-\\000\000\
-\\000\000\
-\\015\000\054\000\000\000\
-\\000\000\
-\\000\000\
-\\000\000\
-\\013\000\058\000\014\000\022\000\000\000\
-\\000\000\
-\\015\000\059\000\000\000\
-\\000\000\
-\\009\000\060\000\000\000\
+\\014\000\042\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
@@ -165,6 +155,23 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\000\000\
+\\014\000\050\000\000\000\
+\\007\000\054\000\008\000\053\000\010\000\052\000\011\000\051\000\
+\\013\000\024\000\014\000\023\000\000\000\
+\\011\000\057\000\000\000\
+\\000\000\
+\\000\000\
+\\015\000\058\000\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\013\000\062\000\014\000\023\000\000\000\
+\\002\000\063\000\005\000\001\000\000\000\
+\\000\000\
+\\000\000\
+\\015\000\064\000\000\000\
+\\000\000\
+\\009\000\065\000\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
@@ -172,15 +179,27 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\000\000\
-\\007\000\050\000\010\000\066\000\011\000\047\000\013\000\023\000\
-\\014\000\022\000\000\000\
 \\000\000\
-\\009\000\068\000\000\000\
+\\000\000\
+\\000\000\
+\\003\000\069\000\004\000\008\000\006\000\007\000\018\000\006\000\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\000\000\
+\\007\000\054\000\010\000\073\000\011\000\051\000\013\000\024\000\
+\\014\000\023\000\000\000\
+\\000\000\
+\\000\000\
+\\009\000\075\000\000\000\
 \\000\000\
 \\000\000\
 \"
-val numstates = 70
-val numrules = 40
+val numstates = 77
+val numrules = 42
 val s = ref "" and index = ref 0
 val string_to_int = fn () => 
 let val i = !index
@@ -494,7 +513,7 @@ end
 |  ( 5, ( ( _, ( MlyValue.item_type item_type1, item_type1left, 
 item_type1right)) :: rest671)) => let val  result = MlyValue.vis_item
  (fn _ => let val  (item_type as item_type1) = item_type1 ()
- in (VisItem(NONE, item_type))
+ in (VisItem(DefaultVis, item_type))
 end)
  in ( LrTable.NT 18, ( result, item_type1left, item_type1right), 
 rest671)
@@ -504,13 +523,13 @@ end
 rest671)) => let val  result = MlyValue.vis_item (fn _ => let val  (
 visibility as visibility1) = visibility1 ()
  val  (item_type as item_type1) = item_type1 ()
- in (VisItem(SOME(visibility), item_type))
+ in (VisItem(visibility, item_type))
 end)
  in ( LrTable.NT 18, ( result, visibility1left, item_type1right), 
 rest671)
 end
 |  ( 7, ( ( _, ( _, PUB1left, PUB1right)) :: rest671)) => let val  
-result = MlyValue.visibility (fn _ => (DefaultVis))
+result = MlyValue.visibility (fn _ => (PubVis))
  in ( LrTable.NT 20, ( result, PUB1left, PUB1right), rest671)
 end
 |  ( 8, ( ( _, ( _, _, RPARENT1right)) :: _ :: _ :: ( _, ( _, PUB1left
@@ -536,16 +555,36 @@ simple_path as simple_path1) = simple_path1 ()
 end)
  in ( LrTable.NT 20, ( result, PUB1left, RPARENT1right), rest671)
 end
-|  ( 12, ( ( _, ( _, ANDAND1left, ANDAND1right)) :: rest671)) => let
- val  result = MlyValue.item_type (fn _ => (Function))
- in ( LrTable.NT 21, ( result, ANDAND1left, ANDAND1right), rest671)
-
+|  ( 12, ( ( _, ( MlyValue.IDENT IDENT1, IDENT1left, IDENT1right)) :: 
+rest671)) => let val  result = MlyValue.item_type (fn _ => let val  
+IDENT1 = IDENT1 ()
+ in (Function)
+end)
+ in ( LrTable.NT 21, ( result, IDENT1left, IDENT1right), rest671)
 end
-|  ( 13, ( rest671)) => let val  result = MlyValue.macro_item (fn _ =>
+|  ( 13, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.IDENT IDENT1,
+ _, _)) :: ( _, ( _, MOD1left, _)) :: rest671)) => let val  result = 
+MlyValue.item_type (fn _ => let val  (IDENT as IDENT1) = IDENT1 ()
+ in (Module (IDENT, NONE))
+end)
+ in ( LrTable.NT 21, ( result, MOD1left, SEMI1right), rest671)
+end
+|  ( 14, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( MlyValue.items items1
+, _, _)) :: ( _, ( MlyValue.inner_attrs inner_attrs1, _, _)) :: _ :: (
+ _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, MOD1left, _)) :: 
+rest671)) => let val  result = MlyValue.item_type (fn _ => let val  (
+IDENT as IDENT1) = IDENT1 ()
+ val  (inner_attrs as inner_attrs1) = inner_attrs1 ()
+ val  (items as items1) = items1 ()
+ in (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
+end)
+ in ( LrTable.NT 21, ( result, MOD1left, RBRACE1right), rest671)
+end
+|  ( 15, ( rest671)) => let val  result = MlyValue.macro_item (fn _ =>
  (MarcoItem))
  in ( LrTable.NT 19, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 14, ( ( _, ( MlyValue.inner_attrs inner_attrs1, _, 
+|  ( 16, ( ( _, ( MlyValue.inner_attrs inner_attrs1, _, 
 inner_attrs1right)) :: ( _, ( MlyValue.inner_attr inner_attr1, 
 inner_attr1left, _)) :: rest671)) => let val  result = 
 MlyValue.inner_attrs (fn _ => let val  (inner_attr as inner_attr1) = 
@@ -556,11 +595,11 @@ end)
  in ( LrTable.NT 1, ( result, inner_attr1left, inner_attrs1right), 
 rest671)
 end
-|  ( 15, ( rest671)) => let val  result = MlyValue.inner_attrs (fn _
+|  ( 17, ( rest671)) => let val  result = MlyValue.inner_attrs (fn _
  => ([]))
  in ( LrTable.NT 1, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 16, ( ( _, ( MlyValue.outer_attrs outer_attrs1, _, 
+|  ( 18, ( ( _, ( MlyValue.outer_attrs outer_attrs1, _, 
 outer_attrs1right)) :: ( _, ( MlyValue.outer_attr outer_attr1, 
 outer_attr1left, _)) :: rest671)) => let val  result = 
 MlyValue.outer_attrs (fn _ => let val  (outer_attr as outer_attr1) = 
@@ -571,11 +610,11 @@ end)
  in ( LrTable.NT 3, ( result, outer_attr1left, outer_attrs1right), 
 rest671)
 end
-|  ( 17, ( rest671)) => let val  result = MlyValue.outer_attrs (fn _
+|  ( 19, ( rest671)) => let val  result = MlyValue.outer_attrs (fn _
  => ([]))
  in ( LrTable.NT 3, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 18, ( ( _, ( _, _, RBRACKET1right)) :: ( _, ( MlyValue.meta_item 
+|  ( 20, ( ( _, ( _, _, RBRACKET1right)) :: ( _, ( MlyValue.meta_item 
 meta_item1, _, _)) :: _ :: ( _, ( _, SHEBANG1left, _)) :: rest671)) =>
  let val  result = MlyValue.inner_attr (fn _ => let val  (meta_item
  as meta_item1) = meta_item1 ()
@@ -584,7 +623,7 @@ end)
  in ( LrTable.NT 4, ( result, SHEBANG1left, RBRACKET1right), rest671)
 
 end
-|  ( 19, ( ( _, ( _, _, RBRACKET1right)) :: ( _, ( MlyValue.meta_item 
+|  ( 21, ( ( _, ( _, _, RBRACKET1right)) :: ( _, ( MlyValue.meta_item 
 meta_item1, _, _)) :: _ :: ( _, ( _, POUND1left, _)) :: rest671)) =>
  let val  result = MlyValue.outer_attr (fn _ => let val  (meta_item
  as meta_item1) = meta_item1 ()
@@ -593,7 +632,7 @@ end)
  in ( LrTable.NT 5, ( result, POUND1left, RBRACKET1right), rest671)
 
 end
-|  ( 20, ( ( _, ( MlyValue.lit_exp lit_exp1, _, lit_exp1right)) :: _
+|  ( 22, ( ( _, ( MlyValue.lit_exp lit_exp1, _, lit_exp1right)) :: _
  :: ( _, ( MlyValue.simple_path simple_path1, simple_path1left, _)) ::
  rest671)) => let val  result = MlyValue.meta_item (fn _ => let val  (
 simple_path as simple_path1) = simple_path1 ()
@@ -603,7 +642,7 @@ end)
  in ( LrTable.NT 6, ( result, simple_path1left, lit_exp1right), 
 rest671)
 end
-|  ( 21, ( ( _, ( _, _, RPARENT1right)) :: ( _, ( MlyValue.meta_seq 
+|  ( 23, ( ( _, ( _, _, RPARENT1right)) :: ( _, ( MlyValue.meta_seq 
 meta_seq1, _, _)) :: _ :: ( _, ( MlyValue.simple_path simple_path1, 
 simple_path1left, _)) :: rest671)) => let val  result = 
 MlyValue.meta_item (fn _ => let val  (simple_path as simple_path1) = 
@@ -614,7 +653,7 @@ end)
  in ( LrTable.NT 6, ( result, simple_path1left, RPARENT1right), 
 rest671)
 end
-|  ( 22, ( ( _, ( _, _, RPARENT1right)) :: _ :: ( _, ( 
+|  ( 24, ( ( _, ( _, _, RPARENT1right)) :: _ :: ( _, ( 
 MlyValue.simple_path simple_path1, simple_path1left, _)) :: rest671))
  => let val  result = MlyValue.meta_item (fn _ => let val  (
 simple_path as simple_path1) = simple_path1 ()
@@ -623,7 +662,7 @@ end)
  in ( LrTable.NT 6, ( result, simple_path1left, RPARENT1right), 
 rest671)
 end
-|  ( 23, ( ( _, ( MlyValue.simple_path simple_path1, simple_path1left,
+|  ( 25, ( ( _, ( MlyValue.simple_path simple_path1, simple_path1left,
  simple_path1right)) :: rest671)) => let val  result = 
 MlyValue.meta_item (fn _ => let val  (simple_path as simple_path1) = 
 simple_path1 ()
@@ -632,7 +671,7 @@ end)
  in ( LrTable.NT 6, ( result, simple_path1left, simple_path1right), 
 rest671)
 end
-|  ( 24, ( ( _, ( _, _, COMMA1right)) :: ( _, ( 
+|  ( 26, ( ( _, ( _, _, COMMA1right)) :: ( _, ( 
 MlyValue.meta_seq_expansion meta_seq_expansion1, _, _)) :: ( _, ( 
 MlyValue.meta_item_inner meta_item_inner1, meta_item_inner1left, _))
  :: rest671)) => let val  result = MlyValue.meta_seq (fn _ => let val 
@@ -644,7 +683,7 @@ end)
  in ( LrTable.NT 7, ( result, meta_item_inner1left, COMMA1right), 
 rest671)
 end
-|  ( 25, ( ( _, ( MlyValue.meta_seq_expansion meta_seq_expansion1, _, 
+|  ( 27, ( ( _, ( MlyValue.meta_seq_expansion meta_seq_expansion1, _, 
 meta_seq_expansion1right)) :: ( _, ( MlyValue.meta_item_inner 
 meta_item_inner1, meta_item_inner1left, _)) :: rest671)) => let val  
 result = MlyValue.meta_seq (fn _ => let val  (meta_item_inner as 
@@ -656,7 +695,7 @@ end)
  in ( LrTable.NT 7, ( result, meta_item_inner1left, 
 meta_seq_expansion1right), rest671)
 end
-|  ( 26, ( ( _, ( MlyValue.meta_seq_expansion meta_seq_expansion1, _, 
+|  ( 28, ( ( _, ( MlyValue.meta_seq_expansion meta_seq_expansion1, _, 
 meta_seq_expansion1right)) :: _ :: ( _, ( MlyValue.meta_item_inner 
 meta_item_inner1, _, _)) :: _ :: ( _, ( _, LPARENT1left, _)) :: 
 rest671)) => let val  result = MlyValue.meta_seq_expansion (fn _ =>
@@ -668,11 +707,11 @@ end)
  in ( LrTable.NT 8, ( result, LPARENT1left, meta_seq_expansion1right),
  rest671)
 end
-|  ( 27, ( rest671)) => let val  result = MlyValue.meta_seq_expansion
+|  ( 29, ( rest671)) => let val  result = MlyValue.meta_seq_expansion
  (fn _ => ([]))
  in ( LrTable.NT 8, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 28, ( ( _, ( MlyValue.meta_item meta_item1, meta_item1left, 
+|  ( 30, ( ( _, ( MlyValue.meta_item meta_item1, meta_item1left, 
 meta_item1right)) :: rest671)) => let val  result = 
 MlyValue.meta_item_inner (fn _ => let val  (meta_item as meta_item1) =
  meta_item1 ()
@@ -681,7 +720,7 @@ end)
  in ( LrTable.NT 9, ( result, meta_item1left, meta_item1right), 
 rest671)
 end
-|  ( 29, ( ( _, ( MlyValue.lit_exp lit_exp1, lit_exp1left, 
+|  ( 31, ( ( _, ( MlyValue.lit_exp lit_exp1, lit_exp1left, 
 lit_exp1right)) :: rest671)) => let val  result = 
 MlyValue.meta_item_inner (fn _ => let val  (lit_exp as lit_exp1) = 
 lit_exp1 ()
@@ -690,7 +729,7 @@ end)
  in ( LrTable.NT 9, ( result, lit_exp1left, lit_exp1right), rest671)
 
 end
-|  ( 30, ( ( _, ( MlyValue.STR_LIT STR_LIT1, STR_LIT1left, 
+|  ( 32, ( ( _, ( MlyValue.STR_LIT STR_LIT1, STR_LIT1left, 
 STR_LIT1right)) :: rest671)) => let val  result = MlyValue.lit_exp (fn
  _ => let val  (STR_LIT as STR_LIT1) = STR_LIT1 ()
  in (yaccLog("lit_exp "^STR_LIT); LiteralExpression(STR_LIT))
@@ -698,7 +737,7 @@ end)
  in ( LrTable.NT 10, ( result, STR_LIT1left, STR_LIT1right), rest671)
 
 end
-|  ( 31, ( ( _, ( MlyValue.simple_path_expansion 
+|  ( 33, ( ( _, ( MlyValue.simple_path_expansion 
 simple_path_expansion1, _, simple_path_expansion1right)) :: ( _, ( 
 MlyValue.simple_path_segment simple_path_segment1, _, _)) :: ( _, ( _,
  PATHSEP1left, _)) :: rest671)) => let val  result = 
@@ -711,7 +750,7 @@ end)
  in ( LrTable.NT 12, ( result, PATHSEP1left, 
 simple_path_expansion1right), rest671)
 end
-|  ( 32, ( ( _, ( MlyValue.simple_path_expansion 
+|  ( 34, ( ( _, ( MlyValue.simple_path_expansion 
 simple_path_expansion1, _, simple_path_expansion1right)) :: ( _, ( 
 MlyValue.simple_path_segment simple_path_segment1, 
 simple_path_segment1left, _)) :: rest671)) => let val  result = 
@@ -724,7 +763,7 @@ end)
  in ( LrTable.NT 12, ( result, simple_path_segment1left, 
 simple_path_expansion1right), rest671)
 end
-|  ( 33, ( ( _, ( MlyValue.simple_path_expansion 
+|  ( 35, ( ( _, ( MlyValue.simple_path_expansion 
 simple_path_expansion1, _, simple_path_expansion1right)) :: ( _, ( 
 MlyValue.simple_path_segment simple_path_segment1, _, _)) :: ( _, ( _,
  PATHSEP1left, _)) :: rest671)) => let val  result = 
@@ -737,31 +776,31 @@ end)
  in ( LrTable.NT 14, ( result, PATHSEP1left, 
 simple_path_expansion1right), rest671)
 end
-|  ( 34, ( rest671)) => let val  result = 
+|  ( 36, ( rest671)) => let val  result = 
 MlyValue.simple_path_expansion (fn _ => ([]))
  in ( LrTable.NT 14, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 35, ( ( _, ( MlyValue.IDENT IDENT1, IDENT1left, IDENT1right)) :: 
+|  ( 37, ( ( _, ( MlyValue.IDENT IDENT1, IDENT1left, IDENT1right)) :: 
 rest671)) => let val  result = MlyValue.simple_path_segment (fn _ =>
  let val  (IDENT as IDENT1) = IDENT1 ()
  in (IDENT)
 end)
  in ( LrTable.NT 13, ( result, IDENT1left, IDENT1right), rest671)
 end
-|  ( 36, ( ( _, ( _, SUPER1left, SUPER1right)) :: rest671)) => let
+|  ( 38, ( ( _, ( _, SUPER1left, SUPER1right)) :: rest671)) => let
  val  result = MlyValue.simple_path_segment (fn _ => ("super"))
  in ( LrTable.NT 13, ( result, SUPER1left, SUPER1right), rest671)
 end
-|  ( 37, ( ( _, ( _, SELFVALUE1left, SELFVALUE1right)) :: rest671)) =>
+|  ( 39, ( ( _, ( _, SELFVALUE1left, SELFVALUE1right)) :: rest671)) =>
  let val  result = MlyValue.simple_path_segment (fn _ => ("self"))
  in ( LrTable.NT 13, ( result, SELFVALUE1left, SELFVALUE1right), 
 rest671)
 end
-|  ( 38, ( ( _, ( _, CARET1left, CARET1right)) :: rest671)) => let
+|  ( 40, ( ( _, ( _, CARET1left, CARET1right)) :: rest671)) => let
  val  result = MlyValue.simple_path_segment (fn _ => ("crate"))
  in ( LrTable.NT 13, ( result, CARET1left, CARET1right), rest671)
 end
-|  ( 39, ( ( _, ( _, _, CARET1right)) :: ( _, ( _, DOLLAR1left, _)) ::
+|  ( 41, ( ( _, ( _, _, CARET1right)) :: ( _, ( _, DOLLAR1left, _)) ::
  rest671)) => let val  result = MlyValue.simple_path_segment (fn _ =>
  ("$crate"))
  in ( LrTable.NT 13, ( result, DOLLAR1left, CARET1right), rest671)

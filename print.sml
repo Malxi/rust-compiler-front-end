@@ -25,8 +25,8 @@ struct
 
             fun Crate(A.Crate(shebang, innerAttrs, items), d) = 
                     (indent d; outln "Crate ("; Shebang(shebang, d+1); outln ","; 
-                    outList (d+1) InnerAttribute innerAttrs;
-                    (* outList (d+1) Item items;*)
+                    outList (d+1) InnerAttribute innerAttrs; outln ",";
+                    outList (d+1) Item items;
                     outln "\n)")
             and Shebang(A.Shebang(SOME s), d) = (indent d; out("Shebang ("^s^")"))
                 | Shebang(A.Shebang(NONE), d) = (indent d; out("Shebang (NONE)"))
@@ -53,10 +53,22 @@ struct
                     (indent d; out "MetaItemInner ("; MetaItem(metaItem, d);out ")")
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
-            and Item(A.VisItemType(item), d) = 
-                (indent d; out "VisItemType("; out ")")
-                | Item(A.MarcoItemType(item), d) = 
+            and Item(A.VisItemType(outerAttrs, visItem), d) = 
+                (indent d; out "VisItemType("; VisItem(visItem, d); out ")")
+                | Item(A.MarcoItemType(marcoItem), d) = 
                 (indent d; out "MarcoItemType("; out ")")
+            and VisItem(A.VisItem(visibility, itemType), d) =
+                (indent d; out "VisItem ("; Visibility(visibility, d); ItemType(itemType, d); out ")")
+            and Visibility(A.DefaultVis, d) = (indent d; out "<default>")
+                | Visibility(A.PubVis, d) = (indent d; out "<pub>")
+                | Visibility(A.CrateVis, d) = (indent d; out "<crate>")
+                | Visibility(A.SelfVis, d) = (indent d; out "<self>")
+                | Visibility(A.SuperVis, d) = (indent d; out "<super>")
+                | Visibility(A.InVis(vis), d) = (indent d; out "<in>"; SimplePath(vis, d))
+            and ItemType(A.Module module, d) = 
+                (indent d; out "Module ()")
+                | ItemType (_, d) =
+                (indent d; out "ItemType")
         in
             Crate(ast, 0)
         end
