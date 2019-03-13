@@ -29,7 +29,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG | SHEBANG_LINE of string
-        | LOWER_THAN_LPARENT
+        | LOWER_THAN_LPARENT | LOWER_THAN_ABI | ABI
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
@@ -39,6 +39,13 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | exp | program
         | item of Item | vis_item of VisItem | macro_item of MarcoItem
         | visibility of Visibility | item_type of ItemType
+        | use_tree of UseTree
+        | generics | where_clause | maybe_generics | maybe_where_clause
+        | function | fun_qualifier | maybe_const | maybe_unsafe | abi
+        | fun_parameters | maybe_fun_parameters | fun_param | fun_parameters_expansion
+        | fun_return_type | maybe_fun_return_type
+        | block_expression | maybe_statements
+        | patterns | types
 %pos int
 %eop EOF
 %noshift EOF
@@ -52,6 +59,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
 
 %nonassoc LOWER_THAN_LPARENT
 %nonassoc LPARENT
+%nonassoc LOWER_THAN_ABI
+%nonassoc ABI
 %verbose
 
 %%
@@ -73,9 +82,9 @@ visibility: PUB                                                 (PubVis)
         | PUB LPARENT SUPER RPARENT                             (SuperVis)
         | PUB LPARENT IN simple_path RPARENT                    (InVis (simple_path))
 
-item_type: IDENT                                                (Function)
-        | MOD IDENT SEMI                                        (Module (IDENT, NONE))
-        | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
+use_tree: simple_path                                           (UseSingle ([simple_path]))
+        | simple_path AS IDENT                                  (UseAlias (simple_path, IDENT))
+        (* Some recursion use tree need to add *)
 
 macro_item:                                                     (MarcoItem)
 
@@ -103,6 +112,9 @@ meta_item_inner: meta_item                                      (MetaItem(meta_i
 
 lit_exp:STR_LIT                                                 (yaccLog("lit_exp "^STR_LIT); LiteralExpression(STR_LIT))
 
+patterns: IDENT                                                 ()
+types: IDENT                                                    ()
+
 simple_path: PATHSEP simple_path_segment simple_path_expansion  (SimplePath(simple_path_segment::simple_path_expansion))
             | simple_path_segment simple_path_expansion         (SimplePath(simple_path_segment::simple_path_expansion))
 simple_path_expansion: PATHSEP simple_path_segment 
@@ -113,3 +125,58 @@ simple_path_segment: IDENT                                      (IDENT)
                     | SELFVALUE                                 ("self")
                     | CARET                                     ("crate")
                     | DOLLAR CARET                              ("$crate")
+
+item_type: IDENT                                                (Function)
+        | MOD IDENT SEMI                                        (Module (IDENT, NONE))
+        | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
+        | EXTERN CARET IDENT SEMI                               (yaccLog("extern crate "^IDENT); ExternCrate (IDENT, NONE))
+        | EXTERN CARET IDENT AS IDENT SEMI                      (yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (IDENT1, SOME(IDENT2)))
+        | USE use_tree SEMI                                     (yaccLog("use_tree"); UseDeclaration(use_tree))
+        | function                                              (yaccLog("function"); Function)
+
+function: fun_qualifier FN IDENT maybe_generics
+            LPARENT maybe_fun_parameters RPARENT
+            maybe_fun_return_type
+            maybe_where_clause
+            block_expression                                    ()      
+
+fun_qualifier: maybe_const maybe_unsafe                         ()
+                (*| maybe_const maybe_unsafe EXTERN 
+                %prec LOWER_THAN_ABI                            ()*)
+                (*| maybe_const maybe_unsafe EXTERN abi
+                %prec ABI                                       ()*)
+
+maybe_const: CONST                                              ()
+            |                                                   ()
+maybe_unsafe: UNSAFE                                            ()
+            |                                                   ()
+abi: STR_LIT                                                    ()
+    | RAW_BYTE_STR_LIT                                          ()
+
+maybe_fun_parameters: fun_parameters                            ()
+                    |                                           ()
+
+fun_parameters: fun_param fun_parameters_expansion COMMA        ()
+                | fun_param fun_parameters_expansion            ()
+
+fun_parameters_expansion: 
+                        (* This is a left recursion to solve COMMA conflicts *)
+                        fun_parameters_expansion 
+                        COMMA fun_param                         ()
+                        |                                       ()
+
+fun_param: patterns SEMI types                                  ()
+
+maybe_fun_return_type: fun_return_type                          ()
+                        |                                       ()
+fun_return_type: RARROW types                                   ()
+
+maybe_where_clause: where_clause                                ()
+                    |                                           ()
+where_clause: WHERE                                             ()
+maybe_generics: generics                                        ()
+                |                                               ()
+generics: LT GT                                                 ()
+
+block_expression: LBRACE inner_attrs maybe_statements RBRACE    ()
+maybe_statements:                                               ()
