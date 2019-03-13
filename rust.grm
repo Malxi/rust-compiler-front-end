@@ -40,12 +40,14 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | item of Item | vis_item of VisItem | macro_item of MarcoItem
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree
+        | patterns | types
         | generics | where_clause | maybe_generics | maybe_where_clause
         | function | fun_qualifier | maybe_const | maybe_unsafe | abi
         | fun_parameters | maybe_fun_parameters | fun_param | fun_parameters_expansion
         | fun_return_type | maybe_fun_return_type
-        | block_expression | maybe_statements
-        | patterns | types
+        | block_expression | maybe_statements | expression
+        | struct_struct | tuple_struct | struct_fields | struct_field | tuple_fields | tuple_field 
+        | maybe_struct_fields | maybe_tuple_fields | struct_fields_expansion | tuple_fields_expansion
 %pos int
 %eop EOF
 %noshift EOF
@@ -126,6 +128,13 @@ simple_path_segment: IDENT                                      (IDENT)
                     | CARET                                     ("crate")
                     | DOLLAR CARET                              ("$crate")
 
+maybe_where_clause: where_clause                                ()
+                    |                                           ()
+where_clause: WHERE                                             ()
+maybe_generics: generics                                        ()
+                |                                               ()
+generics: LT GT                                                 ()
+
 item_type: IDENT                                                (Function)
         | MOD IDENT SEMI                                        (Module (IDENT, NONE))
         | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
@@ -133,6 +142,16 @@ item_type: IDENT                                                (Function)
         | EXTERN CARET IDENT AS IDENT SEMI                      (yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (IDENT1, SOME(IDENT2)))
         | USE use_tree SEMI                                     (yaccLog("use_tree"); UseDeclaration(use_tree))
         | function                                              (yaccLog("function"); Function)
+        | TYPE IDENT maybe_generics maybe_where_clause
+            EQ types SEMI                                       (yaccLog("type alias"); TypeAlias)
+        | struct_struct                                         (yaccLog("struct struct"); Struct)
+        | tuple_struct                                          (yaccLog("tuple struct"); Struct)
+        | UNION IDENT maybe_generics maybe_where_clause 
+            LBRACE struct_fields RBRACE                         (yaccLog("Union"); Union)
+        | CONST IDENT COLON types EQ expression SEMI            (yaccLog("ConstantItem"); ConstantItem)
+        | STATIC MUT IDENT COLON types EQ expression SEMI       (yaccLog("StaticItem"); StaticItem)
+        | STATIC IDENT COLON types EQ expression SEMI           (yaccLog("StaticItem"); StaticItem)
+        
 
 function: fun_qualifier FN IDENT maybe_generics
             LPARENT maybe_fun_parameters RPARENT
@@ -171,12 +190,36 @@ maybe_fun_return_type: fun_return_type                          ()
                         |                                       ()
 fun_return_type: RARROW types                                   ()
 
-maybe_where_clause: where_clause                                ()
+struct_struct: STRUCT IDENT maybe_generics maybe_where_clause
+                LBRACE maybe_struct_fields RBRACE               ()
+            | STRUCT IDENT maybe_generics maybe_where_clause
+                SEMI                                            ()
+
+maybe_struct_fields: struct_fields                              ()
                     |                                           ()
-where_clause: WHERE                                             ()
-maybe_generics: generics                                        ()
-                |                                               ()
-generics: LT GT                                                 ()
+struct_fields: struct_field struct_fields_expansion             ()
+                | struct_field struct_fields_expansion COMMA    ()
+
+struct_fields_expansion:
+                        (* This is a left recursion to solve COMMA conflicts *)
+                        struct_fields_expansion
+                        COMMA struct_field                      ()
+                        |                                       ()
+struct_field: outer_attrs visibility IDENT COLON types          ()
+                | outer_attrs IDENT COLON types                 ()
+
+tuple_struct: STRUCT IDENT maybe_generics 
+                LPARENT maybe_tuple_fields 
+                RPARENT maybe_where_clause SEMI                 ()
+maybe_tuple_fields: tuple_fields                                ()
+                    |                                           ()
+tuple_fields: tuple_field tuple_fields_expansion COMMA          ()
+                | tuple_field tuple_fields_expansion            ()
+tuple_fields_expansion: tuple_fields_expansion 
+                        COMMA tuple_field                       ()
+tuple_field: outer_attrs visibility types                       ()
+            | outer_attrs types                                 ()
 
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    ()
 maybe_statements:                                               ()
+expression:                                                     ()

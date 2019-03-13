@@ -17,7 +17,7 @@ sig
         | ExternCrate of (string * string option)
         | UseDeclaration of UseTree 
         | Function
-        | TypeAlias of {ident:string, generic:string, whereClause:string, typ: string}
+        | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
         | Struct
         | Enumeration
         | Union
@@ -56,7 +56,7 @@ struct
         | ExternCrate of (string * string option)
         | UseDeclaration of UseTree 
         | Function
-        | TypeAlias of {ident:string, generic:string, whereClause:string, typ: string}
+        | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
         | Struct
         | Enumeration
         | Union
