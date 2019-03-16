@@ -2705,7 +2705,7 @@ fun yyAction183 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LT(yypos, yypos+size yytext))
       end
 fun yyAction184 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)

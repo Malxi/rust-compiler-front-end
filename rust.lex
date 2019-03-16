@@ -622,7 +622,7 @@ shebang_line = ("#!"([^\[\n])*\n);
 <INITIAL>"|"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OR(yypos, yypos+size yytext));
 <INITIAL>"="               => (lexLog(yypos, "Tokens.EQ "^yytext); Tokens.EQ(yypos, yypos+size yytext));
 <INITIAL>">"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GT(yypos, yypos+size yytext));
-<INITIAL>"<"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext));
+<INITIAL>"<"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LT(yypos, yypos+size yytext));
 <INITIAL>"@"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AT(yypos, yypos+size yytext));
 <INITIAL>","               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COMMA(yypos, yypos+size yytext));
 <INITIAL>";"               => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SEMI(yypos, yypos+size yytext));

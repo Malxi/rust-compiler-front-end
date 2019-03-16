@@ -41,8 +41,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree
         | patterns | types
-        | generics | where_clause | maybe_generics | maybe_where_clause 
-        | maybe_comma | maybe_plus | maybe_ques
+        | generics | where_clause | maybe_generics | maybe_where_clause | maybe_visibility
+        | maybe_comma | maybe_plus | maybe_ques | maybe_not
         | function | func_qualifier | maybe_const | maybe_unsafe | abi
         | func_parameters | maybe_func_parameters | func_param | func_parameters_expansion
         | func_return_type | maybe_func_return_type
@@ -51,6 +51,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | maybe_struct_fields | maybe_tuple_fields | struct_fields_expansion | tuple_fields_expansion
         | enum_items | maybe_enum_items | enum_items_expansion | enum_item | enum_item_tuple | enum_item_struct 
         | enum_item_discriminant
+        | type_alias
+        | constant_item
         | maybe_trait_super | maybe_type_param_bounds | type_param_bounds | type_param_bounds_expansion | type_param_bound
         | lifetime | trait_bound | for_lifetimes | type_path | maybe_for_lifetimes
         | trait_items | trait_item 
@@ -58,6 +60,9 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | trait_func_decl | trait_method_decl | trait_func_parameters 
         | trait_func_param | maybe_trait_func_parameters | trait_func_parameters_expansion
         | self_param | maybe_and_or_lifetime | maybe_mut
+        | inherent_impl | trait_impl | inherent_impl_items | inherent_impl_items_expansion | inherent_impl_item
+        | trait_impl_items | trait_impl_items_expansion | trait_impl_item
+        | method
 %pos int
 %eop EOF
 %noshift EOF
@@ -138,14 +143,29 @@ simple_path_segment: IDENT                                      (IDENT)
                     | CARET                                     ("crate")
                     | DOLLAR CARET                              ("$crate")
 
+maybe_visibility: visibility                                    ()
+                    |                                           ()
 maybe_where_clause: where_clause                                ()
                     |                                           ()
 where_clause: WHERE                                             ()
 maybe_generics: generics                                        ()
                 |                                               ()
-generics: LT GT                                                 ()
+generics: LT IDENT GT                                           ()
 maybe_comma: COMMA                                              ()
             |                                                   ()
+maybe_mut: MUT                                                  ()
+            |                                                   ()
+maybe_plus: PLUS                                                ()
+            |                                                   ()
+maybe_ques: QUESTION                                            ()
+            |                                                   ()
+maybe_const: CONST                                              ()
+            |                                                   ()
+maybe_unsafe: UNSAFE                                            ()
+            |                                                   ()
+maybe_not: NOT                                                  ()
+            |                                                   ()
+
 item_type: IDENT                                                (Function)
         | MOD IDENT SEMI                                        (Module (IDENT, NONE))
         | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
@@ -153,21 +173,25 @@ item_type: IDENT                                                (Function)
         | EXTERN CARET IDENT AS IDENT SEMI                      (yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (IDENT1, SOME(IDENT2)))
         | USE use_tree SEMI                                     (yaccLog("use_tree"); UseDeclaration(use_tree))
         | function                                              (yaccLog("function"); Function)
-        | TYPE IDENT maybe_generics maybe_where_clause
-            EQ types SEMI                                       (yaccLog("type alias"); TypeAlias)
+        | type_alias                                            (yaccLog("type alias"); TypeAlias)
         | struct_struct                                         (yaccLog("struct struct"); Struct)
         | tuple_struct                                          (yaccLog("tuple struct"); Struct)
         | ENUM IDENT maybe_generics maybe_where_clause
             LBRACE maybe_enum_items RBRACE                      (yaccLog("enumeration"); Enumeration)
         | UNION IDENT maybe_generics maybe_where_clause 
             LBRACE struct_fields RBRACE                         (yaccLog("Union"); Union)
-        | CONST IDENT COLON types EQ expression SEMI            (yaccLog("ConstantItem"); ConstantItem)
+        | constant_item                                         (yaccLog("ConstantItem"); ConstantItem)
         | STATIC MUT IDENT COLON types EQ expression SEMI       (yaccLog("StaticItem"); StaticItem)
         | STATIC IDENT COLON types EQ expression SEMI           (yaccLog("StaticItem"); StaticItem)
         | maybe_unsafe TRAIT IDENT maybe_generics
             maybe_trait_super maybe_where_clause
             LBRACE trait_items RBRACE                           (yaccLog("Trait"); Trait)
-        
+        | inherent_impl                                         (yaccLog("inherent_impl"); Implementation)
+        | trait_impl                                            (yaccLog("trait_impl"); Implementation)
+
+type_alias: TYPE IDENT maybe_generics maybe_where_clause
+            EQ types SEMI                                       ()        
+constant_item: CONST IDENT COLON types EQ expression SEMI       ()
 
 function: func_qualifier FN IDENT maybe_generics
             LPARENT maybe_func_parameters RPARENT
@@ -181,16 +205,6 @@ func_qualifier: maybe_const maybe_unsafe                         ()
                 (*| maybe_const maybe_unsafe EXTERN abi
                 %prec ABI                                       ()*)
 
-maybe_mut: MUT                                                  ()
-            |                                                   ()
-maybe_plus: PLUS                                                ()
-            |                                                   ()
-maybe_ques: QUESTION                                            ()
-            |                                                   ()
-maybe_const: CONST                                              ()
-            |                                                   ()
-maybe_unsafe: UNSAFE                                            ()
-            |                                                   ()
 abi: STR_LIT                                                    ()
     | RAW_BYTE_STR_LIT                                          ()
 
@@ -285,7 +299,7 @@ trait_func_parameters: trait_func_param
 trait_func_parameters_expansion: 
     trait_func_parameters_expansion COMMA trait_func_param      ()
                             |                                   ()
-trait_func_param: LPARENT patterns COLON RPARENT types          ()
+trait_func_param:  patterns COLON types                         ()
                 | types                                         ()
 trait_const: CONST IDENT COLON types SEMI                       ()
             | CONST IDENT COLON types EQ expression SEMI        ()
@@ -316,6 +330,30 @@ self_param: maybe_and_or_lifetime maybe_mut SELFVALUE           ()
 maybe_and_or_lifetime: AND                                      ()
                     | AND lifetime                              ()
 
+inherent_impl: IMPL maybe_generics types maybe_where_clause
+                LBRACE inner_attrs inherent_impl_items RBRACE   ()
+inherent_impl_items: inherent_impl_item inherent_impl_items     ()
+                    |                                           ()
+inherent_impl_item: outer_attrs marco_invocation_semi           ()
+                    | outer_attrs maybe_visibility 
+                        constant_item                           ()
+                    | outer_attrs maybe_visibility function     ()
+                    | outer_attrs maybe_visibility method       ()
+trait_impl: maybe_unsafe IMPL maybe_generics maybe_not type_path
+            FOR types maybe_where_clause LBRACE
+            inner_attrs trait_impl_items RBRACE                 ()
+trait_impl_items: trait_impl_item trait_impl_items              ()
+                |                                               ()
+trait_impl_item: outer_attrs marco_invocation_semi              ()
+                | maybe_visibility type_alias                   ()
+                | constant_item                                 ()
+                | function                                      ()
+                | method                                        ()
+method: func_qualifier FN IDENT maybe_generics LPARENT
+        self_param func_parameters_expansion maybe_comma RPARENT
+        maybe_func_return_type maybe_where_clause 
+        block_expression                                        ()
+marco_invocation_semi: simple_path (* need to be completed*)    ()
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    ()
 maybe_statements:                                               ()
-expression:                                                     ()
+expression: INTEGER_LIT                                         ()
