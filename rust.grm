@@ -41,13 +41,23 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree
         | patterns | types
-        | generics | where_clause | maybe_generics | maybe_where_clause
-        | function | fun_qualifier | maybe_const | maybe_unsafe | abi
-        | fun_parameters | maybe_fun_parameters | fun_param | fun_parameters_expansion
-        | fun_return_type | maybe_fun_return_type
+        | generics | where_clause | maybe_generics | maybe_where_clause 
+        | maybe_comma | maybe_plus | maybe_ques
+        | function | func_qualifier | maybe_const | maybe_unsafe | abi
+        | func_parameters | maybe_func_parameters | func_param | func_parameters_expansion
+        | func_return_type | maybe_func_return_type
         | block_expression | maybe_statements | expression
         | struct_struct | tuple_struct | struct_fields | struct_field | tuple_fields | tuple_field 
         | maybe_struct_fields | maybe_tuple_fields | struct_fields_expansion | tuple_fields_expansion
+        | enum_items | maybe_enum_items | enum_items_expansion | enum_item | enum_item_tuple | enum_item_struct 
+        | enum_item_discriminant
+        | maybe_trait_super | maybe_type_param_bounds | type_param_bounds | type_param_bounds_expansion | type_param_bound
+        | lifetime | trait_bound | for_lifetimes | type_path | maybe_for_lifetimes
+        | trait_items | trait_item 
+        | trait_func | trait_method | trait_const | trait_type | marco_invocation_semi
+        | trait_func_decl | trait_method_decl | trait_func_parameters 
+        | trait_func_param | maybe_trait_func_parameters | trait_func_parameters_expansion
+        | self_param | maybe_and_or_lifetime | maybe_mut
 %pos int
 %eop EOF
 %noshift EOF
@@ -134,7 +144,8 @@ where_clause: WHERE                                             ()
 maybe_generics: generics                                        ()
                 |                                               ()
 generics: LT GT                                                 ()
-
+maybe_comma: COMMA                                              ()
+            |                                                   ()
 item_type: IDENT                                                (Function)
         | MOD IDENT SEMI                                        (Module (IDENT, NONE))
         | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
@@ -146,25 +157,36 @@ item_type: IDENT                                                (Function)
             EQ types SEMI                                       (yaccLog("type alias"); TypeAlias)
         | struct_struct                                         (yaccLog("struct struct"); Struct)
         | tuple_struct                                          (yaccLog("tuple struct"); Struct)
+        | ENUM IDENT maybe_generics maybe_where_clause
+            LBRACE maybe_enum_items RBRACE                      (yaccLog("enumeration"); Enumeration)
         | UNION IDENT maybe_generics maybe_where_clause 
             LBRACE struct_fields RBRACE                         (yaccLog("Union"); Union)
         | CONST IDENT COLON types EQ expression SEMI            (yaccLog("ConstantItem"); ConstantItem)
         | STATIC MUT IDENT COLON types EQ expression SEMI       (yaccLog("StaticItem"); StaticItem)
         | STATIC IDENT COLON types EQ expression SEMI           (yaccLog("StaticItem"); StaticItem)
+        | maybe_unsafe TRAIT IDENT maybe_generics
+            maybe_trait_super maybe_where_clause
+            LBRACE trait_items RBRACE                           (yaccLog("Trait"); Trait)
         
 
-function: fun_qualifier FN IDENT maybe_generics
-            LPARENT maybe_fun_parameters RPARENT
-            maybe_fun_return_type
+function: func_qualifier FN IDENT maybe_generics
+            LPARENT maybe_func_parameters RPARENT
+            maybe_func_return_type
             maybe_where_clause
             block_expression                                    ()      
 
-fun_qualifier: maybe_const maybe_unsafe                         ()
+func_qualifier: maybe_const maybe_unsafe                         ()
                 (*| maybe_const maybe_unsafe EXTERN 
                 %prec LOWER_THAN_ABI                            ()*)
                 (*| maybe_const maybe_unsafe EXTERN abi
                 %prec ABI                                       ()*)
 
+maybe_mut: MUT                                                  ()
+            |                                                   ()
+maybe_plus: PLUS                                                ()
+            |                                                   ()
+maybe_ques: QUESTION                                            ()
+            |                                                   ()
 maybe_const: CONST                                              ()
             |                                                   ()
 maybe_unsafe: UNSAFE                                            ()
@@ -172,23 +194,22 @@ maybe_unsafe: UNSAFE                                            ()
 abi: STR_LIT                                                    ()
     | RAW_BYTE_STR_LIT                                          ()
 
-maybe_fun_parameters: fun_parameters                            ()
+maybe_func_parameters: func_parameters                            ()
                     |                                           ()
 
-fun_parameters: fun_param fun_parameters_expansion COMMA        ()
-                | fun_param fun_parameters_expansion            ()
+func_parameters: func_param func_parameters_expansion maybe_comma  ()
 
-fun_parameters_expansion: 
+func_parameters_expansion: 
                         (* This is a left recursion to solve COMMA conflicts *)
-                        fun_parameters_expansion 
-                        COMMA fun_param                         ()
+                        func_parameters_expansion 
+                        COMMA func_param                         ()
                         |                                       ()
 
-fun_param: patterns SEMI types                                  ()
+func_param: patterns COLON types                                 ()
 
-maybe_fun_return_type: fun_return_type                          ()
+maybe_func_return_type: func_return_type                          ()
                         |                                       ()
-fun_return_type: RARROW types                                   ()
+func_return_type: RARROW types                                   ()
 
 struct_struct: STRUCT IDENT maybe_generics maybe_where_clause
                 LBRACE maybe_struct_fields RBRACE               ()
@@ -197,8 +218,7 @@ struct_struct: STRUCT IDENT maybe_generics maybe_where_clause
 
 maybe_struct_fields: struct_fields                              ()
                     |                                           ()
-struct_fields: struct_field struct_fields_expansion             ()
-                | struct_field struct_fields_expansion COMMA    ()
+struct_fields: struct_field struct_fields_expansion maybe_comma ()
 
 struct_fields_expansion:
                         (* This is a left recursion to solve COMMA conflicts *)
@@ -213,12 +233,88 @@ tuple_struct: STRUCT IDENT maybe_generics
                 RPARENT maybe_where_clause SEMI                 ()
 maybe_tuple_fields: tuple_fields                                ()
                     |                                           ()
-tuple_fields: tuple_field tuple_fields_expansion COMMA          ()
-                | tuple_field tuple_fields_expansion            ()
-tuple_fields_expansion: tuple_fields_expansion 
+tuple_fields: tuple_field tuple_fields_expansion maybe_comma    ()
+tuple_fields_expansion: 
+                        (* This is a left recursion to solve COMMA conflicts *)
+                        tuple_fields_expansion 
                         COMMA tuple_field                       ()
+                        |                                       ()
 tuple_field: outer_attrs visibility types                       ()
             | outer_attrs types                                 ()
+
+maybe_enum_items: enum_items                                    ()
+                |                                               ()
+enum_items: enum_item enum_items_expansion maybe_comma          (yaccLog("enum_items"))
+enum_items_expansion: 
+                    (* This is a left recursion to solve COMMA conflicts *)
+                    enum_items_expansion COMMA enum_item        ()
+                    |                                           ()
+enum_item: outer_attrs IDENT enum_item_tuple                    ()
+            | outer_attrs IDENT enum_item_struct                ()
+            | outer_attrs IDENT enum_item_discriminant          ()
+            | outer_attrs IDENT                                 (yaccLog("enum_item: branch 4"))
+
+enum_item_tuple: LPARENT maybe_tuple_fields RPARENT             ()
+enum_item_struct: LBRACE maybe_struct_fields RBRACE             ()
+enum_item_discriminant: EQ expression                           ()
+
+trait_items: trait_item trait_items                             ()
+            |                                                   ()
+trait_item: outer_attrs trait_func                              ()
+            | outer_attrs trait_method                          ()
+            | outer_attrs trait_const                           ()
+            | outer_attrs trait_type                            ()
+            | marco_invocation_semi                             ()
+
+trait_func: trait_func_decl SEMI                                ()
+            | trait_func_decl block_expression                  ()
+trait_method: trait_method_decl SEMI                            ()
+            | block_expression                                  ()
+trait_func_decl: func_qualifier FN IDENT maybe_generics
+                    LPARENT maybe_trait_func_parameters 
+                    RPARENT maybe_func_return_type where_clause ()
+maybe_trait_func_parameters: trait_func_parameters              ()
+                                |                               ()
+trait_method_decl: func_qualifier FN IDENT maybe_generics
+                    LPARENT self_param 
+                    trait_func_parameters_expansion maybe_comma
+                    RPARENT maybe_func_return_type
+                    maybe_where_clause                          ()
+trait_func_parameters: trait_func_param 
+                trait_func_parameters_expansion maybe_comma     ()
+trait_func_parameters_expansion: 
+    trait_func_parameters_expansion COMMA trait_func_param      ()
+                            |                                   ()
+trait_func_param: LPARENT patterns COLON RPARENT types          ()
+                | types                                         ()
+trait_const: CONST IDENT COLON types SEMI                       ()
+            | CONST IDENT COLON types EQ expression SEMI        ()
+trait_type: TYPE IDENT maybe_trait_super SEMI                   ()
+maybe_trait_super: COLON maybe_type_param_bounds                ()
+                    |                                           ()
+maybe_type_param_bounds: type_param_bounds                      ()
+                        |                                       ()
+type_param_bounds: type_param_bound type_param_bounds_expansion
+                    maybe_plus                                  ()
+type_param_bounds_expansion: type_param_bounds_expansion
+                            PLUS type_param_bound               ()
+                        |                                       ()
+type_param_bound: lifetime                                      ()
+                | trait_bound                                   ()
+lifetime: (* here are some questions *)
+          LIFETIME                                              ()
+        | STATICLIFETIME                                        ()
+trait_bound: maybe_ques maybe_for_lifetimes type_path           ()
+            | LPARENT maybe_ques maybe_for_lifetimes type_path  ()
+type_path: IDENT (* need to be completed *)                     ()
+maybe_for_lifetimes: for_lifetimes                              ()
+                    |                                           ()
+for_lifetimes: IDENT(* There is no definition *)                ()
+self_param: maybe_and_or_lifetime maybe_mut SELFVALUE           ()
+            | maybe_mut SELFVALUE                               ()
+            | maybe_mut SELFVALUE COLON types                   ()
+maybe_and_or_lifetime: AND                                      ()
+                    | AND lifetime                              ()
 
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    ()
 maybe_statements:                                               ()

@@ -54,11 +54,11 @@ struct
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
             and Item(A.VisItemType(outerAttrs, visItem), d) = 
-                (indent d; out "VisItemType("; VisItem(visItem, d); out ")")
+                (indent d; out "VisItemType("; VisItem(visItem, 0); out ")")
                 | Item(A.MarcoItemType(marcoItem), d) = 
                 (indent d; out "MarcoItemType("; out ")")
             and VisItem(A.VisItem(visibility, itemType), d) =
-                (indent d; out "VisItem ("; Visibility(visibility, d); ItemType(itemType, d); out ")")
+                (indent d; out "VisItem ("; Visibility(visibility, 0); ItemType(itemType, 1); out ")")
             and Visibility(A.DefaultVis, d) = (indent d; out "<default>")
                 | Visibility(A.PubVis, d) = (indent d; out "<pub>")
                 | Visibility(A.CrateVis, d) = (indent d; out "<crate>")
