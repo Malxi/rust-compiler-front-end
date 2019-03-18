@@ -43,7 +43,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | patterns | types
         | generics | where_clause | maybe_generics | maybe_where_clause | maybe_visibility
         | maybe_comma | maybe_plus | maybe_ques | maybe_not
-        | function | func_qualifier | maybe_const | maybe_unsafe | abi
+        | function | func_qualifier | maybe_const | maybe_unsafe | abi | maybe_abi
         | func_parameters | maybe_func_parameters | func_param | func_parameters_expansion
         | func_return_type | maybe_func_return_type
         | block_expression | maybe_statements | expression
@@ -63,6 +63,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | inherent_impl | trait_impl | inherent_impl_items | inherent_impl_items_expansion | inherent_impl_item
         | trait_impl_items | trait_impl_items_expansion | trait_impl_item
         | method
+        | extern_block | external_items | external_item | external_static_item | external_func_item | maybe_named_func_parameters
+        | named_func_parameters | named_func_parameters_expansion | named_func_param | named_func_parameters_with_variadics 
 %pos int
 %eop EOF
 %noshift EOF
@@ -188,6 +190,7 @@ item_type: IDENT                                                (Function)
             LBRACE trait_items RBRACE                           (yaccLog("Trait"); Trait)
         | inherent_impl                                         (yaccLog("inherent_impl"); Implementation)
         | trait_impl                                            (yaccLog("trait_impl"); Implementation)
+        | extern_block                                          (yaccLog("extern_block"); ExternBlock)
 
 type_alias: TYPE IDENT maybe_generics maybe_where_clause
             EQ types SEMI                                       ()        
@@ -205,11 +208,14 @@ func_qualifier: maybe_const maybe_unsafe                         ()
                 (*| maybe_const maybe_unsafe EXTERN abi
                 %prec ABI                                       ()*)
 
+maybe_abi: abi                                                  ()
+        |                                                       ()
+
 abi: STR_LIT                                                    ()
     | RAW_BYTE_STR_LIT                                          ()
 
 maybe_func_parameters: func_parameters                            ()
-                    |                                           ()
+                    |                                              ()
 
 func_parameters: func_param func_parameters_expansion maybe_comma  ()
 
@@ -354,6 +360,37 @@ method: func_qualifier FN IDENT maybe_generics LPARENT
         maybe_func_return_type maybe_where_clause 
         block_expression                                        ()
 marco_invocation_semi: simple_path (* need to be completed*)    ()
+
+extern_block: EXTERN maybe_abi LBRACE inner_attrs
+            external_items RBRACE                               ()
+external_items: external_item external_items                    ()
+            |                                                   ()
+external_item: outer_attrs 
+                maybe_visibility external_static_item           ()
+            | inner_attrs
+                maybe_visibility external_func_item             ()
+external_static_item: STATIC maybe_mut IDENT COLON types SEMI   ()
+external_func_item: FN IDENT maybe_generics LPARENT
+                maybe_named_func_parameters RPARENT
+                maybe_func_return_type maybe_where_clause
+                SEMI                                            ()
+            |   FN IDENT maybe_generics LPARENT
+                named_func_parameters_with_variadics RPARENT
+                maybe_func_return_type maybe_where_clause
+                SEMI                                            ()
+
+maybe_named_func_parameters: named_func_parameters              ()
+                        |                                       ()
+named_func_parameters: named_func_param 
+                named_func_parameters_expansion maybe_comma     ()
+named_func_parameters_expansion: 
+    named_func_parameters_expansion COMMA named_func_param      ()
+                    |                                           ()
+named_func_param: IDENT COLON types                             ()
+                | UNDERSCORE COLON types                        ()
+named_func_parameters_with_variadics: 
+                named_func_parameters_expansion 
+                named_func_param COMMA DOTDOTDOT                ()
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    ()
 maybe_statements:                                               ()
 expression: INTEGER_LIT                                         ()

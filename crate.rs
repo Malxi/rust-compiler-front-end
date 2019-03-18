@@ -105,3 +105,8 @@ impl Point {
         //println!("Point is at ({}, {})", self.x, self.y);
     }
 }
+
+/* extern block */
+extern {
+    fn foo(x: i32, ...);
+}
