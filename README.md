@@ -11,6 +11,7 @@ In sml interactive system
 + Literal parse in lex or yacc?
 + Add a suffix option for literals
 + Solve conflicts of function qualifier
++ Complete simple path
 
 ## Tools
 + convert for encoding and decoding

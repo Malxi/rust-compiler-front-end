@@ -43,7 +43,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | patterns | types
         | generics | where_clause | maybe_generics | maybe_where_clause | maybe_visibility
         | maybe_comma | maybe_plus | maybe_ques | maybe_not
-        | function | func_qualifier | maybe_const | maybe_unsafe | abi | maybe_abi
+        | function | func_qualifier | maybe_const | maybe_unsafe | abi | maybe_abi | maybe_path_sep
         | func_parameters | maybe_func_parameters | func_param | func_parameters_expansion
         | func_return_type | maybe_func_return_type
         | block_expression | maybe_statements | expression
@@ -80,6 +80,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
 %nonassoc LPARENT
 %nonassoc LOWER_THAN_ABI
 %nonassoc ABI
+
 %verbose
 
 %%
@@ -95,6 +96,9 @@ item: outer_attrs vis_item                                      (VisItemType (ou
 vis_item: item_type                                             (VisItem(DefaultVis, item_type))
         | visibility item_type                                  (VisItem(visibility, item_type))
 
+maybe_visibility: visibility                                    ()
+                    |                                           ()
+
 visibility: PUB                                                 (PubVis)
         | PUB LPARENT CARET RPARENT                             (CrateVis)
         | PUB LPARENT SELFVALUE RPARENT                         (SelfVis)
@@ -107,9 +111,9 @@ use_tree: simple_path                                           (UseSingle ([sim
 
 macro_item:                                                     (MarcoItem)
 
-inner_attrs: inner_attr inner_attrs                             (yaccLog("inner_attrs"); inner_attr::inner_attrs)
+inner_attrs: inner_attrs inner_attr                             (yaccLog("inner_attrs"); inner_attr::inner_attrs)
             |                                                   ([])
-outer_attrs: outer_attr outer_attrs                             (yaccLog("outer_attrs"); outer_attr::outer_attrs)
+outer_attrs: outer_attrs outer_attr                             (yaccLog("outer_attrs"); outer_attr::outer_attrs)
             |                                                   ([])
 
 inner_attr: SHEBANG LBRACKET meta_item RBRACKET                 (yaccLog("inner_attr"); InnerAttribute(meta_item))
@@ -134,10 +138,10 @@ lit_exp:STR_LIT                                                 (yaccLog("lit_ex
 patterns: IDENT                                                 ()
 types: IDENT                                                    ()
 
-simple_path: PATHSEP simple_path_segment simple_path_expansion  (SimplePath(simple_path_segment::simple_path_expansion))
-            | simple_path_segment simple_path_expansion         (SimplePath(simple_path_segment::simple_path_expansion))
-simple_path_expansion: PATHSEP simple_path_segment 
-                        simple_path_expansion                   (simple_path_segment::simple_path_expansion)
+simple_path: (*maybe_path_sep*)
+                simple_path_segment simple_path_expansion       (SimplePath([simple_path_segment]))(*::simple_path_expansion))*)
+simple_path_expansion:  simple_path_expansion PATHSEP simple_path_segment 
+                                           (simple_path_segment::simple_path_expansion)
                     |                                           ([])
 simple_path_segment: IDENT                                      (IDENT)
                     | SUPER                                     ("super")
@@ -145,8 +149,9 @@ simple_path_segment: IDENT                                      (IDENT)
                     | CARET                                     ("crate")
                     | DOLLAR CARET                              ("$crate")
 
-maybe_visibility: visibility                                    ()
-                    |                                           ()
+maybe_path_sep: PATHSEP                                         ()
+                |                                               ()
+
 maybe_where_clause: where_clause                                ()
                     |                                           ()
 where_clause: WHERE                                             ()
@@ -164,7 +169,7 @@ maybe_ques: QUESTION                                            ()
 maybe_const: CONST                                              ()
             |                                                   ()
 maybe_unsafe: UNSAFE                                            ()
-            |                                                   ()
+            (* |                                                   ()*)
 maybe_not: NOT                                                  ()
             |                                                   ()
 
@@ -202,7 +207,12 @@ function: func_qualifier FN IDENT maybe_generics
             maybe_where_clause
             block_expression                                    ()      
 
-func_qualifier: maybe_const maybe_unsafe                         ()
+func_qualifier: (* 
+                    The problem is lalr reads 1 token, there are two productions 
+                    which can produce epsilon, the parser can not 
+                    distinct function and trait.
+                *)
+                (*maybe_const*) maybe_unsafe                         ()
                 (*| maybe_const maybe_unsafe EXTERN 
                 %prec LOWER_THAN_ABI                            ()*)
                 (*| maybe_const maybe_unsafe EXTERN abi
@@ -329,7 +339,9 @@ trait_bound: maybe_ques maybe_for_lifetimes type_path           ()
 type_path: IDENT (* need to be completed *)                     ()
 maybe_for_lifetimes: for_lifetimes                              ()
                     |                                           ()
-for_lifetimes: IDENT(* There is no definition *)                ()
+for_lifetimes: (* There is no definition in reference, 
+            and following production comes from rust repository *)                
+                FOR LT lifetime GT                              ()
 self_param: maybe_and_or_lifetime maybe_mut SELFVALUE           ()
             | maybe_mut SELFVALUE                               ()
             | maybe_mut SELFVALUE COLON types                   ()
@@ -363,11 +375,11 @@ marco_invocation_semi: simple_path (* need to be completed*)    ()
 
 extern_block: EXTERN maybe_abi LBRACE inner_attrs
             external_items RBRACE                               ()
-external_items: external_item external_items                    ()
+external_items: external_items external_item                    ()
             |                                                   ()
 external_item: outer_attrs 
                 maybe_visibility external_static_item           ()
-            | inner_attrs
+            | outer_attrs
                 maybe_visibility external_func_item             ()
 external_static_item: STATIC maybe_mut IDENT COLON types SEMI   ()
 external_func_item: FN IDENT maybe_generics LPARENT
@@ -387,10 +399,11 @@ named_func_parameters_expansion:
     named_func_parameters_expansion COMMA named_func_param      ()
                     |                                           ()
 named_func_param: IDENT COLON types                             ()
-                | UNDERSCORE COLON types                        ()
-named_func_parameters_with_variadics: 
-                named_func_parameters_expansion 
-                named_func_param COMMA DOTDOTDOT                ()
+                 |UNDERSCORE COLON types                        ()
+named_func_parameters_with_variadics:
+                (* For convenient, this production is rewrote *)
+                named_func_param named_func_parameters_expansion 
+                COMMA DOTDOTDOT                                 ()
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    ()
 maybe_statements:                                               ()
 expression: INTEGER_LIT                                         ()
