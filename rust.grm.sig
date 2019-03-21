@@ -60,7 +60,8 @@ val SLASH:  'a * 'a -> (svalue,'a) token
 val STAR:  'a * 'a -> (svalue,'a) token
 val MINUS:  'a * 'a -> (svalue,'a) token
 val PLUS:  'a * 'a -> (svalue,'a) token
-val LIFETIME: (string) *  'a * 'a -> (svalue,'a) token
+val LIFETIME_TOKEN: (string) *  'a * 'a -> (svalue,'a) token
+val LIFETIME_OR_LABEL: (string) *  'a * 'a -> (svalue,'a) token
 val FLOAT_LIT: (real) *  'a * 'a -> (svalue,'a) token
 val TUPLE_INDEX: (int) *  'a * 'a -> (svalue,'a) token
 val INTEGER_LIT: (LargeInt.int) *  'a * 'a -> (svalue,'a) token

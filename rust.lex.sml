@@ -2111,7 +2111,7 @@ fun yyAction86 (strm, lastMatch : yymatch) = let
         yystrm := strm;
         (YYBEGIN INITIAL; lexLog(yypos, yytext);
                                         (* lifetime_token or loop_label *)
-                                        Tokens.LIFETIME(yytext, yypos, yypos-1+size yytext); continue())
+                                        Tokens.LIFETIME_OR_LABEL(yytext, yypos, yypos-1+size yytext); continue())
       end
 fun yyAction87 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)

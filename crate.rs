@@ -110,3 +110,6 @@ impl Point {
 extern {
     fn foo(x: i32, ...);
 }
+
+/* generics */
+fn foo<'a, T>() {}

@@ -412,7 +412,7 @@ shebang_line = ("#!"([^\[\n])*\n);
 <INITIAL>"static"                   => (YYBEGIN INITIAL; lexLog(yypos, yytext); Tokens.STATICLIFETIME(yypos, yypos+size yytext));
 <LIFE_OR_CHAR>{ident}               => (YYBEGIN INITIAL; lexLog(yypos, yytext);
                                         (* lifetime_token or loop_label *)
-                                        Tokens.LIFETIME(yytext, yypos, yypos-1+size yytext); continue());
+                                        Tokens.LIFETIME_OR_LABEL(yytext, yypos, yypos-1+size yytext); continue());
 <LIFE_OR_CHAR>{quote_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
                                         Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue());
 <LIFE_OR_CHAR>{ascii_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 

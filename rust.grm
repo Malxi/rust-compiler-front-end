@@ -18,7 +18,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | BYTE_LIT of int | BYTE_STR_LIT of string | RAW_BYTE_STR_LIT of string
         | INTEGER_LIT of LargeInt.int | TUPLE_INDEX of int 
         | FLOAT_LIT of real
-    | LIFETIME of string
+    | LIFETIME_OR_LABEL of string | LIFETIME_TOKEN of string
     | PLUS | MINUS | STAR | SLASH | PERCENT | CARET
         | NOT | AND | OR | ANDAND | OROR | SHL | SHR
         | PLUSEQ | MINUSEQ | STAREQ | SLASHEQ | PERCENTEQ | CARETEQ | ANDEQ | OREQ
@@ -42,7 +42,10 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | use_tree of UseTree
         | patterns | types
         | generics | where_clause | maybe_generics | maybe_where_clause | maybe_visibility
-        | maybe_comma | maybe_plus | maybe_ques | maybe_not
+        | generic_params | lifetime_params | lifetime_param | lifetime_params_expansion 
+        | type_params | type_params_expansion | type_param | maybe_type_param
+        | maybe_lifetime_param | maybe_colon_lifetime_bounds | lifetime_param_tail | maybe_colon_type_bounds
+        | maybe_comma | maybe_plus | maybe_ques | maybe_not | maybe_outer_attr
         | function | func_qualifier | maybe_const | maybe_unsafe | abi | maybe_abi | maybe_path_sep
         | func_parameters | maybe_func_parameters | func_param | func_parameters_expansion
         | func_return_type | maybe_func_return_type
@@ -54,7 +57,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | type_alias
         | constant_item
         | maybe_trait_super | maybe_type_param_bounds | type_param_bounds | type_param_bounds_expansion | type_param_bound
-        | lifetime | trait_bound | for_lifetimes | type_path | maybe_for_lifetimes
+        | lifetime | lifetime_bounds | lifetime_bounds_expansion | maybe_lifetime
+        | trait_bound | for_lifetimes | type_path | maybe_for_lifetimes
         | trait_items | trait_item 
         | trait_func | trait_method | trait_const | trait_type | marco_invocation_semi
         | trait_func_decl | trait_method_decl | trait_func_parameters 
@@ -116,6 +120,8 @@ inner_attrs: inner_attrs inner_attr                             (yaccLog("inner_
 outer_attrs: outer_attrs outer_attr                             (yaccLog("outer_attrs"); outer_attr::outer_attrs)
             |                                                   ([])
 
+maybe_outer_attr: outer_attr                                    ()
+                |                                               ()
 inner_attr: SHEBANG LBRACKET meta_item RBRACKET                 (yaccLog("inner_attr"); InnerAttribute(meta_item))
 outer_attr: POUND LBRACKET meta_item RBRACKET                   (OuterAttribute meta_item)
 
@@ -138,7 +144,7 @@ lit_exp:STR_LIT                                                 (yaccLog("lit_ex
 patterns: IDENT                                                 ()
 types: IDENT                                                    ()
 
-simple_path: (*maybe_path_sep*)
+simple_path: maybe_path_sep
                 simple_path_segment simple_path_expansion       (SimplePath([simple_path_segment]))(*::simple_path_expansion))*)
 simple_path_expansion:  simple_path_expansion PATHSEP simple_path_segment 
                                            (simple_path_segment::simple_path_expansion)
@@ -157,7 +163,34 @@ maybe_where_clause: where_clause                                ()
 where_clause: WHERE                                             ()
 maybe_generics: generics                                        ()
                 |                                               ()
-generics: LT IDENT GT                                           ()
+
+generics: LT generic_params GT                                  ()
+generic_params: lifetime_params                                 ()
+                | lifetime_params_expansion type_params         ()
+lifetime_params: lifetime_params_expansion 
+                maybe_lifetime_param                            ()
+maybe_lifetime_param: lifetime_param                            ()
+                    |                                           ()
+lifetime_params_expansion: lifetime_params_expansion
+                            lifetime_param COMMA                ()
+                        |                                       ()
+lifetime_param: maybe_outer_attr
+            LIFETIME_OR_LABEL maybe_colon_lifetime_bounds       ()
+maybe_colon_lifetime_bounds: COLON lifetime_bounds              ()
+                        |                                       ()
+type_params: type_params_expansion maybe_type_param             ()
+type_params_expansion: type_params_expansion 
+                    type_param COMMA                            ()
+                    |                                           ()
+maybe_type_param: type_param                                    ()
+                |                                               ()
+type_param: maybe_outer_attr IDENT maybe_colon_type_bounds      ()
+            | maybe_outer_attr IDENT maybe_colon_type_bounds
+                EQ types                                        ()
+maybe_colon_type_bounds: COLON                                  ()
+                        | COLON type_param_bounds               ()
+                        |                                       ()
+
 maybe_comma: COMMA                                              ()
             |                                                   ()
 maybe_mut: MUT                                                  ()
@@ -169,7 +202,7 @@ maybe_ques: QUESTION                                            ()
 maybe_const: CONST                                              ()
             |                                                   ()
 maybe_unsafe: UNSAFE                                            ()
-            (* |                                                   ()*)
+            |                                                   ()
 maybe_not: NOT                                                  ()
             |                                                   ()
 
@@ -331,8 +364,15 @@ type_param_bounds_expansion: type_param_bounds_expansion
                         |                                       ()
 type_param_bound: lifetime                                      ()
                 | trait_bound                                   ()
+
+lifetime_bounds: lifetime_bounds_expansion maybe_lifetime       ()
+lifetime_bounds_expansion: lifetime_bounds_expansion
+                    lifetime PLUS                               ()
+maybe_lifetime: lifetime                                        ()
+                |                                               ()
+
 lifetime: (* here are some questions *)
-          LIFETIME                                              ()
+          LIFETIME_OR_LABEL                                     ()
         | STATICLIFETIME                                        ()
 trait_bound: maybe_ques maybe_for_lifetimes type_path           ()
             | LPARENT maybe_ques maybe_for_lifetimes type_path  ()
