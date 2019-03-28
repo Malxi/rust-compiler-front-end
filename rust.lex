@@ -408,21 +408,22 @@ shebang_line = ("#!"([^\[\n])*\n);
 
 <INITIAL>{ident}           => (lexLog(yypos, "Tokens.IDENT "^yytext); Tokens.IDENT(yytext, yypos, yypos+size yytext));
 
-<INITIAL>"'"                        => (YYBEGIN LIFE_OR_CHAR; lexLog(yypos, "<Char>"); continue());
+<INITIAL>"'"                        => (YYBEGIN LIFE_OR_CHAR; lexLog(yypos, "<LIFE_OR_CHAR>"); continue());
 <INITIAL>"static"                   => (YYBEGIN INITIAL; lexLog(yypos, yytext); Tokens.STATICLIFETIME(yypos, yypos+size yytext));
-<LIFE_OR_CHAR>{ident}               => (YYBEGIN INITIAL; lexLog(yypos, yytext);
+<LIFE_OR_CHAR>{ident}               => (YYBEGIN INITIAL;
                                         (* lifetime_token or loop_label *)
-                                        Tokens.LIFETIME_OR_LABEL(yytext, yypos, yypos-1+size yytext); continue());
+                                        lexLog(yypos, "<LIFETIME_OR_LABEL> "^yytext);
+                                        Tokens.LIFETIME_OR_LABEL(yytext, yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>{quote_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>{ascii_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>{unicode_escape}"'"   => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>."'"                  => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>[\128-\255]{2,4}"'"   => (YYBEGIN INITIAL; lexLog(yypos, yytext);
-                                        Tokens.CHAR_LIT(decodeChar(strip(yytext, #"'"), UTF8), yypos, yypos-1+size yytext); continue());
+                                        Tokens.CHAR_LIT(decodeChar(strip(yytext, #"'"), UTF8), yypos, yypos-1+size yytext));
 
 <INITIAL>"\""              => (YYBEGIN STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<String>"); continue());
 <STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos, "Tokens.STR_LIT "^strMake()); Tokens.STR_LIT(strMake(), !strpos, yypos));           

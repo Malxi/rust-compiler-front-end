@@ -113,3 +113,16 @@ extern {
 
 /* generics */
 fn foo<'a, T>() {}
+
+/* where clause */
+struct A<T>
+where
+    T: Iterator,            // Could use A<T: Iterator> instead
+    T::Item: Copy,
+    //String: PartialEq<T>,
+    i32: Default,           // Allowed, but not useful
+    i32: Iterator,          // Error: the trait bound is not satisfied
+    //[T]: Copy,              // Error: the trait bound is not satisfied
+{
+    f: T,
+}

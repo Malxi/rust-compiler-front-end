@@ -39,9 +39,10 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | exp | program
         | item of Item | vis_item of VisItem | macro_item of MarcoItem
         | visibility of Visibility | item_type of ItemType
-        | use_tree of UseTree
+        | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
         | patterns | types
-        | generics | where_clause | maybe_generics | maybe_where_clause | maybe_visibility
+        | generics | where_clause | maybe_generics | maybe_where_clause | maybe_visibility | where_clause_expansion
+        | where_clause_item | maybe_where_clause_item | lifetime_where_clause_item | type_bound_where_clause_item
         | generic_params | lifetime_params | lifetime_param | lifetime_params_expansion 
         | type_params | type_params_expansion | type_param | maybe_type_param
         | maybe_lifetime_param | maybe_colon_lifetime_bounds | lifetime_param_tail | maybe_colon_type_bounds
@@ -109,9 +110,21 @@ visibility: PUB                                                 (PubVis)
         | PUB LPARENT SUPER RPARENT                             (SuperVis)
         | PUB LPARENT IN simple_path RPARENT                    (InVis (simple_path))
 
-use_tree: simple_path                                           (UseSingle ([simple_path]))
-        | simple_path AS IDENT                                  (UseAlias (simple_path, IDENT))
-        (* Some recursion use tree need to add *)
+use_tree: simple_path                                           (yaccLog("use_tree:branch 1"); UseAlias (simple_path, NONE))
+        | simple_path AS IDENT                                  (yaccLog("use_tree:branch 2"); UseAlias (simple_path, SOME(IDENT)))
+        | STAR                                                  (yaccLog("use_tree:branch 3"); UseWildCard (NONE))
+        | PATHSEP STAR                                          (yaccLog("use_tree:branch 4"); UseWildCard (NONE))
+        | simple_path PATHSEP STAR                              (yaccLog("use_tree:branch 5"); UseWildCard (SOME(simple_path)))
+        | use_tree_multi                                        (yaccLog("use_tree:branch 6"); UseMultiple (NONE, use_tree_multi))
+        | PATHSEP use_tree_multi                                (yaccLog("use_tree:branch 7"); UseMultiple (NONE, use_tree_multi))
+        | simple_path PATHSEP use_tree_multi                    (yaccLog("use_tree:branch 8"); UseMultiple (SOME(simple_path), use_tree_multi))
+use_tree_multi: LBRACE use_tree 
+                use_tree_multi_expansion maybe_comma RBRACE     (use_tree::use_tree_multi_expansion)
+                | LBRACE RBRACE                                 ([])
+use_tree_multi_expansion: use_tree_multi_expansion
+                            COMMA use_tree                      (use_tree::use_tree_multi_expansion)
+                        |                                       ([])                       
+
 
 macro_item:                                                     (MarcoItem)
 
@@ -144,11 +157,10 @@ lit_exp:STR_LIT                                                 (yaccLog("lit_ex
 patterns: IDENT                                                 ()
 types: IDENT                                                    ()
 
-simple_path: maybe_path_sep
-                simple_path_segment simple_path_expansion       (SimplePath([simple_path_segment]))(*::simple_path_expansion))*)
-simple_path_expansion:  simple_path_expansion PATHSEP simple_path_segment 
-                                           (simple_path_segment::simple_path_expansion)
-                    |                                           ([])
+simple_path: simple_path_expansion simple_path_segment       (SimplePath([simple_path_segment]))(*::simple_path_expansion))*)
+simple_path_expansion:  simple_path_expansion 
+                        PATHSEP simple_path_segment             (simple_path_segment::simple_path_expansion)
+                    | simple_path_segment                       ([simple_path_segment])
 simple_path_segment: IDENT                                      (IDENT)
                     | SUPER                                     ("super")
                     | SELFVALUE                                 ("self")
@@ -157,36 +169,66 @@ simple_path_segment: IDENT                                      (IDENT)
 
 maybe_path_sep: PATHSEP                                         ()
                 |                                               ()
+(* simple_path: simple_path simple_path_segment                    (SimplePath([simple_path_segment]))
+            |                                                   ()*)
+            
+(* simple_path_segment: PATHSEP IDENT                              (IDENT)
+                    | IDENT                                     (IDENT)
+                    | PATHSEP SUPER                             ("super")
+                    | SUPER                                     ("super")
+                    | PATHSEP CARET                             ("crate")
+                    | CARET                                     ("crate")
+                    | PATHSEP DOLLAR CARET                      ("$crate")
+                    | DOLLAR CARET                              ("$crate") *)
+            
 
 maybe_where_clause: where_clause                                ()
                     |                                           ()
-where_clause: WHERE                                             ()
+where_clause: WHERE where_clause_expansion 
+                    maybe_where_clause_item                     ()
+where_clause_expansion: where_clause_expansion 
+                    where_clause_item COMMA                     ()
+                    |                                           ()
+maybe_where_clause_item: where_clause_item                      ()
+                    |                                           ()
+where_clause_item: lifetime_where_clause_item                   ()
+                    | type_bound_where_clause_item              ()
+lifetime_where_clause_item: lifetime COLON lifetime_bounds      ()
+type_bound_where_clause_item: maybe_for_lifetimes types COLON 
+                            maybe_type_param_bounds             ()
 maybe_generics: generics                                        ()
                 |                                               ()
+maybe_for_lifetimes: for_lifetimes                              ()
+                    |                                           ()
+for_lifetimes: (* There is no definition in reference, 
+            and following production comes from rust repository *)                
+                FOR LT lifetime_params GT                        ()
 
-generics: LT generic_params GT                                  ()
-generic_params: lifetime_params                                 ()
-                | lifetime_params_expansion type_params         ()
+(* There is a ambiguous token, SHR *)
+generics: LT generic_params GT                                  (yaccLog("generics"))
+
+generic_params: lifetime_params                                 (yaccLog("generic_params:branch 1"))
+                | lifetime_params_expansion type_params         (yaccLog("generic_params:branch 2"))
 lifetime_params: lifetime_params_expansion 
                 maybe_lifetime_param                            ()
 maybe_lifetime_param: lifetime_param                            ()
                     |                                           ()
 lifetime_params_expansion: lifetime_params_expansion
-                            lifetime_param COMMA                ()
-                        |                                       ()
+                            lifetime_param COMMA                (yaccLog("lifetime_params_expansion:branch 1"))
+                        |                                       (yaccLog("lifetime_params_expansion:branch 2"))
 lifetime_param: maybe_outer_attr
-            LIFETIME_OR_LABEL maybe_colon_lifetime_bounds       ()
+            LIFETIME_OR_LABEL maybe_colon_lifetime_bounds       (yaccLog("lifetime_param"))
 maybe_colon_lifetime_bounds: COLON lifetime_bounds              ()
                         |                                       ()
 type_params: type_params_expansion maybe_type_param             ()
 type_params_expansion: type_params_expansion 
-                    type_param COMMA                            ()
-                    |                                           ()
+                    type_param COMMA                            (yaccLog("type_params_expansion:branch 1"))
+                    |                                           (yaccLog("type_params_expansion:branch 2"))
 maybe_type_param: type_param                                    ()
                 |                                               ()
-type_param: maybe_outer_attr IDENT maybe_colon_type_bounds      ()
+type_param: maybe_outer_attr IDENT maybe_colon_type_bounds      (yaccLog("type_param:branch 1"))
             | maybe_outer_attr IDENT maybe_colon_type_bounds
-                EQ types                                        ()
+                EQ types                                        (yaccLog("type_param:branch 2"))
 maybe_colon_type_bounds: COLON                                  ()
                         | COLON type_param_bounds               ()
                         |                                       ()
@@ -245,11 +287,11 @@ func_qualifier: (*
                     which can produce epsilon, the parser can not 
                     distinct function and trait.
                 *)
-                (*maybe_const*) maybe_unsafe                         ()
-                (*| maybe_const maybe_unsafe EXTERN 
-                %prec LOWER_THAN_ABI                            ()*)
-                (*| maybe_const maybe_unsafe EXTERN abi
-                %prec ABI                                       ()*)
+                maybe_const maybe_unsafe                         ()
+                | maybe_const maybe_unsafe EXTERN 
+                %prec LOWER_THAN_ABI                            ()
+                | maybe_const maybe_unsafe EXTERN abi
+                %prec ABI                                       ()
 
 maybe_abi: abi                                                  ()
         |                                                       ()
@@ -377,11 +419,7 @@ lifetime: (* here are some questions *)
 trait_bound: maybe_ques maybe_for_lifetimes type_path           ()
             | LPARENT maybe_ques maybe_for_lifetimes type_path  ()
 type_path: IDENT (* need to be completed *)                     ()
-maybe_for_lifetimes: for_lifetimes                              ()
-                    |                                           ()
-for_lifetimes: (* There is no definition in reference, 
-            and following production comes from rust repository *)                
-                FOR LT lifetime GT                              ()
+
 self_param: maybe_and_or_lifetime maybe_mut SELFVALUE           ()
             | maybe_mut SELFVALUE                               ()
             | maybe_mut SELFVALUE COLON types                   ()

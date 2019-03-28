@@ -2098,7 +2098,7 @@ fun yyAction83 (strm, lastMatch : yymatch) = let
         (lexLog(yypos, "Tokens.IDENT "^yytext); Tokens.IDENT(yytext, yypos, yypos+size yytext))
       end
 fun yyAction84 (strm, lastMatch : yymatch) = (yystrm := strm;
-      (YYBEGIN LIFE_OR_CHAR; lexLog(yypos, "<Char>"); continue()))
+      (YYBEGIN LIFE_OR_CHAR; lexLog(yypos, "<LIFE_OR_CHAR>"); continue()))
 fun yyAction85 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
@@ -2109,44 +2109,45 @@ fun yyAction86 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (YYBEGIN INITIAL; lexLog(yypos, yytext);
+        (YYBEGIN INITIAL;
                                         (* lifetime_token or loop_label *)
-                                        Tokens.LIFETIME_OR_LABEL(yytext, yypos, yypos-1+size yytext); continue())
+                                        lexLog(yypos, "<LIFETIME_OR_LABEL> "^yytext);
+                                        Tokens.LIFETIME_OR_LABEL(yytext, yypos, yypos-1+size yytext))
       end
 fun yyAction87 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
         (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue())
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext))
       end
 fun yyAction88 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
         (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue())
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext))
       end
 fun yyAction89 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
         (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext); continue())
+                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext))
       end
 fun yyAction90 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
         (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos-1+size yytext); continue())
+                                        Tokens.CHAR_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos-1+size yytext))
       end
 fun yyAction91 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
         (YYBEGIN INITIAL; lexLog(yypos, yytext);
-                                        Tokens.CHAR_LIT(decodeChar(strip(yytext, #"'"), UTF8), yypos, yypos-1+size yytext); continue())
+                                        Tokens.CHAR_LIT(decodeChar(strip(yytext, #"'"), UTF8), yypos, yypos-1+size yytext))
       end
 fun yyAction92 (strm, lastMatch : yymatch) = (yystrm := strm;
       (YYBEGIN STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<String>"); continue()))

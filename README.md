@@ -12,6 +12,7 @@ In sml interactive system
 + Add a suffix option for literals
 + Solve conflicts of function qualifier
 + Complete simple path
++ Extra work for ambiguous tokens (GT and SHR)
 
 ## Tools
 + convert for encoding and decoding

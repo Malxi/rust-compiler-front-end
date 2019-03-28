@@ -28,7 +28,7 @@ sig
         | ExternBlock
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
-    and UseTree = UseSingle of SimplePath list | UseMultiple of (SimplePath list * UseTree list) | UseAlias of (SimplePath * string)
+    and UseTree = UseWildCard of SimplePath option | UseMultiple of (SimplePath option * UseTree list) | UseAlias of (SimplePath * string option)
     and MarcoItem = MarcoItem
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
@@ -67,7 +67,7 @@ struct
         | ExternBlock
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
-    and UseTree = UseSingle of SimplePath list | UseMultiple of (SimplePath list * UseTree list) | UseAlias of (SimplePath * string)
+    and UseTree = UseWildCard of SimplePath option | UseMultiple of (SimplePath option * UseTree list) | UseAlias of (SimplePath * string option)
     and MarcoItem = MarcoItem
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
