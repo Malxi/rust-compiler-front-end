@@ -35,7 +35,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
         | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner 
         | lit_exp of LiteralExpression
-        | path | simple_path of SimplePath | simple_path_segment of string | simple_path_expansion of string list
+        | path | simple_path of PathSeg list | simple_path_segment of PathSeg
         | exp | program
         | item of Item | vis_item of VisItem | macro_item of MarcoItem
         | visibility of Visibility | item_type of ItemType
@@ -69,7 +69,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | trait_impl_items | trait_impl_items_expansion | trait_impl_item
         | method
         | extern_block | external_items | external_item | external_static_item | external_func_item | maybe_named_func_parameters
-        | named_func_parameters | named_func_parameters_expansion | named_func_param | named_func_parameters_with_variadics 
+        | named_func_parameters | named_func_parameters_expansion | named_func_param | named_func_parameters_with_variadics
 %pos int
 %eop EOF
 %noshift EOF
@@ -108,21 +108,21 @@ visibility: PUB                                                 (PubVis)
         | PUB LPARENT CARET RPARENT                             (CrateVis)
         | PUB LPARENT SELFVALUE RPARENT                         (SelfVis)
         | PUB LPARENT SUPER RPARENT                             (SuperVis)
-        | PUB LPARENT IN simple_path RPARENT                    (InVis (simple_path))
+        | PUB LPARENT IN simple_path RPARENT                    (InVis (SimplePath(simple_path)))
 
-use_tree: simple_path                                           (yaccLog("use_tree:branch 1"); UseAlias (simple_path, NONE))
-        | simple_path AS IDENT                                  (yaccLog("use_tree:branch 2"); UseAlias (simple_path, SOME(IDENT)))
+use_tree: simple_path                                           (yaccLog("use_tree:branch 1"); UseAlias (SimplePath(simple_path), NONE))
+        | simple_path AS IDENT                                  (yaccLog("use_tree:branch 2"); UseAlias (SimplePath(simple_path), SOME(IDENT)))
         | STAR                                                  (yaccLog("use_tree:branch 3"); UseWildCard (NONE))
         | PATHSEP STAR                                          (yaccLog("use_tree:branch 4"); UseWildCard (NONE))
-        | simple_path PATHSEP STAR                              (yaccLog("use_tree:branch 5"); UseWildCard (SOME(simple_path)))
+        | simple_path PATHSEP STAR                              (yaccLog("use_tree:branch 5"); UseWildCard (SOME(SimplePath(simple_path))))
         | use_tree_multi                                        (yaccLog("use_tree:branch 6"); UseMultiple (NONE, use_tree_multi))
         | PATHSEP use_tree_multi                                (yaccLog("use_tree:branch 7"); UseMultiple (NONE, use_tree_multi))
-        | simple_path PATHSEP use_tree_multi                    (yaccLog("use_tree:branch 8"); UseMultiple (SOME(simple_path), use_tree_multi))
+        | simple_path PATHSEP use_tree_multi                    (yaccLog("use_tree:branch 8"); UseMultiple (SOME(SimplePath(simple_path)), use_tree_multi))
 use_tree_multi: LBRACE use_tree 
                 use_tree_multi_expansion maybe_comma RBRACE     (use_tree::use_tree_multi_expansion)
                 | LBRACE RBRACE                                 ([])
 use_tree_multi_expansion: use_tree_multi_expansion
-                            COMMA use_tree                      (use_tree::use_tree_multi_expansion)
+                            COMMA use_tree                      (use_tree_multi_expansion)
                         |                                       ([])                       
 
 
@@ -138,10 +138,10 @@ maybe_outer_attr: outer_attr                                    ()
 inner_attr: SHEBANG LBRACKET meta_item RBRACKET                 (yaccLog("inner_attr"); InnerAttribute(meta_item))
 outer_attr: POUND LBRACKET meta_item RBRACKET                   (OuterAttribute meta_item)
 
-meta_item: simple_path EQ lit_exp                               (AttrKVPair(simple_path, lit_exp))
-        | simple_path LPARENT meta_seq RPARENT                  (AttrSubs(simple_path, SOME(meta_seq)))
-        | simple_path LPARENT RPARENT                           (AttrSubs(simple_path, NONE))
-        | simple_path %prec LOWER_THAN_LPARENT                  (AttrName simple_path)
+meta_item: simple_path EQ lit_exp                               (AttrKVPair(SimplePath(simple_path), lit_exp))
+        | simple_path LPARENT meta_seq RPARENT                  (AttrSubs(SimplePath(simple_path), SOME(meta_seq)))
+        | simple_path LPARENT RPARENT                           (AttrSubs(SimplePath(simple_path), NONE))
+        | simple_path %prec LOWER_THAN_LPARENT                  (AttrName (SimplePath(simple_path)))
 
 meta_seq: meta_item_inner meta_seq_expansion COMMA              (MetaSeq(meta_item_inner::meta_seq_expansion))
             | meta_item_inner meta_seq_expansion                (MetaSeq(meta_item_inner::meta_seq_expansion))
@@ -157,30 +157,18 @@ lit_exp:STR_LIT                                                 (yaccLog("lit_ex
 patterns: IDENT                                                 ()
 types: IDENT                                                    ()
 
-simple_path: simple_path_expansion simple_path_segment       (SimplePath([simple_path_segment]))(*::simple_path_expansion))*)
-simple_path_expansion:  simple_path_expansion 
-                        PATHSEP simple_path_segment             (simple_path_segment::simple_path_expansion)
-                    | simple_path_segment                       ([simple_path_segment])
-simple_path_segment: IDENT                                      (IDENT)
-                    | SUPER                                     ("super")
-                    | SELFVALUE                                 ("self")
-                    | CARET                                     ("crate")
-                    | DOLLAR CARET                              ("$crate")
+(* rewrite simple path production*)
+simple_path:  simple_path_segment                               ([simple_path_segment])
+            | PATHSEP simple_path_segment                       ([DefaultPat, simple_path_segment])
+            | simple_path PATHSEP simple_path_segment           (simple_path_segment::simple_path)
+simple_path_segment: IDENT                                      (IDPat(IDENT))
+                    | SUPER                                     (SuperPat)
+                    | SELFVALUE                                 (SelfPat)
+                    | CARET                                     (CratePat)
+                    | DOLLAR CARET                              (DCratePat)
 
 maybe_path_sep: PATHSEP                                         ()
                 |                                               ()
-(* simple_path: simple_path simple_path_segment                    (SimplePath([simple_path_segment]))
-            |                                                   ()*)
-            
-(* simple_path_segment: PATHSEP IDENT                              (IDENT)
-                    | IDENT                                     (IDENT)
-                    | PATHSEP SUPER                             ("super")
-                    | SUPER                                     ("super")
-                    | PATHSEP CARET                             ("crate")
-                    | CARET                                     ("crate")
-                    | PATHSEP DOLLAR CARET                      ("$crate")
-                    | DOLLAR CARET                              ("$crate") *)
-            
 
 maybe_where_clause: where_clause                                ()
                     |                                           ()
@@ -449,7 +437,7 @@ method: func_qualifier FN IDENT maybe_generics LPARENT
         self_param func_parameters_expansion maybe_comma RPARENT
         maybe_func_return_type maybe_where_clause 
         block_expression                                        ()
-marco_invocation_semi: simple_path (* need to be completed*)    ()
+marco_invocation_semi: simple_path NOT(* need to be completed*)    ()
 
 extern_block: EXTERN maybe_abi LBRACE inner_attrs
             external_items RBRACE                               ()

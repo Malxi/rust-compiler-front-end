@@ -9,7 +9,8 @@ sig
     and MetaSeq = MetaSeq of MetaItemInner list
     and LiteralExpression = LiteralExpression of string
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
-    and SimplePath = SimplePath of string list
+    and SimplePath = SimplePath of PathSeg list
+    and PathSeg = IDPat of string | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
@@ -48,7 +49,8 @@ struct
     and MetaSeq = MetaSeq of MetaItemInner list
     and LiteralExpression = LiteralExpression of string
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
-    and SimplePath = SimplePath of string list
+    and SimplePath = SimplePath of PathSeg list
+    and PathSeg = IDPat of string | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 

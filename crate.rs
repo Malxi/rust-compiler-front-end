@@ -118,7 +118,7 @@ fn foo<'a, T>() {}
 struct A<T>
 where
     T: Iterator,            // Could use A<T: Iterator> instead
-    T::Item: Copy,
+    //T::Item: Copy,
     //String: PartialEq<T>,
     i32: Default,           // Allowed, but not useful
     i32: Iterator,          // Error: the trait bound is not satisfied

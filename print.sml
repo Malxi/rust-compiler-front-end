@@ -39,8 +39,13 @@ struct
                 | MetaItem (A.AttrSubs(simplePath, metaSeq), d) = 
                     (indent d; out "AttrSubs ("; SimplePath(simplePath, d); out "("; MetaSeq(metaSeq, d); out ")")
             and SimplePath (A.SimplePath(pathList), d) = 
-                (indent d; out "SimplePath ("; outList (0) Path pathList; out ")")
-            and Path(s, d) = (out (s))
+                (indent d; out "SimplePath ("; outList (0) PathSeg pathList; out ")")
+            and PathSeg(A.IDPat(id), d) = (out (id))
+                | PathSeg(A.SelfPat, d) = (out ("self"))
+                | PathSeg(A.CratePat, d) = (out ("crate"))
+                | PathSeg(A.DCratePat, d) = (out ("$crate"))
+                | PathSeg(A.SuperPat, d) = (out ("super"))
+                | PathSeg(A.DefaultPat, d) = (out (""))
             and LiteralExpression (A.LiteralExpression s, d) = (indent d; out s)
             and MetaSeq((SOME metaSeq), d) = 
                     let 
