@@ -1,11 +1,12 @@
 1 reduce/reduce conflict
-2 shift/reduce conflicts
-1 rule not reduced
+1 shift/reduce conflict
+3 rules not reduced
 
 warning: rule <macro_item : > will never be reduced
-error:  state 65: shift/reduce conflict (shift IDENT, reduce by rule 104)
-error:  state 109: reduce/reduce conflict between rule 77 and rule 85 on GT
-error:  state 109: shift/reduce conflict (shift POUND, reduce by rule 85)
+warning: rule <maybe_type_param : type_param > will never be reduced
+warning: rule <maybe_type_param : > will never be reduced
+error:  state 108: reduce/reduce conflict between rule 77 and rule 86 on GT
+error:  state 108: shift/reduce conflict (shift POUND, reduce by rule 86)
 
 state 0:
 
@@ -14,7 +15,7 @@ state 0:
 
 	SHEBANG_LINE	shift 2
 
-	crate	goto 497
+	crate	goto 511
 	inner_attrs	goto 1
 
 	.	reduce by rule 28
@@ -40,7 +41,6 @@ state 1:
 	UNSAFE	reduce by rule 30
 	USE	reduce by rule 30
 	UNION	reduce by rule 30
-	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
 	SHEBANG	shift 7
 
@@ -81,7 +81,6 @@ state 3:
 	UNSAFE	reduce by rule 30
 	USE	reduce by rule 30
 	UNION	reduce by rule 30
-	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
 	RBRACE	reduce by rule 3
 
@@ -106,21 +105,20 @@ state 5:
 	outer_attrs : outer_attrs . outer_attr 
 	item : outer_attrs . vis_item 
 
-	CONST	shift 37
-	ENUM	shift 36
-	EXTERN	shift 35
-	FN	reduce by rule 138
-	IMPL	shift 34
-	MOD	shift 33
-	PUB	shift 32
-	STATIC	shift 31
-	STRUCT	shift 30
-	TRAIT	reduce by rule 102
-	TYPE	shift 29
-	UNSAFE	shift 28
-	USE	shift 27
-	UNION	shift 26
-	IDENT	shift 25
+	CONST	shift 36
+	ENUM	shift 35
+	EXTERN	shift 34
+	FN	reduce by rule 136
+	IMPL	shift 33
+	MOD	shift 32
+	PUB	shift 31
+	STATIC	shift 30
+	STRUCT	shift 29
+	TRAIT	reduce by rule 103
+	TYPE	shift 28
+	UNSAFE	shift 27
+	USE	shift 26
+	UNION	shift 25
 	POUND	shift 24
 
 	outer_attr	goto 23
@@ -154,7 +152,7 @@ state 7:
 
 	inner_attr : SHEBANG . LBRACKET meta_item RBRACKET 
 
-	LBRACKET	shift 38
+	LBRACKET	shift 37
 
 
 	.	error
@@ -180,11 +178,10 @@ state 8:
 	UNSAFE	reduce by rule 30
 	USE	reduce by rule 30
 	UNION	reduce by rule 30
-	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
 	SHEBANG	shift 7
 
-	items	goto 39
+	items	goto 38
 	outer_attrs	goto 5
 	inner_attr	goto 4
 	item	goto 3
@@ -203,72 +200,72 @@ state 9:
 
 state 10:
 
-	item_type : extern_block .  (reduce by rule 123)
-
-
-
-	.	reduce by rule 123
-
-
-state 11:
-
-	item_type : trait_impl .  (reduce by rule 122)
-
-
-
-	.	reduce by rule 122
-
-
-state 12:
-
-	item_type : inherent_impl .  (reduce by rule 121)
+	item_type : extern_block .  (reduce by rule 121)
 
 
 
 	.	reduce by rule 121
 
 
+state 11:
+
+	item_type : trait_impl .  (reduce by rule 120)
+
+
+
+	.	reduce by rule 120
+
+
+state 12:
+
+	item_type : inherent_impl .  (reduce by rule 119)
+
+
+
+	.	reduce by rule 119
+
+
 state 13:
 
-	item_type : constant_item .  (reduce by rule 117)
+	item_type : constant_item .  (reduce by rule 115)
 
 
 
-	.	reduce by rule 117
+	.	reduce by rule 115
 
 
 state 14:
 
-	item_type : type_alias .  (reduce by rule 112)
+	item_type : type_alias .  (reduce by rule 110)
+
+
+
+	.	reduce by rule 110
+
+
+state 15:
+
+	item_type : tuple_struct .  (reduce by rule 112)
 
 
 
 	.	reduce by rule 112
 
 
-state 15:
-
-	item_type : tuple_struct .  (reduce by rule 114)
-
-
-
-	.	reduce by rule 114
-
-
 state 16:
 
-	item_type : struct_struct .  (reduce by rule 113)
+	item_type : struct_struct .  (reduce by rule 111)
 
 
 
-	.	reduce by rule 113
+	.	reduce by rule 111
 
 
 state 17:
 
 	item_type : maybe_unsafe . TRAIT IDENT maybe_generics maybe_trait_super maybe_where_clause LBRACE trait_items RBRACE 
 
-	TRAIT	shift 40
+	TRAIT	shift 39
 
 
 	.	error
@@ -278,7 +275,7 @@ state 18:
 
 	function : func_qualifier . FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	FN	shift 41
+	FN	shift 40
 
 
 	.	error
@@ -286,11 +283,11 @@ state 18:
 
 state 19:
 
-	item_type : function .  (reduce by rule 111)
+	item_type : function .  (reduce by rule 109)
 
 
 
-	.	reduce by rule 111
+	.	reduce by rule 109
 
 
 state 20:
@@ -306,22 +303,21 @@ state 21:
 
 	vis_item : visibility . item_type 
 
-	CONST	shift 37
-	ENUM	shift 36
-	EXTERN	shift 35
-	FN	reduce by rule 138
-	IMPL	shift 34
-	MOD	shift 33
-	STATIC	shift 31
-	STRUCT	shift 30
-	TRAIT	reduce by rule 102
-	TYPE	shift 29
-	UNSAFE	shift 28
-	USE	shift 27
-	UNION	shift 26
-	IDENT	shift 25
+	CONST	shift 36
+	ENUM	shift 35
+	EXTERN	shift 34
+	FN	reduce by rule 136
+	IMPL	shift 33
+	MOD	shift 32
+	STATIC	shift 30
+	STRUCT	shift 29
+	TRAIT	reduce by rule 103
+	TYPE	shift 28
+	UNSAFE	shift 27
+	USE	shift 26
+	UNION	shift 25
 
-	item_type	goto 42
+	item_type	goto 41
 	function	goto 19
 	func_qualifier	goto 18
 	maybe_unsafe	goto 17
@@ -358,7 +354,7 @@ state 24:
 
 	outer_attr : POUND . LBRACKET meta_item RBRACKET 
 
-	LBRACKET	shift 43
+	LBRACKET	shift 42
 
 
 	.	error
@@ -366,56 +362,58 @@ state 24:
 
 state 25:
 
-	item_type : IDENT .  (reduce by rule 105)
+	item_type : UNION . IDENT maybe_generics maybe_where_clause LBRACE struct_fields RBRACE 
+
+	IDENT	shift 43
 
 
-
-	.	reduce by rule 105
+	.	error
 
 
 state 26:
 
-	item_type : UNION . IDENT maybe_generics maybe_where_clause LBRACE struct_fields RBRACE 
+	item_type : USE . use_tree SEMI 
 
-	IDENT	shift 44
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	STAR	shift 52
+	CARET	shift 51
+	PATHSEP	shift 50
+	DOLLAR	shift 49
+	LBRACE	shift 48
 
+	simple_path	goto 47
+	simple_path_segment	goto 46
+	use_tree	goto 45
+	use_tree_multi	goto 44
 
 	.	error
 
 
 state 27:
 
-	item_type : USE . use_tree SEMI 
+	func_qualifier : UNSAFE .  (reduce by rule 131)
+	func_qualifier : UNSAFE . EXTERN 
+	func_qualifier : UNSAFE . EXTERN abi 
+	maybe_unsafe : UNSAFE .  (reduce by rule 102)
+	trait_impl : UNSAFE . IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : UNSAFE . IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	STAR	shift 53
-	CARET	shift 52
-	PATHSEP	shift 51
-	DOLLAR	shift 50
-	LBRACE	shift 49
+	EXTERN	shift 57
+	FN	reduce by rule 131
+	IMPL	shift 56
+	TRAIT	reduce by rule 102
 
-	simple_path	goto 48
-	simple_path_segment	goto 47
-	use_tree	goto 46
-	use_tree_multi	goto 45
 
 	.	error
 
 
 state 28:
 
-	func_qualifier : UNSAFE .  (reduce by rule 133)
-	func_qualifier : UNSAFE . EXTERN 
-	func_qualifier : UNSAFE . EXTERN abi 
-	maybe_unsafe : UNSAFE .  (reduce by rule 101)
-	trait_impl : UNSAFE . IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	type_alias : TYPE . IDENT maybe_generics maybe_where_clause EQ types SEMI 
 
-	EXTERN	shift 58
-	FN	reduce by rule 133
-	IMPL	shift 57
-	TRAIT	reduce by rule 101
+	IDENT	shift 58
 
 
 	.	error
@@ -423,7 +421,9 @@ state 28:
 
 state 29:
 
-	type_alias : TYPE . IDENT maybe_generics maybe_where_clause EQ types SEMI 
+	struct_struct : STRUCT . IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields RBRACE 
+	struct_struct : STRUCT . IDENT maybe_generics maybe_where_clause SEMI 
+	tuple_struct : STRUCT . IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI 
 
 	IDENT	shift 59
 
@@ -433,10 +433,10 @@ state 29:
 
 state 30:
 
-	struct_struct : STRUCT . IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields RBRACE 
-	struct_struct : STRUCT . IDENT maybe_generics maybe_where_clause SEMI 
-	tuple_struct : STRUCT . IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI 
+	item_type : STATIC . MUT IDENT COLON types EQ expression SEMI 
+	item_type : STATIC . IDENT COLON types EQ expression SEMI 
 
+	MUT	shift 61
 	IDENT	shift 60
 
 
@@ -445,87 +445,76 @@ state 30:
 
 state 31:
 
-	item_type : STATIC . MUT IDENT COLON types EQ expression SEMI 
-	item_type : STATIC . IDENT COLON types EQ expression SEMI 
-
-	MUT	shift 62
-	IDENT	shift 61
-
-
-	.	error
-
-
-state 32:
-
 	visibility : PUB .  (reduce by rule 9)
 	visibility : PUB . LPARENT CARET RPARENT 
 	visibility : PUB . LPARENT SELFVALUE RPARENT 
 	visibility : PUB . LPARENT SUPER RPARENT 
 	visibility : PUB . LPARENT IN simple_path RPARENT 
 
-	LPARENT	shift 63
+	LPARENT	shift 62
 
 
 	.	reduce by rule 9
 
 
-state 33:
+state 32:
 
 	item_type : MOD . IDENT SEMI 
 	item_type : MOD . IDENT LBRACE inner_attrs items RBRACE 
 
-	IDENT	shift 64
+	IDENT	shift 63
 
 
 	.	error
 
 
-state 34:
+state 33:
 
 	inherent_impl : IMPL . maybe_generics types maybe_where_clause LBRACE inner_attrs inherent_impl_items RBRACE 
-	trait_impl : IMPL . maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : IMPL . maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : IMPL . maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	LT	shift 67
+	LT	shift 66
 
-	generics	goto 66
-	maybe_generics	goto 65
+	generics	goto 65
+	maybe_generics	goto 64
 
 	.	reduce by rule 68
 
 
-state 35:
+state 34:
 
 	item_type : EXTERN . CARET IDENT SEMI 
 	item_type : EXTERN . CARET IDENT AS IDENT SEMI 
-	func_qualifier : EXTERN .  (reduce by rule 136)
+	func_qualifier : EXTERN .  (reduce by rule 134)
 	func_qualifier : EXTERN . abi 
 	extern_block : EXTERN . maybe_abi LBRACE inner_attrs external_items RBRACE 
 
-	FN	reduce by rule 136
-	STR_LIT	shift 72
-	RAW_BYTE_STR_LIT	shift 71
-	CARET	shift 70
-	LBRACE	reduce by rule 140
+	FN	reduce by rule 134
+	STR_LIT	shift 71
+	RAW_BYTE_STR_LIT	shift 70
+	CARET	shift 69
+	LBRACE	reduce by rule 138
 
-	abi	goto 69
-	maybe_abi	goto 68
+	abi	goto 68
+	maybe_abi	goto 67
+
+	.	error
+
+
+state 35:
+
+	item_type : ENUM . IDENT maybe_generics maybe_where_clause LBRACE maybe_enum_items RBRACE 
+
+	IDENT	shift 72
+
 
 	.	error
 
 
 state 36:
 
-	item_type : ENUM . IDENT maybe_generics maybe_where_clause LBRACE maybe_enum_items RBRACE 
-
-	IDENT	shift 73
-
-
-	.	error
-
-
-state 37:
-
-	func_qualifier : CONST .  (reduce by rule 127)
+	func_qualifier : CONST .  (reduce by rule 125)
 	func_qualifier : CONST . UNSAFE 
 	func_qualifier : CONST . EXTERN 
 	func_qualifier : CONST . EXTERN abi 
@@ -533,33 +522,33 @@ state 37:
 	func_qualifier : CONST . UNSAFE EXTERN abi 
 	constant_item : CONST . IDENT COLON types EQ expression SEMI 
 
-	EXTERN	shift 76
-	UNSAFE	shift 75
-	IDENT	shift 74
+	EXTERN	shift 75
+	UNSAFE	shift 74
+	IDENT	shift 73
 
 
-	.	reduce by rule 127
+	.	reduce by rule 125
 
 
-state 38:
+state 37:
 
 	inner_attr : SHEBANG LBRACKET . meta_item RBRACKET 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	CARET	shift 52
-	PATHSEP	shift 79
-	DOLLAR	shift 50
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	CARET	shift 51
+	PATHSEP	shift 78
+	DOLLAR	shift 49
 
-	meta_item	goto 78
-	simple_path	goto 77
-	simple_path_segment	goto 47
+	meta_item	goto 77
+	simple_path	goto 76
+	simple_path_segment	goto 46
 
 	.	error
 
 
-state 39:
+state 38:
 
 	crate : SHEBANG_LINE inner_attrs items .  (reduce by rule 0)
 
@@ -568,9 +557,19 @@ state 39:
 	.	reduce by rule 0
 
 
-state 40:
+state 39:
 
 	item_type : maybe_unsafe TRAIT . IDENT maybe_generics maybe_trait_super maybe_where_clause LBRACE trait_items RBRACE 
+
+	IDENT	shift 79
+
+
+	.	error
+
+
+state 40:
+
+	function : func_qualifier FN . IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
 	IDENT	shift 80
 
@@ -580,16 +579,6 @@ state 40:
 
 state 41:
 
-	function : func_qualifier FN . IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
-
-	IDENT	shift 81
-
-
-	.	error
-
-
-state 42:
-
 	vis_item : visibility item_type .  (reduce by rule 6)
 
 
@@ -597,37 +586,37 @@ state 42:
 	.	reduce by rule 6
 
 
-state 43:
+state 42:
 
 	outer_attr : POUND LBRACKET . meta_item RBRACKET 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	CARET	shift 52
-	PATHSEP	shift 79
-	DOLLAR	shift 50
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	CARET	shift 51
+	PATHSEP	shift 78
+	DOLLAR	shift 49
 
-	meta_item	goto 82
-	simple_path	goto 77
-	simple_path_segment	goto 47
+	meta_item	goto 81
+	simple_path	goto 76
+	simple_path_segment	goto 46
 
 	.	error
 
 
-state 44:
+state 43:
 
 	item_type : UNION IDENT . maybe_generics maybe_where_clause LBRACE struct_fields RBRACE 
 
-	LT	shift 67
+	LT	shift 66
 
-	generics	goto 66
-	maybe_generics	goto 83
+	generics	goto 65
+	maybe_generics	goto 82
 
 	.	reduce by rule 68
 
 
-state 45:
+state 44:
 
 	use_tree : use_tree_multi .  (reduce by rule 19)
 
@@ -636,17 +625,17 @@ state 45:
 	.	reduce by rule 19
 
 
-state 46:
+state 45:
 
 	item_type : USE use_tree . SEMI 
 
-	SEMI	shift 84
+	SEMI	shift 83
 
 
 	.	error
 
 
-state 47:
+state 46:
 
 	simple_path : simple_path_segment .  (reduce by rule 48)
 
@@ -655,7 +644,7 @@ state 47:
 	.	reduce by rule 48
 
 
-state 48:
+state 47:
 
 	simple_path : simple_path . PATHSEP simple_path_segment 
 	use_tree : simple_path .  (reduce by rule 14)
@@ -663,67 +652,67 @@ state 48:
 	use_tree : simple_path . PATHSEP STAR 
 	use_tree : simple_path . PATHSEP use_tree_multi 
 
-	AS	shift 86
-	PATHSEP	shift 85
+	AS	shift 85
+	PATHSEP	shift 84
 
 
 	.	reduce by rule 14
 
 
-state 49:
+state 48:
 
 	use_tree_multi : LBRACE . use_tree use_tree_multi_expansion maybe_comma RBRACE 
 	use_tree_multi : LBRACE . RBRACE 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	STAR	shift 53
-	CARET	shift 52
-	PATHSEP	shift 51
-	DOLLAR	shift 50
-	LBRACE	shift 49
-	RBRACE	shift 88
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	STAR	shift 52
+	CARET	shift 51
+	PATHSEP	shift 50
+	DOLLAR	shift 49
+	LBRACE	shift 48
+	RBRACE	shift 87
 
-	simple_path	goto 48
-	simple_path_segment	goto 47
-	use_tree	goto 87
-	use_tree_multi	goto 45
+	simple_path	goto 47
+	simple_path_segment	goto 46
+	use_tree	goto 86
+	use_tree_multi	goto 44
+
+	.	error
+
+
+state 49:
+
+	simple_path_segment : DOLLAR . CARET 
+
+	CARET	shift 88
+
 
 	.	error
 
 
 state 50:
 
-	simple_path_segment : DOLLAR . CARET 
+	simple_path : PATHSEP . simple_path_segment 
+	use_tree : PATHSEP . STAR 
+	use_tree : PATHSEP . use_tree_multi 
 
-	CARET	shift 89
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	STAR	shift 91
+	CARET	shift 51
+	DOLLAR	shift 49
+	LBRACE	shift 48
 
+	simple_path_segment	goto 90
+	use_tree_multi	goto 89
 
 	.	error
 
 
 state 51:
-
-	simple_path : PATHSEP . simple_path_segment 
-	use_tree : PATHSEP . STAR 
-	use_tree : PATHSEP . use_tree_multi 
-
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	STAR	shift 92
-	CARET	shift 52
-	DOLLAR	shift 50
-	LBRACE	shift 49
-
-	simple_path_segment	goto 91
-	use_tree_multi	goto 90
-
-	.	error
-
-
-state 52:
 
 	simple_path_segment : CARET .  (reduce by rule 54)
 
@@ -732,7 +721,7 @@ state 52:
 	.	reduce by rule 54
 
 
-state 53:
+state 52:
 
 	use_tree : STAR .  (reduce by rule 16)
 
@@ -741,7 +730,7 @@ state 53:
 	.	reduce by rule 16
 
 
-state 54:
+state 53:
 
 	simple_path_segment : IDENT .  (reduce by rule 51)
 
@@ -750,7 +739,7 @@ state 54:
 	.	reduce by rule 51
 
 
-state 55:
+state 54:
 
 	simple_path_segment : SUPER .  (reduce by rule 52)
 
@@ -759,7 +748,7 @@ state 55:
 	.	reduce by rule 52
 
 
-state 56:
+state 55:
 
 	simple_path_segment : SELFVALUE .  (reduce by rule 53)
 
@@ -768,38 +757,53 @@ state 56:
 	.	reduce by rule 53
 
 
-state 57:
+state 56:
 
-	trait_impl : UNSAFE IMPL . maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : UNSAFE IMPL . maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : UNSAFE IMPL . maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	LT	shift 67
+	LT	shift 66
 
-	generics	goto 66
-	maybe_generics	goto 93
+	generics	goto 65
+	maybe_generics	goto 92
 
 	.	reduce by rule 68
 
 
-state 58:
+state 57:
 
-	func_qualifier : UNSAFE EXTERN .  (reduce by rule 134)
+	func_qualifier : UNSAFE EXTERN .  (reduce by rule 132)
 	func_qualifier : UNSAFE EXTERN . abi 
 
-	STR_LIT	shift 72
-	RAW_BYTE_STR_LIT	shift 71
+	STR_LIT	shift 71
+	RAW_BYTE_STR_LIT	shift 70
 
-	abi	goto 94
+	abi	goto 93
 
-	.	reduce by rule 134
+	.	reduce by rule 132
+
+
+state 58:
+
+	type_alias : TYPE IDENT . maybe_generics maybe_where_clause EQ types SEMI 
+
+	LT	shift 66
+
+	generics	goto 65
+	maybe_generics	goto 94
+
+	.	reduce by rule 68
 
 
 state 59:
 
-	type_alias : TYPE IDENT . maybe_generics maybe_where_clause EQ types SEMI 
+	struct_struct : STRUCT IDENT . maybe_generics maybe_where_clause LBRACE maybe_struct_fields RBRACE 
+	struct_struct : STRUCT IDENT . maybe_generics maybe_where_clause SEMI 
+	tuple_struct : STRUCT IDENT . maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI 
 
-	LT	shift 67
+	LT	shift 66
 
-	generics	goto 66
+	generics	goto 65
 	maybe_generics	goto 95
 
 	.	reduce by rule 68
@@ -807,23 +811,19 @@ state 59:
 
 state 60:
 
-	struct_struct : STRUCT IDENT . maybe_generics maybe_where_clause LBRACE maybe_struct_fields RBRACE 
-	struct_struct : STRUCT IDENT . maybe_generics maybe_where_clause SEMI 
-	tuple_struct : STRUCT IDENT . maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI 
+	item_type : STATIC IDENT . COLON types EQ expression SEMI 
 
-	LT	shift 67
+	COLON	shift 96
 
-	generics	goto 66
-	maybe_generics	goto 96
 
-	.	reduce by rule 68
+	.	error
 
 
 state 61:
 
-	item_type : STATIC IDENT . COLON types EQ expression SEMI 
+	item_type : STATIC MUT . IDENT COLON types EQ expression SEMI 
 
-	COLON	shift 97
+	IDENT	shift 97
 
 
 	.	error
@@ -831,9 +831,15 @@ state 61:
 
 state 62:
 
-	item_type : STATIC MUT . IDENT COLON types EQ expression SEMI 
+	visibility : PUB LPARENT . CARET RPARENT 
+	visibility : PUB LPARENT . SELFVALUE RPARENT 
+	visibility : PUB LPARENT . SUPER RPARENT 
+	visibility : PUB LPARENT . IN simple_path RPARENT 
 
-	IDENT	shift 98
+	IN	shift 101
+	SELFVALUE	shift 100
+	SUPER	shift 99
+	CARET	shift 98
 
 
 	.	error
@@ -841,15 +847,11 @@ state 62:
 
 state 63:
 
-	visibility : PUB LPARENT . CARET RPARENT 
-	visibility : PUB LPARENT . SELFVALUE RPARENT 
-	visibility : PUB LPARENT . SUPER RPARENT 
-	visibility : PUB LPARENT . IN simple_path RPARENT 
+	item_type : MOD IDENT . SEMI 
+	item_type : MOD IDENT . LBRACE inner_attrs items RBRACE 
 
-	IN	shift 102
-	SELFVALUE	shift 101
-	SUPER	shift 100
-	CARET	shift 99
+	SEMI	shift 103
+	LBRACE	shift 102
 
 
 	.	error
@@ -857,32 +859,20 @@ state 63:
 
 state 64:
 
-	item_type : MOD IDENT . SEMI 
-	item_type : MOD IDENT . LBRACE inner_attrs items RBRACE 
+	inherent_impl : IMPL maybe_generics . types maybe_where_clause LBRACE inner_attrs inherent_impl_items RBRACE 
+	trait_impl : IMPL maybe_generics . type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : IMPL maybe_generics . NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	SEMI	shift 104
-	LBRACE	shift 103
+	IDENT	shift 107
+	NOT	shift 106
 
+	types	goto 105
+	type_path	goto 104
 
 	.	error
 
-error:  state 65: shift/reduce conflict (shift IDENT, reduce by rule 104)
 
 state 65:
-
-	inherent_impl : IMPL maybe_generics . types maybe_where_clause LBRACE inner_attrs inherent_impl_items RBRACE 
-	trait_impl : IMPL maybe_generics . maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
-
-	IDENT	shift 108
-	NOT	shift 107
-
-	types	goto 106
-	maybe_not	goto 105
-
-	.	error
-
-
-state 66:
 
 	maybe_generics : generics .  (reduce by rule 67)
 
@@ -891,23 +881,35 @@ state 66:
 	.	reduce by rule 67
 
 
-state 67:
+state 66:
 
 	generics : LT . generic_params GT 
 
 
-	generic_params	goto 111
-	lifetime_params	goto 110
-	lifetime_params_expansion	goto 109
+	generic_params	goto 110
+	lifetime_params	goto 109
+	lifetime_params_expansion	goto 108
 
 	.	reduce by rule 79
 
 
-state 68:
+state 67:
 
 	extern_block : EXTERN maybe_abi . LBRACE inner_attrs external_items RBRACE 
 
-	LBRACE	shift 112
+	LBRACE	shift 111
+
+
+	.	error
+
+
+state 68:
+
+	func_qualifier : EXTERN abi .  (reduce by rule 135)
+	maybe_abi : abi .  (reduce by rule 137)
+
+	FN	reduce by rule 135
+	LBRACE	reduce by rule 137
 
 
 	.	error
@@ -915,11 +917,10 @@ state 68:
 
 state 69:
 
-	func_qualifier : EXTERN abi .  (reduce by rule 137)
-	maybe_abi : abi .  (reduce by rule 139)
+	item_type : EXTERN CARET . IDENT SEMI 
+	item_type : EXTERN CARET . IDENT AS IDENT SEMI 
 
-	FN	reduce by rule 137
-	LBRACE	reduce by rule 139
+	IDENT	shift 112
 
 
 	.	error
@@ -927,81 +928,70 @@ state 69:
 
 state 70:
 
-	item_type : EXTERN CARET . IDENT SEMI 
-	item_type : EXTERN CARET . IDENT AS IDENT SEMI 
-
-	IDENT	shift 113
+	abi : RAW_BYTE_STR_LIT .  (reduce by rule 140)
 
 
-	.	error
+
+	.	reduce by rule 140
 
 
 state 71:
 
-	abi : RAW_BYTE_STR_LIT .  (reduce by rule 142)
+	abi : STR_LIT .  (reduce by rule 139)
 
 
 
-	.	reduce by rule 142
+	.	reduce by rule 139
 
 
 state 72:
 
-	abi : STR_LIT .  (reduce by rule 141)
-
-
-
-	.	reduce by rule 141
-
-
-state 73:
-
 	item_type : ENUM IDENT . maybe_generics maybe_where_clause LBRACE maybe_enum_items RBRACE 
 
-	LT	shift 67
+	LT	shift 66
 
-	generics	goto 66
-	maybe_generics	goto 114
+	generics	goto 65
+	maybe_generics	goto 113
 
 	.	reduce by rule 68
 
 
-state 74:
+state 73:
 
 	constant_item : CONST IDENT . COLON types EQ expression SEMI 
 
-	COLON	shift 115
+	COLON	shift 114
 
 
 	.	error
 
 
-state 75:
+state 74:
 
-	func_qualifier : CONST UNSAFE .  (reduce by rule 128)
+	func_qualifier : CONST UNSAFE .  (reduce by rule 126)
 	func_qualifier : CONST UNSAFE . EXTERN 
 	func_qualifier : CONST UNSAFE . EXTERN abi 
 
-	EXTERN	shift 116
+	EXTERN	shift 115
 
 
-	.	reduce by rule 128
+	.	reduce by rule 126
+
+
+state 75:
+
+	func_qualifier : CONST EXTERN .  (reduce by rule 127)
+	func_qualifier : CONST EXTERN . abi 
+
+	STR_LIT	shift 71
+	RAW_BYTE_STR_LIT	shift 70
+
+	abi	goto 116
+
+	.	reduce by rule 127
 
 
 state 76:
-
-	func_qualifier : CONST EXTERN .  (reduce by rule 129)
-	func_qualifier : CONST EXTERN . abi 
-
-	STR_LIT	shift 72
-	RAW_BYTE_STR_LIT	shift 71
-
-	abi	goto 117
-
-	.	reduce by rule 129
-
-
-state 77:
 
 	meta_item : simple_path . EQ lit_exp 
 	meta_item : simple_path . LPARENT meta_seq RPARENT 
@@ -1009,46 +999,58 @@ state 77:
 	meta_item : simple_path .  (reduce by rule 38)
 	simple_path : simple_path . PATHSEP simple_path_segment 
 
-	EQ	shift 120
-	PATHSEP	shift 119
-	LPARENT	shift 118
+	EQ	shift 119
+	PATHSEP	shift 118
+	LPARENT	shift 117
 
 
 	.	reduce by rule 38
 
 
-state 78:
+state 77:
 
 	inner_attr : SHEBANG LBRACKET meta_item . RBRACKET 
 
-	RBRACKET	shift 121
+	RBRACKET	shift 120
 
+
+	.	error
+
+
+state 78:
+
+	simple_path : PATHSEP . simple_path_segment 
+
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	CARET	shift 51
+	DOLLAR	shift 49
+
+	simple_path_segment	goto 90
 
 	.	error
 
 
 state 79:
 
-	simple_path : PATHSEP . simple_path_segment 
+	item_type : maybe_unsafe TRAIT IDENT . maybe_generics maybe_trait_super maybe_where_clause LBRACE trait_items RBRACE 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	CARET	shift 52
-	DOLLAR	shift 50
+	LT	shift 66
 
-	simple_path_segment	goto 91
+	generics	goto 65
+	maybe_generics	goto 121
 
-	.	error
+	.	reduce by rule 68
 
 
 state 80:
 
-	item_type : maybe_unsafe TRAIT IDENT . maybe_generics maybe_trait_super maybe_where_clause LBRACE trait_items RBRACE 
+	function : func_qualifier FN IDENT . maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	LT	shift 67
+	LT	shift 66
 
-	generics	goto 66
+	generics	goto 65
 	maybe_generics	goto 122
 
 	.	reduce by rule 68
@@ -1056,88 +1058,76 @@ state 80:
 
 state 81:
 
-	function : func_qualifier FN IDENT . maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
-
-	LT	shift 67
-
-	generics	goto 66
-	maybe_generics	goto 123
-
-	.	reduce by rule 68
-
-
-state 82:
-
 	outer_attr : POUND LBRACKET meta_item . RBRACKET 
 
-	RBRACKET	shift 124
+	RBRACKET	shift 123
 
 
 	.	error
 
 
-state 83:
+state 82:
 
 	item_type : UNION IDENT maybe_generics . maybe_where_clause LBRACE struct_fields RBRACE 
 
-	WHERE	shift 127
+	WHERE	shift 126
 
-	where_clause	goto 126
-	maybe_where_clause	goto 125
+	where_clause	goto 125
+	maybe_where_clause	goto 124
 
 	.	reduce by rule 57
 
 
+state 83:
+
+	item_type : USE use_tree SEMI .  (reduce by rule 108)
+
+
+
+	.	reduce by rule 108
+
+
 state 84:
-
-	item_type : USE use_tree SEMI .  (reduce by rule 110)
-
-
-
-	.	reduce by rule 110
-
-
-state 85:
 
 	simple_path : simple_path PATHSEP . simple_path_segment 
 	use_tree : simple_path PATHSEP . STAR 
 	use_tree : simple_path PATHSEP . use_tree_multi 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	STAR	shift 130
-	CARET	shift 52
-	DOLLAR	shift 50
-	LBRACE	shift 49
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	STAR	shift 129
+	CARET	shift 51
+	DOLLAR	shift 49
+	LBRACE	shift 48
 
-	simple_path_segment	goto 129
-	use_tree_multi	goto 128
+	simple_path_segment	goto 128
+	use_tree_multi	goto 127
+
+	.	error
+
+
+state 85:
+
+	use_tree : simple_path AS . IDENT 
+
+	IDENT	shift 130
+
 
 	.	error
 
 
 state 86:
 
-	use_tree : simple_path AS . IDENT 
-
-	IDENT	shift 131
-
-
-	.	error
-
-
-state 87:
-
 	use_tree_multi : LBRACE use_tree . use_tree_multi_expansion maybe_comma RBRACE 
 
 
-	use_tree_multi_expansion	goto 132
+	use_tree_multi_expansion	goto 131
 
 	.	reduce by rule 25
 
 
-state 88:
+state 87:
 
 	use_tree_multi : LBRACE RBRACE .  (reduce by rule 23)
 
@@ -1146,7 +1136,7 @@ state 88:
 	.	reduce by rule 23
 
 
-state 89:
+state 88:
 
 	simple_path_segment : DOLLAR CARET .  (reduce by rule 55)
 
@@ -1155,7 +1145,7 @@ state 89:
 	.	reduce by rule 55
 
 
-state 90:
+state 89:
 
 	use_tree : PATHSEP use_tree_multi .  (reduce by rule 20)
 
@@ -1164,7 +1154,7 @@ state 90:
 	.	reduce by rule 20
 
 
-state 91:
+state 90:
 
 	simple_path : PATHSEP simple_path_segment .  (reduce by rule 49)
 
@@ -1173,7 +1163,7 @@ state 91:
 	.	reduce by rule 49
 
 
-state 92:
+state 91:
 
 	use_tree : PATHSEP STAR .  (reduce by rule 17)
 
@@ -1182,97 +1172,79 @@ state 92:
 	.	reduce by rule 17
 
 
+state 92:
+
+	trait_impl : UNSAFE IMPL maybe_generics . type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : UNSAFE IMPL maybe_generics . NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	IDENT	shift 134
+	NOT	shift 133
+
+	type_path	goto 132
+
+	.	error
+
+
 state 93:
 
-	trait_impl : UNSAFE IMPL maybe_generics . maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	func_qualifier : UNSAFE EXTERN abi .  (reduce by rule 133)
 
-	NOT	shift 107
 
-	maybe_not	goto 133
 
-	.	reduce by rule 104
+	.	reduce by rule 133
 
 
 state 94:
 
-	func_qualifier : UNSAFE EXTERN abi .  (reduce by rule 135)
+	type_alias : TYPE IDENT maybe_generics . maybe_where_clause EQ types SEMI 
 
+	WHERE	shift 126
 
+	where_clause	goto 125
+	maybe_where_clause	goto 135
 
-	.	reduce by rule 135
+	.	reduce by rule 57
 
 
 state 95:
 
-	type_alias : TYPE IDENT maybe_generics . maybe_where_clause EQ types SEMI 
+	struct_struct : STRUCT IDENT maybe_generics . maybe_where_clause LBRACE maybe_struct_fields RBRACE 
+	struct_struct : STRUCT IDENT maybe_generics . maybe_where_clause SEMI 
+	tuple_struct : STRUCT IDENT maybe_generics . LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI 
 
-	WHERE	shift 127
+	WHERE	shift 126
+	LPARENT	shift 137
 
-	where_clause	goto 126
-	maybe_where_clause	goto 134
+	where_clause	goto 125
+	maybe_where_clause	goto 136
 
 	.	reduce by rule 57
 
 
 state 96:
 
-	struct_struct : STRUCT IDENT maybe_generics . maybe_where_clause LBRACE maybe_struct_fields RBRACE 
-	struct_struct : STRUCT IDENT maybe_generics . maybe_where_clause SEMI 
-	tuple_struct : STRUCT IDENT maybe_generics . LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI 
+	item_type : STATIC IDENT COLON . types EQ expression SEMI 
 
-	WHERE	shift 127
-	LPARENT	shift 136
+	IDENT	shift 139
 
-	where_clause	goto 126
-	maybe_where_clause	goto 135
+	types	goto 138
 
-	.	reduce by rule 57
+	.	error
 
 
 state 97:
 
-	item_type : STATIC IDENT COLON . types EQ expression SEMI 
+	item_type : STATIC MUT IDENT . COLON types EQ expression SEMI 
 
-	IDENT	shift 108
+	COLON	shift 140
 
-	types	goto 137
 
 	.	error
 
 
 state 98:
 
-	item_type : STATIC MUT IDENT . COLON types EQ expression SEMI 
-
-	COLON	shift 138
-
-
-	.	error
-
-
-state 99:
-
 	visibility : PUB LPARENT CARET . RPARENT 
-
-	RPARENT	shift 139
-
-
-	.	error
-
-
-state 100:
-
-	visibility : PUB LPARENT SUPER . RPARENT 
-
-	RPARENT	shift 140
-
-
-	.	error
-
-
-state 101:
-
-	visibility : PUB LPARENT SELFVALUE . RPARENT 
 
 	RPARENT	shift 141
 
@@ -1280,107 +1252,132 @@ state 101:
 	.	error
 
 
-state 102:
+state 99:
 
-	visibility : PUB LPARENT IN . simple_path RPARENT 
+	visibility : PUB LPARENT SUPER . RPARENT 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	CARET	shift 52
-	PATHSEP	shift 79
-	DOLLAR	shift 50
+	RPARENT	shift 142
 
-	simple_path	goto 142
-	simple_path_segment	goto 47
 
 	.	error
 
 
-state 103:
+state 100:
+
+	visibility : PUB LPARENT SELFVALUE . RPARENT 
+
+	RPARENT	shift 143
+
+
+	.	error
+
+
+state 101:
+
+	visibility : PUB LPARENT IN . simple_path RPARENT 
+
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	CARET	shift 51
+	PATHSEP	shift 78
+	DOLLAR	shift 49
+
+	simple_path	goto 144
+	simple_path_segment	goto 46
+
+	.	error
+
+
+state 102:
 
 	item_type : MOD IDENT LBRACE . inner_attrs items RBRACE 
 
 
-	inner_attrs	goto 143
+	inner_attrs	goto 145
 
 	.	reduce by rule 28
 
 
+state 103:
+
+	item_type : MOD IDENT SEMI .  (reduce by rule 104)
+
+
+
+	.	reduce by rule 104
+
+
 state 104:
 
-	item_type : MOD IDENT SEMI .  (reduce by rule 106)
+	trait_impl : IMPL maybe_generics type_path . FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
+	FOR	shift 146
 
-
-	.	reduce by rule 106
-
-
-state 105:
-
-	trait_impl : IMPL maybe_generics maybe_not . type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
-
-	IDENT	shift 145
-
-	type_path	goto 144
 
 	.	error
 
 
-state 106:
+state 105:
 
 	inherent_impl : IMPL maybe_generics types . maybe_where_clause LBRACE inner_attrs inherent_impl_items RBRACE 
 
-	WHERE	shift 127
+	WHERE	shift 126
 
-	where_clause	goto 126
-	maybe_where_clause	goto 146
+	where_clause	goto 125
+	maybe_where_clause	goto 147
 
 	.	reduce by rule 57
 
 
+state 106:
+
+	trait_impl : IMPL maybe_generics NOT . type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	IDENT	shift 134
+
+	type_path	goto 148
+
+	.	error
+
+
 state 107:
 
-	maybe_not : NOT .  (reduce by rule 103)
+	types : IDENT .  (reduce by rule 47)
+	type_path : IDENT .  (reduce by rule 219)
+
+	FOR	reduce by rule 219
+	WHERE	reduce by rule 47
+	LBRACE	reduce by rule 47
 
 
+	.	error
 
-	.	reduce by rule 103
-
+error:  state 108: reduce/reduce conflict between rule 77 and rule 86 on GT
+error:  state 108: shift/reduce conflict (shift POUND, reduce by rule 86)
 
 state 108:
-
-	types : IDENT .  (reduce by rule 47)
-
-
-
-	.	reduce by rule 47
-
-error:  state 109: reduce/reduce conflict between rule 77 and rule 85 on GT
-error:  state 109: shift/reduce conflict (shift POUND, reduce by rule 85)
-
-state 109:
 
 	generic_params : lifetime_params_expansion . type_params 
 	lifetime_params : lifetime_params_expansion . maybe_lifetime_param 
 	lifetime_params_expansion : lifetime_params_expansion . lifetime_param COMMA 
 
-	IDENT	reduce by rule 85
+	IDENT	reduce by rule 86
 	LIFETIME_OR_LABEL	reduce by rule 32
 	GT	reduce by rule 77
 	POUND	shift 24
 
-	outer_attr	goto 152
-	lifetime_param	goto 151
-	type_params	goto 150
-	type_params_expansion	goto 149
-	maybe_lifetime_param	goto 148
-	maybe_outer_attr	goto 147
+	outer_attr	goto 154
+	lifetime_param	goto 153
+	type_params	goto 152
+	type_params_expansion	goto 151
+	maybe_lifetime_param	goto 150
+	maybe_outer_attr	goto 149
 
 	.	error
 
 
-state 110:
+state 109:
 
 	generic_params : lifetime_params .  (reduce by rule 73)
 
@@ -1389,134 +1386,134 @@ state 110:
 	.	reduce by rule 73
 
 
-state 111:
+state 110:
 
 	generics : LT generic_params . GT 
 
-	GT	shift 153
+	GT	shift 155
 
 
 	.	error
 
 
-state 112:
+state 111:
 
 	extern_block : EXTERN maybe_abi LBRACE . inner_attrs external_items RBRACE 
 
 
-	inner_attrs	goto 154
+	inner_attrs	goto 156
 
 	.	reduce by rule 28
 
 
-state 113:
+state 112:
 
 	item_type : EXTERN CARET IDENT . SEMI 
 	item_type : EXTERN CARET IDENT . AS IDENT SEMI 
 
-	AS	shift 156
-	SEMI	shift 155
+	AS	shift 158
+	SEMI	shift 157
 
 
 	.	error
 
 
-state 114:
+state 113:
 
 	item_type : ENUM IDENT maybe_generics . maybe_where_clause LBRACE maybe_enum_items RBRACE 
 
-	WHERE	shift 127
+	WHERE	shift 126
 
-	where_clause	goto 126
-	maybe_where_clause	goto 157
+	where_clause	goto 125
+	maybe_where_clause	goto 159
 
 	.	reduce by rule 57
 
 
-state 115:
+state 114:
 
 	constant_item : CONST IDENT COLON . types EQ expression SEMI 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 158
+	types	goto 160
 
 	.	error
 
 
-state 116:
+state 115:
 
-	func_qualifier : CONST UNSAFE EXTERN .  (reduce by rule 131)
+	func_qualifier : CONST UNSAFE EXTERN .  (reduce by rule 129)
 	func_qualifier : CONST UNSAFE EXTERN . abi 
 
-	STR_LIT	shift 72
-	RAW_BYTE_STR_LIT	shift 71
+	STR_LIT	shift 71
+	RAW_BYTE_STR_LIT	shift 70
 
-	abi	goto 159
+	abi	goto 161
 
-	.	reduce by rule 131
+	.	reduce by rule 129
+
+
+state 116:
+
+	func_qualifier : CONST EXTERN abi .  (reduce by rule 128)
+
+
+
+	.	reduce by rule 128
 
 
 state 117:
 
-	func_qualifier : CONST EXTERN abi .  (reduce by rule 130)
+	meta_item : simple_path LPARENT . meta_seq RPARENT 
+	meta_item : simple_path LPARENT . RPARENT 
 
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	STR_LIT	shift 167
+	CARET	shift 51
+	PATHSEP	shift 78
+	DOLLAR	shift 49
+	RPARENT	shift 166
 
+	meta_item	goto 165
+	meta_seq	goto 164
+	meta_item_inner	goto 163
+	lit_exp	goto 162
+	simple_path	goto 76
+	simple_path_segment	goto 46
 
-	.	reduce by rule 130
+	.	error
 
 
 state 118:
 
-	meta_item : simple_path LPARENT . meta_seq RPARENT 
-	meta_item : simple_path LPARENT . RPARENT 
+	simple_path : simple_path PATHSEP . simple_path_segment 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	STR_LIT	shift 165
-	CARET	shift 52
-	PATHSEP	shift 79
-	DOLLAR	shift 50
-	RPARENT	shift 164
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	CARET	shift 51
+	DOLLAR	shift 49
 
-	meta_item	goto 163
-	meta_seq	goto 162
-	meta_item_inner	goto 161
-	lit_exp	goto 160
-	simple_path	goto 77
-	simple_path_segment	goto 47
+	simple_path_segment	goto 128
 
 	.	error
 
 
 state 119:
 
-	simple_path : simple_path PATHSEP . simple_path_segment 
+	meta_item : simple_path EQ . lit_exp 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	CARET	shift 52
-	DOLLAR	shift 50
+	STR_LIT	shift 167
 
-	simple_path_segment	goto 129
+	lit_exp	goto 168
 
 	.	error
 
 
 state 120:
-
-	meta_item : simple_path EQ . lit_exp 
-
-	STR_LIT	shift 165
-
-	lit_exp	goto 166
-
-	.	error
-
-
-state 121:
 
 	inner_attr : SHEBANG LBRACKET meta_item RBRACKET .  (reduce by rule 33)
 
@@ -1525,28 +1522,28 @@ state 121:
 	.	reduce by rule 33
 
 
-state 122:
+state 121:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics . maybe_trait_super maybe_where_clause LBRACE trait_items RBRACE 
 
-	COLON	shift 168
+	COLON	shift 170
 
-	maybe_trait_super	goto 167
+	maybe_trait_super	goto 169
 
-	.	reduce by rule 205
+	.	reduce by rule 203
 
 
-state 123:
+state 122:
 
 	function : func_qualifier FN IDENT maybe_generics . LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	LPARENT	shift 169
+	LPARENT	shift 171
 
 
 	.	error
 
 
-state 124:
+state 123:
 
 	outer_attr : POUND LBRACKET meta_item RBRACKET .  (reduce by rule 34)
 
@@ -1555,17 +1552,17 @@ state 124:
 	.	reduce by rule 34
 
 
-state 125:
+state 124:
 
 	item_type : UNION IDENT maybe_generics maybe_where_clause . LBRACE struct_fields RBRACE 
 
-	LBRACE	shift 170
+	LBRACE	shift 172
 
 
 	.	error
 
 
-state 126:
+state 125:
 
 	maybe_where_clause : where_clause .  (reduce by rule 56)
 
@@ -1574,17 +1571,17 @@ state 126:
 	.	reduce by rule 56
 
 
-state 127:
+state 126:
 
 	where_clause : WHERE . where_clause_expansion maybe_where_clause_item 
 
 
-	where_clause_expansion	goto 171
+	where_clause_expansion	goto 173
 
 	.	reduce by rule 60
 
 
-state 128:
+state 127:
 
 	use_tree : simple_path PATHSEP use_tree_multi .  (reduce by rule 21)
 
@@ -1593,7 +1590,7 @@ state 128:
 	.	reduce by rule 21
 
 
-state 129:
+state 128:
 
 	simple_path : simple_path PATHSEP simple_path_segment .  (reduce by rule 50)
 
@@ -1602,7 +1599,7 @@ state 129:
 	.	reduce by rule 50
 
 
-state 130:
+state 129:
 
 	use_tree : simple_path PATHSEP STAR .  (reduce by rule 18)
 
@@ -1611,7 +1608,7 @@ state 130:
 	.	reduce by rule 18
 
 
-state 131:
+state 130:
 
 	use_tree : simple_path AS IDENT .  (reduce by rule 15)
 
@@ -1620,46 +1617,53 @@ state 131:
 	.	reduce by rule 15
 
 
-state 132:
+state 131:
 
 	use_tree_multi : LBRACE use_tree use_tree_multi_expansion . maybe_comma RBRACE 
 	use_tree_multi_expansion : use_tree_multi_expansion . COMMA use_tree 
 
-	COMMA	shift 173
+	COMMA	shift 175
 
-	maybe_comma	goto 172
+	maybe_comma	goto 174
 
-	.	reduce by rule 94
+	.	reduce by rule 95
+
+
+state 132:
+
+	trait_impl : UNSAFE IMPL maybe_generics type_path . FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	FOR	shift 176
+
+
+	.	error
 
 
 state 133:
 
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not . type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	trait_impl : UNSAFE IMPL maybe_generics NOT . type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	IDENT	shift 145
+	IDENT	shift 134
 
-	type_path	goto 174
+	type_path	goto 177
 
 	.	error
 
 
 state 134:
 
-	type_alias : TYPE IDENT maybe_generics maybe_where_clause . EQ types SEMI 
-
-	EQ	shift 175
+	type_path : IDENT .  (reduce by rule 219)
 
 
-	.	error
+
+	.	reduce by rule 219
 
 
 state 135:
 
-	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause . LBRACE maybe_struct_fields RBRACE 
-	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause . SEMI 
+	type_alias : TYPE IDENT maybe_generics maybe_where_clause . EQ types SEMI 
 
-	SEMI	shift 177
-	LBRACE	shift 176
+	EQ	shift 178
 
 
 	.	error
@@ -1667,43 +1671,64 @@ state 135:
 
 state 136:
 
-	tuple_struct : STRUCT IDENT maybe_generics LPARENT . maybe_tuple_fields RPARENT maybe_where_clause SEMI 
+	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause . LBRACE maybe_struct_fields RBRACE 
+	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause . SEMI 
 
-	PUB	reduce by rule 30
-	IDENT	reduce by rule 30
-	POUND	reduce by rule 30
-	RPARENT	reduce by rule 163
+	SEMI	shift 180
+	LBRACE	shift 179
 
-	outer_attrs	goto 181
-	tuple_fields	goto 180
-	tuple_field	goto 179
-	maybe_tuple_fields	goto 178
 
 	.	error
 
 
 state 137:
 
-	item_type : STATIC IDENT COLON types . EQ expression SEMI 
+	tuple_struct : STRUCT IDENT maybe_generics LPARENT . maybe_tuple_fields RPARENT maybe_where_clause SEMI 
 
-	EQ	shift 182
+	PUB	reduce by rule 30
+	IDENT	reduce by rule 30
+	POUND	reduce by rule 30
+	RPARENT	reduce by rule 161
 
+	outer_attrs	goto 184
+	tuple_fields	goto 183
+	tuple_field	goto 182
+	maybe_tuple_fields	goto 181
 
 	.	error
 
 
 state 138:
 
-	item_type : STATIC MUT IDENT COLON . types EQ expression SEMI 
+	item_type : STATIC IDENT COLON types . EQ expression SEMI 
 
-	IDENT	shift 108
+	EQ	shift 185
 
-	types	goto 183
 
 	.	error
 
 
 state 139:
+
+	types : IDENT .  (reduce by rule 47)
+
+
+
+	.	reduce by rule 47
+
+
+state 140:
+
+	item_type : STATIC MUT IDENT COLON . types EQ expression SEMI 
+
+	IDENT	shift 139
+
+	types	goto 186
+
+	.	error
+
+
+state 141:
 
 	visibility : PUB LPARENT CARET RPARENT .  (reduce by rule 10)
 
@@ -1712,7 +1737,7 @@ state 139:
 	.	reduce by rule 10
 
 
-state 140:
+state 142:
 
 	visibility : PUB LPARENT SUPER RPARENT .  (reduce by rule 12)
 
@@ -1721,7 +1746,7 @@ state 140:
 	.	reduce by rule 12
 
 
-state 141:
+state 143:
 
 	visibility : PUB LPARENT SELFVALUE RPARENT .  (reduce by rule 11)
 
@@ -1730,19 +1755,19 @@ state 141:
 	.	reduce by rule 11
 
 
-state 142:
+state 144:
 
 	simple_path : simple_path . PATHSEP simple_path_segment 
 	visibility : PUB LPARENT IN simple_path . RPARENT 
 
-	PATHSEP	shift 119
-	RPARENT	shift 184
+	PATHSEP	shift 118
+	RPARENT	shift 187
 
 
 	.	error
 
 
-state 143:
+state 145:
 
 	inner_attrs : inner_attrs . inner_attr 
 	item_type : MOD IDENT LBRACE inner_attrs . items RBRACE 
@@ -1761,12 +1786,11 @@ state 143:
 	UNSAFE	reduce by rule 30
 	USE	reduce by rule 30
 	UNION	reduce by rule 30
-	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
 	RBRACE	reduce by rule 3
 	SHEBANG	shift 7
 
-	items	goto 185
+	items	goto 188
 	outer_attrs	goto 5
 	inner_attr	goto 4
 	item	goto 3
@@ -1774,46 +1798,48 @@ state 143:
 	.	error
 
 
-state 144:
-
-	trait_impl : IMPL maybe_generics maybe_not type_path . FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
-
-	FOR	shift 186
-
-
-	.	error
-
-
-state 145:
-
-	type_path : IDENT .  (reduce by rule 221)
-
-
-
-	.	reduce by rule 221
-
-
 state 146:
 
-	inherent_impl : IMPL maybe_generics types maybe_where_clause . LBRACE inner_attrs inherent_impl_items RBRACE 
+	trait_impl : IMPL maybe_generics type_path FOR . types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	LBRACE	shift 187
+	IDENT	shift 139
 
+	types	goto 189
 
 	.	error
 
 
 state 147:
 
-	lifetime_param : maybe_outer_attr . LIFETIME_OR_LABEL maybe_colon_lifetime_bounds 
+	inherent_impl : IMPL maybe_generics types maybe_where_clause . LBRACE inner_attrs inherent_impl_items RBRACE 
 
-	LIFETIME_OR_LABEL	shift 188
+	LBRACE	shift 190
 
 
 	.	error
 
 
 state 148:
+
+	trait_impl : IMPL maybe_generics NOT type_path . FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	FOR	shift 191
+
+
+	.	error
+
+
+state 149:
+
+	lifetime_param : maybe_outer_attr . LIFETIME_OR_LABEL maybe_colon_lifetime_bounds 
+
+	LIFETIME_OR_LABEL	shift 192
+
+
+	.	error
+
+
+state 150:
 
 	lifetime_params : lifetime_params_expansion maybe_lifetime_param .  (reduce by rule 75)
 
@@ -1822,24 +1848,24 @@ state 148:
 	.	reduce by rule 75
 
 
-state 149:
+state 151:
 
-	type_params : type_params_expansion . maybe_type_param 
+	type_params : type_params_expansion .  (reduce by rule 83)
+	type_params : type_params_expansion . type_param 
 	type_params_expansion : type_params_expansion . type_param COMMA 
 
 	IDENT	reduce by rule 32
-	GT	reduce by rule 87
+	GT	reduce by rule 83
 	POUND	shift 24
 
-	outer_attr	goto 152
-	type_param	goto 191
-	maybe_type_param	goto 190
-	maybe_outer_attr	goto 189
+	outer_attr	goto 154
+	type_param	goto 194
+	maybe_outer_attr	goto 193
 
 	.	error
 
 
-state 150:
+state 152:
 
 	generic_params : lifetime_params_expansion type_params .  (reduce by rule 74)
 
@@ -1848,18 +1874,18 @@ state 150:
 	.	reduce by rule 74
 
 
-state 151:
+state 153:
 
 	lifetime_params_expansion : lifetime_params_expansion lifetime_param . COMMA 
 	maybe_lifetime_param : lifetime_param .  (reduce by rule 76)
 
-	COMMA	shift 192
+	COMMA	shift 195
 
 
 	.	reduce by rule 76
 
 
-state 152:
+state 154:
 
 	maybe_outer_attr : outer_attr .  (reduce by rule 31)
 
@@ -1868,7 +1894,7 @@ state 152:
 	.	reduce by rule 31
 
 
-state 153:
+state 155:
 
 	generics : LT generic_params GT .  (reduce by rule 72)
 
@@ -1877,7 +1903,7 @@ state 153:
 	.	reduce by rule 72
 
 
-state 154:
+state 156:
 
 	inner_attrs : inner_attrs . inner_attr 
 	extern_block : EXTERN maybe_abi LBRACE inner_attrs . external_items RBRACE 
@@ -1885,45 +1911,25 @@ state 154:
 	SHEBANG	shift 7
 
 	inner_attr	goto 4
-	external_items	goto 193
+	external_items	goto 196
 
 	.	reduce by rule 247
 
 
-state 155:
-
-	item_type : EXTERN CARET IDENT SEMI .  (reduce by rule 108)
-
-
-
-	.	reduce by rule 108
-
-
-state 156:
-
-	item_type : EXTERN CARET IDENT AS . IDENT SEMI 
-
-	IDENT	shift 194
-
-
-	.	error
-
-
 state 157:
 
-	item_type : ENUM IDENT maybe_generics maybe_where_clause . LBRACE maybe_enum_items RBRACE 
-
-	LBRACE	shift 195
+	item_type : EXTERN CARET IDENT SEMI .  (reduce by rule 106)
 
 
-	.	error
+
+	.	reduce by rule 106
 
 
 state 158:
 
-	constant_item : CONST IDENT COLON types . EQ expression SEMI 
+	item_type : EXTERN CARET IDENT AS . IDENT SEMI 
 
-	EQ	shift 196
+	IDENT	shift 197
 
 
 	.	error
@@ -1931,14 +1937,34 @@ state 158:
 
 state 159:
 
-	func_qualifier : CONST UNSAFE EXTERN abi .  (reduce by rule 132)
+	item_type : ENUM IDENT maybe_generics maybe_where_clause . LBRACE maybe_enum_items RBRACE 
+
+	LBRACE	shift 198
 
 
-
-	.	reduce by rule 132
+	.	error
 
 
 state 160:
+
+	constant_item : CONST IDENT COLON types . EQ expression SEMI 
+
+	EQ	shift 199
+
+
+	.	error
+
+
+state 161:
+
+	func_qualifier : CONST UNSAFE EXTERN abi .  (reduce by rule 130)
+
+
+
+	.	reduce by rule 130
+
+
+state 162:
 
 	meta_item_inner : lit_exp .  (reduce by rule 44)
 
@@ -1947,29 +1973,29 @@ state 160:
 	.	reduce by rule 44
 
 
-state 161:
+state 163:
 
 	meta_seq : meta_item_inner . meta_seq_expansion COMMA 
 	meta_seq : meta_item_inner . meta_seq_expansion 
 
-	LPARENT	shift 198
+	LPARENT	shift 201
 
-	meta_seq_expansion	goto 197
+	meta_seq_expansion	goto 200
 
 	.	reduce by rule 42
 
 
-state 162:
+state 164:
 
 	meta_item : simple_path LPARENT meta_seq . RPARENT 
 
-	RPARENT	shift 199
+	RPARENT	shift 202
 
 
 	.	error
 
 
-state 163:
+state 165:
 
 	meta_item_inner : meta_item .  (reduce by rule 43)
 
@@ -1978,7 +2004,7 @@ state 163:
 	.	reduce by rule 43
 
 
-state 164:
+state 166:
 
 	meta_item : simple_path LPARENT RPARENT .  (reduce by rule 37)
 
@@ -1987,7 +2013,7 @@ state 164:
 	.	reduce by rule 37
 
 
-state 165:
+state 167:
 
 	lit_exp : STR_LIT .  (reduce by rule 45)
 
@@ -1996,7 +2022,7 @@ state 165:
 	.	reduce by rule 45
 
 
-state 166:
+state 168:
 
 	meta_item : simple_path EQ lit_exp .  (reduce by rule 35)
 
@@ -2005,129 +2031,97 @@ state 166:
 	.	reduce by rule 35
 
 
-state 167:
+state 169:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_trait_super . maybe_where_clause LBRACE trait_items RBRACE 
 
-	WHERE	shift 127
+	WHERE	shift 126
 
-	where_clause	goto 126
-	maybe_where_clause	goto 200
+	where_clause	goto 125
+	maybe_where_clause	goto 203
 
 	.	reduce by rule 57
 
 
-state 168:
+state 170:
 
 	maybe_trait_super : COLON . maybe_type_param_bounds 
 
-	FOR	reduce by rule 100
-	WHERE	reduce by rule 207
-	STATICLIFETIME	shift 210
-	IDENT	reduce by rule 100
-	LIFETIME_OR_LABEL	shift 209
-	SEMI	reduce by rule 207
-	QUESTION	shift 208
-	LBRACE	reduce by rule 207
-	LPARENT	shift 207
+	FOR	reduce by rule 101
+	WHERE	reduce by rule 205
+	STATICLIFETIME	shift 213
+	IDENT	reduce by rule 101
+	LIFETIME_OR_LABEL	shift 212
+	SEMI	reduce by rule 205
+	QUESTION	shift 211
+	LBRACE	reduce by rule 205
+	LPARENT	shift 210
 
-	maybe_ques	goto 206
-	maybe_type_param_bounds	goto 205
-	type_param_bounds	goto 204
-	type_param_bound	goto 203
-	lifetime	goto 202
-	trait_bound	goto 201
+	maybe_ques	goto 209
+	maybe_type_param_bounds	goto 208
+	type_param_bounds	goto 207
+	type_param_bound	goto 206
+	lifetime	goto 205
+	trait_bound	goto 204
 
 	.	error
-
-
-state 169:
-
-	function : func_qualifier FN IDENT maybe_generics LPARENT . maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
-
-	IDENT	shift 215
-
-	patterns	goto 214
-	func_parameters	goto 213
-	maybe_func_parameters	goto 212
-	func_param	goto 211
-
-	.	reduce by rule 144
-
-
-state 170:
-
-	item_type : UNION IDENT maybe_generics maybe_where_clause LBRACE . struct_fields RBRACE 
-
-
-	outer_attrs	goto 218
-	struct_fields	goto 217
-	struct_field	goto 216
-
-	.	reduce by rule 30
 
 
 state 171:
 
-	where_clause : WHERE where_clause_expansion . maybe_where_clause_item 
-	where_clause_expansion : where_clause_expansion . where_clause_item COMMA 
+	function : func_qualifier FN IDENT maybe_generics LPARENT . maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	FOR	shift 226
-	STATICLIFETIME	shift 210
-	IDENT	reduce by rule 70
-	LIFETIME_OR_LABEL	shift 209
-	EQ	reduce by rule 62
-	SEMI	reduce by rule 62
-	LBRACE	reduce by rule 62
+	IDENT	shift 218
 
-	where_clause_item	goto 225
-	maybe_where_clause_item	goto 224
-	lifetime_where_clause_item	goto 223
-	type_bound_where_clause_item	goto 222
-	lifetime	goto 221
-	for_lifetimes	goto 220
-	maybe_for_lifetimes	goto 219
+	patterns	goto 217
+	func_parameters	goto 216
+	maybe_func_parameters	goto 215
+	func_param	goto 214
 
-	.	error
+	.	reduce by rule 142
 
 
 state 172:
 
-	use_tree_multi : LBRACE use_tree use_tree_multi_expansion maybe_comma . RBRACE 
-
-	RBRACE	shift 227
+	item_type : UNION IDENT maybe_generics maybe_where_clause LBRACE . struct_fields RBRACE 
 
 
-	.	error
+	outer_attrs	goto 221
+	struct_fields	goto 220
+	struct_field	goto 219
+
+	.	reduce by rule 30
 
 
 state 173:
 
-	use_tree_multi_expansion : use_tree_multi_expansion COMMA . use_tree 
-	maybe_comma : COMMA .  (reduce by rule 93)
+	where_clause : WHERE where_clause_expansion . maybe_where_clause_item 
+	where_clause_expansion : where_clause_expansion . where_clause_item COMMA 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	STAR	shift 53
-	CARET	shift 52
-	PATHSEP	shift 51
-	DOLLAR	shift 50
-	LBRACE	shift 49
+	FOR	shift 229
+	STATICLIFETIME	shift 213
+	IDENT	reduce by rule 70
+	LIFETIME_OR_LABEL	shift 212
+	EQ	reduce by rule 62
+	SEMI	reduce by rule 62
+	LBRACE	reduce by rule 62
 
-	simple_path	goto 48
-	simple_path_segment	goto 47
-	use_tree	goto 228
-	use_tree_multi	goto 45
+	where_clause_item	goto 228
+	maybe_where_clause_item	goto 227
+	lifetime_where_clause_item	goto 226
+	type_bound_where_clause_item	goto 225
+	lifetime	goto 224
+	for_lifetimes	goto 223
+	maybe_for_lifetimes	goto 222
 
-	.	reduce by rule 93
+	.	error
 
 
 state 174:
 
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path . FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+	use_tree_multi : LBRACE use_tree use_tree_multi_expansion maybe_comma . RBRACE 
 
-	FOR	shift 229
+	RBRACE	shift 230
 
 
 	.	error
@@ -2135,109 +2129,152 @@ state 174:
 
 state 175:
 
-	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ . types SEMI 
+	use_tree_multi_expansion : use_tree_multi_expansion COMMA . use_tree 
+	maybe_comma : COMMA .  (reduce by rule 94)
 
-	IDENT	shift 108
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	STAR	shift 52
+	CARET	shift 51
+	PATHSEP	shift 50
+	DOLLAR	shift 49
+	LBRACE	shift 48
 
-	types	goto 230
+	simple_path	goto 47
+	simple_path_segment	goto 46
+	use_tree	goto 231
+	use_tree_multi	goto 44
 
-	.	error
+	.	reduce by rule 94
 
 
 state 176:
 
-	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE . maybe_struct_fields RBRACE 
+	trait_impl : UNSAFE IMPL maybe_generics type_path FOR . types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	PUB	reduce by rule 30
-	IDENT	reduce by rule 30
-	POUND	reduce by rule 30
-	RBRACE	reduce by rule 155
+	IDENT	shift 139
 
-	outer_attrs	goto 218
-	struct_fields	goto 232
-	struct_field	goto 216
-	maybe_struct_fields	goto 231
+	types	goto 232
 
 	.	error
 
 
 state 177:
 
-	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause SEMI .  (reduce by rule 153)
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path . FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	FOR	shift 233
 
 
-
-	.	reduce by rule 153
+	.	error
 
 
 state 178:
 
-	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields . RPARENT maybe_where_clause SEMI 
+	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ . types SEMI 
 
-	RPARENT	shift 233
+	IDENT	shift 139
 
+	types	goto 234
 
 	.	error
 
 
 state 179:
 
-	tuple_fields : tuple_field . tuple_fields_expansion maybe_comma 
+	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE . maybe_struct_fields RBRACE 
 
+	PUB	reduce by rule 30
+	IDENT	reduce by rule 30
+	POUND	reduce by rule 30
+	RBRACE	reduce by rule 153
 
-	tuple_fields_expansion	goto 234
+	outer_attrs	goto 221
+	struct_fields	goto 236
+	struct_field	goto 219
+	maybe_struct_fields	goto 235
 
-	.	reduce by rule 166
+	.	error
 
 
 state 180:
 
-	maybe_tuple_fields : tuple_fields .  (reduce by rule 162)
+	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause SEMI .  (reduce by rule 151)
 
 
 
-	.	reduce by rule 162
+	.	reduce by rule 151
 
 
 state 181:
 
-	outer_attrs : outer_attrs . outer_attr 
-	tuple_field : outer_attrs . visibility types 
-	tuple_field : outer_attrs . types 
+	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields . RPARENT maybe_where_clause SEMI 
 
-	PUB	shift 32
-	IDENT	shift 108
-	POUND	shift 24
+	RPARENT	shift 237
 
-	outer_attr	goto 23
-	visibility	goto 236
-	types	goto 235
 
 	.	error
 
 
 state 182:
 
-	item_type : STATIC IDENT COLON types EQ . expression SEMI 
+	tuple_fields : tuple_field . tuple_fields_expansion maybe_comma 
 
-	INTEGER_LIT	shift 238
 
-	expression	goto 237
+	tuple_fields_expansion	goto 238
 
-	.	error
+	.	reduce by rule 164
 
 
 state 183:
 
+	maybe_tuple_fields : tuple_fields .  (reduce by rule 160)
+
+
+
+	.	reduce by rule 160
+
+
+state 184:
+
+	outer_attrs : outer_attrs . outer_attr 
+	tuple_field : outer_attrs . visibility types 
+	tuple_field : outer_attrs . types 
+
+	PUB	shift 31
+	IDENT	shift 139
+	POUND	shift 24
+
+	outer_attr	goto 23
+	visibility	goto 240
+	types	goto 239
+
+	.	error
+
+
+state 185:
+
+	item_type : STATIC IDENT COLON types EQ . expression SEMI 
+
+	INTEGER_LIT	shift 242
+
+	expression	goto 241
+
+	.	error
+
+
+state 186:
+
 	item_type : STATIC MUT IDENT COLON types . EQ expression SEMI 
 
-	EQ	shift 239
+	EQ	shift 243
 
 
 	.	error
 
 
-state 184:
+state 187:
 
 	visibility : PUB LPARENT IN simple_path RPARENT .  (reduce by rule 13)
 
@@ -2246,80 +2283,83 @@ state 184:
 	.	reduce by rule 13
 
 
-state 185:
+state 188:
 
 	item_type : MOD IDENT LBRACE inner_attrs items . RBRACE 
 
-	RBRACE	shift 240
+	RBRACE	shift 244
 
 
 	.	error
-
-
-state 186:
-
-	trait_impl : IMPL maybe_generics maybe_not type_path FOR . types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
-
-	IDENT	shift 108
-
-	types	goto 241
-
-	.	error
-
-
-state 187:
-
-	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE . inner_attrs inherent_impl_items RBRACE 
-
-
-	inner_attrs	goto 242
-
-	.	reduce by rule 28
-
-
-state 188:
-
-	lifetime_param : maybe_outer_attr LIFETIME_OR_LABEL . maybe_colon_lifetime_bounds 
-
-	COLON	shift 244
-
-	maybe_colon_lifetime_bounds	goto 243
-
-	.	reduce by rule 82
 
 
 state 189:
 
+	trait_impl : IMPL maybe_generics type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	WHERE	shift 126
+
+	where_clause	goto 125
+	maybe_where_clause	goto 245
+
+	.	reduce by rule 57
+
+
+state 190:
+
+	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE . inner_attrs inherent_impl_items RBRACE 
+
+
+	inner_attrs	goto 246
+
+	.	reduce by rule 28
+
+
+state 191:
+
+	trait_impl : IMPL maybe_generics NOT type_path FOR . types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	IDENT	shift 139
+
+	types	goto 247
+
+	.	error
+
+
+state 192:
+
+	lifetime_param : maybe_outer_attr LIFETIME_OR_LABEL . maybe_colon_lifetime_bounds 
+
+	COLON	shift 249
+
+	maybe_colon_lifetime_bounds	goto 248
+
+	.	reduce by rule 82
+
+
+state 193:
+
 	type_param : maybe_outer_attr . IDENT maybe_colon_type_bounds 
 	type_param : maybe_outer_attr . IDENT maybe_colon_type_bounds EQ types 
 
-	IDENT	shift 245
+	IDENT	shift 250
 
 
 	.	error
 
 
-state 190:
+state 194:
 
-	type_params : type_params_expansion maybe_type_param .  (reduce by rule 83)
-
-
-
-	.	reduce by rule 83
-
-
-state 191:
-
+	type_params : type_params_expansion type_param .  (reduce by rule 84)
 	type_params_expansion : type_params_expansion type_param . COMMA 
-	maybe_type_param : type_param .  (reduce by rule 86)
 
-	COMMA	shift 246
-
-
-	.	reduce by rule 86
+	COMMA	shift 251
 
 
-state 192:
+	.	reduce by rule 84
+
+
+state 195:
 
 	lifetime_params_expansion : lifetime_params_expansion lifetime_param COMMA .  (reduce by rule 78)
 
@@ -2328,78 +2368,78 @@ state 192:
 	.	reduce by rule 78
 
 
-state 193:
+state 196:
 
 	extern_block : EXTERN maybe_abi LBRACE inner_attrs external_items . RBRACE 
 	external_items : external_items . external_item 
 
-	RBRACE	shift 249
+	RBRACE	shift 254
 
-	outer_attrs	goto 248
-	external_item	goto 247
+	outer_attrs	goto 253
+	external_item	goto 252
 
 	.	reduce by rule 30
 
 
-state 194:
+state 197:
 
 	item_type : EXTERN CARET IDENT AS IDENT . SEMI 
 
-	SEMI	shift 250
+	SEMI	shift 255
 
 
 	.	error
 
 
-state 195:
+state 198:
 
 	item_type : ENUM IDENT maybe_generics maybe_where_clause LBRACE . maybe_enum_items RBRACE 
 
 	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
-	RBRACE	reduce by rule 170
+	RBRACE	reduce by rule 168
 
-	outer_attrs	goto 254
-	enum_items	goto 253
-	maybe_enum_items	goto 252
-	enum_item	goto 251
-
-	.	error
-
-
-state 196:
-
-	constant_item : CONST IDENT COLON types EQ . expression SEMI 
-
-	INTEGER_LIT	shift 238
-
-	expression	goto 255
-
-	.	error
-
-
-state 197:
-
-	meta_seq : meta_item_inner meta_seq_expansion . COMMA 
-	meta_seq : meta_item_inner meta_seq_expansion .  (reduce by rule 40)
-
-	COMMA	shift 256
-
-
-	.	reduce by rule 40
-
-
-state 198:
-
-	meta_seq_expansion : LPARENT . COMMA meta_item_inner RPARENT meta_seq_expansion 
-
-	COMMA	shift 257
-
+	outer_attrs	goto 259
+	enum_items	goto 258
+	maybe_enum_items	goto 257
+	enum_item	goto 256
 
 	.	error
 
 
 state 199:
+
+	constant_item : CONST IDENT COLON types EQ . expression SEMI 
+
+	INTEGER_LIT	shift 242
+
+	expression	goto 260
+
+	.	error
+
+
+state 200:
+
+	meta_seq : meta_item_inner meta_seq_expansion . COMMA 
+	meta_seq : meta_item_inner meta_seq_expansion .  (reduce by rule 40)
+
+	COMMA	shift 261
+
+
+	.	reduce by rule 40
+
+
+state 201:
+
+	meta_seq_expansion : LPARENT . COMMA meta_item_inner RPARENT meta_seq_expansion 
+
+	COMMA	shift 262
+
+
+	.	error
+
+
+state 202:
 
 	meta_item : simple_path LPARENT meta_seq RPARENT .  (reduce by rule 36)
 
@@ -2408,152 +2448,152 @@ state 199:
 	.	reduce by rule 36
 
 
-state 200:
+state 203:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_trait_super maybe_where_clause . LBRACE trait_items RBRACE 
 
-	LBRACE	shift 258
+	LBRACE	shift 263
 
 
 	.	error
 
 
-state 201:
+state 204:
 
-	type_param_bound : trait_bound .  (reduce by rule 212)
-
-
-
-	.	reduce by rule 212
+	type_param_bound : trait_bound .  (reduce by rule 210)
 
 
-state 202:
-
-	type_param_bound : lifetime .  (reduce by rule 211)
-
-
-
-	.	reduce by rule 211
-
-
-state 203:
-
-	type_param_bounds : type_param_bound . type_param_bounds_expansion maybe_plus 
-
-
-	type_param_bounds_expansion	goto 259
 
 	.	reduce by rule 210
 
 
-state 204:
-
-	maybe_type_param_bounds : type_param_bounds .  (reduce by rule 206)
-
-
-
-	.	reduce by rule 206
-
-
 state 205:
 
-	maybe_trait_super : COLON maybe_type_param_bounds .  (reduce by rule 204)
+	type_param_bound : lifetime .  (reduce by rule 209)
+
+
+
+	.	reduce by rule 209
+
+
+state 206:
+
+	type_param_bounds : type_param_bound . type_param_bounds_expansion maybe_plus 
+
+
+	type_param_bounds_expansion	goto 264
+
+	.	reduce by rule 208
+
+
+state 207:
+
+	maybe_type_param_bounds : type_param_bounds .  (reduce by rule 204)
 
 
 
 	.	reduce by rule 204
 
 
-state 206:
-
-	trait_bound : maybe_ques . maybe_for_lifetimes type_path 
-
-	FOR	shift 226
-
-	for_lifetimes	goto 220
-	maybe_for_lifetimes	goto 260
-
-	.	reduce by rule 70
-
-
-state 207:
-
-	trait_bound : LPARENT . maybe_ques maybe_for_lifetimes type_path 
-
-	QUESTION	shift 208
-
-	maybe_ques	goto 261
-
-	.	reduce by rule 100
-
-
 state 208:
 
-	maybe_ques : QUESTION .  (reduce by rule 99)
+	maybe_trait_super : COLON maybe_type_param_bounds .  (reduce by rule 202)
 
 
 
-	.	reduce by rule 99
+	.	reduce by rule 202
 
 
 state 209:
 
-	lifetime : LIFETIME_OR_LABEL .  (reduce by rule 217)
+	trait_bound : maybe_ques . maybe_for_lifetimes type_path 
 
+	FOR	shift 229
 
+	for_lifetimes	goto 223
+	maybe_for_lifetimes	goto 265
 
-	.	reduce by rule 217
+	.	reduce by rule 70
 
 
 state 210:
 
-	lifetime : STATICLIFETIME .  (reduce by rule 218)
+	trait_bound : LPARENT . maybe_ques maybe_for_lifetimes type_path 
 
+	QUESTION	shift 211
 
+	maybe_ques	goto 266
 
-	.	reduce by rule 218
+	.	reduce by rule 101
 
 
 state 211:
 
-	func_parameters : func_param . func_parameters_expansion maybe_comma 
+	maybe_ques : QUESTION .  (reduce by rule 100)
 
 
-	func_parameters_expansion	goto 262
 
-	.	reduce by rule 147
+	.	reduce by rule 100
 
 
 state 212:
 
-	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters . RPARENT maybe_func_return_type maybe_where_clause block_expression 
-
-	RPARENT	shift 263
+	lifetime : LIFETIME_OR_LABEL .  (reduce by rule 215)
 
 
-	.	error
+
+	.	reduce by rule 215
 
 
 state 213:
 
-	maybe_func_parameters : func_parameters .  (reduce by rule 143)
+	lifetime : STATICLIFETIME .  (reduce by rule 216)
 
 
 
-	.	reduce by rule 143
+	.	reduce by rule 216
 
 
 state 214:
 
-	func_param : patterns . COLON types 
+	func_parameters : func_param . func_parameters_expansion maybe_comma 
 
-	COLON	shift 264
+
+	func_parameters_expansion	goto 267
+
+	.	reduce by rule 145
+
+
+state 215:
+
+	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters . RPARENT maybe_func_return_type maybe_where_clause block_expression 
+
+	RPARENT	shift 268
 
 
 	.	error
 
 
-state 215:
+state 216:
+
+	maybe_func_parameters : func_parameters .  (reduce by rule 141)
+
+
+
+	.	reduce by rule 141
+
+
+state 217:
+
+	func_param : patterns . COLON types 
+
+	COLON	shift 269
+
+
+	.	error
+
+
+state 218:
 
 	patterns : IDENT .  (reduce by rule 46)
 
@@ -2562,54 +2602,54 @@ state 215:
 	.	reduce by rule 46
 
 
-state 216:
+state 219:
 
 	struct_fields : struct_field . struct_fields_expansion maybe_comma 
 
 
-	struct_fields_expansion	goto 265
+	struct_fields_expansion	goto 270
 
-	.	reduce by rule 158
+	.	reduce by rule 156
 
 
-state 217:
+state 220:
 
 	item_type : UNION IDENT maybe_generics maybe_where_clause LBRACE struct_fields . RBRACE 
 
-	RBRACE	shift 266
+	RBRACE	shift 271
 
 
 	.	error
 
 
-state 218:
+state 221:
 
 	outer_attrs : outer_attrs . outer_attr 
 	struct_field : outer_attrs . visibility IDENT COLON types 
 	struct_field : outer_attrs . IDENT COLON types 
 
-	PUB	shift 32
-	IDENT	shift 268
+	PUB	shift 31
+	IDENT	shift 273
 	POUND	shift 24
 
 	outer_attr	goto 23
-	visibility	goto 267
+	visibility	goto 272
 
 	.	error
 
 
-state 219:
+state 222:
 
 	type_bound_where_clause_item : maybe_for_lifetimes . types COLON maybe_type_param_bounds 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 269
+	types	goto 274
 
 	.	error
 
 
-state 220:
+state 223:
 
 	maybe_for_lifetimes : for_lifetimes .  (reduce by rule 69)
 
@@ -2618,17 +2658,17 @@ state 220:
 	.	reduce by rule 69
 
 
-state 221:
+state 224:
 
 	lifetime_where_clause_item : lifetime . COLON lifetime_bounds 
 
-	COLON	shift 270
+	COLON	shift 275
 
 
 	.	error
 
 
-state 222:
+state 225:
 
 	where_clause_item : type_bound_where_clause_item .  (reduce by rule 64)
 
@@ -2637,7 +2677,7 @@ state 222:
 	.	reduce by rule 64
 
 
-state 223:
+state 226:
 
 	where_clause_item : lifetime_where_clause_item .  (reduce by rule 63)
 
@@ -2646,7 +2686,7 @@ state 223:
 	.	reduce by rule 63
 
 
-state 224:
+state 227:
 
 	where_clause : WHERE where_clause_expansion maybe_where_clause_item .  (reduce by rule 58)
 
@@ -2655,28 +2695,28 @@ state 224:
 	.	reduce by rule 58
 
 
-state 225:
+state 228:
 
 	where_clause_expansion : where_clause_expansion where_clause_item . COMMA 
 	maybe_where_clause_item : where_clause_item .  (reduce by rule 61)
 
-	COMMA	shift 271
+	COMMA	shift 276
 
 
 	.	reduce by rule 61
 
 
-state 226:
+state 229:
 
 	for_lifetimes : FOR . LT lifetime_params GT 
 
-	LT	shift 272
+	LT	shift 277
 
 
 	.	error
 
 
-state 227:
+state 230:
 
 	use_tree_multi : LBRACE use_tree use_tree_multi_expansion maybe_comma RBRACE .  (reduce by rule 22)
 
@@ -2685,7 +2725,7 @@ state 227:
 	.	reduce by rule 22
 
 
-state 228:
+state 231:
 
 	use_tree_multi_expansion : use_tree_multi_expansion COMMA use_tree .  (reduce by rule 24)
 
@@ -2694,93 +2734,32 @@ state 228:
 	.	reduce by rule 24
 
 
-state 229:
-
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path FOR . types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
-
-	IDENT	shift 108
-
-	types	goto 273
-
-	.	error
-
-
-state 230:
-
-	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ types . SEMI 
-
-	SEMI	shift 274
-
-
-	.	error
-
-
-state 231:
-
-	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields . RBRACE 
-
-	RBRACE	shift 275
-
-
-	.	error
-
-
 state 232:
 
-	maybe_struct_fields : struct_fields .  (reduce by rule 154)
+	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
+	WHERE	shift 126
 
-
-	.	reduce by rule 154
-
-
-state 233:
-
-	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT . maybe_where_clause SEMI 
-
-	WHERE	shift 127
-
-	where_clause	goto 126
-	maybe_where_clause	goto 276
+	where_clause	goto 125
+	maybe_where_clause	goto 278
 
 	.	reduce by rule 57
 
 
-state 234:
+state 233:
 
-	tuple_fields : tuple_field tuple_fields_expansion . maybe_comma 
-	tuple_fields_expansion : tuple_fields_expansion . COMMA tuple_field 
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR . types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
-	COMMA	shift 278
-
-	maybe_comma	goto 277
-
-	.	reduce by rule 94
-
-
-state 235:
-
-	tuple_field : outer_attrs types .  (reduce by rule 168)
-
-
-
-	.	reduce by rule 168
-
-
-state 236:
-
-	tuple_field : outer_attrs visibility . types 
-
-	IDENT	shift 108
+	IDENT	shift 139
 
 	types	goto 279
 
 	.	error
 
 
-state 237:
+state 234:
 
-	item_type : STATIC IDENT COLON types EQ expression . SEMI 
+	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ types . SEMI 
 
 	SEMI	shift 280
 
@@ -2788,7 +2767,80 @@ state 237:
 	.	error
 
 
+state 235:
+
+	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields . RBRACE 
+
+	RBRACE	shift 281
+
+
+	.	error
+
+
+state 236:
+
+	maybe_struct_fields : struct_fields .  (reduce by rule 152)
+
+
+
+	.	reduce by rule 152
+
+
+state 237:
+
+	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT . maybe_where_clause SEMI 
+
+	WHERE	shift 126
+
+	where_clause	goto 125
+	maybe_where_clause	goto 282
+
+	.	reduce by rule 57
+
+
 state 238:
+
+	tuple_fields : tuple_field tuple_fields_expansion . maybe_comma 
+	tuple_fields_expansion : tuple_fields_expansion . COMMA tuple_field 
+
+	COMMA	shift 284
+
+	maybe_comma	goto 283
+
+	.	reduce by rule 95
+
+
+state 239:
+
+	tuple_field : outer_attrs types .  (reduce by rule 166)
+
+
+
+	.	reduce by rule 166
+
+
+state 240:
+
+	tuple_field : outer_attrs visibility . types 
+
+	IDENT	shift 139
+
+	types	goto 285
+
+	.	error
+
+
+state 241:
+
+	item_type : STATIC IDENT COLON types EQ expression . SEMI 
+
+	SEMI	shift 286
+
+
+	.	error
+
+
+state 242:
 
 	expression : INTEGER_LIT .  (reduce by rule 263)
 
@@ -2797,39 +2849,37 @@ state 238:
 	.	reduce by rule 263
 
 
-state 239:
+state 243:
 
 	item_type : STATIC MUT IDENT COLON types EQ . expression SEMI 
 
-	INTEGER_LIT	shift 238
+	INTEGER_LIT	shift 242
 
-	expression	goto 281
+	expression	goto 287
 
 	.	error
 
 
-state 240:
+state 244:
 
-	item_type : MOD IDENT LBRACE inner_attrs items RBRACE .  (reduce by rule 107)
-
-
-
-	.	reduce by rule 107
+	item_type : MOD IDENT LBRACE inner_attrs items RBRACE .  (reduce by rule 105)
 
 
-state 241:
 
-	trait_impl : IMPL maybe_generics maybe_not type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
-
-	WHERE	shift 127
-
-	where_clause	goto 126
-	maybe_where_clause	goto 282
-
-	.	reduce by rule 57
+	.	reduce by rule 105
 
 
-state 242:
+state 245:
+
+	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
+
+	LBRACE	shift 288
+
+
+	.	error
+
+
+state 246:
 
 	inner_attrs : inner_attrs . inner_attr 
 	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs . inherent_impl_items RBRACE 
@@ -2846,18 +2896,30 @@ state 242:
 	PATHSEP	reduce by rule 30
 	POUND	reduce by rule 30
 	DOLLAR	reduce by rule 30
-	RBRACE	reduce by rule 229
+	RBRACE	reduce by rule 227
 	SHEBANG	shift 7
 
-	outer_attrs	goto 285
+	outer_attrs	goto 291
 	inner_attr	goto 4
-	inherent_impl_items	goto 284
-	inherent_impl_item	goto 283
+	inherent_impl_items	goto 290
+	inherent_impl_item	goto 289
 
 	.	error
 
 
-state 243:
+state 247:
+
+	trait_impl : IMPL maybe_generics NOT type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
+
+	WHERE	shift 126
+
+	where_clause	goto 125
+	maybe_where_clause	goto 292
+
+	.	reduce by rule 57
+
+
+state 248:
 
 	lifetime_param : maybe_outer_attr LIFETIME_OR_LABEL maybe_colon_lifetime_bounds .  (reduce by rule 80)
 
@@ -2866,39 +2928,39 @@ state 243:
 	.	reduce by rule 80
 
 
-state 244:
+state 249:
 
 	maybe_colon_lifetime_bounds : COLON . lifetime_bounds 
 
 
-	lifetime_bounds	goto 287
-	lifetime_bounds_expansion	goto 286
+	lifetime_bounds	goto 294
+	lifetime_bounds_expansion	goto 293
 
 	.	error
 
 
-state 245:
+state 250:
 
 	type_param : maybe_outer_attr IDENT . maybe_colon_type_bounds 
 	type_param : maybe_outer_attr IDENT . maybe_colon_type_bounds EQ types 
 
-	COLON	shift 289
+	COLON	shift 296
 
-	maybe_colon_type_bounds	goto 288
+	maybe_colon_type_bounds	goto 295
 
-	.	reduce by rule 92
-
-
-state 246:
-
-	type_params_expansion : type_params_expansion type_param COMMA .  (reduce by rule 84)
+	.	reduce by rule 93
 
 
+state 251:
 
-	.	reduce by rule 84
+	type_params_expansion : type_params_expansion type_param COMMA .  (reduce by rule 85)
 
 
-state 247:
+
+	.	reduce by rule 85
+
+
+state 252:
 
 	external_items : external_items external_item .  (reduce by rule 246)
 
@@ -2907,23 +2969,23 @@ state 247:
 	.	reduce by rule 246
 
 
-state 248:
+state 253:
 
 	outer_attrs : outer_attrs . outer_attr 
 	external_item : outer_attrs . maybe_visibility external_static_item 
 	external_item : outer_attrs . maybe_visibility external_func_item 
 
-	PUB	shift 32
+	PUB	shift 31
 	POUND	shift 24
 
 	outer_attr	goto 23
-	visibility	goto 291
-	maybe_visibility	goto 290
+	visibility	goto 298
+	maybe_visibility	goto 297
 
 	.	reduce by rule 8
 
 
-state 249:
+state 254:
 
 	extern_block : EXTERN maybe_abi LBRACE inner_attrs external_items RBRACE .  (reduce by rule 245)
 
@@ -2932,45 +2994,45 @@ state 249:
 	.	reduce by rule 245
 
 
-state 250:
+state 255:
 
-	item_type : EXTERN CARET IDENT AS IDENT SEMI .  (reduce by rule 109)
-
-
-
-	.	reduce by rule 109
+	item_type : EXTERN CARET IDENT AS IDENT SEMI .  (reduce by rule 107)
 
 
-state 251:
+
+	.	reduce by rule 107
+
+
+state 256:
 
 	enum_items : enum_item . enum_items_expansion maybe_comma 
 
 
-	enum_items_expansion	goto 292
+	enum_items_expansion	goto 299
 
-	.	reduce by rule 173
+	.	reduce by rule 171
 
 
-state 252:
+state 257:
 
 	item_type : ENUM IDENT maybe_generics maybe_where_clause LBRACE maybe_enum_items . RBRACE 
 
-	RBRACE	shift 293
+	RBRACE	shift 300
 
 
 	.	error
 
 
-state 253:
+state 258:
 
-	maybe_enum_items : enum_items .  (reduce by rule 169)
-
-
-
-	.	reduce by rule 169
+	maybe_enum_items : enum_items .  (reduce by rule 167)
 
 
-state 254:
+
+	.	reduce by rule 167
+
+
+state 259:
 
 	outer_attrs : outer_attrs . outer_attr 
 	enum_item : outer_attrs . IDENT enum_item_tuple 
@@ -2978,7 +3040,7 @@ state 254:
 	enum_item : outer_attrs . IDENT enum_item_discriminant 
 	enum_item : outer_attrs . IDENT 
 
-	IDENT	shift 294
+	IDENT	shift 301
 	POUND	shift 24
 
 	outer_attr	goto 23
@@ -2986,17 +3048,17 @@ state 254:
 	.	error
 
 
-state 255:
+state 260:
 
 	constant_item : CONST IDENT COLON types EQ expression . SEMI 
 
-	SEMI	shift 295
+	SEMI	shift 302
 
 
 	.	error
 
 
-state 256:
+state 261:
 
 	meta_seq : meta_item_inner meta_seq_expansion COMMA .  (reduce by rule 39)
 
@@ -3005,189 +3067,189 @@ state 256:
 	.	reduce by rule 39
 
 
-state 257:
+state 262:
 
 	meta_seq_expansion : LPARENT COMMA . meta_item_inner RPARENT meta_seq_expansion 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	STR_LIT	shift 165
-	CARET	shift 52
-	PATHSEP	shift 79
-	DOLLAR	shift 50
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	STR_LIT	shift 167
+	CARET	shift 51
+	PATHSEP	shift 78
+	DOLLAR	shift 49
 
-	meta_item	goto 163
-	meta_item_inner	goto 296
-	lit_exp	goto 160
-	simple_path	goto 77
-	simple_path_segment	goto 47
+	meta_item	goto 165
+	meta_item_inner	goto 303
+	lit_exp	goto 162
+	simple_path	goto 76
+	simple_path_segment	goto 46
 
 	.	error
 
 
-state 258:
+state 263:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_trait_super maybe_where_clause LBRACE . trait_items RBRACE 
 
 	CONST	reduce by rule 30
 	EXTERN	reduce by rule 30
 	FN	reduce by rule 30
-	SELFVALUE	shift 56
-	SUPER	shift 55
+	SELFVALUE	shift 55
+	SUPER	shift 54
 	TYPE	reduce by rule 30
 	UNSAFE	reduce by rule 30
-	IDENT	shift 54
-	CARET	shift 52
-	PATHSEP	shift 79
+	IDENT	shift 53
+	CARET	shift 51
+	PATHSEP	shift 78
 	POUND	reduce by rule 30
-	DOLLAR	shift 50
+	DOLLAR	shift 49
 	LBRACE	reduce by rule 30
-	RBRACE	reduce by rule 182
+	RBRACE	reduce by rule 180
 
-	outer_attrs	goto 301
-	simple_path	goto 300
-	simple_path_segment	goto 47
-	trait_items	goto 299
-	trait_item	goto 298
-	marco_invocation_semi	goto 297
-
-	.	error
-
-
-state 259:
-
-	type_param_bounds : type_param_bound type_param_bounds_expansion . maybe_plus 
-	type_param_bounds_expansion : type_param_bounds_expansion . PLUS type_param_bound 
-
-	PLUS	shift 303
-
-	maybe_plus	goto 302
-
-	.	reduce by rule 98
-
-
-state 260:
-
-	trait_bound : maybe_ques maybe_for_lifetimes . type_path 
-
-	IDENT	shift 145
-
-	type_path	goto 304
+	outer_attrs	goto 308
+	simple_path	goto 307
+	simple_path_segment	goto 46
+	trait_items	goto 306
+	trait_item	goto 305
+	marco_invocation_semi	goto 304
 
 	.	error
-
-
-state 261:
-
-	trait_bound : LPARENT maybe_ques . maybe_for_lifetimes type_path 
-
-	FOR	shift 226
-
-	for_lifetimes	goto 220
-	maybe_for_lifetimes	goto 305
-
-	.	reduce by rule 70
-
-
-state 262:
-
-	func_parameters : func_param func_parameters_expansion . maybe_comma 
-	func_parameters_expansion : func_parameters_expansion . COMMA func_param 
-
-	COMMA	shift 307
-
-	maybe_comma	goto 306
-
-	.	reduce by rule 94
-
-
-state 263:
-
-	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT . maybe_func_return_type maybe_where_clause block_expression 
-
-	RARROW	shift 310
-
-	func_return_type	goto 309
-	maybe_func_return_type	goto 308
-
-	.	reduce by rule 150
 
 
 state 264:
 
-	func_param : patterns COLON . types 
+	type_param_bounds : type_param_bound type_param_bounds_expansion . maybe_plus 
+	type_param_bounds_expansion : type_param_bounds_expansion . PLUS type_param_bound 
 
-	IDENT	shift 108
+	PLUS	shift 310
 
-	types	goto 311
+	maybe_plus	goto 309
 
-	.	error
+	.	reduce by rule 99
 
 
 state 265:
 
-	struct_fields : struct_field struct_fields_expansion . maybe_comma 
-	struct_fields_expansion : struct_fields_expansion . COMMA struct_field 
+	trait_bound : maybe_ques maybe_for_lifetimes . type_path 
 
-	COMMA	shift 313
+	IDENT	shift 134
 
-	maybe_comma	goto 312
+	type_path	goto 311
 
-	.	reduce by rule 94
+	.	error
 
 
 state 266:
 
-	item_type : UNION IDENT maybe_generics maybe_where_clause LBRACE struct_fields RBRACE .  (reduce by rule 116)
+	trait_bound : LPARENT maybe_ques . maybe_for_lifetimes type_path 
 
+	FOR	shift 229
 
+	for_lifetimes	goto 223
+	maybe_for_lifetimes	goto 312
 
-	.	reduce by rule 116
+	.	reduce by rule 70
 
 
 state 267:
 
-	struct_field : outer_attrs visibility . IDENT COLON types 
+	func_parameters : func_param func_parameters_expansion . maybe_comma 
+	func_parameters_expansion : func_parameters_expansion . COMMA func_param 
 
-	IDENT	shift 314
+	COMMA	shift 314
 
+	maybe_comma	goto 313
 
-	.	error
+	.	reduce by rule 95
 
 
 state 268:
 
-	struct_field : outer_attrs IDENT . COLON types 
+	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT . maybe_func_return_type maybe_where_clause block_expression 
 
-	COLON	shift 315
+	RARROW	shift 317
 
+	func_return_type	goto 316
+	maybe_func_return_type	goto 315
 
-	.	error
+	.	reduce by rule 148
 
 
 state 269:
 
-	type_bound_where_clause_item : maybe_for_lifetimes types . COLON maybe_type_param_bounds 
+	func_param : patterns COLON . types 
 
-	COLON	shift 316
+	IDENT	shift 139
 
+	types	goto 318
 
 	.	error
 
 
 state 270:
 
-	lifetime_where_clause_item : lifetime COLON . lifetime_bounds 
+	struct_fields : struct_field struct_fields_expansion . maybe_comma 
+	struct_fields_expansion : struct_fields_expansion . COMMA struct_field 
+
+	COMMA	shift 320
+
+	maybe_comma	goto 319
+
+	.	reduce by rule 95
 
 
-	lifetime_bounds	goto 317
-	lifetime_bounds_expansion	goto 286
+state 271:
+
+	item_type : UNION IDENT maybe_generics maybe_where_clause LBRACE struct_fields RBRACE .  (reduce by rule 114)
+
+
+
+	.	reduce by rule 114
+
+
+state 272:
+
+	struct_field : outer_attrs visibility . IDENT COLON types 
+
+	IDENT	shift 321
+
 
 	.	error
 
 
-state 271:
+state 273:
+
+	struct_field : outer_attrs IDENT . COLON types 
+
+	COLON	shift 322
+
+
+	.	error
+
+
+state 274:
+
+	type_bound_where_clause_item : maybe_for_lifetimes types . COLON maybe_type_param_bounds 
+
+	COLON	shift 323
+
+
+	.	error
+
+
+state 275:
+
+	lifetime_where_clause_item : lifetime COLON . lifetime_bounds 
+
+
+	lifetime_bounds	goto 324
+	lifetime_bounds_expansion	goto 293
+
+	.	error
+
+
+state 276:
 
 	where_clause_expansion : where_clause_expansion where_clause_item COMMA .  (reduce by rule 59)
 
@@ -3196,121 +3258,131 @@ state 271:
 	.	reduce by rule 59
 
 
-state 272:
+state 277:
 
 	for_lifetimes : FOR LT . lifetime_params GT 
 
 
-	lifetime_params	goto 319
-	lifetime_params_expansion	goto 318
+	lifetime_params	goto 326
+	lifetime_params_expansion	goto 325
 
 	.	reduce by rule 79
 
 
-state 273:
-
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
-
-	WHERE	shift 127
-
-	where_clause	goto 126
-	maybe_where_clause	goto 320
-
-	.	reduce by rule 57
-
-
-state 274:
-
-	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ types SEMI .  (reduce by rule 124)
-
-
-
-	.	reduce by rule 124
-
-
-state 275:
-
-	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields RBRACE .  (reduce by rule 152)
-
-
-
-	.	reduce by rule 152
-
-
-state 276:
-
-	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause . SEMI 
-
-	SEMI	shift 321
-
-
-	.	error
-
-
-state 277:
-
-	tuple_fields : tuple_field tuple_fields_expansion maybe_comma .  (reduce by rule 164)
-
-
-
-	.	reduce by rule 164
-
-
 state 278:
 
-	maybe_comma : COMMA .  (reduce by rule 93)
-	tuple_fields_expansion : tuple_fields_expansion COMMA . tuple_field 
+	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
 
-	PUB	reduce by rule 30
-	IDENT	reduce by rule 30
-	POUND	reduce by rule 30
-	RPARENT	reduce by rule 93
+	LBRACE	shift 327
 
-	outer_attrs	goto 181
-	tuple_field	goto 322
 
 	.	error
 
 
 state 279:
 
-	tuple_field : outer_attrs visibility types .  (reduce by rule 167)
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
+	WHERE	shift 126
 
+	where_clause	goto 125
+	maybe_where_clause	goto 328
 
-	.	reduce by rule 167
+	.	reduce by rule 57
 
 
 state 280:
 
-	item_type : STATIC IDENT COLON types EQ expression SEMI .  (reduce by rule 119)
+	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ types SEMI .  (reduce by rule 122)
 
 
 
-	.	reduce by rule 119
+	.	reduce by rule 122
 
 
 state 281:
 
-	item_type : STATIC MUT IDENT COLON types EQ expression . SEMI 
-
-	SEMI	shift 323
+	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields RBRACE .  (reduce by rule 150)
 
 
-	.	error
+
+	.	reduce by rule 150
 
 
 state 282:
 
-	trait_impl : IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
+	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause . SEMI 
 
-	LBRACE	shift 324
+	SEMI	shift 329
 
 
 	.	error
 
 
 state 283:
+
+	tuple_fields : tuple_field tuple_fields_expansion maybe_comma .  (reduce by rule 162)
+
+
+
+	.	reduce by rule 162
+
+
+state 284:
+
+	maybe_comma : COMMA .  (reduce by rule 94)
+	tuple_fields_expansion : tuple_fields_expansion COMMA . tuple_field 
+
+	PUB	reduce by rule 30
+	IDENT	reduce by rule 30
+	POUND	reduce by rule 30
+	RPARENT	reduce by rule 94
+
+	outer_attrs	goto 184
+	tuple_field	goto 330
+
+	.	error
+
+
+state 285:
+
+	tuple_field : outer_attrs visibility types .  (reduce by rule 165)
+
+
+
+	.	reduce by rule 165
+
+
+state 286:
+
+	item_type : STATIC IDENT COLON types EQ expression SEMI .  (reduce by rule 117)
+
+
+
+	.	reduce by rule 117
+
+
+state 287:
+
+	item_type : STATIC MUT IDENT COLON types EQ expression . SEMI 
+
+	SEMI	shift 331
+
+
+	.	error
+
+
+state 288:
+
+	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
+
+
+	inner_attrs	goto 332
+
+	.	reduce by rule 28
+
+
+state 289:
 
 	inherent_impl_items : inherent_impl_item . inherent_impl_items 
 
@@ -3326,26 +3398,26 @@ state 283:
 	PATHSEP	reduce by rule 30
 	POUND	reduce by rule 30
 	DOLLAR	reduce by rule 30
-	RBRACE	reduce by rule 229
+	RBRACE	reduce by rule 227
 
-	outer_attrs	goto 285
-	inherent_impl_items	goto 325
-	inherent_impl_item	goto 283
+	outer_attrs	goto 291
+	inherent_impl_items	goto 333
+	inherent_impl_item	goto 289
 
 	.	error
 
 
-state 284:
+state 290:
 
 	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs inherent_impl_items . RBRACE 
 
-	RBRACE	shift 326
+	RBRACE	shift 334
 
 
 	.	error
 
 
-state 285:
+state 291:
 
 	outer_attrs : outer_attrs . outer_attr 
 	inherent_impl_item : outer_attrs . marco_invocation_semi 
@@ -3353,40 +3425,50 @@ state 285:
 	inherent_impl_item : outer_attrs . maybe_visibility function 
 	inherent_impl_item : outer_attrs . maybe_visibility method 
 
-	PUB	shift 32
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	CARET	shift 52
-	PATHSEP	shift 79
+	PUB	shift 31
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	CARET	shift 51
+	PATHSEP	shift 78
 	POUND	shift 24
-	DOLLAR	shift 50
+	DOLLAR	shift 49
 
 	outer_attr	goto 23
-	simple_path	goto 300
-	simple_path_segment	goto 47
-	visibility	goto 291
-	maybe_visibility	goto 328
-	marco_invocation_semi	goto 327
+	simple_path	goto 307
+	simple_path_segment	goto 46
+	visibility	goto 298
+	maybe_visibility	goto 336
+	marco_invocation_semi	goto 335
 
 	.	reduce by rule 8
 
 
-state 286:
+state 292:
+
+	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
+
+	LBRACE	shift 337
+
+
+	.	error
+
+
+state 293:
 
 	lifetime_bounds : lifetime_bounds_expansion . maybe_lifetime 
 	lifetime_bounds_expansion : lifetime_bounds_expansion . lifetime PLUS 
 
-	STATICLIFETIME	shift 210
-	LIFETIME_OR_LABEL	shift 209
+	STATICLIFETIME	shift 213
+	LIFETIME_OR_LABEL	shift 212
 
-	lifetime	goto 330
-	maybe_lifetime	goto 329
+	lifetime	goto 339
+	maybe_lifetime	goto 338
 
-	.	reduce by rule 216
+	.	reduce by rule 214
 
 
-state 287:
+state 294:
 
 	maybe_colon_lifetime_bounds : COLON lifetime_bounds .  (reduce by rule 81)
 
@@ -3395,56 +3477,56 @@ state 287:
 	.	reduce by rule 81
 
 
-state 288:
+state 295:
 
-	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds .  (reduce by rule 88)
+	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds .  (reduce by rule 89)
 	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds . EQ types 
 
-	EQ	shift 331
+	EQ	shift 340
 
 
-	.	reduce by rule 88
+	.	reduce by rule 89
 
 
-state 289:
+state 296:
 
-	maybe_colon_type_bounds : COLON .  (reduce by rule 90)
+	maybe_colon_type_bounds : COLON .  (reduce by rule 91)
 	maybe_colon_type_bounds : COLON . type_param_bounds 
 
-	FOR	reduce by rule 100
-	STATICLIFETIME	shift 210
-	IDENT	reduce by rule 100
-	LIFETIME_OR_LABEL	shift 209
-	EQ	reduce by rule 90
-	GT	reduce by rule 90
-	COMMA	reduce by rule 90
-	QUESTION	shift 208
-	LPARENT	shift 207
+	FOR	reduce by rule 101
+	STATICLIFETIME	shift 213
+	IDENT	reduce by rule 101
+	LIFETIME_OR_LABEL	shift 212
+	EQ	reduce by rule 91
+	GT	reduce by rule 91
+	COMMA	reduce by rule 91
+	QUESTION	shift 211
+	LPARENT	shift 210
 
-	maybe_ques	goto 206
-	type_param_bounds	goto 332
-	type_param_bound	goto 203
-	lifetime	goto 202
-	trait_bound	goto 201
+	maybe_ques	goto 209
+	type_param_bounds	goto 341
+	type_param_bound	goto 206
+	lifetime	goto 205
+	trait_bound	goto 204
 
 	.	error
 
 
-state 290:
+state 297:
 
 	external_item : outer_attrs maybe_visibility . external_static_item 
 	external_item : outer_attrs maybe_visibility . external_func_item 
 
-	FN	shift 336
-	STATIC	shift 335
+	FN	shift 345
+	STATIC	shift 344
 
-	external_static_item	goto 334
-	external_func_item	goto 333
+	external_static_item	goto 343
+	external_func_item	goto 342
 
 	.	error
 
 
-state 291:
+state 298:
 
 	maybe_visibility : visibility .  (reduce by rule 7)
 
@@ -3453,125 +3535,125 @@ state 291:
 	.	reduce by rule 7
 
 
-state 292:
+state 299:
 
 	enum_items : enum_item enum_items_expansion . maybe_comma 
 	enum_items_expansion : enum_items_expansion . COMMA enum_item 
 
-	COMMA	shift 338
+	COMMA	shift 347
 
-	maybe_comma	goto 337
+	maybe_comma	goto 346
 
-	.	reduce by rule 94
-
-
-state 293:
-
-	item_type : ENUM IDENT maybe_generics maybe_where_clause LBRACE maybe_enum_items RBRACE .  (reduce by rule 115)
+	.	reduce by rule 95
 
 
+state 300:
 
-	.	reduce by rule 115
+	item_type : ENUM IDENT maybe_generics maybe_where_clause LBRACE maybe_enum_items RBRACE .  (reduce by rule 113)
 
 
-state 294:
+
+	.	reduce by rule 113
+
+
+state 301:
 
 	enum_item : outer_attrs IDENT . enum_item_tuple 
 	enum_item : outer_attrs IDENT . enum_item_struct 
 	enum_item : outer_attrs IDENT . enum_item_discriminant 
-	enum_item : outer_attrs IDENT .  (reduce by rule 177)
+	enum_item : outer_attrs IDENT .  (reduce by rule 175)
 
-	EQ	shift 344
-	LBRACE	shift 343
-	LPARENT	shift 342
+	EQ	shift 353
+	LBRACE	shift 352
+	LPARENT	shift 351
 
-	enum_item_tuple	goto 341
-	enum_item_struct	goto 340
-	enum_item_discriminant	goto 339
+	enum_item_tuple	goto 350
+	enum_item_struct	goto 349
+	enum_item_discriminant	goto 348
 
-	.	reduce by rule 177
-
-
-state 295:
-
-	constant_item : CONST IDENT COLON types EQ expression SEMI .  (reduce by rule 125)
+	.	reduce by rule 175
 
 
+state 302:
 
-	.	reduce by rule 125
+	constant_item : CONST IDENT COLON types EQ expression SEMI .  (reduce by rule 123)
 
 
-state 296:
+
+	.	reduce by rule 123
+
+
+state 303:
 
 	meta_seq_expansion : LPARENT COMMA meta_item_inner . RPARENT meta_seq_expansion 
 
-	RPARENT	shift 345
+	RPARENT	shift 354
 
 
 	.	error
 
 
-state 297:
+state 304:
 
-	trait_item : marco_invocation_semi .  (reduce by rule 187)
-
-
-
-	.	reduce by rule 187
+	trait_item : marco_invocation_semi .  (reduce by rule 185)
 
 
-state 298:
+
+	.	reduce by rule 185
+
+
+state 305:
 
 	trait_items : trait_item . trait_items 
 
 	CONST	reduce by rule 30
 	EXTERN	reduce by rule 30
 	FN	reduce by rule 30
-	SELFVALUE	shift 56
-	SUPER	shift 55
+	SELFVALUE	shift 55
+	SUPER	shift 54
 	TYPE	reduce by rule 30
 	UNSAFE	reduce by rule 30
-	IDENT	shift 54
-	CARET	shift 52
-	PATHSEP	shift 79
+	IDENT	shift 53
+	CARET	shift 51
+	PATHSEP	shift 78
 	POUND	reduce by rule 30
-	DOLLAR	shift 50
+	DOLLAR	shift 49
 	LBRACE	reduce by rule 30
-	RBRACE	reduce by rule 182
+	RBRACE	reduce by rule 180
 
-	outer_attrs	goto 301
-	simple_path	goto 300
-	simple_path_segment	goto 47
-	trait_items	goto 346
-	trait_item	goto 298
-	marco_invocation_semi	goto 297
+	outer_attrs	goto 308
+	simple_path	goto 307
+	simple_path_segment	goto 46
+	trait_items	goto 355
+	trait_item	goto 305
+	marco_invocation_semi	goto 304
 
 	.	error
 
 
-state 299:
+state 306:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_trait_super maybe_where_clause LBRACE trait_items . RBRACE 
 
-	RBRACE	shift 347
+	RBRACE	shift 356
 
 
 	.	error
 
 
-state 300:
+state 307:
 
 	simple_path : simple_path . PATHSEP simple_path_segment 
 	marco_invocation_semi : simple_path . NOT 
 
-	NOT	shift 348
-	PATHSEP	shift 119
+	NOT	shift 357
+	PATHSEP	shift 118
 
 
 	.	error
 
 
-state 301:
+state 308:
 
 	outer_attrs : outer_attrs . outer_attr 
 	trait_item : outer_attrs . trait_func 
@@ -3579,216 +3661,216 @@ state 301:
 	trait_item : outer_attrs . trait_const 
 	trait_item : outer_attrs . trait_type 
 
-	CONST	shift 361
-	EXTERN	shift 360
-	TYPE	shift 359
-	UNSAFE	shift 358
+	CONST	shift 370
+	EXTERN	shift 369
+	TYPE	shift 368
+	UNSAFE	shift 367
 	POUND	shift 24
-	LBRACE	shift 357
+	LBRACE	shift 366
 
 	outer_attr	goto 23
-	func_qualifier	goto 356
-	block_expression	goto 355
-	trait_func	goto 354
-	trait_method	goto 353
-	trait_const	goto 352
-	trait_type	goto 351
-	trait_func_decl	goto 350
-	trait_method_decl	goto 349
+	func_qualifier	goto 365
+	block_expression	goto 364
+	trait_func	goto 363
+	trait_method	goto 362
+	trait_const	goto 361
+	trait_type	goto 360
+	trait_func_decl	goto 359
+	trait_method_decl	goto 358
 
-	.	reduce by rule 138
-
-
-state 302:
-
-	type_param_bounds : type_param_bound type_param_bounds_expansion maybe_plus .  (reduce by rule 208)
-
-
-
-	.	reduce by rule 208
-
-
-state 303:
-
-	maybe_plus : PLUS .  (reduce by rule 97)
-	type_param_bounds_expansion : type_param_bounds_expansion PLUS . type_param_bound 
-
-	FOR	reduce by rule 100
-	WHERE	reduce by rule 97
-	STATICLIFETIME	shift 210
-	IDENT	reduce by rule 100
-	LIFETIME_OR_LABEL	shift 209
-	EQ	reduce by rule 97
-	GT	reduce by rule 97
-	COMMA	reduce by rule 97
-	SEMI	reduce by rule 97
-	QUESTION	shift 208
-	LBRACE	reduce by rule 97
-	LPARENT	shift 207
-
-	maybe_ques	goto 206
-	type_param_bound	goto 362
-	lifetime	goto 202
-	trait_bound	goto 201
-
-	.	error
-
-
-state 304:
-
-	trait_bound : maybe_ques maybe_for_lifetimes type_path .  (reduce by rule 219)
-
-
-
-	.	reduce by rule 219
-
-
-state 305:
-
-	trait_bound : LPARENT maybe_ques maybe_for_lifetimes . type_path 
-
-	IDENT	shift 145
-
-	type_path	goto 363
-
-	.	error
-
-
-state 306:
-
-	func_parameters : func_param func_parameters_expansion maybe_comma .  (reduce by rule 145)
-
-
-
-	.	reduce by rule 145
-
-
-state 307:
-
-	maybe_comma : COMMA .  (reduce by rule 93)
-	func_parameters_expansion : func_parameters_expansion COMMA . func_param 
-
-	IDENT	shift 215
-
-	patterns	goto 214
-	func_param	goto 364
-
-	.	reduce by rule 93
-
-
-state 308:
-
-	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type . maybe_where_clause block_expression 
-
-	WHERE	shift 127
-
-	where_clause	goto 126
-	maybe_where_clause	goto 365
-
-	.	reduce by rule 57
+	.	reduce by rule 136
 
 
 state 309:
 
-	maybe_func_return_type : func_return_type .  (reduce by rule 149)
+	type_param_bounds : type_param_bound type_param_bounds_expansion maybe_plus .  (reduce by rule 206)
 
 
 
-	.	reduce by rule 149
+	.	reduce by rule 206
 
 
 state 310:
 
-	func_return_type : RARROW . types 
+	maybe_plus : PLUS .  (reduce by rule 98)
+	type_param_bounds_expansion : type_param_bounds_expansion PLUS . type_param_bound 
 
-	IDENT	shift 108
+	FOR	reduce by rule 101
+	WHERE	reduce by rule 98
+	STATICLIFETIME	shift 213
+	IDENT	reduce by rule 101
+	LIFETIME_OR_LABEL	shift 212
+	EQ	reduce by rule 98
+	GT	reduce by rule 98
+	COMMA	reduce by rule 98
+	SEMI	reduce by rule 98
+	QUESTION	shift 211
+	LBRACE	reduce by rule 98
+	LPARENT	shift 210
 
-	types	goto 366
+	maybe_ques	goto 209
+	type_param_bound	goto 371
+	lifetime	goto 205
+	trait_bound	goto 204
 
 	.	error
 
 
 state 311:
 
-	func_param : patterns COLON types .  (reduce by rule 148)
+	trait_bound : maybe_ques maybe_for_lifetimes type_path .  (reduce by rule 217)
 
 
 
-	.	reduce by rule 148
+	.	reduce by rule 217
 
 
 state 312:
 
-	struct_fields : struct_field struct_fields_expansion maybe_comma .  (reduce by rule 156)
+	trait_bound : LPARENT maybe_ques maybe_for_lifetimes . type_path 
 
+	IDENT	shift 134
 
+	type_path	goto 372
 
-	.	reduce by rule 156
+	.	error
 
 
 state 313:
 
-	maybe_comma : COMMA .  (reduce by rule 93)
+	func_parameters : func_param func_parameters_expansion maybe_comma .  (reduce by rule 143)
+
+
+
+	.	reduce by rule 143
+
+
+state 314:
+
+	maybe_comma : COMMA .  (reduce by rule 94)
+	func_parameters_expansion : func_parameters_expansion COMMA . func_param 
+
+	IDENT	shift 218
+
+	patterns	goto 217
+	func_param	goto 373
+
+	.	reduce by rule 94
+
+
+state 315:
+
+	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type . maybe_where_clause block_expression 
+
+	WHERE	shift 126
+
+	where_clause	goto 125
+	maybe_where_clause	goto 374
+
+	.	reduce by rule 57
+
+
+state 316:
+
+	maybe_func_return_type : func_return_type .  (reduce by rule 147)
+
+
+
+	.	reduce by rule 147
+
+
+state 317:
+
+	func_return_type : RARROW . types 
+
+	IDENT	shift 139
+
+	types	goto 375
+
+	.	error
+
+
+state 318:
+
+	func_param : patterns COLON types .  (reduce by rule 146)
+
+
+
+	.	reduce by rule 146
+
+
+state 319:
+
+	struct_fields : struct_field struct_fields_expansion maybe_comma .  (reduce by rule 154)
+
+
+
+	.	reduce by rule 154
+
+
+state 320:
+
+	maybe_comma : COMMA .  (reduce by rule 94)
 	struct_fields_expansion : struct_fields_expansion COMMA . struct_field 
 
 	PUB	reduce by rule 30
 	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
-	RBRACE	reduce by rule 93
+	RBRACE	reduce by rule 94
 
-	outer_attrs	goto 218
-	struct_field	goto 367
+	outer_attrs	goto 221
+	struct_field	goto 376
 
 	.	error
 
 
-state 314:
+state 321:
 
 	struct_field : outer_attrs visibility IDENT . COLON types 
 
-	COLON	shift 368
+	COLON	shift 377
 
 
 	.	error
 
 
-state 315:
+state 322:
 
 	struct_field : outer_attrs IDENT COLON . types 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 369
+	types	goto 378
 
 	.	error
 
 
-state 316:
+state 323:
 
 	type_bound_where_clause_item : maybe_for_lifetimes types COLON . maybe_type_param_bounds 
 
-	FOR	reduce by rule 100
-	STATICLIFETIME	shift 210
-	IDENT	reduce by rule 100
-	LIFETIME_OR_LABEL	shift 209
-	EQ	reduce by rule 207
-	COMMA	reduce by rule 207
-	SEMI	reduce by rule 207
-	QUESTION	shift 208
-	LBRACE	reduce by rule 207
-	LPARENT	shift 207
+	FOR	reduce by rule 101
+	STATICLIFETIME	shift 213
+	IDENT	reduce by rule 101
+	LIFETIME_OR_LABEL	shift 212
+	EQ	reduce by rule 205
+	COMMA	reduce by rule 205
+	SEMI	reduce by rule 205
+	QUESTION	shift 211
+	LBRACE	reduce by rule 205
+	LPARENT	shift 210
 
-	maybe_ques	goto 206
-	maybe_type_param_bounds	goto 370
-	type_param_bounds	goto 204
-	type_param_bound	goto 203
-	lifetime	goto 202
-	trait_bound	goto 201
+	maybe_ques	goto 209
+	maybe_type_param_bounds	goto 379
+	type_param_bounds	goto 207
+	type_param_bound	goto 206
+	lifetime	goto 205
+	trait_bound	goto 204
 
 	.	error
 
 
-state 317:
+state 324:
 
 	lifetime_where_clause_item : lifetime COLON lifetime_bounds .  (reduce by rule 65)
 
@@ -3797,7 +3879,7 @@ state 317:
 	.	reduce by rule 65
 
 
-state 318:
+state 325:
 
 	lifetime_params : lifetime_params_expansion . maybe_lifetime_param 
 	lifetime_params_expansion : lifetime_params_expansion . lifetime_param COMMA 
@@ -3806,157 +3888,202 @@ state 318:
 	GT	reduce by rule 77
 	POUND	shift 24
 
-	outer_attr	goto 152
-	lifetime_param	goto 151
-	maybe_lifetime_param	goto 148
-	maybe_outer_attr	goto 147
+	outer_attr	goto 154
+	lifetime_param	goto 153
+	maybe_lifetime_param	goto 150
+	maybe_outer_attr	goto 149
 
 	.	error
 
 
-state 319:
+state 326:
 
 	for_lifetimes : FOR LT lifetime_params . GT 
 
-	GT	shift 371
+	GT	shift 380
 
 
 	.	error
 
 
-state 320:
+state 327:
 
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
-
-	LBRACE	shift 372
+	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
 
 
-	.	error
-
-
-state 321:
-
-	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI .  (reduce by rule 161)
-
-
-
-	.	reduce by rule 161
-
-
-state 322:
-
-	tuple_fields_expansion : tuple_fields_expansion COMMA tuple_field .  (reduce by rule 165)
-
-
-
-	.	reduce by rule 165
-
-
-state 323:
-
-	item_type : STATIC MUT IDENT COLON types EQ expression SEMI .  (reduce by rule 118)
-
-
-
-	.	reduce by rule 118
-
-
-state 324:
-
-	trait_impl : IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
-
-
-	inner_attrs	goto 373
+	inner_attrs	goto 381
 
 	.	reduce by rule 28
 
 
-state 325:
+state 328:
 
-	inherent_impl_items : inherent_impl_item inherent_impl_items .  (reduce by rule 228)
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
+
+	LBRACE	shift 382
+
+
+	.	error
+
+
+state 329:
+
+	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI .  (reduce by rule 159)
+
+
+
+	.	reduce by rule 159
+
+
+state 330:
+
+	tuple_fields_expansion : tuple_fields_expansion COMMA tuple_field .  (reduce by rule 163)
+
+
+
+	.	reduce by rule 163
+
+
+state 331:
+
+	item_type : STATIC MUT IDENT COLON types EQ expression SEMI .  (reduce by rule 116)
+
+
+
+	.	reduce by rule 116
+
+
+state 332:
+
+	inner_attrs : inner_attrs . inner_attr 
+	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
+
+	CONST	shift 36
+	EXTERN	shift 369
+	FN	reduce by rule 136
+	PUB	shift 31
+	SELFVALUE	reduce by rule 30
+	SUPER	reduce by rule 30
+	TYPE	reduce by rule 8
+	UNSAFE	shift 367
+	IDENT	reduce by rule 30
+	CARET	reduce by rule 30
+	PATHSEP	reduce by rule 30
+	POUND	reduce by rule 30
+	DOLLAR	reduce by rule 30
+	RBRACE	reduce by rule 237
+	SHEBANG	shift 7
+
+	outer_attrs	goto 390
+	inner_attr	goto 4
+	visibility	goto 298
+	maybe_visibility	goto 389
+	function	goto 388
+	func_qualifier	goto 387
+	constant_item	goto 386
+	trait_impl_items	goto 385
+	trait_impl_item	goto 384
+	method	goto 383
+
+	.	error
+
+
+state 333:
+
+	inherent_impl_items : inherent_impl_item inherent_impl_items .  (reduce by rule 226)
+
+
+
+	.	reduce by rule 226
+
+
+state 334:
+
+	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs inherent_impl_items RBRACE .  (reduce by rule 225)
+
+
+
+	.	reduce by rule 225
+
+
+state 335:
+
+	inherent_impl_item : outer_attrs marco_invocation_semi .  (reduce by rule 228)
 
 
 
 	.	reduce by rule 228
 
 
-state 326:
-
-	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs inherent_impl_items RBRACE .  (reduce by rule 227)
-
-
-
-	.	reduce by rule 227
-
-
-state 327:
-
-	inherent_impl_item : outer_attrs marco_invocation_semi .  (reduce by rule 230)
-
-
-
-	.	reduce by rule 230
-
-
-state 328:
+state 336:
 
 	inherent_impl_item : outer_attrs maybe_visibility . constant_item 
 	inherent_impl_item : outer_attrs maybe_visibility . function 
 	inherent_impl_item : outer_attrs maybe_visibility . method 
 
-	CONST	shift 37
-	EXTERN	shift 360
-	UNSAFE	shift 358
+	CONST	shift 36
+	EXTERN	shift 369
+	UNSAFE	shift 367
 
-	function	goto 377
-	func_qualifier	goto 376
-	constant_item	goto 375
-	method	goto 374
+	function	goto 393
+	func_qualifier	goto 387
+	constant_item	goto 392
+	method	goto 391
 
-	.	reduce by rule 138
+	.	reduce by rule 136
 
 
-state 329:
+state 337:
 
-	lifetime_bounds : lifetime_bounds_expansion maybe_lifetime .  (reduce by rule 213)
+	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
 
+
+	inner_attrs	goto 394
+
+	.	reduce by rule 28
+
+
+state 338:
+
+	lifetime_bounds : lifetime_bounds_expansion maybe_lifetime .  (reduce by rule 211)
+
+
+
+	.	reduce by rule 211
+
+
+state 339:
+
+	lifetime_bounds_expansion : lifetime_bounds_expansion lifetime . PLUS 
+	maybe_lifetime : lifetime .  (reduce by rule 213)
+
+	PLUS	shift 395
 
 
 	.	reduce by rule 213
 
 
-state 330:
-
-	lifetime_bounds_expansion : lifetime_bounds_expansion lifetime . PLUS 
-	maybe_lifetime : lifetime .  (reduce by rule 215)
-
-	PLUS	shift 378
-
-
-	.	reduce by rule 215
-
-
-state 331:
+state 340:
 
 	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds EQ . types 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 379
+	types	goto 396
 
 	.	error
 
 
-state 332:
+state 341:
 
-	maybe_colon_type_bounds : COLON type_param_bounds .  (reduce by rule 91)
-
-
-
-	.	reduce by rule 91
+	maybe_colon_type_bounds : COLON type_param_bounds .  (reduce by rule 92)
 
 
-state 333:
+
+	.	reduce by rule 92
+
+
+state 342:
 
 	external_item : outer_attrs maybe_visibility external_func_item .  (reduce by rule 249)
 
@@ -3965,7 +4092,7 @@ state 333:
 	.	reduce by rule 249
 
 
-state 334:
+state 343:
 
 	external_item : outer_attrs maybe_visibility external_static_item .  (reduce by rule 248)
 
@@ -3974,154 +4101,154 @@ state 334:
 	.	reduce by rule 248
 
 
-state 335:
+state 344:
 
 	external_static_item : STATIC . maybe_mut IDENT COLON types SEMI 
 
-	MUT	shift 381
+	MUT	shift 398
 
-	maybe_mut	goto 380
+	maybe_mut	goto 397
 
-	.	reduce by rule 96
+	.	reduce by rule 97
 
 
-state 336:
+state 345:
 
 	external_func_item : FN . IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
 	external_func_item : FN . IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	IDENT	shift 382
+	IDENT	shift 399
 
 
 	.	error
 
 
-state 337:
+state 346:
 
-	enum_items : enum_item enum_items_expansion maybe_comma .  (reduce by rule 171)
-
-
-
-	.	reduce by rule 171
+	enum_items : enum_item enum_items_expansion maybe_comma .  (reduce by rule 169)
 
 
-state 338:
 
-	maybe_comma : COMMA .  (reduce by rule 93)
+	.	reduce by rule 169
+
+
+state 347:
+
+	maybe_comma : COMMA .  (reduce by rule 94)
 	enum_items_expansion : enum_items_expansion COMMA . enum_item 
 
 	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
-	RBRACE	reduce by rule 93
+	RBRACE	reduce by rule 94
 
-	outer_attrs	goto 254
-	enum_item	goto 383
+	outer_attrs	goto 259
+	enum_item	goto 400
 
 	.	error
 
 
-state 339:
+state 348:
 
-	enum_item : outer_attrs IDENT enum_item_discriminant .  (reduce by rule 176)
-
-
-
-	.	reduce by rule 176
-
-
-state 340:
-
-	enum_item : outer_attrs IDENT enum_item_struct .  (reduce by rule 175)
-
-
-
-	.	reduce by rule 175
-
-
-state 341:
-
-	enum_item : outer_attrs IDENT enum_item_tuple .  (reduce by rule 174)
+	enum_item : outer_attrs IDENT enum_item_discriminant .  (reduce by rule 174)
 
 
 
 	.	reduce by rule 174
 
 
-state 342:
+state 349:
+
+	enum_item : outer_attrs IDENT enum_item_struct .  (reduce by rule 173)
+
+
+
+	.	reduce by rule 173
+
+
+state 350:
+
+	enum_item : outer_attrs IDENT enum_item_tuple .  (reduce by rule 172)
+
+
+
+	.	reduce by rule 172
+
+
+state 351:
 
 	enum_item_tuple : LPARENT . maybe_tuple_fields RPARENT 
 
 	PUB	reduce by rule 30
 	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
-	RPARENT	reduce by rule 163
+	RPARENT	reduce by rule 161
 
-	outer_attrs	goto 181
-	tuple_fields	goto 180
-	tuple_field	goto 179
-	maybe_tuple_fields	goto 384
+	outer_attrs	goto 184
+	tuple_fields	goto 183
+	tuple_field	goto 182
+	maybe_tuple_fields	goto 401
 
 	.	error
 
 
-state 343:
+state 352:
 
 	enum_item_struct : LBRACE . maybe_struct_fields RBRACE 
 
 	PUB	reduce by rule 30
 	IDENT	reduce by rule 30
 	POUND	reduce by rule 30
-	RBRACE	reduce by rule 155
+	RBRACE	reduce by rule 153
 
-	outer_attrs	goto 218
-	struct_fields	goto 232
-	struct_field	goto 216
-	maybe_struct_fields	goto 385
+	outer_attrs	goto 221
+	struct_fields	goto 236
+	struct_field	goto 219
+	maybe_struct_fields	goto 402
 
 	.	error
 
 
-state 344:
+state 353:
 
 	enum_item_discriminant : EQ . expression 
 
-	INTEGER_LIT	shift 238
+	INTEGER_LIT	shift 242
 
-	expression	goto 386
+	expression	goto 403
 
 	.	error
 
 
-state 345:
+state 354:
 
 	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT . meta_seq_expansion 
 
-	LPARENT	shift 198
+	LPARENT	shift 201
 
-	meta_seq_expansion	goto 387
+	meta_seq_expansion	goto 404
 
 	.	reduce by rule 42
 
 
-state 346:
+state 355:
 
-	trait_items : trait_item trait_items .  (reduce by rule 181)
-
-
-
-	.	reduce by rule 181
-
-
-state 347:
-
-	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_trait_super maybe_where_clause LBRACE trait_items RBRACE .  (reduce by rule 120)
+	trait_items : trait_item trait_items .  (reduce by rule 179)
 
 
 
-	.	reduce by rule 120
+	.	reduce by rule 179
 
 
-state 348:
+state 356:
+
+	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_trait_super maybe_where_clause LBRACE trait_items RBRACE .  (reduce by rule 118)
+
+
+
+	.	reduce by rule 118
+
+
+state 357:
 
 	marco_invocation_semi : simple_path NOT .  (reduce by rule 244)
 
@@ -4130,133 +4257,133 @@ state 348:
 	.	reduce by rule 244
 
 
-state 349:
+state 358:
 
 	trait_method : trait_method_decl . SEMI 
 
-	SEMI	shift 388
+	SEMI	shift 405
 
 
 	.	error
-
-
-state 350:
-
-	trait_func : trait_func_decl . SEMI 
-	trait_func : trait_func_decl . block_expression 
-
-	SEMI	shift 390
-	LBRACE	shift 357
-
-	block_expression	goto 389
-
-	.	error
-
-
-state 351:
-
-	trait_item : outer_attrs trait_type .  (reduce by rule 186)
-
-
-
-	.	reduce by rule 186
-
-
-state 352:
-
-	trait_item : outer_attrs trait_const .  (reduce by rule 185)
-
-
-
-	.	reduce by rule 185
-
-
-state 353:
-
-	trait_item : outer_attrs trait_method .  (reduce by rule 184)
-
-
-
-	.	reduce by rule 184
-
-
-state 354:
-
-	trait_item : outer_attrs trait_func .  (reduce by rule 183)
-
-
-
-	.	reduce by rule 183
-
-
-state 355:
-
-	trait_method : block_expression .  (reduce by rule 191)
-
-
-
-	.	reduce by rule 191
-
-
-state 356:
-
-	trait_func_decl : func_qualifier . FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
-	trait_method_decl : func_qualifier . FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
-
-	FN	shift 391
-
-
-	.	error
-
-
-state 357:
-
-	block_expression : LBRACE . inner_attrs maybe_statements RBRACE 
-
-
-	inner_attrs	goto 392
-
-	.	reduce by rule 28
-
-
-state 358:
-
-	func_qualifier : UNSAFE .  (reduce by rule 133)
-	func_qualifier : UNSAFE . EXTERN 
-	func_qualifier : UNSAFE . EXTERN abi 
-
-	EXTERN	shift 58
-
-
-	.	reduce by rule 133
 
 
 state 359:
 
-	trait_type : TYPE . IDENT maybe_trait_super SEMI 
+	trait_func : trait_func_decl . SEMI 
+	trait_func : trait_func_decl . block_expression 
 
-	IDENT	shift 393
+	SEMI	shift 407
+	LBRACE	shift 366
 
+	block_expression	goto 406
 
 	.	error
 
 
 state 360:
 
-	func_qualifier : EXTERN .  (reduce by rule 136)
-	func_qualifier : EXTERN . abi 
+	trait_item : outer_attrs trait_type .  (reduce by rule 184)
 
-	STR_LIT	shift 72
-	RAW_BYTE_STR_LIT	shift 71
 
-	abi	goto 394
 
-	.	reduce by rule 136
+	.	reduce by rule 184
 
 
 state 361:
 
-	func_qualifier : CONST .  (reduce by rule 127)
+	trait_item : outer_attrs trait_const .  (reduce by rule 183)
+
+
+
+	.	reduce by rule 183
+
+
+state 362:
+
+	trait_item : outer_attrs trait_method .  (reduce by rule 182)
+
+
+
+	.	reduce by rule 182
+
+
+state 363:
+
+	trait_item : outer_attrs trait_func .  (reduce by rule 181)
+
+
+
+	.	reduce by rule 181
+
+
+state 364:
+
+	trait_method : block_expression .  (reduce by rule 189)
+
+
+
+	.	reduce by rule 189
+
+
+state 365:
+
+	trait_func_decl : func_qualifier . FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
+	trait_method_decl : func_qualifier . FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
+
+	FN	shift 408
+
+
+	.	error
+
+
+state 366:
+
+	block_expression : LBRACE . inner_attrs maybe_statements RBRACE 
+
+
+	inner_attrs	goto 409
+
+	.	reduce by rule 28
+
+
+state 367:
+
+	func_qualifier : UNSAFE .  (reduce by rule 131)
+	func_qualifier : UNSAFE . EXTERN 
+	func_qualifier : UNSAFE . EXTERN abi 
+
+	EXTERN	shift 57
+
+
+	.	reduce by rule 131
+
+
+state 368:
+
+	trait_type : TYPE . IDENT maybe_trait_super SEMI 
+
+	IDENT	shift 410
+
+
+	.	error
+
+
+state 369:
+
+	func_qualifier : EXTERN .  (reduce by rule 134)
+	func_qualifier : EXTERN . abi 
+
+	STR_LIT	shift 71
+	RAW_BYTE_STR_LIT	shift 70
+
+	abi	goto 411
+
+	.	reduce by rule 134
+
+
+state 370:
+
+	func_qualifier : CONST .  (reduce by rule 125)
 	func_qualifier : CONST . UNSAFE 
 	func_qualifier : CONST . EXTERN 
 	func_qualifier : CONST . EXTERN abi 
@@ -4265,91 +4392,91 @@ state 361:
 	trait_const : CONST . IDENT COLON types SEMI 
 	trait_const : CONST . IDENT COLON types EQ expression SEMI 
 
-	EXTERN	shift 76
-	UNSAFE	shift 75
-	IDENT	shift 395
+	EXTERN	shift 75
+	UNSAFE	shift 74
+	IDENT	shift 412
 
 
-	.	reduce by rule 127
+	.	reduce by rule 125
 
 
-state 362:
+state 371:
 
-	type_param_bounds_expansion : type_param_bounds_expansion PLUS type_param_bound .  (reduce by rule 209)
-
-
-
-	.	reduce by rule 209
-
-
-state 363:
-
-	trait_bound : LPARENT maybe_ques maybe_for_lifetimes type_path .  (reduce by rule 220)
+	type_param_bounds_expansion : type_param_bounds_expansion PLUS type_param_bound .  (reduce by rule 207)
 
 
 
-	.	reduce by rule 220
+	.	reduce by rule 207
 
 
-state 364:
+state 372:
 
-	func_parameters_expansion : func_parameters_expansion COMMA func_param .  (reduce by rule 146)
-
-
-
-	.	reduce by rule 146
+	trait_bound : LPARENT maybe_ques maybe_for_lifetimes type_path .  (reduce by rule 218)
 
 
-state 365:
+
+	.	reduce by rule 218
+
+
+state 373:
+
+	func_parameters_expansion : func_parameters_expansion COMMA func_param .  (reduce by rule 144)
+
+
+
+	.	reduce by rule 144
+
+
+state 374:
 
 	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause . block_expression 
 
-	LBRACE	shift 357
+	LBRACE	shift 366
 
-	block_expression	goto 396
+	block_expression	goto 413
 
 	.	error
 
 
-state 366:
+state 375:
 
-	func_return_type : RARROW types .  (reduce by rule 151)
-
-
-
-	.	reduce by rule 151
-
-
-state 367:
-
-	struct_fields_expansion : struct_fields_expansion COMMA struct_field .  (reduce by rule 157)
+	func_return_type : RARROW types .  (reduce by rule 149)
 
 
 
-	.	reduce by rule 157
+	.	reduce by rule 149
 
 
-state 368:
+state 376:
+
+	struct_fields_expansion : struct_fields_expansion COMMA struct_field .  (reduce by rule 155)
+
+
+
+	.	reduce by rule 155
+
+
+state 377:
 
 	struct_field : outer_attrs visibility IDENT COLON . types 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 397
+	types	goto 414
 
 	.	error
 
 
-state 369:
+state 378:
 
-	struct_field : outer_attrs IDENT COLON types .  (reduce by rule 160)
-
-
-
-	.	reduce by rule 160
+	struct_field : outer_attrs IDENT COLON types .  (reduce by rule 158)
 
 
-state 370:
+
+	.	reduce by rule 158
+
+
+state 379:
 
 	type_bound_where_clause_item : maybe_for_lifetimes types COLON maybe_type_param_bounds .  (reduce by rule 66)
 
@@ -4358,7 +4485,7 @@ state 370:
 	.	reduce by rule 66
 
 
-state 371:
+state 380:
 
 	for_lifetimes : FOR LT lifetime_params GT .  (reduce by rule 71)
 
@@ -4367,29 +4494,19 @@ state 371:
 	.	reduce by rule 71
 
 
-state 372:
-
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
-
-
-	inner_attrs	goto 398
-
-	.	reduce by rule 28
-
-
-state 373:
+state 381:
 
 	inner_attrs : inner_attrs . inner_attr 
-	trait_impl : IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
+	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
 
-	CONST	shift 37
-	EXTERN	shift 360
-	FN	reduce by rule 138
-	PUB	shift 32
+	CONST	shift 36
+	EXTERN	shift 369
+	FN	reduce by rule 136
+	PUB	shift 31
 	SELFVALUE	reduce by rule 30
 	SUPER	reduce by rule 30
 	TYPE	reduce by rule 8
-	UNSAFE	shift 358
+	UNSAFE	shift 367
 	IDENT	reduce by rule 30
 	CARET	reduce by rule 30
 	PATHSEP	reduce by rule 30
@@ -4398,291 +4515,31 @@ state 373:
 	RBRACE	reduce by rule 237
 	SHEBANG	shift 7
 
-	outer_attrs	goto 405
+	outer_attrs	goto 390
 	inner_attr	goto 4
-	visibility	goto 291
-	maybe_visibility	goto 404
-	function	goto 403
-	func_qualifier	goto 376
-	constant_item	goto 402
-	trait_impl_items	goto 401
-	trait_impl_item	goto 400
-	method	goto 399
+	visibility	goto 298
+	maybe_visibility	goto 389
+	function	goto 388
+	func_qualifier	goto 387
+	constant_item	goto 386
+	trait_impl_items	goto 415
+	trait_impl_item	goto 384
+	method	goto 383
 
 	.	error
-
-
-state 374:
-
-	inherent_impl_item : outer_attrs maybe_visibility method .  (reduce by rule 233)
-
-
-
-	.	reduce by rule 233
-
-
-state 375:
-
-	inherent_impl_item : outer_attrs maybe_visibility constant_item .  (reduce by rule 231)
-
-
-
-	.	reduce by rule 231
-
-
-state 376:
-
-	function : func_qualifier . FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
-	method : func_qualifier . FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
-
-	FN	shift 406
-
-
-	.	error
-
-
-state 377:
-
-	inherent_impl_item : outer_attrs maybe_visibility function .  (reduce by rule 232)
-
-
-
-	.	reduce by rule 232
-
-
-state 378:
-
-	lifetime_bounds_expansion : lifetime_bounds_expansion lifetime PLUS .  (reduce by rule 214)
-
-
-
-	.	reduce by rule 214
-
-
-state 379:
-
-	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds EQ types .  (reduce by rule 89)
-
-
-
-	.	reduce by rule 89
-
-
-state 380:
-
-	external_static_item : STATIC maybe_mut . IDENT COLON types SEMI 
-
-	IDENT	shift 407
-
-
-	.	error
-
-
-state 381:
-
-	maybe_mut : MUT .  (reduce by rule 95)
-
-
-
-	.	reduce by rule 95
 
 
 state 382:
 
-	external_func_item : FN IDENT . maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
-	external_func_item : FN IDENT . maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
 
-	LT	shift 67
 
-	generics	goto 66
-	maybe_generics	goto 408
+	inner_attrs	goto 416
 
-	.	reduce by rule 68
+	.	reduce by rule 28
 
 
 state 383:
-
-	enum_items_expansion : enum_items_expansion COMMA enum_item .  (reduce by rule 172)
-
-
-
-	.	reduce by rule 172
-
-
-state 384:
-
-	enum_item_tuple : LPARENT maybe_tuple_fields . RPARENT 
-
-	RPARENT	shift 409
-
-
-	.	error
-
-
-state 385:
-
-	enum_item_struct : LBRACE maybe_struct_fields . RBRACE 
-
-	RBRACE	shift 410
-
-
-	.	error
-
-
-state 386:
-
-	enum_item_discriminant : EQ expression .  (reduce by rule 180)
-
-
-
-	.	reduce by rule 180
-
-
-state 387:
-
-	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT meta_seq_expansion .  (reduce by rule 41)
-
-
-
-	.	reduce by rule 41
-
-
-state 388:
-
-	trait_method : trait_method_decl SEMI .  (reduce by rule 190)
-
-
-
-	.	reduce by rule 190
-
-
-state 389:
-
-	trait_func : trait_func_decl block_expression .  (reduce by rule 189)
-
-
-
-	.	reduce by rule 189
-
-
-state 390:
-
-	trait_func : trait_func_decl SEMI .  (reduce by rule 188)
-
-
-
-	.	reduce by rule 188
-
-
-state 391:
-
-	trait_func_decl : func_qualifier FN . IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
-	trait_method_decl : func_qualifier FN . IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
-
-	IDENT	shift 411
-
-
-	.	error
-
-
-state 392:
-
-	inner_attrs : inner_attrs . inner_attr 
-	block_expression : LBRACE inner_attrs . maybe_statements RBRACE 
-
-	SHEBANG	shift 7
-
-	inner_attr	goto 4
-	maybe_statements	goto 412
-
-	.	reduce by rule 262
-
-
-state 393:
-
-	trait_type : TYPE IDENT . maybe_trait_super SEMI 
-
-	COLON	shift 168
-
-	maybe_trait_super	goto 413
-
-	.	reduce by rule 205
-
-
-state 394:
-
-	func_qualifier : EXTERN abi .  (reduce by rule 137)
-
-
-
-	.	reduce by rule 137
-
-
-state 395:
-
-	trait_const : CONST IDENT . COLON types SEMI 
-	trait_const : CONST IDENT . COLON types EQ expression SEMI 
-
-	COLON	shift 414
-
-
-	.	error
-
-
-state 396:
-
-	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression .  (reduce by rule 126)
-
-
-
-	.	reduce by rule 126
-
-
-state 397:
-
-	struct_field : outer_attrs visibility IDENT COLON types .  (reduce by rule 159)
-
-
-
-	.	reduce by rule 159
-
-
-state 398:
-
-	inner_attrs : inner_attrs . inner_attr 
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
-
-	CONST	shift 37
-	EXTERN	shift 360
-	FN	reduce by rule 138
-	PUB	shift 32
-	SELFVALUE	reduce by rule 30
-	SUPER	reduce by rule 30
-	TYPE	reduce by rule 8
-	UNSAFE	shift 358
-	IDENT	reduce by rule 30
-	CARET	reduce by rule 30
-	PATHSEP	reduce by rule 30
-	POUND	reduce by rule 30
-	DOLLAR	reduce by rule 30
-	RBRACE	reduce by rule 237
-	SHEBANG	shift 7
-
-	outer_attrs	goto 405
-	inner_attr	goto 4
-	visibility	goto 291
-	maybe_visibility	goto 404
-	function	goto 403
-	func_qualifier	goto 376
-	constant_item	goto 402
-	trait_impl_items	goto 415
-	trait_impl_item	goto 400
-	method	goto 399
-
-	.	error
-
-
-state 399:
 
 	trait_impl_item : method .  (reduce by rule 242)
 
@@ -4691,18 +4548,18 @@ state 399:
 	.	reduce by rule 242
 
 
-state 400:
+state 384:
 
 	trait_impl_items : trait_impl_item . trait_impl_items 
 
-	CONST	shift 37
-	EXTERN	shift 360
-	FN	reduce by rule 138
-	PUB	shift 32
+	CONST	shift 36
+	EXTERN	shift 369
+	FN	reduce by rule 136
+	PUB	shift 31
 	SELFVALUE	reduce by rule 30
 	SUPER	reduce by rule 30
 	TYPE	reduce by rule 8
-	UNSAFE	shift 358
+	UNSAFE	shift 367
 	IDENT	reduce by rule 30
 	CARET	reduce by rule 30
 	PATHSEP	reduce by rule 30
@@ -4710,30 +4567,30 @@ state 400:
 	DOLLAR	reduce by rule 30
 	RBRACE	reduce by rule 237
 
-	outer_attrs	goto 405
-	visibility	goto 291
-	maybe_visibility	goto 404
-	function	goto 403
-	func_qualifier	goto 376
-	constant_item	goto 402
-	trait_impl_items	goto 416
-	trait_impl_item	goto 400
-	method	goto 399
+	outer_attrs	goto 390
+	visibility	goto 298
+	maybe_visibility	goto 389
+	function	goto 388
+	func_qualifier	goto 387
+	constant_item	goto 386
+	trait_impl_items	goto 417
+	trait_impl_item	goto 384
+	method	goto 383
 
 	.	error
 
 
-state 401:
+state 385:
 
-	trait_impl : IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
+	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
 
-	RBRACE	shift 417
+	RBRACE	shift 418
 
 
 	.	error
 
 
-state 402:
+state 386:
 
 	trait_impl_item : constant_item .  (reduce by rule 240)
 
@@ -4742,7 +4599,18 @@ state 402:
 	.	reduce by rule 240
 
 
-state 403:
+state 387:
+
+	function : func_qualifier . FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
+	method : func_qualifier . FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
+
+	FN	shift 419
+
+
+	.	error
+
+
+state 388:
 
 	trait_impl_item : function .  (reduce by rule 241)
 
@@ -4751,65 +4619,230 @@ state 403:
 	.	reduce by rule 241
 
 
-state 404:
+state 389:
 
 	trait_impl_item : maybe_visibility . type_alias 
 
-	TYPE	shift 29
+	TYPE	shift 28
 
-	type_alias	goto 418
+	type_alias	goto 420
 
 	.	error
 
 
-state 405:
+state 390:
 
 	outer_attrs : outer_attrs . outer_attr 
 	trait_impl_item : outer_attrs . marco_invocation_semi 
 
-	SELFVALUE	shift 56
-	SUPER	shift 55
-	IDENT	shift 54
-	CARET	shift 52
-	PATHSEP	shift 79
+	SELFVALUE	shift 55
+	SUPER	shift 54
+	IDENT	shift 53
+	CARET	shift 51
+	PATHSEP	shift 78
 	POUND	shift 24
-	DOLLAR	shift 50
+	DOLLAR	shift 49
 
 	outer_attr	goto 23
-	simple_path	goto 300
-	simple_path_segment	goto 47
-	marco_invocation_semi	goto 419
+	simple_path	goto 307
+	simple_path_segment	goto 46
+	marco_invocation_semi	goto 421
 
 	.	error
+
+
+state 391:
+
+	inherent_impl_item : outer_attrs maybe_visibility method .  (reduce by rule 231)
+
+
+
+	.	reduce by rule 231
+
+
+state 392:
+
+	inherent_impl_item : outer_attrs maybe_visibility constant_item .  (reduce by rule 229)
+
+
+
+	.	reduce by rule 229
+
+
+state 393:
+
+	inherent_impl_item : outer_attrs maybe_visibility function .  (reduce by rule 230)
+
+
+
+	.	reduce by rule 230
+
+
+state 394:
+
+	inner_attrs : inner_attrs . inner_attr 
+	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
+
+	CONST	shift 36
+	EXTERN	shift 369
+	FN	reduce by rule 136
+	PUB	shift 31
+	SELFVALUE	reduce by rule 30
+	SUPER	reduce by rule 30
+	TYPE	reduce by rule 8
+	UNSAFE	shift 367
+	IDENT	reduce by rule 30
+	CARET	reduce by rule 30
+	PATHSEP	reduce by rule 30
+	POUND	reduce by rule 30
+	DOLLAR	reduce by rule 30
+	RBRACE	reduce by rule 237
+	SHEBANG	shift 7
+
+	outer_attrs	goto 390
+	inner_attr	goto 4
+	visibility	goto 298
+	maybe_visibility	goto 389
+	function	goto 388
+	func_qualifier	goto 387
+	constant_item	goto 386
+	trait_impl_items	goto 422
+	trait_impl_item	goto 384
+	method	goto 383
+
+	.	error
+
+
+state 395:
+
+	lifetime_bounds_expansion : lifetime_bounds_expansion lifetime PLUS .  (reduce by rule 212)
+
+
+
+	.	reduce by rule 212
+
+
+state 396:
+
+	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds EQ types .  (reduce by rule 90)
+
+
+
+	.	reduce by rule 90
+
+
+state 397:
+
+	external_static_item : STATIC maybe_mut . IDENT COLON types SEMI 
+
+	IDENT	shift 423
+
+
+	.	error
+
+
+state 398:
+
+	maybe_mut : MUT .  (reduce by rule 96)
+
+
+
+	.	reduce by rule 96
+
+
+state 399:
+
+	external_func_item : FN IDENT . maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
+	external_func_item : FN IDENT . maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
+
+	LT	shift 66
+
+	generics	goto 65
+	maybe_generics	goto 424
+
+	.	reduce by rule 68
+
+
+state 400:
+
+	enum_items_expansion : enum_items_expansion COMMA enum_item .  (reduce by rule 170)
+
+
+
+	.	reduce by rule 170
+
+
+state 401:
+
+	enum_item_tuple : LPARENT maybe_tuple_fields . RPARENT 
+
+	RPARENT	shift 425
+
+
+	.	error
+
+
+state 402:
+
+	enum_item_struct : LBRACE maybe_struct_fields . RBRACE 
+
+	RBRACE	shift 426
+
+
+	.	error
+
+
+state 403:
+
+	enum_item_discriminant : EQ expression .  (reduce by rule 178)
+
+
+
+	.	reduce by rule 178
+
+
+state 404:
+
+	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT meta_seq_expansion .  (reduce by rule 41)
+
+
+
+	.	reduce by rule 41
+
+
+state 405:
+
+	trait_method : trait_method_decl SEMI .  (reduce by rule 188)
+
+
+
+	.	reduce by rule 188
 
 
 state 406:
 
-	function : func_qualifier FN . IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
-	method : func_qualifier FN . IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
-
-	IDENT	shift 420
+	trait_func : trait_func_decl block_expression .  (reduce by rule 187)
 
 
-	.	error
+
+	.	reduce by rule 187
 
 
 state 407:
 
-	external_static_item : STATIC maybe_mut IDENT . COLON types SEMI 
-
-	COLON	shift 421
+	trait_func : trait_func_decl SEMI .  (reduce by rule 186)
 
 
-	.	error
+
+	.	reduce by rule 186
 
 
 state 408:
 
-	external_func_item : FN IDENT maybe_generics . LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
-	external_func_item : FN IDENT maybe_generics . LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
+	trait_func_decl : func_qualifier FN . IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
+	trait_method_decl : func_qualifier FN . IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
-	LPARENT	shift 422
+	IDENT	shift 427
 
 
 	.	error
@@ -4817,40 +4850,43 @@ state 408:
 
 state 409:
 
-	enum_item_tuple : LPARENT maybe_tuple_fields RPARENT .  (reduce by rule 178)
+	inner_attrs : inner_attrs . inner_attr 
+	block_expression : LBRACE inner_attrs . maybe_statements RBRACE 
 
+	SHEBANG	shift 7
 
+	inner_attr	goto 4
+	maybe_statements	goto 428
 
-	.	reduce by rule 178
+	.	reduce by rule 262
 
 
 state 410:
 
-	enum_item_struct : LBRACE maybe_struct_fields RBRACE .  (reduce by rule 179)
+	trait_type : TYPE IDENT . maybe_trait_super SEMI 
 
+	COLON	shift 170
 
+	maybe_trait_super	goto 429
 
-	.	reduce by rule 179
+	.	reduce by rule 203
 
 
 state 411:
 
-	trait_func_decl : func_qualifier FN IDENT . maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
-	trait_method_decl : func_qualifier FN IDENT . maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
+	func_qualifier : EXTERN abi .  (reduce by rule 135)
 
-	LT	shift 67
 
-	generics	goto 66
-	maybe_generics	goto 423
 
-	.	reduce by rule 68
+	.	reduce by rule 135
 
 
 state 412:
 
-	block_expression : LBRACE inner_attrs maybe_statements . RBRACE 
+	trait_const : CONST IDENT . COLON types SEMI 
+	trait_const : CONST IDENT . COLON types EQ expression SEMI 
 
-	RBRACE	shift 424
+	COLON	shift 430
 
 
 	.	error
@@ -4858,37 +4894,68 @@ state 412:
 
 state 413:
 
-	trait_type : TYPE IDENT maybe_trait_super . SEMI 
-
-	SEMI	shift 425
+	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression .  (reduce by rule 124)
 
 
-	.	error
+
+	.	reduce by rule 124
 
 
 state 414:
 
-	trait_const : CONST IDENT COLON . types SEMI 
-	trait_const : CONST IDENT COLON . types EQ expression SEMI 
+	struct_field : outer_attrs visibility IDENT COLON types .  (reduce by rule 157)
 
-	IDENT	shift 108
 
-	types	goto 426
 
-	.	error
+	.	reduce by rule 157
 
 
 state 415:
 
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
+	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
 
-	RBRACE	shift 427
+	RBRACE	shift 431
 
 
 	.	error
 
 
 state 416:
+
+	inner_attrs : inner_attrs . inner_attr 
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
+
+	CONST	shift 36
+	EXTERN	shift 369
+	FN	reduce by rule 136
+	PUB	shift 31
+	SELFVALUE	reduce by rule 30
+	SUPER	reduce by rule 30
+	TYPE	reduce by rule 8
+	UNSAFE	shift 367
+	IDENT	reduce by rule 30
+	CARET	reduce by rule 30
+	PATHSEP	reduce by rule 30
+	POUND	reduce by rule 30
+	DOLLAR	reduce by rule 30
+	RBRACE	reduce by rule 237
+	SHEBANG	shift 7
+
+	outer_attrs	goto 390
+	inner_attr	goto 4
+	visibility	goto 298
+	maybe_visibility	goto 389
+	function	goto 388
+	func_qualifier	goto 387
+	constant_item	goto 386
+	trait_impl_items	goto 432
+	trait_impl_item	goto 384
+	method	goto 383
+
+	.	error
+
+
+state 417:
 
 	trait_impl_items : trait_impl_item trait_impl_items .  (reduce by rule 236)
 
@@ -4897,16 +4964,27 @@ state 416:
 	.	reduce by rule 236
 
 
-state 417:
-
-	trait_impl : IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 234)
-
-
-
-	.	reduce by rule 234
-
-
 state 418:
+
+	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 232)
+
+
+
+	.	reduce by rule 232
+
+
+state 419:
+
+	function : func_qualifier FN . IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
+	method : func_qualifier FN . IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
+
+	IDENT	shift 433
+
+
+	.	error
+
+
+state 420:
 
 	trait_impl_item : maybe_visibility type_alias .  (reduce by rule 239)
 
@@ -4915,7 +4993,7 @@ state 418:
 	.	reduce by rule 239
 
 
-state 419:
+state 421:
 
 	trait_impl_item : outer_attrs marco_invocation_semi .  (reduce by rule 238)
 
@@ -4924,50 +5002,30 @@ state 419:
 	.	reduce by rule 238
 
 
-state 420:
+state 422:
 
-	function : func_qualifier FN IDENT . maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
-	method : func_qualifier FN IDENT . maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
+	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
 
-	LT	shift 67
+	RBRACE	shift 434
 
-	generics	goto 66
-	maybe_generics	goto 428
-
-	.	reduce by rule 68
-
-
-state 421:
-
-	external_static_item : STATIC maybe_mut IDENT COLON . types SEMI 
-
-	IDENT	shift 108
-
-	types	goto 429
 
 	.	error
 
 
-state 422:
-
-	external_func_item : FN IDENT maybe_generics LPARENT . maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
-	external_func_item : FN IDENT maybe_generics LPARENT . named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
-
-	IDENT	shift 435
-	UNDERSCORE	shift 434
-
-	maybe_named_func_parameters	goto 433
-	named_func_parameters	goto 432
-	named_func_param	goto 431
-	named_func_parameters_with_variadics	goto 430
-
-	.	reduce by rule 254
-
-
 state 423:
 
-	trait_func_decl : func_qualifier FN IDENT maybe_generics . LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
-	trait_method_decl : func_qualifier FN IDENT maybe_generics . LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
+	external_static_item : STATIC maybe_mut IDENT . COLON types SEMI 
+
+	COLON	shift 435
+
+
+	.	error
+
+
+state 424:
+
+	external_func_item : FN IDENT maybe_generics . LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
+	external_func_item : FN IDENT maybe_generics . LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
 	LPARENT	shift 436
 
@@ -4975,7 +5033,149 @@ state 423:
 	.	error
 
 
-state 424:
+state 425:
+
+	enum_item_tuple : LPARENT maybe_tuple_fields RPARENT .  (reduce by rule 176)
+
+
+
+	.	reduce by rule 176
+
+
+state 426:
+
+	enum_item_struct : LBRACE maybe_struct_fields RBRACE .  (reduce by rule 177)
+
+
+
+	.	reduce by rule 177
+
+
+state 427:
+
+	trait_func_decl : func_qualifier FN IDENT . maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
+	trait_method_decl : func_qualifier FN IDENT . maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
+
+	LT	shift 66
+
+	generics	goto 65
+	maybe_generics	goto 437
+
+	.	reduce by rule 68
+
+
+state 428:
+
+	block_expression : LBRACE inner_attrs maybe_statements . RBRACE 
+
+	RBRACE	shift 438
+
+
+	.	error
+
+
+state 429:
+
+	trait_type : TYPE IDENT maybe_trait_super . SEMI 
+
+	SEMI	shift 439
+
+
+	.	error
+
+
+state 430:
+
+	trait_const : CONST IDENT COLON . types SEMI 
+	trait_const : CONST IDENT COLON . types EQ expression SEMI 
+
+	IDENT	shift 139
+
+	types	goto 440
+
+	.	error
+
+
+state 431:
+
+	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 234)
+
+
+
+	.	reduce by rule 234
+
+
+state 432:
+
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
+
+	RBRACE	shift 441
+
+
+	.	error
+
+
+state 433:
+
+	function : func_qualifier FN IDENT . maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
+	method : func_qualifier FN IDENT . maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
+
+	LT	shift 66
+
+	generics	goto 65
+	maybe_generics	goto 442
+
+	.	reduce by rule 68
+
+
+state 434:
+
+	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 233)
+
+
+
+	.	reduce by rule 233
+
+
+state 435:
+
+	external_static_item : STATIC maybe_mut IDENT COLON . types SEMI 
+
+	IDENT	shift 139
+
+	types	goto 443
+
+	.	error
+
+
+state 436:
+
+	external_func_item : FN IDENT maybe_generics LPARENT . maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
+	external_func_item : FN IDENT maybe_generics LPARENT . named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
+
+	IDENT	shift 449
+	UNDERSCORE	shift 448
+
+	maybe_named_func_parameters	goto 447
+	named_func_parameters	goto 446
+	named_func_param	goto 445
+	named_func_parameters_with_variadics	goto 444
+
+	.	reduce by rule 254
+
+
+state 437:
+
+	trait_func_decl : func_qualifier FN IDENT maybe_generics . LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
+	trait_method_decl : func_qualifier FN IDENT maybe_generics . LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
+
+	LPARENT	shift 450
+
+
+	.	error
+
+
+state 438:
 
 	block_expression : LBRACE inner_attrs maybe_statements RBRACE .  (reduce by rule 261)
 
@@ -4984,79 +5184,79 @@ state 424:
 	.	reduce by rule 261
 
 
-state 425:
+state 439:
 
-	trait_type : TYPE IDENT maybe_trait_super SEMI .  (reduce by rule 203)
-
-
-
-	.	reduce by rule 203
+	trait_type : TYPE IDENT maybe_trait_super SEMI .  (reduce by rule 201)
 
 
-state 426:
+
+	.	reduce by rule 201
+
+
+state 440:
 
 	trait_const : CONST IDENT COLON types . SEMI 
 	trait_const : CONST IDENT COLON types . EQ expression SEMI 
 
-	EQ	shift 438
-	SEMI	shift 437
+	EQ	shift 452
+	SEMI	shift 451
 
 
 	.	error
 
 
-state 427:
+state 441:
 
-	trait_impl : UNSAFE IMPL maybe_generics maybe_not type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 235)
+	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 235)
 
 
 
 	.	reduce by rule 235
 
 
-state 428:
+state 442:
 
 	function : func_qualifier FN IDENT maybe_generics . LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
 	method : func_qualifier FN IDENT maybe_generics . LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	LPARENT	shift 439
+	LPARENT	shift 453
 
 
 	.	error
 
 
-state 429:
+state 443:
 
 	external_static_item : STATIC maybe_mut IDENT COLON types . SEMI 
 
-	SEMI	shift 440
+	SEMI	shift 454
 
 
 	.	error
 
 
-state 430:
+state 444:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics . RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	RPARENT	shift 441
+	RPARENT	shift 455
 
 
 	.	error
 
 
-state 431:
+state 445:
 
 	named_func_parameters : named_func_param . named_func_parameters_expansion maybe_comma 
 	named_func_parameters_with_variadics : named_func_param . named_func_parameters_expansion COMMA DOTDOTDOT 
 
 
-	named_func_parameters_expansion	goto 442
+	named_func_parameters_expansion	goto 456
 
 	.	reduce by rule 257
 
 
-state 432:
+state 446:
 
 	maybe_named_func_parameters : named_func_parameters .  (reduce by rule 253)
 
@@ -5065,102 +5265,102 @@ state 432:
 	.	reduce by rule 253
 
 
-state 433:
+state 447:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters . RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	RPARENT	shift 443
+	RPARENT	shift 457
 
 
 	.	error
 
 
-state 434:
+state 448:
 
 	named_func_param : UNDERSCORE . COLON types 
 
-	COLON	shift 444
+	COLON	shift 458
 
 
 	.	error
 
 
-state 435:
+state 449:
 
 	named_func_param : IDENT . COLON types 
 
-	COLON	shift 445
+	COLON	shift 459
 
 
 	.	error
 
 
-state 436:
+state 450:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT . maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT . self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
-	MUT	shift 381
-	SELFVALUE	reduce by rule 96
-	IDENT	shift 455
-	AND	shift 454
-	RPARENT	reduce by rule 194
+	MUT	shift 398
+	SELFVALUE	reduce by rule 97
+	IDENT	shift 469
+	AND	shift 468
+	RPARENT	reduce by rule 192
 
-	patterns	goto 453
-	types	goto 452
-	trait_func_parameters	goto 451
-	trait_func_param	goto 450
-	maybe_trait_func_parameters	goto 449
-	self_param	goto 448
-	maybe_and_or_lifetime	goto 447
-	maybe_mut	goto 446
+	patterns	goto 467
+	types	goto 466
+	trait_func_parameters	goto 465
+	trait_func_param	goto 464
+	maybe_trait_func_parameters	goto 463
+	self_param	goto 462
+	maybe_and_or_lifetime	goto 461
+	maybe_mut	goto 460
 
 	.	error
 
 
-state 437:
+state 451:
 
-	trait_const : CONST IDENT COLON types SEMI .  (reduce by rule 201)
-
-
-
-	.	reduce by rule 201
+	trait_const : CONST IDENT COLON types SEMI .  (reduce by rule 199)
 
 
-state 438:
+
+	.	reduce by rule 199
+
+
+state 452:
 
 	trait_const : CONST IDENT COLON types EQ . expression SEMI 
 
-	INTEGER_LIT	shift 238
+	INTEGER_LIT	shift 242
 
-	expression	goto 456
+	expression	goto 470
 
 	.	error
 
 
-state 439:
+state 453:
 
 	function : func_qualifier FN IDENT maybe_generics LPARENT . maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_expression 
 	method : func_qualifier FN IDENT maybe_generics LPARENT . self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	MUT	shift 381
-	SELFVALUE	reduce by rule 96
-	IDENT	shift 215
-	AND	shift 454
-	RPARENT	reduce by rule 144
+	MUT	shift 398
+	SELFVALUE	reduce by rule 97
+	IDENT	shift 218
+	AND	shift 468
+	RPARENT	reduce by rule 142
 
-	patterns	goto 214
-	func_parameters	goto 213
-	maybe_func_parameters	goto 212
-	func_param	goto 211
-	self_param	goto 457
-	maybe_and_or_lifetime	goto 447
-	maybe_mut	goto 446
+	patterns	goto 217
+	func_parameters	goto 216
+	maybe_func_parameters	goto 215
+	func_param	goto 214
+	self_param	goto 471
+	maybe_and_or_lifetime	goto 461
+	maybe_mut	goto 460
 
 	.	error
 
 
-state 440:
+state 454:
 
 	external_static_item : STATIC maybe_mut IDENT COLON types SEMI .  (reduce by rule 250)
 
@@ -5169,159 +5369,159 @@ state 440:
 	.	reduce by rule 250
 
 
-state 441:
+state 455:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT . maybe_func_return_type maybe_where_clause SEMI 
 
-	RARROW	shift 310
+	RARROW	shift 317
 
-	func_return_type	goto 309
-	maybe_func_return_type	goto 458
+	func_return_type	goto 316
+	maybe_func_return_type	goto 472
 
-	.	reduce by rule 150
+	.	reduce by rule 148
 
 
-state 442:
+state 456:
 
 	named_func_parameters : named_func_param named_func_parameters_expansion . maybe_comma 
 	named_func_parameters_expansion : named_func_parameters_expansion . COMMA named_func_param 
 	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion . COMMA DOTDOTDOT 
 
-	COMMA	shift 460
+	COMMA	shift 474
 
-	maybe_comma	goto 459
+	maybe_comma	goto 473
 
-	.	reduce by rule 94
+	.	reduce by rule 95
 
 
-state 443:
+state 457:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT . maybe_func_return_type maybe_where_clause SEMI 
 
-	RARROW	shift 310
+	RARROW	shift 317
 
-	func_return_type	goto 309
-	maybe_func_return_type	goto 461
+	func_return_type	goto 316
+	maybe_func_return_type	goto 475
 
-	.	reduce by rule 150
+	.	reduce by rule 148
 
 
-state 444:
+state 458:
 
 	named_func_param : UNDERSCORE COLON . types 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 462
+	types	goto 476
 
 	.	error
 
 
-state 445:
+state 459:
 
 	named_func_param : IDENT COLON . types 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 463
+	types	goto 477
 
 	.	error
 
 
-state 446:
+state 460:
 
 	self_param : maybe_mut . SELFVALUE 
 	self_param : maybe_mut . SELFVALUE COLON types 
 
-	SELFVALUE	shift 464
+	SELFVALUE	shift 478
 
 
 	.	error
 
 
-state 447:
+state 461:
 
 	self_param : maybe_and_or_lifetime . maybe_mut SELFVALUE 
 
-	MUT	shift 381
+	MUT	shift 398
 
-	maybe_mut	goto 465
+	maybe_mut	goto 479
 
-	.	reduce by rule 96
+	.	reduce by rule 97
 
 
-state 448:
+state 462:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param . trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
 
-	trait_func_parameters_expansion	goto 466
+	trait_func_parameters_expansion	goto 480
 
-	.	reduce by rule 198
+	.	reduce by rule 196
 
 
-state 449:
+state 463:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters . RPARENT maybe_func_return_type where_clause 
 
-	RPARENT	shift 467
+	RPARENT	shift 481
 
 
 	.	error
 
 
-state 450:
+state 464:
 
 	trait_func_parameters : trait_func_param . trait_func_parameters_expansion maybe_comma 
 
 
-	trait_func_parameters_expansion	goto 468
+	trait_func_parameters_expansion	goto 482
+
+	.	reduce by rule 196
+
+
+state 465:
+
+	maybe_trait_func_parameters : trait_func_parameters .  (reduce by rule 191)
+
+
+
+	.	reduce by rule 191
+
+
+state 466:
+
+	trait_func_param : types .  (reduce by rule 198)
+
+
 
 	.	reduce by rule 198
 
 
-state 451:
-
-	maybe_trait_func_parameters : trait_func_parameters .  (reduce by rule 193)
-
-
-
-	.	reduce by rule 193
-
-
-state 452:
-
-	trait_func_param : types .  (reduce by rule 200)
-
-
-
-	.	reduce by rule 200
-
-
-state 453:
+state 467:
 
 	trait_func_param : patterns . COLON types 
 
-	COLON	shift 469
+	COLON	shift 483
 
 
 	.	error
 
 
-state 454:
+state 468:
 
-	maybe_and_or_lifetime : AND .  (reduce by rule 225)
+	maybe_and_or_lifetime : AND .  (reduce by rule 223)
 	maybe_and_or_lifetime : AND . lifetime 
 
-	STATICLIFETIME	shift 210
-	LIFETIME_OR_LABEL	shift 209
+	STATICLIFETIME	shift 213
+	LIFETIME_OR_LABEL	shift 212
 
-	lifetime	goto 470
+	lifetime	goto 484
 
-	.	reduce by rule 225
+	.	reduce by rule 223
 
 
-state 455:
+state 469:
 
 	patterns : IDENT .  (reduce by rule 46)
 	types : IDENT .  (reduce by rule 47)
@@ -5334,39 +5534,39 @@ state 455:
 	.	error
 
 
-state 456:
+state 470:
 
 	trait_const : CONST IDENT COLON types EQ expression . SEMI 
 
-	SEMI	shift 471
+	SEMI	shift 485
 
 
 	.	error
 
 
-state 457:
+state 471:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param . func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
 
-	func_parameters_expansion	goto 472
+	func_parameters_expansion	goto 486
 
-	.	reduce by rule 147
+	.	reduce by rule 145
 
 
-state 458:
+state 472:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type . maybe_where_clause SEMI 
 
-	WHERE	shift 127
+	WHERE	shift 126
 
-	where_clause	goto 126
-	maybe_where_clause	goto 473
+	where_clause	goto 125
+	maybe_where_clause	goto 487
 
 	.	reduce by rule 57
 
 
-state 459:
+state 473:
 
 	named_func_parameters : named_func_param named_func_parameters_expansion maybe_comma .  (reduce by rule 255)
 
@@ -5375,34 +5575,34 @@ state 459:
 	.	reduce by rule 255
 
 
-state 460:
+state 474:
 
-	maybe_comma : COMMA .  (reduce by rule 93)
+	maybe_comma : COMMA .  (reduce by rule 94)
 	named_func_parameters_expansion : named_func_parameters_expansion COMMA . named_func_param 
 	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion COMMA . DOTDOTDOT 
 
-	IDENT	shift 435
-	UNDERSCORE	shift 434
-	DOTDOTDOT	shift 475
+	IDENT	shift 449
+	UNDERSCORE	shift 448
+	DOTDOTDOT	shift 489
 
-	named_func_param	goto 474
+	named_func_param	goto 488
 
-	.	reduce by rule 93
+	.	reduce by rule 94
 
 
-state 461:
+state 475:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type . maybe_where_clause SEMI 
 
-	WHERE	shift 127
+	WHERE	shift 126
 
-	where_clause	goto 126
-	maybe_where_clause	goto 476
+	where_clause	goto 125
+	maybe_where_clause	goto 490
 
 	.	reduce by rule 57
 
 
-state 462:
+state 476:
 
 	named_func_param : UNDERSCORE COLON types .  (reduce by rule 259)
 
@@ -5411,7 +5611,7 @@ state 462:
 	.	reduce by rule 259
 
 
-state 463:
+state 477:
 
 	named_func_param : IDENT COLON types .  (reduce by rule 258)
 
@@ -5420,115 +5620,115 @@ state 463:
 	.	reduce by rule 258
 
 
-state 464:
+state 478:
 
-	self_param : maybe_mut SELFVALUE .  (reduce by rule 223)
+	self_param : maybe_mut SELFVALUE .  (reduce by rule 221)
 	self_param : maybe_mut SELFVALUE . COLON types 
 
-	COLON	shift 477
+	COLON	shift 491
 
 
-	.	reduce by rule 223
+	.	reduce by rule 221
 
 
-state 465:
+state 479:
 
 	self_param : maybe_and_or_lifetime maybe_mut . SELFVALUE 
 
-	SELFVALUE	shift 478
+	SELFVALUE	shift 492
 
 
 	.	error
 
 
-state 466:
+state 480:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion . maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 	trait_func_parameters_expansion : trait_func_parameters_expansion . COMMA trait_func_param 
 
-	COMMA	shift 480
+	COMMA	shift 494
 
-	maybe_comma	goto 479
+	maybe_comma	goto 493
 
-	.	reduce by rule 94
+	.	reduce by rule 95
 
 
-state 467:
+state 481:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT . maybe_func_return_type where_clause 
 
-	RARROW	shift 310
+	RARROW	shift 317
 
-	func_return_type	goto 309
-	maybe_func_return_type	goto 481
+	func_return_type	goto 316
+	maybe_func_return_type	goto 495
 
-	.	reduce by rule 150
+	.	reduce by rule 148
 
 
-state 468:
+state 482:
 
 	trait_func_parameters : trait_func_param trait_func_parameters_expansion . maybe_comma 
 	trait_func_parameters_expansion : trait_func_parameters_expansion . COMMA trait_func_param 
 
-	COMMA	shift 480
+	COMMA	shift 494
 
-	maybe_comma	goto 482
+	maybe_comma	goto 496
 
-	.	reduce by rule 94
+	.	reduce by rule 95
 
 
-state 469:
+state 483:
 
 	trait_func_param : patterns COLON . types 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 483
+	types	goto 497
 
 	.	error
 
 
-state 470:
+state 484:
 
-	maybe_and_or_lifetime : AND lifetime .  (reduce by rule 226)
-
-
-
-	.	reduce by rule 226
-
-
-state 471:
-
-	trait_const : CONST IDENT COLON types EQ expression SEMI .  (reduce by rule 202)
+	maybe_and_or_lifetime : AND lifetime .  (reduce by rule 224)
 
 
 
-	.	reduce by rule 202
+	.	reduce by rule 224
 
 
-state 472:
+state 485:
+
+	trait_const : CONST IDENT COLON types EQ expression SEMI .  (reduce by rule 200)
+
+
+
+	.	reduce by rule 200
+
+
+state 486:
 
 	func_parameters_expansion : func_parameters_expansion . COMMA func_param 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion . maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	COMMA	shift 307
+	COMMA	shift 314
 
-	maybe_comma	goto 484
+	maybe_comma	goto 498
 
-	.	reduce by rule 94
+	.	reduce by rule 95
 
 
-state 473:
+state 487:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause . SEMI 
 
-	SEMI	shift 485
+	SEMI	shift 499
 
 
 	.	error
 
 
-state 474:
+state 488:
 
 	named_func_parameters_expansion : named_func_parameters_expansion COMMA named_func_param .  (reduce by rule 256)
 
@@ -5537,7 +5737,7 @@ state 474:
 	.	reduce by rule 256
 
 
-state 475:
+state 489:
 
 	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion COMMA DOTDOTDOT .  (reduce by rule 260)
 
@@ -5546,100 +5746,100 @@ state 475:
 	.	reduce by rule 260
 
 
-state 476:
+state 490:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause . SEMI 
 
-	SEMI	shift 486
+	SEMI	shift 500
 
 
 	.	error
 
 
-state 477:
+state 491:
 
 	self_param : maybe_mut SELFVALUE COLON . types 
 
-	IDENT	shift 108
+	IDENT	shift 139
 
-	types	goto 487
+	types	goto 501
 
 	.	error
 
 
-state 478:
+state 492:
 
-	self_param : maybe_and_or_lifetime maybe_mut SELFVALUE .  (reduce by rule 222)
-
-
-
-	.	reduce by rule 222
+	self_param : maybe_and_or_lifetime maybe_mut SELFVALUE .  (reduce by rule 220)
 
 
-state 479:
+
+	.	reduce by rule 220
+
+
+state 493:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma . RPARENT maybe_func_return_type maybe_where_clause 
 
-	RPARENT	shift 488
+	RPARENT	shift 502
 
 
 	.	error
 
 
-state 480:
+state 494:
 
-	maybe_comma : COMMA .  (reduce by rule 93)
+	maybe_comma : COMMA .  (reduce by rule 94)
 	trait_func_parameters_expansion : trait_func_parameters_expansion COMMA . trait_func_param 
 
-	IDENT	shift 455
+	IDENT	shift 469
 
-	patterns	goto 453
-	types	goto 452
-	trait_func_param	goto 489
+	patterns	goto 467
+	types	goto 466
+	trait_func_param	goto 503
 
-	.	reduce by rule 93
+	.	reduce by rule 94
 
 
-state 481:
+state 495:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type . where_clause 
 
-	WHERE	shift 127
+	WHERE	shift 126
 
-	where_clause	goto 490
+	where_clause	goto 504
 
 	.	error
 
 
-state 482:
+state 496:
 
-	trait_func_parameters : trait_func_param trait_func_parameters_expansion maybe_comma .  (reduce by rule 196)
-
-
-
-	.	reduce by rule 196
-
-
-state 483:
-
-	trait_func_param : patterns COLON types .  (reduce by rule 199)
+	trait_func_parameters : trait_func_param trait_func_parameters_expansion maybe_comma .  (reduce by rule 194)
 
 
 
-	.	reduce by rule 199
+	.	reduce by rule 194
 
 
-state 484:
+state 497:
+
+	trait_func_param : patterns COLON types .  (reduce by rule 197)
+
+
+
+	.	reduce by rule 197
+
+
+state 498:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma . RPARENT maybe_func_return_type maybe_where_clause block_expression 
 
-	RPARENT	shift 491
+	RPARENT	shift 505
 
 
 	.	error
 
 
-state 485:
+state 499:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI .  (reduce by rule 252)
 
@@ -5648,7 +5848,7 @@ state 485:
 	.	reduce by rule 252
 
 
-state 486:
+state 500:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI .  (reduce by rule 251)
 
@@ -5657,102 +5857,102 @@ state 486:
 	.	reduce by rule 251
 
 
-state 487:
+state 501:
 
-	self_param : maybe_mut SELFVALUE COLON types .  (reduce by rule 224)
-
-
-
-	.	reduce by rule 224
+	self_param : maybe_mut SELFVALUE COLON types .  (reduce by rule 222)
 
 
-state 488:
+
+	.	reduce by rule 222
+
+
+state 502:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT . maybe_func_return_type maybe_where_clause 
 
-	RARROW	shift 310
+	RARROW	shift 317
 
-	func_return_type	goto 309
-	maybe_func_return_type	goto 492
+	func_return_type	goto 316
+	maybe_func_return_type	goto 506
 
-	.	reduce by rule 150
-
-
-state 489:
-
-	trait_func_parameters_expansion : trait_func_parameters_expansion COMMA trait_func_param .  (reduce by rule 197)
+	.	reduce by rule 148
 
 
+state 503:
 
-	.	reduce by rule 197
-
-
-state 490:
-
-	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause .  (reduce by rule 192)
-
-
-
-	.	reduce by rule 192
-
-
-state 491:
-
-	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT . maybe_func_return_type maybe_where_clause block_expression 
-
-	RARROW	shift 310
-
-	func_return_type	goto 309
-	maybe_func_return_type	goto 493
-
-	.	reduce by rule 150
-
-
-state 492:
-
-	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type . maybe_where_clause 
-
-	WHERE	shift 127
-
-	where_clause	goto 126
-	maybe_where_clause	goto 494
-
-	.	reduce by rule 57
-
-
-state 493:
-
-	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type . maybe_where_clause block_expression 
-
-	WHERE	shift 127
-
-	where_clause	goto 126
-	maybe_where_clause	goto 495
-
-	.	reduce by rule 57
-
-
-state 494:
-
-	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause .  (reduce by rule 195)
+	trait_func_parameters_expansion : trait_func_parameters_expansion COMMA trait_func_param .  (reduce by rule 195)
 
 
 
 	.	reduce by rule 195
 
 
-state 495:
+state 504:
+
+	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type where_clause .  (reduce by rule 190)
+
+
+
+	.	reduce by rule 190
+
+
+state 505:
+
+	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT . maybe_func_return_type maybe_where_clause block_expression 
+
+	RARROW	shift 317
+
+	func_return_type	goto 316
+	maybe_func_return_type	goto 507
+
+	.	reduce by rule 148
+
+
+state 506:
+
+	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type . maybe_where_clause 
+
+	WHERE	shift 126
+
+	where_clause	goto 125
+	maybe_where_clause	goto 508
+
+	.	reduce by rule 57
+
+
+state 507:
+
+	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type . maybe_where_clause block_expression 
+
+	WHERE	shift 126
+
+	where_clause	goto 125
+	maybe_where_clause	goto 509
+
+	.	reduce by rule 57
+
+
+state 508:
+
+	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause .  (reduce by rule 193)
+
+
+
+	.	reduce by rule 193
+
+
+state 509:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause . block_expression 
 
-	LBRACE	shift 357
+	LBRACE	shift 366
 
-	block_expression	goto 496
+	block_expression	goto 510
 
 	.	error
 
 
-state 496:
+state 510:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_expression .  (reduce by rule 243)
 
@@ -5761,7 +5961,7 @@ state 496:
 	.	reduce by rule 243
 
 
-state 497:
+state 511:
 
 
 	EOF	accept
@@ -5769,5 +5969,5 @@ state 497:
 
 	.	error
 
-558 of 1187 action table entries left after compaction
-428 goto table entries
+563 of 1239 action table entries left after compaction
+455 goto table entries

@@ -47,8 +47,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | type_params | type_params_expansion | type_param | maybe_type_param
         | maybe_lifetime_param | maybe_colon_lifetime_bounds | lifetime_param_tail | maybe_colon_type_bounds
         | maybe_comma | maybe_plus | maybe_ques | maybe_not | maybe_outer_attr
-        | function | func_qualifier | maybe_unsafe | abi | maybe_abi
-        | func_parameters | maybe_func_parameters | func_param | func_parameters_expansion
+        | function of ItemType | func_qualifier of FunctionQualifier list | maybe_unsafe | abi of Abi | maybe_abi of Abi option
+        | func_parameters of FunctionParam list | maybe_func_parameters of FunctionParam list| func_param of FunctionParam | func_parameters_expansion of FunctionParam list
         | func_return_type | maybe_func_return_type
         | block_expression | maybe_statements | expression
         | struct_struct | tuple_struct | struct_fields | struct_field | tuple_fields | tuple_field 
@@ -191,6 +191,18 @@ for_lifetimes: (* There is no definition in reference,
 
 (* There is a ambiguous token, SHR *)
 generics: LT generic_params GT                                  (yaccLog("generics"))
+(* generics: LT GT                                                 ()
+        | LT lifetime_params GT                                 ()
+        | LT lifetime_params COMMA GT                           ()
+        | LT type_params GT                                     ()
+        | LT type_params COMMA GT                               ()
+        | LT lifetime_params COMMA type_params                  ()
+        | LT lifetime_params COMMA type_params COMMA            ()
+
+lifetime_params: lifetime_param                                 ()
+                | lifetime_params COMMA lifetime_param          ()
+type_params: type_param                                         ()
+            | type_params COMMA type_param                      () *)
 
 generic_params: lifetime_params                                 (yaccLog("generic_params:branch 1"))
                 | lifetime_params_expansion type_params         (yaccLog("generic_params:branch 2"))
@@ -205,7 +217,8 @@ lifetime_param: maybe_outer_attr
             LIFETIME_OR_LABEL maybe_colon_lifetime_bounds       (yaccLog("lifetime_param"))
 maybe_colon_lifetime_bounds: COLON lifetime_bounds              ()
                         |                                       ()
-type_params: type_params_expansion maybe_type_param             ()
+type_params: type_params_expansion                              ()
+            | type_params_expansion type_param                  ()
 type_params_expansion: type_params_expansion 
                     type_param COMMA                            (yaccLog("type_params_expansion:branch 1"))
                     |                                           (yaccLog("type_params_expansion:branch 2"))
@@ -228,16 +241,13 @@ maybe_ques: QUESTION                                            ()
             |                                                   ()
 maybe_unsafe: UNSAFE                                            ()
             |                                                   ()
-maybe_not: NOT                                                  ()
-            |                                                   ()
 
-item_type: IDENT                                                (Function)
-        | MOD IDENT SEMI                                        (Module (Identifer(IDENT), NONE))
+item_type: MOD IDENT SEMI                                       (Module (Identifer(IDENT), NONE))
         | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (Identifer(IDENT), SOME(ModuleBody(inner_attrs, items))))
         | EXTERN CARET IDENT SEMI                               (yaccLog("extern crate "^IDENT); ExternCrate (Identifer(IDENT), NONE))
         | EXTERN CARET IDENT AS IDENT SEMI                      (yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (Identifer(IDENT1), SOME(Identifer(IDENT2))))
         | USE use_tree SEMI                                     (yaccLog("use_tree"); UseDeclaration(use_tree))
-        | function                                              (yaccLog("function"); Function)
+        | function                                              (yaccLog("function"); function)
         | type_alias                                            (yaccLog("type alias"); TypeAlias)
         | struct_struct                                         (yaccLog("struct struct"); Struct)
         | tuple_struct                                          (yaccLog("tuple struct"); Struct)
@@ -259,47 +269,53 @@ type_alias: TYPE IDENT maybe_generics maybe_where_clause
             EQ types SEMI                                       ()        
 constant_item: CONST IDENT COLON types EQ expression SEMI       ()
 
-function:  func_qualifier FN IDENT maybe_generics
+function: func_qualifier FN IDENT maybe_generics
             LPARENT maybe_func_parameters RPARENT
             maybe_func_return_type
             maybe_where_clause
-            block_expression                                    ()      
+            block_expression                                    (Function({ qualifier=func_qualifier, generic=SOME(Generic),
+                                                                            name=Identifer(IDENT), params=maybe_func_parameters,
+                                                                            ret=SOME(Type), wh=SOME(WhereClause),
+                                                                            be=BlockExpression
+                                                                        })
+                                                                )
 
-func_qualifier: CONST                                           ()
-                | CONST UNSAFE                                  ()
-                | CONST EXTERN                                  ()
-                | CONST EXTERN abi                              ()
-                | CONST UNSAFE EXTERN                           ()
-                | CONST UNSAFE EXTERN abi                       ()
-                | UNSAFE                                        ()
-                | UNSAFE EXTERN                                 ()
-                | UNSAFE EXTERN abi                             ()
-                | EXTERN                                        ()
-                | EXTERN abi                                    ()
-                |                                               ()
+func_qualifier: CONST                                           ([ConstFQ])
+                | CONST UNSAFE                                  ([ConstFQ, UnsafeFQ])
+                | CONST EXTERN                                  ([ConstFQ, ExternFQ(NONE)])
+                | CONST EXTERN abi                              ([ConstFQ, ExternFQ(SOME(abi))])
+                | CONST UNSAFE EXTERN                           ([ConstFQ, UnsafeFQ, ExternFQ(NONE)])
+                | CONST UNSAFE EXTERN abi                       ([ConstFQ, UnsafeFQ, ExternFQ(SOME(abi))])
+                | UNSAFE                                        ([UnsafeFQ])
+                | UNSAFE EXTERN                                 ([UnsafeFQ, ExternFQ(NONE)])
+                | UNSAFE EXTERN abi                             ([UnsafeFQ, ExternFQ(SOME(abi))])
+                | EXTERN                                        ([ExternFQ(NONE)])
+                | EXTERN abi                                    ([ExternFQ(SOME(abi))])
+                |                                               ([])
 
-maybe_abi: abi                                                  ()
-        |                                                       ()
+maybe_abi: abi                                                  (SOME(abi))
+        |                                                       (NONE)
 
-abi: STR_LIT                                                    ()
-    | RAW_BYTE_STR_LIT                                          ()
+abi: STR_LIT                                                    (Abi(STR_LIT))
+    | RAW_BYTE_STR_LIT                                          (Abi(RAW_BYTE_STR_LIT))
 
-maybe_func_parameters: func_parameters                            ()
-                    |                                              ()
+maybe_func_parameters: func_parameters                          (func_parameters)
+                    |                                           ([])
 
-func_parameters: func_param func_parameters_expansion maybe_comma  ()
+func_parameters: func_param func_parameters_expansion 
+                maybe_comma                                     (func_param::func_parameters_expansion)
 
 func_parameters_expansion: 
                         (* This is a left recursion to solve COMMA conflicts *)
                         func_parameters_expansion 
-                        COMMA func_param                         ()
-                        |                                       ()
+                        COMMA func_param                        (func_param::func_parameters_expansion)
+                        |                                       (nil)
 
-func_param: patterns COLON types                                 ()
+func_param: patterns COLON types                                (FunctionParam)
 
-maybe_func_return_type: func_return_type                          ()
+maybe_func_return_type: func_return_type                        ()
                         |                                       ()
-func_return_type: RARROW types                                   ()
+func_return_type: RARROW types                                  ()
 
 struct_struct: STRUCT IDENT maybe_generics maybe_where_clause
                 LBRACE maybe_struct_fields RBRACE               ()
@@ -420,10 +436,16 @@ inherent_impl_item: outer_attrs marco_invocation_semi           ()
                         constant_item                           ()
                     | outer_attrs maybe_visibility function     ()
                     | outer_attrs maybe_visibility method       ()
-trait_impl:  IMPL maybe_generics maybe_not type_path
+trait_impl:  IMPL maybe_generics type_path
             FOR types maybe_where_clause LBRACE
             inner_attrs trait_impl_items RBRACE                 ()
-            | UNSAFE IMPL maybe_generics maybe_not type_path
+            |IMPL maybe_generics NOT type_path
+            FOR types maybe_where_clause LBRACE
+            inner_attrs trait_impl_items RBRACE                 ()
+            | UNSAFE IMPL maybe_generics  type_path
+            FOR types maybe_where_clause LBRACE
+            inner_attrs trait_impl_items RBRACE                 ()
+            | UNSAFE IMPL maybe_generics NOT type_path
             FOR types maybe_where_clause LBRACE
             inner_attrs trait_impl_items RBRACE                 ()
 trait_impl_items: trait_impl_item trait_impl_items              ()

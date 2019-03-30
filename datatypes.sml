@@ -17,7 +17,9 @@ sig
         Module of (Identifer * ModuleBody option)
         | ExternCrate of (Identifer * Identifer option)
         | UseDeclaration of UseTree 
-        | Function
+        | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generic option, 
+                        params:FunctionParam list, ret:Type option, 
+                        wh:WhereClause option, be:BlockExpression}
         | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
         | Struct
         | Enumeration
@@ -32,6 +34,14 @@ sig
     and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
     and MarcoItem = MarcoItem
     and Identifer = Identifer of string
+    and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
+    and Abi = Abi of string
+    and Generic = Generic
+    and FunctionParam = FunctionParam
+    and Pattern = Pattern
+    and Type = Type
+    and WhereClause = WhereClause
+    and BlockExpression = BlockExpression
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
                     | I8 of Word8.word | I16 of Word.word | I32 of Word32.word 
@@ -58,7 +68,9 @@ struct
         Module of (Identifer * ModuleBody option)
         | ExternCrate of (Identifer * Identifer option)
         | UseDeclaration of UseTree 
-        | Function
+        | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generic option, 
+                        params:FunctionParam list, ret:Type option, 
+                        wh:WhereClause option, be:BlockExpression}
         | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
         | Struct
         | Enumeration
@@ -73,6 +85,14 @@ struct
     and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
     and MarcoItem = MarcoItem
     and Identifer = Identifer of string
+    and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
+    and Abi = Abi of string
+    and Generic = Generic
+    and FunctionParam = FunctionParam
+    and Pattern = Pattern
+    and Type = Type
+    and WhereClause = WhereClause
+    and BlockExpression = BlockExpression
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
                     | I8 of Word8.word | I16 of Word.word | I32 of Word32.word 

@@ -6,6 +6,7 @@ In sml interactive system
 ## Record
 + Parse SHEBANG_LINE for solve SHEBANG conflict
 + Fix grammar bug (lex bug ignores some token)
++ Fix many productions (replace maybe_productions with terminals to solve shift/reduce conflicts)
 ### Goal
 + To modify lex comments datatype
 + Literal parse in lex or yacc?
@@ -36,8 +37,8 @@ In sml interactive system
 + Attribute
 + Module
 + Extern crate
++ Use declaration
 ### Processing
 + Literal expression
 + Items
-+ Use declaration
 + Function
