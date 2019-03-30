@@ -47,7 +47,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | type_params | type_params_expansion | type_param | maybe_type_param
         | maybe_lifetime_param | maybe_colon_lifetime_bounds | lifetime_param_tail | maybe_colon_type_bounds
         | maybe_comma | maybe_plus | maybe_ques | maybe_not | maybe_outer_attr
-        | function | func_qualifier | maybe_const | maybe_unsafe | abi | maybe_abi | maybe_path_sep
+        | function | func_qualifier | maybe_unsafe | abi | maybe_abi
         | func_parameters | maybe_func_parameters | func_param | func_parameters_expansion
         | func_return_type | maybe_func_return_type
         | block_expression | maybe_statements | expression
@@ -167,9 +167,6 @@ simple_path_segment: IDENT                                      (IDPat(Identifer
                     | CARET                                     (CratePat)
                     | DOLLAR CARET                              (DCratePat)
 
-maybe_path_sep: PATHSEP                                         ()
-                |                                               ()
-
 maybe_where_clause: where_clause                                ()
                     |                                           ()
 where_clause: WHERE where_clause_expansion 
@@ -229,8 +226,6 @@ maybe_plus: PLUS                                                ()
             |                                                   ()
 maybe_ques: QUESTION                                            ()
             |                                                   ()
-maybe_const: CONST                                              ()
-            |                                                   ()
 maybe_unsafe: UNSAFE                                            ()
             |                                                   ()
 maybe_not: NOT                                                  ()
@@ -264,22 +259,24 @@ type_alias: TYPE IDENT maybe_generics maybe_where_clause
             EQ types SEMI                                       ()        
 constant_item: CONST IDENT COLON types EQ expression SEMI       ()
 
-function: func_qualifier FN IDENT maybe_generics
+function:  func_qualifier FN IDENT maybe_generics
             LPARENT maybe_func_parameters RPARENT
             maybe_func_return_type
             maybe_where_clause
             block_expression                                    ()      
 
-func_qualifier: (* 
-                    The problem is lalr reads 1 token, there are two productions 
-                    which can produce epsilon, the parser can not 
-                    distinct function and trait.
-                *)
-                maybe_const maybe_unsafe                         ()
-                | maybe_const maybe_unsafe EXTERN 
-                %prec LOWER_THAN_ABI                            ()
-                | maybe_const maybe_unsafe EXTERN abi
-                %prec ABI                                       ()
+func_qualifier: CONST                                           ()
+                | CONST UNSAFE                                  ()
+                | CONST EXTERN                                  ()
+                | CONST EXTERN abi                              ()
+                | CONST UNSAFE EXTERN                           ()
+                | CONST UNSAFE EXTERN abi                       ()
+                | UNSAFE                                        ()
+                | UNSAFE EXTERN                                 ()
+                | UNSAFE EXTERN abi                             ()
+                | EXTERN                                        ()
+                | EXTERN abi                                    ()
+                |                                               ()
 
 maybe_abi: abi                                                  ()
         |                                                       ()
@@ -423,7 +420,10 @@ inherent_impl_item: outer_attrs marco_invocation_semi           ()
                         constant_item                           ()
                     | outer_attrs maybe_visibility function     ()
                     | outer_attrs maybe_visibility method       ()
-trait_impl: maybe_unsafe IMPL maybe_generics maybe_not type_path
+trait_impl:  IMPL maybe_generics maybe_not type_path
+            FOR types maybe_where_clause LBRACE
+            inner_attrs trait_impl_items RBRACE                 ()
+            | UNSAFE IMPL maybe_generics maybe_not type_path
             FOR types maybe_where_clause LBRACE
             inner_attrs trait_impl_items RBRACE                 ()
 trait_impl_items: trait_impl_item trait_impl_items              ()
