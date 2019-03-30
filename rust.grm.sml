@@ -2225,7 +2225,9 @@ end
  _, _)) :: _ :: ( _, ( _, EXTERN1left, _)) :: rest671)) => let val  
 result = MlyValue.item_type (fn _ => let val  (IDENT as IDENT1) = 
 IDENT1 ()
- in (yaccLog("extern crate "^IDENT); ExternCrate (IDENT, NONE))
+ in (
+yaccLog("extern crate "^IDENT); ExternCrate (Identifer(IDENT), NONE))
+
 end)
  in ( LrTable.NT 20, ( result, EXTERN1left, SEMI1right), rest671)
 end
@@ -2235,7 +2237,7 @@ end
  (fn _ => let val  IDENT1 = IDENT1 ()
  val  IDENT2 = IDENT2 ()
  in (
-yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (IDENT1, SOME(IDENT2))
+yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (Identifer(IDENT1), SOME(Identifer(IDENT2)))
 )
 end)
  in ( LrTable.NT 20, ( result, EXTERN1left, SEMI1right), rest671)

@@ -15,7 +15,7 @@ sig
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
         Module of (Identifer * ModuleBody option)
-        | ExternCrate of (string * string option)
+        | ExternCrate of (Identifer * Identifer option)
         | UseDeclaration of UseTree 
         | Function
         | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
@@ -56,7 +56,7 @@ struct
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
         Module of (Identifer * ModuleBody option)
-        | ExternCrate of (string * string option)
+        | ExternCrate of (Identifer * Identifer option)
         | UseDeclaration of UseTree 
         | Function
         | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)

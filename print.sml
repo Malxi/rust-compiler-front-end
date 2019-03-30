@@ -64,7 +64,11 @@ struct
                 | Item(A.MarcoItemType(marcoItem), d) = 
                     (indent d; out "MarcoItemType("; out ")")
             and VisItem(A.VisItem(visibility, itemType), d) =
-                (indent d; out "VisItem ("; Visibility(visibility, 0); outln ""; ItemType(itemType, d); out ")")
+                (indent d; 
+                outln "VisItem (";
+                Visibility(visibility, d+1); outln ""; 
+                ItemType(itemType, d+1); outln ""; 
+                indent (d); out ")")
             and Visibility(A.DefaultVis, d) = (indent d; out "<default>")
                 | Visibility(A.PubVis, d) = (indent d; out "<pub>")
                 | Visibility(A.CrateVis, d) = (indent d; out "<crate>")
@@ -78,8 +82,12 @@ struct
                     out ",")
                 | ItemType(A.Module(id, NONE), d) = 
                     (indent d; out "Module "; Identifer(id, 0); out ",")
+                | ItemType(A.ExternCrate(id, NONE), d) =
+                    (indent d; out "Extern Crate ("; Identifer(id, 0); out ")")
+                | ItemType(A.ExternCrate(id1, SOME(id2)), d) =
+                    (indent d; out "Extern Crate ("; Identifer(id1, 0); out " as "; Identifer(id2, 0); out ")")
                 | ItemType(A.UseDeclaration useDecl, d) =
-                    (indent d; "UseDeclaration ("; UseTree(useDecl, d); out ")")
+                    (indent d; "UseDeclaration ("; UseTree(useDecl, 0); out ")")
                 | ItemType (_, d) =
                     (indent d; out "ItemType")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
