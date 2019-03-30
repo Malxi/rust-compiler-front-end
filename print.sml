@@ -46,7 +46,7 @@ struct
                 | PathSeg(A.CratePat, d) = (out ("crate"))
                 | PathSeg(A.DCratePat, d) = (out ("$crate"))
                 | PathSeg(A.SuperPat, d) = (out ("super"))
-                | PathSeg(A.DefaultPat, d) = (out (""))
+                | PathSeg(A.DefaultPat, d) = (out ("root"))
             and LiteralExpression (A.LiteralExpression s, d) = (indent d; out s)
             and MetaSeq((SOME metaSeq), d) = 
                     let 
@@ -60,23 +60,35 @@ struct
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
             and Item(A.VisItemType(outerAttrs, visItem), d) = 
-                    (indent d; out "VisItemType("; VisItem(visItem, 0); out ")")
+                    (indent d; out "VisItemType("; outln ""; VisItem(visItem, d+1); out ")")
                 | Item(A.MarcoItemType(marcoItem), d) = 
                     (indent d; out "MarcoItemType("; out ")")
             and VisItem(A.VisItem(visibility, itemType), d) =
-                (indent d; out "VisItem ("; Visibility(visibility, 0); ItemType(itemType, 1); out ")")
+                (indent d; out "VisItem ("; Visibility(visibility, 0); outln ""; ItemType(itemType, d); out ")")
             and Visibility(A.DefaultVis, d) = (indent d; out "<default>")
                 | Visibility(A.PubVis, d) = (indent d; out "<pub>")
                 | Visibility(A.CrateVis, d) = (indent d; out "<crate>")
                 | Visibility(A.SelfVis, d) = (indent d; out "<self>")
                 | Visibility(A.SuperVis, d) = (indent d; out "<super>")
                 | Visibility(A.InVis(vis), d) = (indent d; out "<in>"; SimplePath(vis, d))
-            and ItemType(A.Module module, d) = 
-                    (indent d; out "Module ()")
+            and ItemType(A.Module(id, SOME(mbd)), d) = 
+                    (indent (d+1); 
+                    out "Module "; Identifer(id, 0); outln ""; 
+                    ModuleBody(mbd, d+1);
+                    out ",")
+                | ItemType(A.Module(id, NONE), d) = 
+                    (indent d; out "Module "; Identifer(id, 0); out ",")
                 | ItemType(A.UseDeclaration useDecl, d) =
                     (indent d; "UseDeclaration ("; UseTree(useDecl, d); out ")")
                 | ItemType (_, d) =
                     (indent d; out "ItemType")
+            and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
+                (indent d; outln "Body {";
+                outList (d+1) InnerAttribute innerAttrs 1;
+                outln ",";
+                outList (d+1) Item items 1;
+                outln "";
+                indent d; out "}")
             and UseTree(A.UseAll(SOME(simplePath)), d) = 
                     (indent d; out "UseAll ("; SimplePath(simplePath, d); out ")")
                 | UseTree(A.UseAll(NONE), d) = 

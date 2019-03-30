@@ -1520,7 +1520,8 @@ yaccLog("use_tree:branch 3"); UseAll (NONE)))
 end
 |  ( 17, ( ( _, ( _, _, STAR1right)) :: ( _, ( _, PATHSEP1left, _)) ::
  rest671)) => let val  result = MlyValue.use_tree (fn _ => (
-yaccLog("use_tree:branch 4"); UseAll (NONE)))
+yaccLog("use_tree:branch 4"); UseAll (SOME(SimplePath([DefaultPat]))))
+)
  in ( LrTable.NT 21, ( result, PATHSEP1left, STAR1right), rest671)
 end
 |  ( 18, ( ( _, ( _, _, STAR1right)) :: _ :: ( _, ( 
@@ -1548,9 +1549,10 @@ end
 use_tree_multi1right)) :: ( _, ( _, PATHSEP1left, _)) :: rest671)) =>
  let val  result = MlyValue.use_tree (fn _ => let val  (use_tree_multi
  as use_tree_multi1) = use_tree_multi1 ()
- in (yaccLog("use_tree:branch 7"); UseList (NONE, use_tree_multi))
-end
+ in (
+yaccLog("use_tree:branch 7"); UseList (SOME(SimplePath([DefaultPat])), use_tree_multi)
 )
+end)
  in ( LrTable.NT 21, ( result, PATHSEP1left, use_tree_multi1right), 
 rest671)
 end
@@ -2203,7 +2205,7 @@ end
 |  ( 110, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.IDENT IDENT1,
  _, _)) :: ( _, ( _, MOD1left, _)) :: rest671)) => let val  result = 
 MlyValue.item_type (fn _ => let val  (IDENT as IDENT1) = IDENT1 ()
- in (Module (IDENT, NONE))
+ in (Module (Identifer(IDENT), NONE))
 end)
  in ( LrTable.NT 20, ( result, MOD1left, SEMI1right), rest671)
 end
@@ -2214,7 +2216,8 @@ items1, _, _)) :: ( _, ( MlyValue.inner_attrs inner_attrs1, _, _)) ::
  val  (IDENT as IDENT1) = IDENT1 ()
  val  (inner_attrs as inner_attrs1) = inner_attrs1 ()
  val  (items as items1) = items1 ()
- in (Module (IDENT, SOME(ModuleBody(inner_attrs, items))))
+ in (Module (Identifer(IDENT), SOME(ModuleBody(inner_attrs, items))))
+
 end)
  in ( LrTable.NT 20, ( result, MOD1left, RBRACE1right), rest671)
 end

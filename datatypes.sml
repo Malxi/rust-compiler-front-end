@@ -14,7 +14,7 @@ sig
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
-        Module of (string * ModuleBody option)
+        Module of (Identifer * ModuleBody option)
         | ExternCrate of (string * string option)
         | UseDeclaration of UseTree 
         | Function
@@ -55,7 +55,7 @@ struct
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
-        Module of (string * ModuleBody option)
+        Module of (Identifer * ModuleBody option)
         | ExternCrate of (string * string option)
         | UseDeclaration of UseTree 
         | Function
