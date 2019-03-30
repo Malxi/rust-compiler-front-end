@@ -10,23 +10,24 @@ struct
             fun indent(0) = ()
                 | indent(n) = (out " "; indent(n-1))
 
-            fun outList d f l = 
+            fun outList d f l r = 
                 let
-                    fun travel d f [a] = (f(a, d+1))
-                        | travel d f (h::t) = (f(h, d+1); outln ", "; travel (d+1) f t)
+                    val sep = if r = 1 then "\n" else ""
+                    fun travel d f [a] = (f(a, d+r))
+                        | travel d f (h::t) = (f(h, d+r); out ", "; out sep; travel (d+r) f t)
                         | travel d f nil = ()
 
                     fun start d f [a] = (f(a, 0))
-                        | start d f (h::t) = (f(h, 0); outln ","; travel (d+1) f t)
+                        | start d f (h::t) = (f(h, 0); out ", "; out sep; travel (d+r) f t)
                         | start d f nil = ()
                 in
-                    (indent d; out "["; start d f l;out "]")
+                    (indent d; out "["; start d f l; out "]")
                 end
 
             fun Crate(A.Crate(shebang, innerAttrs, items), d) = 
                     (indent d; outln "Crate ("; Shebang(shebang, d+1); outln ","; 
-                    outList (d+1) InnerAttribute innerAttrs; outln ",";
-                    outList (d+1) Item items;
+                    outList (d+1) InnerAttribute innerAttrs 1; outln ",";
+                    outList (d+1) Item items 1;
                     outln "\n)")
             and Shebang(A.Shebang(SOME s), d) = (indent d; out("Shebang ("^s^")"))
                 | Shebang(A.Shebang(NONE), d) = (indent d; out("Shebang (NONE)"))
@@ -39,8 +40,8 @@ struct
                 | MetaItem (A.AttrSubs(simplePath, metaSeq), d) = 
                     (indent d; out "AttrSubs ("; SimplePath(simplePath, d); out "("; MetaSeq(metaSeq, d); out ")")
             and SimplePath (A.SimplePath(pathList), d) = 
-                (indent d; out "SimplePath ("; outList (0) PathSeg pathList; out ")")
-            and PathSeg(A.IDPat(id), d) = (out (id))
+                (indent d; out "SimplePath ("; outList (d) PathSeg pathList 0; out ")")
+            and PathSeg(A.IDPat(id), d) = (Identifer(id, d))
                 | PathSeg(A.SelfPat, d) = (out ("self"))
                 | PathSeg(A.CratePat, d) = (out ("crate"))
                 | PathSeg(A.DCratePat, d) = (out ("$crate"))
@@ -49,7 +50,7 @@ struct
             and LiteralExpression (A.LiteralExpression s, d) = (indent d; out s)
             and MetaSeq((SOME metaSeq), d) = 
                     let 
-                        fun helper((A.MetaSeq metaItemInnerList), d) = (indent d; outList (0) MetaItemInner metaItemInnerList)
+                        fun helper((A.MetaSeq metaItemInnerList), d) = (indent d; outList (0) MetaItemInner metaItemInnerList 1)
                     in 
                         helper(metaSeq, d)
                     end
@@ -59,9 +60,9 @@ struct
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
             and Item(A.VisItemType(outerAttrs, visItem), d) = 
-                (indent d; out "VisItemType("; VisItem(visItem, 0); out ")")
+                    (indent d; out "VisItemType("; VisItem(visItem, 0); out ")")
                 | Item(A.MarcoItemType(marcoItem), d) = 
-                (indent d; out "MarcoItemType("; out ")")
+                    (indent d; out "MarcoItemType("; out ")")
             and VisItem(A.VisItem(visibility, itemType), d) =
                 (indent d; out "VisItem ("; Visibility(visibility, 0); ItemType(itemType, 1); out ")")
             and Visibility(A.DefaultVis, d) = (indent d; out "<default>")
@@ -71,9 +72,25 @@ struct
                 | Visibility(A.SuperVis, d) = (indent d; out "<super>")
                 | Visibility(A.InVis(vis), d) = (indent d; out "<in>"; SimplePath(vis, d))
             and ItemType(A.Module module, d) = 
-                (indent d; out "Module ()")
+                    (indent d; out "Module ()")
+                | ItemType(A.UseDeclaration useDecl, d) =
+                    (indent d; "UseDeclaration ("; UseTree(useDecl, d); out ")")
                 | ItemType (_, d) =
-                (indent d; out "ItemType")
+                    (indent d; out "ItemType")
+            and UseTree(A.UseAll(SOME(simplePath)), d) = 
+                    (indent d; out "UseAll ("; SimplePath(simplePath, d); out ")")
+                | UseTree(A.UseAll(NONE), d) = 
+                    (indent d; out "UseAll ("; out ")")
+                | UseTree(A.UseList(SOME(simplePath), useTreeList), d) = 
+                    (indent d; out "UseList ("; SimplePath(simplePath, d); outList (d) UseTree useTreeList 0; out ")")
+                | UseTree(A.UseList(NONE, useTreeList), d) = 
+                    (indent d; out "UseList ("; outList (d) UseTree useTreeList 0; out ")")
+                | UseTree(A.UseAlias(simplePath, SOME(id)), d) = 
+                    (indent d; out "UseAlias ("; SimplePath(simplePath, d); out " as "; Identifer(id, d); out ")")
+                | UseTree(A.UseAlias(simplePath, NONE), d) = 
+                    (indent d; out "UseAlias ("; SimplePath(simplePath, d); out ")")
+            and Identifer(A.Identifer(id), d) = 
+                (indent d; out id)
         in
             Crate(ast, 0)
         end

@@ -1507,7 +1507,7 @@ end
 simple_path as simple_path1) = simple_path1 ()
  val  (IDENT as IDENT1) = IDENT1 ()
  in (
-yaccLog("use_tree:branch 2"); UseAlias (SimplePath(simple_path), SOME(IDENT))
+yaccLog("use_tree:branch 2"); UseAlias (SimplePath(simple_path), SOME(Identifer(IDENT)))
 )
 end)
  in ( LrTable.NT 21, ( result, simple_path1left, IDENT1right), rest671
@@ -1515,12 +1515,12 @@ end)
 end
 |  ( 16, ( ( _, ( _, STAR1left, STAR1right)) :: rest671)) => let val  
 result = MlyValue.use_tree (fn _ => (
-yaccLog("use_tree:branch 3"); UseWildCard (NONE)))
+yaccLog("use_tree:branch 3"); UseAll (NONE)))
  in ( LrTable.NT 21, ( result, STAR1left, STAR1right), rest671)
 end
 |  ( 17, ( ( _, ( _, _, STAR1right)) :: ( _, ( _, PATHSEP1left, _)) ::
  rest671)) => let val  result = MlyValue.use_tree (fn _ => (
-yaccLog("use_tree:branch 4"); UseWildCard (NONE)))
+yaccLog("use_tree:branch 4"); UseAll (NONE)))
  in ( LrTable.NT 21, ( result, PATHSEP1left, STAR1right), rest671)
 end
 |  ( 18, ( ( _, ( _, _, STAR1right)) :: _ :: ( _, ( 
@@ -1528,8 +1528,8 @@ MlyValue.simple_path simple_path1, simple_path1left, _)) :: rest671))
  => let val  result = MlyValue.use_tree (fn _ => let val  (simple_path
  as simple_path1) = simple_path1 ()
  in (
-yaccLog("use_tree:branch 5"); UseWildCard (SOME(SimplePath(simple_path)))
-)
+yaccLog("use_tree:branch 5"); UseAll (SOME(SimplePath(simple_path))))
+
 end)
  in ( LrTable.NT 21, ( result, simple_path1left, STAR1right), rest671)
 
@@ -1538,9 +1538,9 @@ end
 use_tree_multi1left, use_tree_multi1right)) :: rest671)) => let val  
 result = MlyValue.use_tree (fn _ => let val  (use_tree_multi as 
 use_tree_multi1) = use_tree_multi1 ()
- in (yaccLog("use_tree:branch 6"); UseMultiple (NONE, use_tree_multi))
-
-end)
+ in (yaccLog("use_tree:branch 6"); UseList (NONE, use_tree_multi))
+end
+)
  in ( LrTable.NT 21, ( result, use_tree_multi1left, 
 use_tree_multi1right), rest671)
 end
@@ -1548,9 +1548,9 @@ end
 use_tree_multi1right)) :: ( _, ( _, PATHSEP1left, _)) :: rest671)) =>
  let val  result = MlyValue.use_tree (fn _ => let val  (use_tree_multi
  as use_tree_multi1) = use_tree_multi1 ()
- in (yaccLog("use_tree:branch 7"); UseMultiple (NONE, use_tree_multi))
-
-end)
+ in (yaccLog("use_tree:branch 7"); UseList (NONE, use_tree_multi))
+end
+)
  in ( LrTable.NT 21, ( result, PATHSEP1left, use_tree_multi1right), 
 rest671)
 end
@@ -1561,7 +1561,7 @@ MlyValue.use_tree (fn _ => let val  (simple_path as simple_path1) =
 simple_path1 ()
  val  (use_tree_multi as use_tree_multi1) = use_tree_multi1 ()
  in (
-yaccLog("use_tree:branch 8"); UseMultiple (SOME(SimplePath(simple_path)), use_tree_multi)
+yaccLog("use_tree:branch 8"); UseList (SOME(SimplePath(simple_path)), use_tree_multi)
 )
 end)
  in ( LrTable.NT 21, ( result, simple_path1left, use_tree_multi1right)
@@ -1593,14 +1593,14 @@ use_tree_multi_expansion1, use_tree_multi_expansion1left, _)) ::
 rest671)) => let val  result = MlyValue.use_tree_multi_expansion (fn _
  => let val  (use_tree_multi_expansion as use_tree_multi_expansion1) =
  use_tree_multi_expansion1 ()
- val  use_tree1 = use_tree1 ()
- in (use_tree_multi_expansion)
+ val  (use_tree as use_tree1) = use_tree1 ()
+ in (use_tree::use_tree_multi_expansion)
 end)
  in ( LrTable.NT 23, ( result, use_tree_multi_expansion1left, 
 use_tree1right), rest671)
 end
 |  ( 25, ( rest671)) => let val  result = 
-MlyValue.use_tree_multi_expansion (fn _ => ([]))
+MlyValue.use_tree_multi_expansion (fn _ => (nil))
  in ( LrTable.NT 23, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 26, ( rest671)) => let val  result = MlyValue.macro_item (fn _ =>
@@ -1817,7 +1817,7 @@ end
 |  ( 51, ( ( _, ( MlyValue.IDENT IDENT1, IDENT1left, IDENT1right)) :: 
 rest671)) => let val  result = MlyValue.simple_path_segment (fn _ =>
  let val  (IDENT as IDENT1) = IDENT1 ()
- in (IDPat(IDENT))
+ in (IDPat(Identifer(IDENT)))
 end)
  in ( LrTable.NT 13, ( result, IDENT1left, IDENT1right), rest671)
 end

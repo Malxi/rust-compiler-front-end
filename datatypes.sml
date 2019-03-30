@@ -10,7 +10,7 @@ sig
     and LiteralExpression = LiteralExpression of string
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
-    and PathSeg = IDPat of string | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
+    and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
@@ -29,8 +29,9 @@ sig
         | ExternBlock
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
-    and UseTree = UseWildCard of SimplePath option | UseMultiple of (SimplePath option * UseTree list) | UseAlias of (SimplePath * string option)
+    and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
     and MarcoItem = MarcoItem
+    and Identifer = Identifer of string
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
                     | I8 of Word8.word | I16 of Word.word | I32 of Word32.word 
@@ -50,7 +51,7 @@ struct
     and LiteralExpression = LiteralExpression of string
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
-    and PathSeg = IDPat of string | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
+    and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
     and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
@@ -69,8 +70,9 @@ struct
         | ExternBlock
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
-    and UseTree = UseWildCard of SimplePath option | UseMultiple of (SimplePath option * UseTree list) | UseAlias of (SimplePath * string option)
+    and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
     and MarcoItem = MarcoItem
+    and Identifer = Identifer of string
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
                     | I8 of Word8.word | I16 of Word.word | I32 of Word32.word 

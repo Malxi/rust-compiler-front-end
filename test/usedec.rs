@@ -6,6 +6,7 @@ use ::{self, HashMap};
 use std::option::Option::{Some, None};
 use std::collections::hash_map::{self, HashMap};
 pub use quux::foo::{bar, baz};
+use a as s;
 
 // fn foo<T>(_: T){}
 // fn bar(map1: HashMap<String, usize>, map2: hash_map::HashMap<String, usize>){}
