@@ -40,7 +40,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | item of Item | vis_item of VisItem | macro_item of MarcoItem
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
-        | patterns | types of Type
+        | patterns of Pattern| types of Type
         | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility
         | where_clause of WhereClause | maybe_where_clause of WhereClause option | where_clause_expansion of WhereClauseItem list
         | where_clause_item of WhereClauseItem | lifetime_where_clause_item of WhereClauseItem | type_bound_where_clause_item of WhereClauseItem
@@ -156,7 +156,7 @@ meta_item_inner: meta_item                                      (MetaItem(meta_i
 
 lit_exp:STR_LIT                                                 (yaccLog("lit_exp "^STR_LIT); LiteralExpression(STR_LIT))
 
-patterns: IDENT                                                 ()
+patterns: IDENT                                                 (Pattern)
 types: IDENT                                                    (Type)
 
 (* rewrite simple path production*)
@@ -317,7 +317,7 @@ func_parameters_expansion:
                         COMMA func_param                        (func_param::func_parameters_expansion)
                         |                                       (nil)
 
-func_param: patterns COLON types                                (FunctionParam)
+func_param: patterns COLON types                                (FunctionParam (patterns, types))
 
 maybe_func_return_type: func_return_type                        (SOME(func_return_type))
                         |                                       (NONE)

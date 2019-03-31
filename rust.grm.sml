@@ -1301,6 +1301,7 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | generic_params of unit ->  (GenericParams)
  | maybe_generics of unit ->  (Generics option)
  | generics of unit ->  (Generics) | types of unit ->  (Type)
+ | patterns of unit ->  (Pattern)
  | use_tree_multi_expansion of unit ->  (UseTree list)
  | use_tree_multi of unit ->  (UseTree list)
  | use_tree of unit ->  (UseTree) | item_type of unit ->  (ItemType)
@@ -1882,10 +1883,10 @@ end)
 
 end
 |  ( 46, ( ( _, ( MlyValue.IDENT IDENT1, IDENT1left, IDENT1right)) :: 
-rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
+rest671)) => let val  result = MlyValue.patterns (fn _ => let val  
 IDENT1 = IDENT1 ()
- in ()
-end; ()))
+ in (Pattern)
+end)
  in ( LrTable.NT 24, ( result, IDENT1left, IDENT1right), rest671)
 end
 |  ( 47, ( ( _, ( MlyValue.IDENT IDENT1, IDENT1left, IDENT1right)) :: 
@@ -2713,11 +2714,11 @@ MlyValue.func_parameters_expansion (fn _ => (nil))
  in ( LrTable.NT 60, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 144, ( ( _, ( MlyValue.types types1, _, types1right)) :: _ :: ( _
-, ( MlyValue.ntVOID patterns1, patterns1left, _)) :: rest671)) => let
- val  result = MlyValue.func_param (fn _ => let val  patterns1 = 
-patterns1 ()
- val  types1 = types1 ()
- in (FunctionParam)
+, ( MlyValue.patterns patterns1, patterns1left, _)) :: rest671)) =>
+ let val  result = MlyValue.func_param (fn _ => let val  (patterns as 
+patterns1) = patterns1 ()
+ val  (types as types1) = types1 ()
+ in (FunctionParam (patterns, types))
 end)
  in ( LrTable.NT 59, ( result, patterns1left, types1right), rest671)
 
@@ -3205,8 +3206,8 @@ end
  in ( LrTable.NT 110, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 195, ( ( _, ( MlyValue.types types1, _, types1right)) :: _ :: ( _
-, ( MlyValue.ntVOID patterns1, patterns1left, _)) :: rest671)) => let
- val  result = MlyValue.ntVOID (fn _ => ( let val  patterns1 = 
+, ( MlyValue.patterns patterns1, patterns1left, _)) :: rest671)) =>
+ let val  result = MlyValue.ntVOID (fn _ => ( let val  patterns1 = 
 patterns1 ()
  val  types1 = types1 ()
  in ()

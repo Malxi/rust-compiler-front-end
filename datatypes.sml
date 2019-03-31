@@ -40,7 +40,7 @@ sig
     and GenericParams = GenericParams of LifetimeParams * TypeParams
     and TypeParams = TypeParams of TypeParam list
     and TypeParam = TypeParam of (OuterAttribute option * Identifer * TypeParamBounds option * Type option)
-    and FunctionParam = FunctionParam
+    and FunctionParam = FunctionParam of (Pattern * Type)
     and WhereClause = WhereClause of WhereClauseItem list
     and WhereClauseItem = LifetimeWhereClauseItem of (Lifetime * LifetimeBounds) 
                         | TypeBoundWhereClauseItem of (ForLifetimes option * Type * TypeParamBounds option)
@@ -106,7 +106,7 @@ struct
     and GenericParams = GenericParams of LifetimeParams * TypeParams
     and TypeParams = TypeParams of TypeParam list
     and TypeParam = TypeParam of (OuterAttribute option * Identifer * TypeParamBounds option * Type option)
-    and FunctionParam = FunctionParam
+    and FunctionParam = FunctionParam of (Pattern * Type)
     and WhereClause = WhereClause of WhereClauseItem list
     and WhereClauseItem = LifetimeWhereClauseItem of (Lifetime * LifetimeBounds) 
                         | TypeBoundWhereClauseItem of (ForLifetimes option * Type * TypeParamBounds option)
