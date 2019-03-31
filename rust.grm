@@ -40,7 +40,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | item of Item | vis_item of VisItem | macro_item of MarcoItem
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
-        | patterns | types
+        | patterns | types of Type
         | generics | where_clause | maybe_generics | maybe_where_clause | maybe_visibility | where_clause_expansion
         | where_clause_item | maybe_where_clause_item | lifetime_where_clause_item | type_bound_where_clause_item
         | generic_params | lifetime_params | lifetime_param | lifetime_params_expansion 
@@ -49,8 +49,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | maybe_comma | maybe_plus | maybe_ques | maybe_not | maybe_outer_attr
         | function of ItemType | func_qualifier of FunctionQualifier list | maybe_unsafe | abi of Abi | maybe_abi of Abi option
         | func_parameters of FunctionParam list | maybe_func_parameters of FunctionParam list| func_param of FunctionParam | func_parameters_expansion of FunctionParam list
-        | func_return_type | maybe_func_return_type
-        | block_expression | maybe_statements | expression
+        | func_return_type of Type | maybe_func_return_type of Type option
+        | block_expression of BlockExpression | maybe_statements | expression
         | struct_struct | tuple_struct | struct_fields | struct_field | tuple_fields | tuple_field 
         | maybe_struct_fields | maybe_tuple_fields | struct_fields_expansion | tuple_fields_expansion
         | enum_items | maybe_enum_items | enum_items_expansion | enum_item | enum_item_tuple | enum_item_struct 
@@ -155,7 +155,7 @@ meta_item_inner: meta_item                                      (MetaItem(meta_i
 lit_exp:STR_LIT                                                 (yaccLog("lit_exp "^STR_LIT); LiteralExpression(STR_LIT))
 
 patterns: IDENT                                                 ()
-types: IDENT                                                    ()
+types: IDENT                                                    (Type)
 
 (* rewrite simple path production*)
 simple_path:  simple_path_segment                               ([simple_path_segment])
@@ -187,43 +187,41 @@ maybe_for_lifetimes: for_lifetimes                              ()
                     |                                           ()
 for_lifetimes: (* There is no definition in reference, 
             and following production comes from rust repository *)                
-                FOR LT lifetime_params GT                        ()
+            FOR LT lifetime_params GT                           ()
+            | FOR LT GT                                         ()
 
 (* There is a ambiguous token, SHR *)
 generics: LT generic_params GT                                  (yaccLog("generics"))
-(* generics: LT GT                                                 ()
-        | LT lifetime_params GT                                 ()
-        | LT lifetime_params COMMA GT                           ()
-        | LT type_params GT                                     ()
-        | LT type_params COMMA GT                               ()
-        | LT lifetime_params COMMA type_params                  ()
-        | LT lifetime_params COMMA type_params COMMA            ()
-
+generic_params: lifetime_params                                 ()
+                | lifetime_params COMMA                         ()
+                | type_params                                   ()
+                | type_params COMMA                             ()
+                | lifetime_params COMMA type_params             ()
+                | lifetime_params COMMA type_params COMMA       ()
+                |                                               ()
 lifetime_params: lifetime_param                                 ()
                 | lifetime_params COMMA lifetime_param          ()
 type_params: type_param                                         ()
-            | type_params COMMA type_param                      () *)
-
-generic_params: lifetime_params                                 (yaccLog("generic_params:branch 1"))
-                | lifetime_params_expansion type_params         (yaccLog("generic_params:branch 2"))
-lifetime_params: lifetime_params_expansion 
+            | type_params COMMA type_param                      ()
+(* generic_params: lifetime_params                                 (yaccLog("generic_params:branch 1"))
+                | lifetime_params_expansion type_params         (yaccLog("generic_params:branch 2")) *)
+(* lifetime_params: lifetime_params_expansion 
                 maybe_lifetime_param                            ()
 maybe_lifetime_param: lifetime_param                            ()
                     |                                           ()
 lifetime_params_expansion: lifetime_params_expansion
                             lifetime_param COMMA                (yaccLog("lifetime_params_expansion:branch 1"))
-                        |                                       (yaccLog("lifetime_params_expansion:branch 2"))
-lifetime_param: maybe_outer_attr
-            LIFETIME_OR_LABEL maybe_colon_lifetime_bounds       (yaccLog("lifetime_param"))
-maybe_colon_lifetime_bounds: COLON lifetime_bounds              ()
-                        |                                       ()
-type_params: type_params_expansion                              ()
-            | type_params_expansion type_param                  ()
+                        |                                       (yaccLog("lifetime_params_expansion:branch 2")) *)
+(* type_params: type_params_expansion maybe_type_param             ()
 type_params_expansion: type_params_expansion 
                     type_param COMMA                            (yaccLog("type_params_expansion:branch 1"))
                     |                                           (yaccLog("type_params_expansion:branch 2"))
 maybe_type_param: type_param                                    ()
-                |                                               ()
+                |                                               () *)
+lifetime_param: maybe_outer_attr
+            LIFETIME_OR_LABEL maybe_colon_lifetime_bounds       (yaccLog("lifetime_param"))
+maybe_colon_lifetime_bounds: COLON lifetime_bounds              ()
+                        |                                       ()
 type_param: maybe_outer_attr IDENT maybe_colon_type_bounds      (yaccLog("type_param:branch 1"))
             | maybe_outer_attr IDENT maybe_colon_type_bounds
                 EQ types                                        (yaccLog("type_param:branch 2"))
@@ -275,8 +273,8 @@ function: func_qualifier FN IDENT maybe_generics
             maybe_where_clause
             block_expression                                    (Function({ qualifier=func_qualifier, generic=SOME(Generic),
                                                                             name=Identifer(IDENT), params=maybe_func_parameters,
-                                                                            ret=SOME(Type), wh=SOME(WhereClause),
-                                                                            be=BlockExpression
+                                                                            ret=maybe_func_return_type, wh=SOME(WhereClause),
+                                                                            be=block_expression
                                                                         })
                                                                 )
 
@@ -313,9 +311,9 @@ func_parameters_expansion:
 
 func_param: patterns COLON types                                (FunctionParam)
 
-maybe_func_return_type: func_return_type                        ()
-                        |                                       ()
-func_return_type: RARROW types                                  ()
+maybe_func_return_type: func_return_type                        (SOME(func_return_type))
+                        |                                       (NONE)
+func_return_type: RARROW types                                  (types)
 
 struct_struct: STRUCT IDENT maybe_generics maybe_where_clause
                 LBRACE maybe_struct_fields RBRACE               ()
@@ -400,8 +398,9 @@ maybe_trait_super: COLON maybe_type_param_bounds                ()
                     |                                           ()
 maybe_type_param_bounds: type_param_bounds                      ()
                         |                                       ()
-type_param_bounds: type_param_bound type_param_bounds_expansion
-                    maybe_plus                                  ()
+type_param_bounds: type_param_bound type_param_bounds_expansion ()
+                    | type_param_bound 
+                    type_param_bounds_expansion PLUS            ()
 type_param_bounds_expansion: type_param_bounds_expansion
                             PLUS type_param_bound               ()
                         |                                       ()
@@ -411,14 +410,19 @@ type_param_bound: lifetime                                      ()
 lifetime_bounds: lifetime_bounds_expansion maybe_lifetime       ()
 lifetime_bounds_expansion: lifetime_bounds_expansion
                     lifetime PLUS                               ()
+                    |                                           ()
 maybe_lifetime: lifetime                                        ()
                 |                                               ()
 
 lifetime: (* here are some questions *)
           LIFETIME_OR_LABEL                                     ()
         | STATICLIFETIME                                        ()
-trait_bound: maybe_ques maybe_for_lifetimes type_path           ()
-            | LPARENT maybe_ques maybe_for_lifetimes type_path  ()
+trait_bound: type_path                                          ()
+            | for_lifetimes type_path                           ()
+            | QUESTION maybe_for_lifetimes type_path            ()
+            | LPARENT maybe_for_lifetimes type_path RPARENT     ()
+            | LPARENT QUESTION 
+                maybe_for_lifetimes type_path RPARENT           ()
 type_path: IDENT (* need to be completed *)                     ()
 
 self_param: maybe_and_or_lifetime maybe_mut SELFVALUE           ()
@@ -492,6 +496,6 @@ named_func_parameters_with_variadics:
                 (* For convenient, this production is rewrote *)
                 named_func_param named_func_parameters_expansion 
                 COMMA DOTDOTDOT                                 ()
-block_expression: LBRACE inner_attrs maybe_statements RBRACE    ()
+block_expression: LBRACE inner_attrs maybe_statements RBRACE    (BlockExpression)
 maybe_statements:                                               ()
 expression: INTEGER_LIT                                         ()

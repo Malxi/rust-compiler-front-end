@@ -227,5 +227,9 @@ pub mod outer_module {
 
 }
 
+fn func (num:&'a i32) {
+    
+}
+
 // This is a example in raw-string-literal-ambiguity.md
-r#"233"#"#
+r#"233"#"
