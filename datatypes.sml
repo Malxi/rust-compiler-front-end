@@ -21,7 +21,7 @@ sig
                         params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
         | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
-        | Struct
+        | Struct of StructType
         | Enumeration
         | Union
         | ConstantItem
@@ -29,6 +29,11 @@ sig
         | Trait
         | Implementation
         | ExternBlock
+    and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
+                    | UnitStruct of (Identifer * Generics option * WhereClause option)
+                    | TupleStruct of (Identifer * Generics option * TupleField list * WhereClause option)
+    and StructField = StructField of (OuterAttribute list * Visibility * Identifer * Type)
+    and TupleField = TupleField of (OuterAttribute list * Visibility * Type)
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
@@ -87,7 +92,7 @@ struct
                         params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
         | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
-        | Struct
+        | Struct of StructType
         | Enumeration
         | Union
         | ConstantItem
@@ -95,6 +100,11 @@ struct
         | Trait
         | Implementation
         | ExternBlock
+    and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
+                    | UnitStruct of (Identifer * Generics option * WhereClause option)
+                    | TupleStruct of (Identifer * Generics option * TupleField list * WhereClause option)
+    and StructField = StructField of (OuterAttribute list * Visibility * Identifer * Type)
+    and TupleField = TupleField of (OuterAttribute list * Visibility * Type)
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)

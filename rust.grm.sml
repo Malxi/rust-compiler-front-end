@@ -644,7 +644,7 @@ val gotoT =
 \\000\000\
 \\006\000\023\000\018\000\022\000\020\000\021\000\021\000\020\000\
 \\053\000\019\000\054\000\018\000\055\000\017\000\067\000\016\000\
-\\068\000\015\000\084\000\014\000\085\000\013\000\115\000\012\000\
+\\072\000\015\000\084\000\014\000\085\000\013\000\115\000\012\000\
 \\116\000\011\000\124\000\010\000\000\000\
 \\000\000\
 \\000\000\
@@ -662,7 +662,7 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\021\000\041\000\053\000\019\000\054\000\018\000\055\000\017\000\
-\\067\000\016\000\068\000\015\000\084\000\014\000\085\000\013\000\
+\\067\000\016\000\072\000\015\000\084\000\014\000\085\000\013\000\
 \\115\000\012\000\116\000\011\000\124\000\010\000\000\000\
 \\000\000\
 \\000\000\
@@ -785,7 +785,7 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\000\000\
-\\004\000\186\000\071\000\185\000\072\000\184\000\074\000\183\000\000\000\
+\\004\000\186\000\073\000\185\000\074\000\184\000\075\000\183\000\000\000\
 \\000\000\
 \\000\000\
 \\026\000\188\000\000\000\
@@ -820,7 +820,7 @@ val gotoT =
 \\087\000\216\000\088\000\215\000\090\000\214\000\091\000\213\000\
 \\095\000\212\000\096\000\211\000\097\000\210\000\000\000\
 \\025\000\225\000\058\000\224\000\059\000\223\000\060\000\222\000\000\000\
-\\004\000\229\000\069\000\228\000\070\000\227\000\000\000\
+\\004\000\229\000\068\000\228\000\069\000\227\000\000\000\
 \\034\000\235\000\035\000\234\000\036\000\233\000\091\000\232\000\
 \\096\000\231\000\098\000\230\000\000\000\
 \\000\000\
@@ -828,7 +828,7 @@ val gotoT =
 \\026\000\238\000\000\000\
 \\000\000\
 \\026\000\240\000\000\000\
-\\004\000\229\000\069\000\242\000\070\000\227\000\073\000\241\000\000\000\
+\\004\000\229\000\068\000\242\000\069\000\227\000\070\000\241\000\000\000\
 \\000\000\
 \\000\000\
 \\076\000\244\000\000\000\
@@ -875,7 +875,7 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\000\000\
-\\075\000\024\001\000\000\
+\\071\000\024\001\000\000\
 \\000\000\
 \\006\000\023\000\020\000\026\001\000\000\
 \\026\000\028\001\000\000\
@@ -943,7 +943,7 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\000\000\
-\\004\000\186\000\072\000\082\001\000\000\
+\\004\000\186\000\074\000\082\001\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
@@ -985,7 +985,7 @@ val gotoT =
 \\026\000\127\001\000\000\
 \\000\000\
 \\000\000\
-\\004\000\229\000\070\000\128\001\000\000\
+\\004\000\229\000\069\000\128\001\000\000\
 \\000\000\
 \\026\000\130\001\000\000\
 \\087\000\131\001\088\000\215\000\090\000\214\000\091\000\213\000\
@@ -1014,8 +1014,8 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\000\000\
-\\004\000\186\000\071\000\185\000\072\000\184\000\074\000\150\001\000\000\
-\\004\000\229\000\069\000\242\000\070\000\227\000\073\000\151\001\000\000\
+\\004\000\186\000\073\000\185\000\074\000\184\000\075\000\150\001\000\000\
+\\004\000\229\000\068\000\242\000\069\000\227\000\070\000\151\001\000\000\
 \\066\000\152\001\000\000\
 \\009\000\153\001\000\000\
 \\000\000\
@@ -1274,6 +1274,16 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | type_param_bounds of unit ->  (TypeParamBounds)
  | maybe_type_param_bounds of unit ->  (TypeParamBounds option)
  | type_alias of unit ->  (ItemType)
+ | tuple_fields_expansion of unit ->  (TupleField list)
+ | maybe_tuple_fields of unit ->  (TupleField list)
+ | tuple_field of unit ->  (TupleField)
+ | tuple_fields of unit ->  (TupleField list)
+ | tuple_struct of unit ->  (StructType)
+ | struct_fields_expansion of unit ->  (StructField list)
+ | maybe_struct_fields of unit ->  (StructField list)
+ | struct_field of unit ->  (StructField)
+ | struct_fields of unit ->  (StructField list)
+ | struct_struct of unit ->  (StructType)
  | block_expression of unit ->  (BlockExpression)
  | maybe_func_return_type of unit ->  (Type option)
  | func_return_type of unit ->  (Type)
@@ -2403,19 +2413,20 @@ end)
  in ( LrTable.NT 20, ( result, type_alias1left, type_alias1right), 
 rest671)
 end
-|  ( 109, ( ( _, ( MlyValue.ntVOID struct_struct1, struct_struct1left,
- struct_struct1right)) :: rest671)) => let val  result = 
-MlyValue.item_type (fn _ => let val  struct_struct1 = struct_struct1
- ()
- in (yaccLog("struct struct"); Struct)
+|  ( 109, ( ( _, ( MlyValue.struct_struct struct_struct1, 
+struct_struct1left, struct_struct1right)) :: rest671)) => let val  
+result = MlyValue.item_type (fn _ => let val  (struct_struct as 
+struct_struct1) = struct_struct1 ()
+ in (yaccLog("struct struct"); Struct (struct_struct))
 end)
  in ( LrTable.NT 20, ( result, struct_struct1left, struct_struct1right
 ), rest671)
 end
-|  ( 110, ( ( _, ( MlyValue.ntVOID tuple_struct1, tuple_struct1left, 
-tuple_struct1right)) :: rest671)) => let val  result = 
-MlyValue.item_type (fn _ => let val  tuple_struct1 = tuple_struct1 ()
- in (yaccLog("tuple struct"); Struct)
+|  ( 110, ( ( _, ( MlyValue.tuple_struct tuple_struct1, 
+tuple_struct1left, tuple_struct1right)) :: rest671)) => let val  
+result = MlyValue.item_type (fn _ => let val  (tuple_struct as 
+tuple_struct1) = tuple_struct1 ()
+ in (yaccLog("tuple struct"); Struct (tuple_struct))
 end)
  in ( LrTable.NT 20, ( result, tuple_struct1left, tuple_struct1right),
  rest671)
@@ -2433,12 +2444,13 @@ MlyValue.item_type (fn _ => let val  IDENT1 = IDENT1 ()
 end)
  in ( LrTable.NT 20, ( result, ENUM1left, RBRACE1right), rest671)
 end
-|  ( 112, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( MlyValue.ntVOID 
-struct_fields1, _, _)) :: _ :: ( _, ( MlyValue.maybe_where_clause 
-maybe_where_clause1, _, _)) :: ( _, ( MlyValue.maybe_generics 
-maybe_generics1, _, _)) :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _
-, ( _, UNION1left, _)) :: rest671)) => let val  result = 
-MlyValue.item_type (fn _ => let val  IDENT1 = IDENT1 ()
+|  ( 112, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( 
+MlyValue.struct_fields struct_fields1, _, _)) :: _ :: ( _, ( 
+MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: ( _, ( 
+MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
+MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, UNION1left, _)) :: rest671)
+) => let val  result = MlyValue.item_type (fn _ => let val  IDENT1 = 
+IDENT1 ()
  val  maybe_generics1 = maybe_generics1 ()
  val  maybe_where_clause1 = maybe_where_clause1 ()
  val  struct_fields1 = struct_fields1 ()
@@ -2749,18 +2761,22 @@ MlyValue.func_return_type (fn _ => let val  (types as types1) = types1
 end)
  in ( LrTable.NT 61, ( result, RARROW1left, types1right), rest671)
 end
-|  ( 148, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( MlyValue.ntVOID 
-maybe_struct_fields1, _, _)) :: _ :: ( _, ( 
-MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: ( _, ( 
+|  ( 148, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( 
+MlyValue.maybe_struct_fields maybe_struct_fields1, _, _)) :: _ :: ( _,
+ ( MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: ( _, ( 
 MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
 MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, STRUCT1left, _)) :: rest671
-)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  IDENT1 = 
-IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- val  maybe_struct_fields1 = maybe_struct_fields1 ()
- in ()
-end; ()))
+)) => let val  result = MlyValue.struct_struct (fn _ => let val  (
+IDENT as IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ val  (maybe_struct_fields as maybe_struct_fields1) = 
+maybe_struct_fields1 ()
+ in (
+StructStruct (Identifer(IDENT), maybe_generics, maybe_where_clause, maybe_struct_fields)
+)
+end)
  in ( LrTable.NT 66, ( result, STRUCT1left, RBRACE1right), rest671)
 
 end
@@ -2768,149 +2784,167 @@ end
 MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: ( _, ( 
 MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
 MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, STRUCT1left, _)) :: rest671
-)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  IDENT1 = 
-IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- in ()
-end; ()))
+)) => let val  result = MlyValue.struct_struct (fn _ => let val  (
+IDENT as IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ in (UnitStruct (Identifer(IDENT), maybe_generics, maybe_where_clause)
+)
+end)
  in ( LrTable.NT 66, ( result, STRUCT1left, SEMI1right), rest671)
 end
-|  ( 150, ( ( _, ( MlyValue.ntVOID struct_fields1, struct_fields1left,
- struct_fields1right)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  struct_fields1 = struct_fields1 ()
- in ()
-end; ()))
- in ( LrTable.NT 72, ( result, struct_fields1left, struct_fields1right
+|  ( 150, ( ( _, ( MlyValue.struct_fields struct_fields1, 
+struct_fields1left, struct_fields1right)) :: rest671)) => let val  
+result = MlyValue.maybe_struct_fields (fn _ => let val  (struct_fields
+ as struct_fields1) = struct_fields1 ()
+ in (struct_fields)
+end)
+ in ( LrTable.NT 69, ( result, struct_fields1left, struct_fields1right
 ), rest671)
 end
-|  ( 151, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
- in ( LrTable.NT 72, ( result, defaultPos, defaultPos), rest671)
+|  ( 151, ( rest671)) => let val  result = 
+MlyValue.maybe_struct_fields (fn _ => ([]))
+ in ( LrTable.NT 69, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 152, ( ( _, ( MlyValue.ntVOID maybe_comma1, _, maybe_comma1right)
-) :: ( _, ( MlyValue.ntVOID struct_fields_expansion1, _, _)) :: ( _, (
- MlyValue.ntVOID struct_field1, struct_field1left, _)) :: rest671)) =>
- let val  result = MlyValue.ntVOID (fn _ => ( let val  struct_field1 =
- struct_field1 ()
- val  struct_fields_expansion1 = struct_fields_expansion1 ()
+) :: ( _, ( MlyValue.struct_fields_expansion struct_fields_expansion1,
+ _, _)) :: ( _, ( MlyValue.struct_field struct_field1, 
+struct_field1left, _)) :: rest671)) => let val  result = 
+MlyValue.struct_fields (fn _ => let val  (struct_field as 
+struct_field1) = struct_field1 ()
+ val  (struct_fields_expansion as struct_fields_expansion1) = 
+struct_fields_expansion1 ()
  val  maybe_comma1 = maybe_comma1 ()
- in ()
-end; ()))
- in ( LrTable.NT 68, ( result, struct_field1left, maybe_comma1right), 
+ in (struct_field::struct_fields_expansion)
+end)
+ in ( LrTable.NT 67, ( result, struct_field1left, maybe_comma1right), 
 rest671)
 end
-|  ( 153, ( ( _, ( MlyValue.ntVOID struct_field1, _, 
-struct_field1right)) :: _ :: ( _, ( MlyValue.ntVOID 
+|  ( 153, ( ( _, ( MlyValue.struct_field struct_field1, _, 
+struct_field1right)) :: _ :: ( _, ( MlyValue.struct_fields_expansion 
 struct_fields_expansion1, struct_fields_expansion1left, _)) :: rest671
-)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-struct_fields_expansion1 = struct_fields_expansion1 ()
- val  struct_field1 = struct_field1 ()
- in ()
-end; ()))
- in ( LrTable.NT 74, ( result, struct_fields_expansion1left, 
+)) => let val  result = MlyValue.struct_fields_expansion (fn _ => let
+ val  (struct_fields_expansion as struct_fields_expansion1) = 
+struct_fields_expansion1 ()
+ val  (struct_field as struct_field1) = struct_field1 ()
+ in (struct_field::struct_fields_expansion)
+end)
+ in ( LrTable.NT 70, ( result, struct_fields_expansion1left, 
 struct_field1right), rest671)
 end
-|  ( 154, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
- in ( LrTable.NT 74, ( result, defaultPos, defaultPos), rest671)
+|  ( 154, ( rest671)) => let val  result = 
+MlyValue.struct_fields_expansion (fn _ => (nil))
+ in ( LrTable.NT 70, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 155, ( ( _, ( MlyValue.types types1, _, types1right)) :: _ :: ( _
 , ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( MlyValue.visibility 
 visibility1, _, _)) :: ( _, ( MlyValue.outer_attrs outer_attrs1, 
 outer_attrs1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  outer_attrs1 = outer_attrs1 ()
- val  visibility1 = visibility1 ()
- val  IDENT1 = IDENT1 ()
- val  types1 = types1 ()
- in ()
-end; ()))
- in ( LrTable.NT 69, ( result, outer_attrs1left, types1right), rest671
+MlyValue.struct_field (fn _ => let val  (outer_attrs as outer_attrs1)
+ = outer_attrs1 ()
+ val  (visibility as visibility1) = visibility1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (types as types1) = types1 ()
+ in (StructField (outer_attrs, visibility, Identifer(IDENT), types))
+
+end)
+ in ( LrTable.NT 68, ( result, outer_attrs1left, types1right), rest671
 )
 end
 |  ( 156, ( ( _, ( MlyValue.types types1, _, types1right)) :: _ :: ( _
 , ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( MlyValue.outer_attrs 
 outer_attrs1, outer_attrs1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  outer_attrs1 = outer_attrs1 ()
- val  IDENT1 = IDENT1 ()
- val  types1 = types1 ()
- in ()
-end; ()))
- in ( LrTable.NT 69, ( result, outer_attrs1left, types1right), rest671
+MlyValue.struct_field (fn _ => let val  (outer_attrs as outer_attrs1)
+ = outer_attrs1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (types as types1) = types1 ()
+ in (StructField (outer_attrs, DefaultVis, Identifer(IDENT), types))
+
+end)
+ in ( LrTable.NT 68, ( result, outer_attrs1left, types1right), rest671
 )
 end
 |  ( 157, ( ( _, ( _, _, SEMI1right)) :: ( _, ( 
 MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: _ :: ( _, (
- MlyValue.ntVOID maybe_tuple_fields1, _, _)) :: _ :: ( _, ( 
-MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
+ MlyValue.maybe_tuple_fields maybe_tuple_fields1, _, _)) :: _ :: ( _, 
+( MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
 MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, STRUCT1left, _)) :: rest671
-)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  IDENT1 = 
-IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  maybe_tuple_fields1 = maybe_tuple_fields1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- in ()
-end; ()))
- in ( LrTable.NT 67, ( result, STRUCT1left, SEMI1right), rest671)
+)) => let val  result = MlyValue.tuple_struct (fn _ => let val  (IDENT
+ as IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (maybe_tuple_fields as maybe_tuple_fields1) = 
+maybe_tuple_fields1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ in (
+TupleStruct (Identifer(IDENT), maybe_generics, maybe_tuple_fields, maybe_where_clause)
+)
+end)
+ in ( LrTable.NT 71, ( result, STRUCT1left, SEMI1right), rest671)
 end
-|  ( 158, ( ( _, ( MlyValue.ntVOID tuple_fields1, tuple_fields1left, 
-tuple_fields1right)) :: rest671)) => let val  result = MlyValue.ntVOID
- (fn _ => ( let val  tuple_fields1 = tuple_fields1 ()
- in ()
-end; ()))
- in ( LrTable.NT 73, ( result, tuple_fields1left, tuple_fields1right),
+|  ( 158, ( ( _, ( MlyValue.tuple_fields tuple_fields1, 
+tuple_fields1left, tuple_fields1right)) :: rest671)) => let val  
+result = MlyValue.maybe_tuple_fields (fn _ => let val  (tuple_fields
+ as tuple_fields1) = tuple_fields1 ()
+ in (tuple_fields)
+end)
+ in ( LrTable.NT 74, ( result, tuple_fields1left, tuple_fields1right),
  rest671)
 end
-|  ( 159, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
- in ( LrTable.NT 73, ( result, defaultPos, defaultPos), rest671)
+|  ( 159, ( rest671)) => let val  result = MlyValue.maybe_tuple_fields
+ (fn _ => ([]))
+ in ( LrTable.NT 74, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 160, ( ( _, ( MlyValue.ntVOID maybe_comma1, _, maybe_comma1right)
-) :: ( _, ( MlyValue.ntVOID tuple_fields_expansion1, _, _)) :: ( _, ( 
-MlyValue.ntVOID tuple_field1, tuple_field1left, _)) :: rest671)) =>
- let val  result = MlyValue.ntVOID (fn _ => ( let val  tuple_field1 = 
-tuple_field1 ()
- val  tuple_fields_expansion1 = tuple_fields_expansion1 ()
+) :: ( _, ( MlyValue.tuple_fields_expansion tuple_fields_expansion1, _
+, _)) :: ( _, ( MlyValue.tuple_field tuple_field1, tuple_field1left, _
+)) :: rest671)) => let val  result = MlyValue.tuple_fields (fn _ =>
+ let val  (tuple_field as tuple_field1) = tuple_field1 ()
+ val  (tuple_fields_expansion as tuple_fields_expansion1) = 
+tuple_fields_expansion1 ()
  val  maybe_comma1 = maybe_comma1 ()
- in ()
-end; ()))
- in ( LrTable.NT 70, ( result, tuple_field1left, maybe_comma1right), 
+ in (tuple_field::tuple_fields_expansion)
+end)
+ in ( LrTable.NT 72, ( result, tuple_field1left, maybe_comma1right), 
 rest671)
 end
-|  ( 161, ( ( _, ( MlyValue.ntVOID tuple_field1, _, tuple_field1right)
-) :: _ :: ( _, ( MlyValue.ntVOID tuple_fields_expansion1, 
-tuple_fields_expansion1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  tuple_fields_expansion1 = 
+|  ( 161, ( ( _, ( MlyValue.tuple_field tuple_field1, _, 
+tuple_field1right)) :: _ :: ( _, ( MlyValue.tuple_fields_expansion 
+tuple_fields_expansion1, tuple_fields_expansion1left, _)) :: rest671))
+ => let val  result = MlyValue.tuple_fields_expansion (fn _ => let
+ val  (tuple_fields_expansion as tuple_fields_expansion1) = 
 tuple_fields_expansion1 ()
- val  tuple_field1 = tuple_field1 ()
- in ()
-end; ()))
+ val  (tuple_field as tuple_field1) = tuple_field1 ()
+ in (tuple_field::tuple_fields_expansion)
+end)
  in ( LrTable.NT 75, ( result, tuple_fields_expansion1left, 
 tuple_field1right), rest671)
 end
-|  ( 162, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
+|  ( 162, ( rest671)) => let val  result = 
+MlyValue.tuple_fields_expansion (fn _ => (nil))
  in ( LrTable.NT 75, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 163, ( ( _, ( MlyValue.types types1, _, types1right)) :: ( _, ( 
 MlyValue.visibility visibility1, _, _)) :: ( _, ( MlyValue.outer_attrs
  outer_attrs1, outer_attrs1left, _)) :: rest671)) => let val  result =
- MlyValue.ntVOID (fn _ => ( let val  outer_attrs1 = outer_attrs1 ()
- val  visibility1 = visibility1 ()
- val  types1 = types1 ()
- in ()
-end; ()))
- in ( LrTable.NT 71, ( result, outer_attrs1left, types1right), rest671
+ MlyValue.tuple_field (fn _ => let val  (outer_attrs as outer_attrs1)
+ = outer_attrs1 ()
+ val  (visibility as visibility1) = visibility1 ()
+ val  (types as types1) = types1 ()
+ in (TupleField (outer_attrs, visibility, types))
+end)
+ in ( LrTable.NT 73, ( result, outer_attrs1left, types1right), rest671
 )
 end
 |  ( 164, ( ( _, ( MlyValue.types types1, _, types1right)) :: ( _, ( 
 MlyValue.outer_attrs outer_attrs1, outer_attrs1left, _)) :: rest671))
- => let val  result = MlyValue.ntVOID (fn _ => ( let val  outer_attrs1
- = outer_attrs1 ()
- val  types1 = types1 ()
- in ()
-end; ()))
- in ( LrTable.NT 71, ( result, outer_attrs1left, types1right), rest671
+ => let val  result = MlyValue.tuple_field (fn _ => let val  (
+outer_attrs as outer_attrs1) = outer_attrs1 ()
+ val  (types as types1) = types1 ()
+ in (TupleField (outer_attrs, DefaultVis, types))
+end)
+ in ( LrTable.NT 73, ( result, outer_attrs1left, types1right), rest671
 )
 end
 |  ( 165, ( ( _, ( MlyValue.ntVOID enum_items1, enum_items1left, 
@@ -2998,19 +3032,19 @@ end; ()))
  in ( LrTable.NT 79, ( result, outer_attrs1left, IDENT1right), rest671
 )
 end
-|  ( 174, ( ( _, ( _, _, RPARENT1right)) :: ( _, ( MlyValue.ntVOID 
-maybe_tuple_fields1, _, _)) :: ( _, ( _, LPARENT1left, _)) :: rest671)
-) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-maybe_tuple_fields1 = maybe_tuple_fields1 ()
+|  ( 174, ( ( _, ( _, _, RPARENT1right)) :: ( _, ( 
+MlyValue.maybe_tuple_fields maybe_tuple_fields1, _, _)) :: ( _, ( _, 
+LPARENT1left, _)) :: rest671)) => let val  result = MlyValue.ntVOID
+ (fn _ => ( let val  maybe_tuple_fields1 = maybe_tuple_fields1 ()
  in ()
 end; ()))
  in ( LrTable.NT 80, ( result, LPARENT1left, RPARENT1right), rest671)
 
 end
-|  ( 175, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( MlyValue.ntVOID 
-maybe_struct_fields1, _, _)) :: ( _, ( _, LBRACE1left, _)) :: rest671)
-) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-maybe_struct_fields1 = maybe_struct_fields1 ()
+|  ( 175, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( 
+MlyValue.maybe_struct_fields maybe_struct_fields1, _, _)) :: ( _, ( _,
+ LBRACE1left, _)) :: rest671)) => let val  result = MlyValue.ntVOID
+ (fn _ => ( let val  maybe_struct_fields1 = maybe_struct_fields1 ()
  in ()
 end; ()))
  in ( LrTable.NT 81, ( result, LBRACE1left, RBRACE1right), rest671)

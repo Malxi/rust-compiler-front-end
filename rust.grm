@@ -52,8 +52,10 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | func_parameters of FunctionParam list | maybe_func_parameters of FunctionParam list| func_param of FunctionParam | func_parameters_expansion of FunctionParam list
         | func_return_type of Type | maybe_func_return_type of Type option
         | block_expression of BlockExpression | maybe_statements | expression
-        | struct_struct | tuple_struct | struct_fields | struct_field | tuple_fields | tuple_field 
-        | maybe_struct_fields | maybe_tuple_fields | struct_fields_expansion | tuple_fields_expansion
+        | struct_struct of StructType| struct_fields of StructField list | struct_field of StructField 
+        | maybe_struct_fields of StructField list | struct_fields_expansion of StructField list
+        | tuple_struct of StructType | tuple_fields of TupleField list | tuple_field of TupleField 
+        | maybe_tuple_fields of TupleField list | tuple_fields_expansion of TupleField list
         | enum_items | maybe_enum_items | enum_items_expansion | enum_item | enum_item_tuple | enum_item_struct 
         | enum_item_discriminant
         | type_alias of ItemType
@@ -255,8 +257,8 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
         | USE use_tree SEMI                                     (yaccLog("use_tree"); UseDeclaration(use_tree))
         | function                                              (yaccLog("function"); function)
         | type_alias                                            (yaccLog("type alias"); type_alias)
-        | struct_struct                                         (yaccLog("struct struct"); Struct)
-        | tuple_struct                                          (yaccLog("tuple struct"); Struct)
+        | struct_struct                                         (yaccLog("struct struct"); Struct (struct_struct))
+        | tuple_struct                                          (yaccLog("tuple struct"); Struct (tuple_struct))
         | ENUM IDENT maybe_generics maybe_where_clause
             LBRACE maybe_enum_items RBRACE                      (yaccLog("enumeration"); Enumeration)
         | UNION IDENT maybe_generics maybe_where_clause 
@@ -324,35 +326,35 @@ maybe_func_return_type: func_return_type                        (SOME(func_retur
 func_return_type: RARROW types                                  (types)
 
 struct_struct: STRUCT IDENT maybe_generics maybe_where_clause
-                LBRACE maybe_struct_fields RBRACE               ()
+                LBRACE maybe_struct_fields RBRACE               (StructStruct (Identifer(IDENT), maybe_generics, maybe_where_clause, maybe_struct_fields))
             | STRUCT IDENT maybe_generics maybe_where_clause
-                SEMI                                            ()
+                SEMI                                            (UnitStruct (Identifer(IDENT), maybe_generics, maybe_where_clause))
 
-maybe_struct_fields: struct_fields                              ()
-                    |                                           ()
-struct_fields: struct_field struct_fields_expansion maybe_comma ()
+maybe_struct_fields: struct_fields                              (struct_fields)
+                    |                                           ([])
+struct_fields: struct_field struct_fields_expansion maybe_comma (struct_field::struct_fields_expansion)
 
 struct_fields_expansion:
                         (* This is a left recursion to solve COMMA conflicts *)
                         struct_fields_expansion
-                        COMMA struct_field                      ()
-                        |                                       ()
-struct_field: outer_attrs visibility IDENT COLON types          ()
-                | outer_attrs IDENT COLON types                 ()
+                        COMMA struct_field                      (struct_field::struct_fields_expansion)
+                        |                                       (nil)
+struct_field: outer_attrs visibility IDENT COLON types          (StructField (outer_attrs, visibility, Identifer(IDENT), types))
+                | outer_attrs IDENT COLON types                 (StructField (outer_attrs, DefaultVis, Identifer(IDENT), types))
 
 tuple_struct: STRUCT IDENT maybe_generics 
                 LPARENT maybe_tuple_fields 
-                RPARENT maybe_where_clause SEMI                 ()
-maybe_tuple_fields: tuple_fields                                ()
-                    |                                           ()
-tuple_fields: tuple_field tuple_fields_expansion maybe_comma    ()
+                RPARENT maybe_where_clause SEMI                 (TupleStruct (Identifer(IDENT), maybe_generics, maybe_tuple_fields, maybe_where_clause))
+maybe_tuple_fields: tuple_fields                                (tuple_fields)
+                    |                                           ([])
+tuple_fields: tuple_field tuple_fields_expansion maybe_comma    (tuple_field::tuple_fields_expansion)
 tuple_fields_expansion: 
                         (* This is a left recursion to solve COMMA conflicts *)
                         tuple_fields_expansion 
-                        COMMA tuple_field                       ()
-                        |                                       ()
-tuple_field: outer_attrs visibility types                       ()
-            | outer_attrs types                                 ()
+                        COMMA tuple_field                       (tuple_field::tuple_fields_expansion)
+                        |                                       (nil)
+tuple_field: outer_attrs visibility types                       (TupleField (outer_attrs, visibility, types))
+            | outer_attrs types                                 (TupleField (outer_attrs, DefaultVis, types))
 
 maybe_enum_items: enum_items                                    ()
                 |                                               ()
