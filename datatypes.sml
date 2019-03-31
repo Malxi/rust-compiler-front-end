@@ -17,7 +17,7 @@ sig
         Module of (Identifer * ModuleBody option)
         | ExternCrate of (Identifer * Identifer option)
         | UseDeclaration of UseTree 
-        | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generic option, 
+        | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
         | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
@@ -36,11 +36,26 @@ sig
     and Identifer = Identifer of string
     and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
     and Abi = Abi of string
-    and Generic = Generic
+    and Generics = Generics of GenericParams
+    and GenericParams = GenericParams of LifetimeParams * TypeParams
+    and TypeParams = TypeParams of TypeParam list
+    and TypeParam = TypeParam of (OuterAttribute option * Identifer * TypeParamBounds option * Type option)
     and FunctionParam = FunctionParam
+    and WhereClause = WhereClause of WhereClauseItem list
+    and WhereClauseItem = LifetimeWhereClauseItem of (Lifetime * LifetimeBounds) 
+                        | TypeBoundWhereClauseItem of (ForLifetimes option * Type * TypeParamBounds option)
+    and Lifetime = LifetimeOrLabel of string | StaticLifetime
+    and TraitBound = TraitBound of (Sized option * ForLifetimes option * TypePath)
+    and Sized = Sized
+    and LifetimeBounds = LifetimeBounds of Lifetime list
+    and ForLifetimes = ForLifetimes of LifetimeParams
+    and LifetimeParams = LifetimeParams of LifetimeParam list
+    and LifetimeParam = LifetimeParam of (OuterAttribute option * Lifetime * LifetimeBounds option)
+    and TypeParamBounds = TypeParamBounds of TypeParamBound list
+    and TypeParamBound = LTB of Lifetime | TB of TraitBound
+    and TypePath = TypePath
     and Pattern = Pattern
     and Type = Type
-    and WhereClause = WhereClause
     and BlockExpression = BlockExpression
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
@@ -68,7 +83,7 @@ struct
         Module of (Identifer * ModuleBody option)
         | ExternCrate of (Identifer * Identifer option)
         | UseDeclaration of UseTree 
-        | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generic option, 
+        | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
         | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
@@ -87,11 +102,26 @@ struct
     and Identifer = Identifer of string
     and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
     and Abi = Abi of string
-    and Generic = Generic
+    and Generics = Generics of GenericParams
+    and GenericParams = GenericParams of LifetimeParams * TypeParams
+    and TypeParams = TypeParams of TypeParam list
+    and TypeParam = TypeParam of (OuterAttribute option * Identifer * TypeParamBounds option * Type option)
     and FunctionParam = FunctionParam
+    and WhereClause = WhereClause of WhereClauseItem list
+    and WhereClauseItem = LifetimeWhereClauseItem of (Lifetime * LifetimeBounds) 
+                        | TypeBoundWhereClauseItem of (ForLifetimes option * Type * TypeParamBounds option)
+    and Lifetime = LifetimeOrLabel of string | StaticLifetime
+    and TraitBound = TraitBound of (Sized option * ForLifetimes option * TypePath)
+    and Sized = Sized
+    and LifetimeBounds = LifetimeBounds of Lifetime list
+    and ForLifetimes = ForLifetimes of LifetimeParams
+    and LifetimeParams = LifetimeParams of LifetimeParam list
+    and LifetimeParam = LifetimeParam of (OuterAttribute option * Lifetime * LifetimeBounds option)
+    and TypeParamBounds = TypeParamBounds of TypeParamBound list
+    and TypeParamBound = LTB of Lifetime | TB of TraitBound
+    and TypePath = TypePath
     and Pattern = Pattern
     and Type = Type
-    and WhereClause = WhereClause
     and BlockExpression = BlockExpression
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
