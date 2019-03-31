@@ -20,7 +20,7 @@ sig
         | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
-        | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
+        | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
         | Struct
         | Enumeration
         | Union
@@ -86,7 +86,7 @@ struct
         | Function of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
-        | TypeAlias (* of {ident:string, generic:string, whereClause:string, typ: string} *)
+        | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
         | Struct
         | Enumeration
         | Union

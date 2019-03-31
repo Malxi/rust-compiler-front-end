@@ -56,7 +56,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | maybe_struct_fields | maybe_tuple_fields | struct_fields_expansion | tuple_fields_expansion
         | enum_items | maybe_enum_items | enum_items_expansion | enum_item | enum_item_tuple | enum_item_struct 
         | enum_item_discriminant
-        | type_alias
+        | type_alias of ItemType
         | constant_item
         | maybe_trait_super | maybe_type_param_bounds of TypeParamBounds option | type_param_bounds of TypeParamBounds
         | type_param_bounds_expansion of TypeParamBound list | type_param_bound of TypeParamBound
@@ -254,7 +254,7 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
         | EXTERN CARET IDENT AS IDENT SEMI                      (yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (Identifer(IDENT1), SOME(Identifer(IDENT2))))
         | USE use_tree SEMI                                     (yaccLog("use_tree"); UseDeclaration(use_tree))
         | function                                              (yaccLog("function"); function)
-        | type_alias                                            (yaccLog("type alias"); TypeAlias)
+        | type_alias                                            (yaccLog("type alias"); type_alias)
         | struct_struct                                         (yaccLog("struct struct"); Struct)
         | tuple_struct                                          (yaccLog("tuple struct"); Struct)
         | ENUM IDENT maybe_generics maybe_where_clause
@@ -272,7 +272,7 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
         | extern_block                                          (yaccLog("extern_block"); ExternBlock)
 
 type_alias: TYPE IDENT maybe_generics maybe_where_clause
-            EQ types SEMI                                       ()        
+            EQ types SEMI                                       (TypeAlias (Identifer(IDENT), maybe_generics, maybe_where_clause, types))        
 constant_item: CONST IDENT COLON types EQ expression SEMI       ()
 
 function: func_qualifier FN IDENT maybe_generics

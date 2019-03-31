@@ -38,7 +38,16 @@ In sml interactive system
 + Module
 + Extern crate
 + Use declaration
++ Function
 ### Processing
 + Literal expression
 + Items
-+ Function
++ Type alias
++ Structs
++ Enumerations
++ Unions
++ Constant Item
++ Static Item
++ Trait
++ Implementations
++ Extern blocks

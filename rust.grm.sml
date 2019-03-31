@@ -1273,6 +1273,7 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | type_param_bounds_expansion of unit ->  (TypeParamBound list)
  | type_param_bounds of unit ->  (TypeParamBounds)
  | maybe_type_param_bounds of unit ->  (TypeParamBounds option)
+ | type_alias of unit ->  (ItemType)
  | block_expression of unit ->  (BlockExpression)
  | maybe_func_return_type of unit ->  (Type option)
  | func_return_type of unit ->  (Type)
@@ -2393,10 +2394,11 @@ end)
  in ( LrTable.NT 20, ( result, function1left, function1right), rest671
 )
 end
-|  ( 108, ( ( _, ( MlyValue.ntVOID type_alias1, type_alias1left, 
+|  ( 108, ( ( _, ( MlyValue.type_alias type_alias1, type_alias1left, 
 type_alias1right)) :: rest671)) => let val  result = 
-MlyValue.item_type (fn _ => let val  type_alias1 = type_alias1 ()
- in (yaccLog("type alias"); TypeAlias)
+MlyValue.item_type (fn _ => let val  (type_alias as type_alias1) = 
+type_alias1 ()
+ in (yaccLog("type alias"); type_alias)
 end)
  in ( LrTable.NT 20, ( result, type_alias1left, type_alias1right), 
 rest671)
@@ -2524,13 +2526,16 @@ end
  _, _)) :: _ :: ( _, ( MlyValue.maybe_where_clause maybe_where_clause1
 , _, _)) :: ( _, ( MlyValue.maybe_generics maybe_generics1, _, _)) :: 
 ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, TYPE1left, _)) :: 
-rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-IDENT1 = IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- val  types1 = types1 ()
- in ()
-end; ()))
+rest671)) => let val  result = MlyValue.type_alias (fn _ => let val  (
+IDENT as IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ val  (types as types1) = types1 ()
+ in (
+TypeAlias (Identifer(IDENT), maybe_generics, maybe_where_clause, types)
+)
+end)
  in ( LrTable.NT 83, ( result, TYPE1left, SEMI1right), rest671)
 end
 |  ( 121, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.ntVOID 
@@ -3677,10 +3682,11 @@ end; ()))
  in ( LrTable.NT 121, ( result, outer_attrs1left, 
 marco_invocation_semi1right), rest671)
 end
-|  ( 243, ( ( _, ( MlyValue.ntVOID type_alias1, _, type_alias1right))
- :: ( _, ( MlyValue.ntVOID maybe_visibility1, maybe_visibility1left, _
-)) :: rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let
- val  maybe_visibility1 = maybe_visibility1 ()
+|  ( 243, ( ( _, ( MlyValue.type_alias type_alias1, _, 
+type_alias1right)) :: ( _, ( MlyValue.ntVOID maybe_visibility1, 
+maybe_visibility1left, _)) :: rest671)) => let val  result = 
+MlyValue.ntVOID (fn _ => ( let val  maybe_visibility1 = 
+maybe_visibility1 ()
  val  type_alias1 = type_alias1 ()
  in ()
 end; ()))

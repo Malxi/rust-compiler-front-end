@@ -103,8 +103,6 @@ struct
                 | ItemType(A.Function(func), d) = 
                      let
                         val {qualifier=qualifier, name=name, generic=generic, params=params, ret=ret, wh=wh, be=be} = func
-                        fun GenericsOption(SOME(g), d) = (Generics(g, d))
-                            | GenericsOption(NONE, d) = ()
                     in
                         (out "Function (";
                         nextLine(d+1);
@@ -129,6 +127,17 @@ struct
                         out ")"
                         )
                     end
+                | ItemType(A.TypeAlias(id, mgen, mwh, ty), d) =
+                    (out "TypeAlias (";
+                    Identifer(id, 0);
+                    out ",";
+                    GenericsOption(mgen, d+1);
+                    out ",";
+                    WhereClauseOption(mwh, d+1);
+                    out ",";
+                    Type(ty, d+1);
+                    out ")"
+                    )
                 | ItemType (_, d) =
                     (out "ItemType()")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
@@ -245,6 +254,8 @@ struct
                 | ForLifetimesOption(NONE, d) = ()
             and WhereClauseOption(SOME(wh), d) = WhereClause(wh, d)
                 | WhereClauseOption(NONE, d) = ()
+            and GenericsOption(SOME(g), d) = (Generics(g, d))
+                            | GenericsOption(NONE, d) = ()
         in
             Crate(ast, 0)
         end
