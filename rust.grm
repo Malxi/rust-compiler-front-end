@@ -93,13 +93,13 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
 %verbose
 
 %%
-crate: SHEBANG_LINE inner_attrs items                          (Crate (Shebang (SOME SHEBANG_LINE), inner_attrs, items))
-        | inner_attrs items                                    (Crate (Shebang (NONE), inner_attrs, items))
+crate: SHEBANG_LINE inner_attrs items                          (Crate (Shebang (SOME SHEBANG_LINE), rev(inner_attrs), rev(items)))
+        | inner_attrs items                                    (Crate (Shebang (NONE), rev(inner_attrs), rev(items)))
 
-items: item items                                              (item::items)
+items: items item                                              (item::items)
         |                                                      ([])
 
-item: outer_attrs vis_item                                      (VisItemType (outer_attrs, vis_item))
+item: outer_attrs vis_item                                      (VisItemType (rev(outer_attrs), vis_item))
         (* | macro_item                                            (MarcoItemType (macro_item)) *)
 
 vis_item: item_type                                             (VisItem(DefaultVis, item_type))
@@ -112,18 +112,18 @@ visibility: PUB                                                 (PubVis)
         | PUB LPARENT CARET RPARENT                             (CrateVis)
         | PUB LPARENT SELFVALUE RPARENT                         (SelfVis)
         | PUB LPARENT SUPER RPARENT                             (SuperVis)
-        | PUB LPARENT IN simple_path RPARENT                    (InVis (SimplePath(simple_path)))
+        | PUB LPARENT IN simple_path RPARENT                    (InVis (SimplePath(rev(simple_path))))
 
-use_tree: simple_path                                           (yaccLog("use_tree:branch 1"); UseAlias (SimplePath(simple_path), NONE))
-        | simple_path AS IDENT                                  (yaccLog("use_tree:branch 2"); UseAlias (SimplePath(simple_path), SOME(Identifer(IDENT))))
+use_tree: simple_path                                           (yaccLog("use_tree:branch 1"); UseAlias (SimplePath(rev(simple_path)), NONE))
+        | simple_path AS IDENT                                  (yaccLog("use_tree:branch 2"); UseAlias (SimplePath(rev(simple_path)), SOME(Identifer(IDENT))))
         | STAR                                                  (yaccLog("use_tree:branch 3"); UseAll (NONE))
         | PATHSEP STAR                                          (yaccLog("use_tree:branch 4"); UseAll (SOME(SimplePath([DefaultPat]))))
-        | simple_path PATHSEP STAR                              (yaccLog("use_tree:branch 5"); UseAll (SOME(SimplePath(simple_path))))
+        | simple_path PATHSEP STAR                              (yaccLog("use_tree:branch 5"); UseAll (SOME(SimplePath(rev(simple_path)))))
         | use_tree_multi                                        (yaccLog("use_tree:branch 6"); UseList (NONE, use_tree_multi))
         | PATHSEP use_tree_multi                                (yaccLog("use_tree:branch 7"); UseList (SOME(SimplePath([DefaultPat])), use_tree_multi))
-        | simple_path PATHSEP use_tree_multi                    (yaccLog("use_tree:branch 8"); UseList (SOME(SimplePath(simple_path)), use_tree_multi))
+        | simple_path PATHSEP use_tree_multi                    (yaccLog("use_tree:branch 8"); UseList (SOME(SimplePath(rev(simple_path))), use_tree_multi))
 use_tree_multi: LBRACE use_tree 
-                use_tree_multi_expansion maybe_comma RBRACE     (use_tree::use_tree_multi_expansion)
+                use_tree_multi_expansion maybe_comma RBRACE     (use_tree::rev(use_tree_multi_expansion))
                 | LBRACE RBRACE                                 ([])
 use_tree_multi_expansion: use_tree_multi_expansion
                             COMMA use_tree                      (use_tree::use_tree_multi_expansion)
@@ -142,17 +142,17 @@ maybe_outer_attr: outer_attr                                    (SOME(outer_attr
 inner_attr: SHEBANG LBRACKET meta_item RBRACKET                 (yaccLog("inner_attr"); InnerAttribute(meta_item))
 outer_attr: POUND LBRACKET meta_item RBRACKET                   (OuterAttribute meta_item)
 
-meta_item: simple_path EQ lit_exp                               (AttrKVPair(SimplePath(simple_path), lit_exp))
-        | simple_path LPARENT meta_seq RPARENT                  (AttrSubs(SimplePath(simple_path), SOME(meta_seq)))
-        | simple_path LPARENT RPARENT                           (AttrSubs(SimplePath(simple_path), NONE))
-        | simple_path %prec LOWER_THAN_LPARENT                  (AttrName (SimplePath(simple_path)))
+meta_item: simple_path EQ lit_exp                               (AttrKVPair(SimplePath(rev(simple_path)), lit_exp))
+        | simple_path LPARENT meta_seq RPARENT                  (AttrSubs(SimplePath(rev(simple_path)), SOME(meta_seq)))
+        | simple_path LPARENT RPARENT                           (AttrSubs(SimplePath(rev(simple_path)), NONE))
+        | simple_path %prec LOWER_THAN_LPARENT                  (AttrName (SimplePath(rev(simple_path))))
 
-meta_seq: meta_item_inner meta_seq_expansion COMMA              (MetaSeq(meta_item_inner::meta_seq_expansion))
-            | meta_item_inner meta_seq_expansion                (MetaSeq(meta_item_inner::meta_seq_expansion))
+meta_seq: meta_item_inner meta_seq_expansion COMMA              (MetaSeq(meta_item_inner::rev(meta_seq_expansion)))
+            | meta_item_inner meta_seq_expansion                (MetaSeq(meta_item_inner::rev(meta_seq_expansion)))
             
 meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
                     meta_seq_expansion                          (meta_item_inner::meta_seq_expansion)
-                    |                                           ([])
+                    |                                           (nil)
 meta_item_inner: meta_item                                      (MetaItem(meta_item))
                 | lit_exp                                       (MetaLit(lit_exp))
 
@@ -173,8 +173,8 @@ simple_path_segment: IDENT                                      (IDPat(Identifer
 
 maybe_where_clause: where_clause                                (SOME(where_clause))
                     |                                           (NONE)
-where_clause: WHERE where_clause_expansion                      (WhereClause (where_clause_expansion))
-            | WHERE where_clause_expansion where_clause_item    (WhereClause (where_clause_item::where_clause_expansion))
+where_clause: WHERE where_clause_expansion                      (WhereClause (rev (where_clause_expansion)))
+            | WHERE where_clause_expansion where_clause_item    (WhereClause (where_clause_item::rev(where_clause_expansion)))
 where_clause_expansion: where_clause_expansion 
                     where_clause_item COMMA                     (where_clause_item::where_clause_expansion)
                     |                                           (nil)
@@ -189,17 +189,17 @@ maybe_for_lifetimes: for_lifetimes                              (SOME(for_lifeti
                     |                                           (NONE)
 for_lifetimes: (* There is no definition in reference, 
             and following production comes from rust repository *)                
-            FOR LT lifetime_params GT                           (ForLifetimes(LifetimeParams(lifetime_params)))
+            FOR LT lifetime_params GT                           (ForLifetimes(LifetimeParams(rev(lifetime_params))))
             | FOR LT GT                                         (ForLifetimes(LifetimeParams([])))
 
 (* There is a ambiguous token, SHR *)
 generics: LT generic_params GT                                  (yaccLog("generics"); Generics(generic_params))
-generic_params: lifetime_params                                 (GenericParams (LifetimeParams(lifetime_params), TypeParams([])))
-                | lifetime_params COMMA                         (GenericParams (LifetimeParams(lifetime_params), TypeParams([])))
-                | type_params                                   (GenericParams (LifetimeParams([]), TypeParams(type_params)))
-                | type_params COMMA                             (GenericParams (LifetimeParams([]), TypeParams(type_params)))
-                | lifetime_params COMMA type_params             (GenericParams (LifetimeParams(lifetime_params), TypeParams(type_params)))
-                | lifetime_params COMMA type_params COMMA       (GenericParams (LifetimeParams(lifetime_params), TypeParams(type_params)))
+generic_params: lifetime_params                                 (GenericParams (LifetimeParams(rev(lifetime_params)), TypeParams([])))
+                | lifetime_params COMMA                         (GenericParams (LifetimeParams(rev(lifetime_params)), TypeParams([])))
+                | type_params                                   (GenericParams (LifetimeParams([]), TypeParams(rev(type_params))))
+                | type_params COMMA                             (GenericParams (LifetimeParams([]), TypeParams(rev(type_params))))
+                | lifetime_params COMMA type_params             (GenericParams (LifetimeParams(rev(lifetime_params)), TypeParams(rev(type_params))))
+                | lifetime_params COMMA type_params COMMA       (GenericParams (LifetimeParams(rev(lifetime_params)), TypeParams(rev(type_params))))
                 |                                               (GenericParams (LifetimeParams([]), TypeParams([])))
 lifetime_params: lifetime_param                                 ([lifetime_param])
                 | lifetime_params COMMA lifetime_param          (lifetime_param::lifetime_params)
@@ -251,7 +251,7 @@ maybe_unsafe: UNSAFE                                            ()
             |                                                   ()
 
 item_type: MOD IDENT SEMI                                       (Module (Identifer(IDENT), NONE))
-        | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (Identifer(IDENT), SOME(ModuleBody(inner_attrs, items))))
+        | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (Identifer(IDENT), SOME(ModuleBody(rev(inner_attrs), rev(items)))))
         | EXTERN CARET IDENT SEMI                               (yaccLog("extern crate "^IDENT); ExternCrate (Identifer(IDENT), NONE))
         | EXTERN CARET IDENT AS IDENT SEMI                      (yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (Identifer(IDENT1), SOME(Identifer(IDENT2))))
         | USE use_tree SEMI                                     (yaccLog("use_tree"); UseDeclaration(use_tree))
@@ -264,7 +264,8 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
                                                                 Enumeration (Identifer(IDENT), maybe_generics, 
                                                                 maybe_where_clause, maybe_enum_items))
         | UNION IDENT maybe_generics maybe_where_clause 
-            LBRACE struct_fields RBRACE                         (yaccLog("Union"); Union)
+            LBRACE struct_fields RBRACE                         (yaccLog("Union"); Union (Identifer(IDENT), maybe_generics, 
+                                                                                        maybe_where_clause, struct_fields))
         | constant_item                                         (yaccLog("ConstantItem"); ConstantItem)
         | STATIC MUT IDENT COLON types EQ expression SEMI       (yaccLog("StaticItem"); StaticItem)
         | STATIC IDENT COLON types EQ expression SEMI           (yaccLog("StaticItem"); StaticItem)
@@ -313,7 +314,7 @@ maybe_func_parameters: func_parameters                          (func_parameters
                     |                                           ([])
 
 func_parameters: func_param func_parameters_expansion 
-                maybe_comma                                     (func_param::func_parameters_expansion)
+                maybe_comma                                     (func_param::rev(func_parameters_expansion))
 
 func_parameters_expansion: 
                         (* This is a left recursion to solve COMMA conflicts *)
@@ -334,41 +335,41 @@ struct_struct: STRUCT IDENT maybe_generics maybe_where_clause
 
 maybe_struct_fields: struct_fields                              (struct_fields)
                     |                                           ([])
-struct_fields: struct_field struct_fields_expansion maybe_comma (struct_field::struct_fields_expansion)
+struct_fields: struct_field struct_fields_expansion maybe_comma (struct_field::rev(struct_fields_expansion))
 
 struct_fields_expansion:
                         (* This is a left recursion to solve COMMA conflicts *)
                         struct_fields_expansion
                         COMMA struct_field                      (struct_field::struct_fields_expansion)
                         |                                       (nil)
-struct_field: outer_attrs visibility IDENT COLON types          (StructField (outer_attrs, visibility, Identifer(IDENT), types))
-                | outer_attrs IDENT COLON types                 (StructField (outer_attrs, DefaultVis, Identifer(IDENT), types))
+struct_field: outer_attrs visibility IDENT COLON types          (StructField (rev(outer_attrs), visibility, Identifer(IDENT), types))
+                | outer_attrs IDENT COLON types                 (StructField (rev(outer_attrs), DefaultVis, Identifer(IDENT), types))
 
 tuple_struct: STRUCT IDENT maybe_generics 
                 LPARENT maybe_tuple_fields 
                 RPARENT maybe_where_clause SEMI                 (TupleStruct (Identifer(IDENT), maybe_generics, maybe_tuple_fields, maybe_where_clause))
 maybe_tuple_fields: tuple_fields                                (tuple_fields)
                     |                                           ([])
-tuple_fields: tuple_field tuple_fields_expansion maybe_comma    (tuple_field::tuple_fields_expansion)
+tuple_fields: tuple_field tuple_fields_expansion maybe_comma    (tuple_field::rev(tuple_fields_expansion))
 tuple_fields_expansion: 
                         (* This is a left recursion to solve COMMA conflicts *)
                         tuple_fields_expansion 
                         COMMA tuple_field                       (tuple_field::tuple_fields_expansion)
                         |                                       (nil)
-tuple_field: outer_attrs visibility types                       (TupleField (outer_attrs, visibility, types))
-            | outer_attrs types                                 (TupleField (outer_attrs, DefaultVis, types))
+tuple_field: outer_attrs visibility types                       (TupleField (rev(outer_attrs), visibility, types))
+            | outer_attrs types                                 (TupleField (rev(outer_attrs), DefaultVis, types))
 
 maybe_enum_items: enum_items                                    (enum_items)
                 |                                               ([])
-enum_items: enum_item enum_items_expansion maybe_comma          (yaccLog("enum_items"); enum_item::enum_items_expansion)
+enum_items: enum_item enum_items_expansion maybe_comma          (yaccLog("enum_items"); enum_item::rev(enum_items_expansion))
 enum_items_expansion: 
                     (* This is a left recursion to solve COMMA conflicts *)
                     enum_items_expansion COMMA enum_item        (enum_item::enum_items_expansion)
                     |                                           (nil)
-enum_item: outer_attrs IDENT enum_item_tuple                    (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_tuple)))
-            | outer_attrs IDENT enum_item_struct                (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_struct)))
-            | outer_attrs IDENT enum_item_discriminant          (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_discriminant)))
-            | outer_attrs IDENT                                 (yaccLog("enum_item: branch 4"); EnumItem (outer_attrs, Identifer(IDENT), NONE))
+enum_item: outer_attrs IDENT enum_item_tuple                    (EnumItem (rev(outer_attrs), Identifer(IDENT), SOME(enum_item_tuple)))
+            | outer_attrs IDENT enum_item_struct                (EnumItem (rev(outer_attrs), Identifer(IDENT), SOME(enum_item_struct)))
+            | outer_attrs IDENT enum_item_discriminant          (EnumItem (rev(outer_attrs), Identifer(IDENT), SOME(enum_item_discriminant)))
+            | outer_attrs IDENT                                 (yaccLog("enum_item: branch 4"); EnumItem (rev(outer_attrs), Identifer(IDENT), NONE))
 
 enum_item_tuple: LPARENT maybe_tuple_fields RPARENT             (EnumItemTuple (maybe_tuple_fields))
 enum_item_struct: LBRACE maybe_struct_fields RBRACE             (EnumItemStruct (maybe_struct_fields))
@@ -410,17 +411,17 @@ maybe_trait_super: COLON maybe_type_param_bounds                ()
                     |                                           ()
 maybe_type_param_bounds: type_param_bounds                      (SOME(type_param_bounds))
                         |                                       (NONE)
-type_param_bounds: type_param_bound type_param_bounds_expansion (TypeParamBounds(type_param_bound::type_param_bounds_expansion))
+type_param_bounds: type_param_bound type_param_bounds_expansion (TypeParamBounds(type_param_bound::rev(type_param_bounds_expansion)))
                     | type_param_bound 
-                    type_param_bounds_expansion PLUS            (TypeParamBounds(type_param_bound::type_param_bounds_expansion))
+                    type_param_bounds_expansion PLUS            (TypeParamBounds(type_param_bound::rev(type_param_bounds_expansion)))
 type_param_bounds_expansion: type_param_bounds_expansion
                             PLUS type_param_bound               (type_param_bound::type_param_bounds_expansion)
                         |                                       (nil)
 type_param_bound: lifetime                                      (LTB(lifetime))
                 | trait_bound                                   (TB(trait_bound))
 
-lifetime_bounds: lifetime_bounds_expansion                      (LifetimeBounds(lifetime_bounds_expansion))
-                | lifetime_bounds_expansion lifetime            (LifetimeBounds(lifetime::lifetime_bounds_expansion))
+lifetime_bounds: lifetime_bounds_expansion                      (LifetimeBounds(rev(lifetime_bounds_expansion)))
+                | lifetime_bounds_expansion lifetime            (LifetimeBounds(lifetime::rev(lifetime_bounds_expansion)))
 lifetime_bounds_expansion: lifetime_bounds_expansion
                     lifetime PLUS                               (lifetime::lifetime_bounds_expansion)
                     |                                           (nil)

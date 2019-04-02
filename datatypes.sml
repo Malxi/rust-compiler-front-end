@@ -23,7 +23,7 @@ sig
         | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
         | Struct of StructType
         | Enumeration of (Identifer * Generics option * WhereClause option * EnumItem list)
-        | Union
+        | Union of (Identifer * Generics option * WhereClause option * StructField list)
         | ConstantItem
         | StaticItem
         | Trait
@@ -101,7 +101,7 @@ struct
         | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
         | Struct of StructType
         | Enumeration of (Identifer * Generics option * WhereClause option * EnumItem list)
-        | Union
+        | Union of (Identifer * Generics option * WhereClause option * StructField list)
         | ConstantItem
         | StaticItem
         | Trait

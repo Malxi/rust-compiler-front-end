@@ -156,6 +156,21 @@ struct
                         nextLine(d);
                         out ")"
                     )
+                | ItemType (A.Union(id, mgen, mwh, sfList), d) =
+                    (
+                        out "Union (";
+                        nextLine(d);
+                        out "generics: ";
+                        GenericsOption(mgen, d);
+                        nextLine(d);
+                        out "where: ";
+                        WhereClauseOption(mwh, d);
+                        nextLine(d);
+                        out "struct fields: ";
+                        outList (d) StructField sfList false;
+                        nextLine(d);
+                        out ")"
+                    )
                 | ItemType (_, d) =
                     (out "ItemType()")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
