@@ -39,11 +39,11 @@ In sml interactive system
 + Extern crate
 + Use declaration
 + Function
++ Type alias
++ Structs
 ### Processing
 + Literal expression
 + Items
-+ Type alias
-+ Structs
 + Enumerations
 + Unions
 + Constant Item

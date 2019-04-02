@@ -9,32 +9,31 @@ struct
             fun outln(s) = (out s; out "\n")
             fun indent(0) = ()
                 | indent(n) = (out " "; indent(n-1))
+            fun nextLine(d) = (outln ""; indent d)
 
             fun outList d f l r = 
                 let
-                    val sep = if r then "\n" else ""
+                    fun sep(r) = if r then nextLine(d) else out ""
                     val ind = if r then d else 0
                     val inc = if r then 0 else 0
                     fun travel d f [a] = (f(a, d+inc))
-                        | travel d f (h::t) = (f(h, d+inc); out ", "; out sep; travel (d+inc) f t)
+                        | travel d f (h::t) = (f(h, d+inc); out ", "; sep(r); travel (d+inc) f t)
                         | travel d f nil = ()
 
                     fun start d f [a] = (f(a, 0))
-                        | start d f (h::t) = (f(h, 0); out ", "; out sep; travel (d+inc) f t)
+                        | start d f (h::t) = (f(h, 0); out ", "; sep(r); travel (d+inc) f t)
                         | start d f nil = ()
                 in
                     (out "["; start ind f l; out "]")
                 end
-
-            fun nextLine(d) = (outln ""; indent d)
 
             fun Crate(A.Crate(shebang, innerAttrs, items), d) = 
                     (indent d; outln "Crate ("; Shebang(shebang, d+1); outln ","; 
                     outList (d+1) InnerAttribute innerAttrs true; outln ",";
                     outList (d+1) Item items true;
                     outln "\n)")
-            and Shebang(A.Shebang(SOME s), d) = (indent d; out("Shebang ("^s^")"))
-                | Shebang(A.Shebang(NONE), d) = (indent d; out("Shebang (NONE)"))
+            and Shebang(A.Shebang(SOME s), d) = (out("Shebang ("^s^")"))
+                | Shebang(A.Shebang(NONE), d) = (out("Shebang (NONE)"))
             and InnerAttribute(A.InnerAttribute(innerAttr), d) = 
                     (indent d; out "InnerAttribute("; MetaItem(innerAttr, 0); out ")")
             and OuterAttribute(A.OuterAttribute(outerAttr), d) = 
@@ -138,6 +137,7 @@ struct
                     Type(ty, d+1);
                     out ")"
                     )
+                | ItemType(A.Struct(st), d) = (StructType(st, d))
                 | ItemType (_, d) =
                     (out "ItemType()")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
@@ -163,7 +163,7 @@ struct
                 | UseTree(A.UseAlias(simplePath, NONE), d) = 
                     (indent d; out "UseAlias ("; SimplePath(simplePath, d); out ")")
             and Identifer(A.Identifer(id), d) = 
-                (indent d; out id)
+                (out id)
             and FunctionQualifier(A.ConstFQ, d) = (indent d; out "const")
                 | FunctionQualifier(A.UnsafeFQ, d) = (indent d; out "unsafe")
                 | FunctionQualifier(A.ExternFQ(SOME(abi)), d) = (indent d; out "extern("; Abi(abi, 0); out ")")
@@ -244,6 +244,79 @@ struct
                     TypeParamBoundsOption(mtpbs, d);
                     out ")"
                     )
+            and StructType(A.StructStruct(id, mgen, mwh, sfList), d) = 
+                (
+                    out "StructStruct (";
+                    nextLine(d);
+                    out "name: ";
+                    Identifer(id, d+1);
+                    nextLine(d);
+                    out "generic: ";
+                    GenericsOption(mgen, d+1);
+                    nextLine(d);
+                    out "where: ";
+                    WhereClauseOption(mwh, d+1);
+                    nextLine(d);
+                    out "struct filed: ";
+                    outList (d+1) StructField sfList false;
+                    nextLine(d);
+                    out ")"
+                )
+                | StructType(A.UnitStruct(id, mgen, mwh), d) = 
+                (
+                    out "UnitStruct (";
+                    nextLine(d);
+                    out "name: ";
+                    Identifer(id, d+1);
+                    nextLine(d);
+                    out "generic: ";
+                    GenericsOption(mgen, d+1);
+                    nextLine(d);
+                    out "where: ";
+                    WhereClauseOption(mwh, d+1);
+                    nextLine(d);
+                    out ")"
+                )
+                | StructType(A.TupleStruct(id, mgen, tpList, mwh), d) = 
+                (
+                    out "TupleStruct (";
+                    nextLine(d);
+                    out "name: ";
+                    Identifer(id, d+1);
+                    nextLine(d);
+                    out "generic: ";
+                    GenericsOption(mgen, d+1);
+                    nextLine(d);
+                    out "tuple filed: ";
+                    outList (d+1) TupleField tpList false;
+                    nextLine(d);
+                    out "where: ";
+                    WhereClauseOption(mwh, d+1);
+                    nextLine(d);
+                    out ")"
+                )
+            and TupleField(A.TupleField(outerAttrs, vis, ty), d) =
+                (
+                    out "TupleField (";
+                    outList (d+1) OuterAttribute outerAttrs false;
+                    out ",";
+                    Visibility(vis, d+1);
+                    out ",";
+                    Type(ty, d);
+                    out ")"
+                )
+            and StructField(A.StructField(outerAttrs, vis, id, ty), d) =
+                (
+                    out "StructField (";
+                    outList (d+1) OuterAttribute outerAttrs false;
+                    out ",";
+                    Visibility(vis, d+1);
+                    out ",";
+                    Identifer (id, d+1);
+                    out ",";
+                    Type(ty, d);
+                    out ")"
+                )
             and OuterAttributeOption(SOME(outAttr), d) = (OuterAttribute(outAttr, d))
                 | OuterAttributeOption(NONE, d) = ()
             and TypeParamBoundsOption(SOME(tpbs), d) = (TypeParamBounds(tpbs, d))
