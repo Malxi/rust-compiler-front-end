@@ -41,10 +41,10 @@ In sml interactive system
 + Function
 + Type alias
 + Structs
++ Enumerations
 ### Processing
 + Literal expression
 + Items
-+ Enumerations
 + Unions
 + Constant Item
 + Static Item

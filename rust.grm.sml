@@ -1274,6 +1274,13 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | type_param_bounds of unit ->  (TypeParamBounds)
  | maybe_type_param_bounds of unit ->  (TypeParamBounds option)
  | type_alias of unit ->  (ItemType)
+ | enum_item_discriminant of unit ->  (EnumItemType)
+ | enum_item_struct of unit ->  (EnumItemType)
+ | enum_item_tuple of unit ->  (EnumItemType)
+ | enum_item of unit ->  (EnumItem)
+ | enum_items_expansion of unit ->  (EnumItem list)
+ | maybe_enum_items of unit ->  (EnumItem list)
+ | enum_items of unit ->  (EnumItem list)
  | tuple_fields_expansion of unit ->  (TupleField list)
  | maybe_tuple_fields of unit ->  (TupleField list)
  | tuple_field of unit ->  (TupleField)
@@ -1284,6 +1291,7 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | struct_field of unit ->  (StructField)
  | struct_fields of unit ->  (StructField list)
  | struct_struct of unit ->  (StructType)
+ | expression of unit ->  (Expression)
  | block_expression of unit ->  (BlockExpression)
  | maybe_func_return_type of unit ->  (Type option)
  | func_return_type of unit ->  (Type)
@@ -2431,16 +2439,22 @@ end)
  in ( LrTable.NT 20, ( result, tuple_struct1left, tuple_struct1right),
  rest671)
 end
-|  ( 111, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( MlyValue.ntVOID 
-maybe_enum_items1, _, _)) :: _ :: ( _, ( MlyValue.maybe_where_clause 
-maybe_where_clause1, _, _)) :: ( _, ( MlyValue.maybe_generics 
-maybe_generics1, _, _)) :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _
-, ( _, ENUM1left, _)) :: rest671)) => let val  result = 
-MlyValue.item_type (fn _ => let val  IDENT1 = IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- val  maybe_enum_items1 = maybe_enum_items1 ()
- in (yaccLog("enumeration"); Enumeration)
+|  ( 111, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( 
+MlyValue.maybe_enum_items maybe_enum_items1, _, _)) :: _ :: ( _, ( 
+MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: ( _, ( 
+MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
+MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, ENUM1left, _)) :: rest671))
+ => let val  result = MlyValue.item_type (fn _ => let val  (IDENT as 
+IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ val  (maybe_enum_items as maybe_enum_items1) = maybe_enum_items1 ()
+ in (
+yaccLog("enumeration"); 
+                                                                Enumeration (Identifer(IDENT), maybe_generics, 
+                                                                maybe_where_clause, maybe_enum_items)
+)
 end)
  in ( LrTable.NT 20, ( result, ENUM1left, RBRACE1right), rest671)
 end
@@ -2467,7 +2481,7 @@ end)
  in ( LrTable.NT 20, ( result, constant_item1left, constant_item1right
 ), rest671)
 end
-|  ( 114, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.ntVOID 
+|  ( 114, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.expression 
 expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
  :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: _ :: ( _, ( _, STATIC1left
 , _)) :: rest671)) => let val  result = MlyValue.item_type (fn _ =>
@@ -2478,7 +2492,7 @@ expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
 end)
  in ( LrTable.NT 20, ( result, STATIC1left, SEMI1right), rest671)
 end
-|  ( 115, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.ntVOID 
+|  ( 115, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.expression 
 expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
  :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, STATIC1left, _))
  :: rest671)) => let val  result = MlyValue.item_type (fn _ => let
@@ -2550,7 +2564,7 @@ TypeAlias (Identifer(IDENT), maybe_generics, maybe_where_clause, types)
 end)
  in ( LrTable.NT 83, ( result, TYPE1left, SEMI1right), rest671)
 end
-|  ( 121, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.ntVOID 
+|  ( 121, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.expression 
 expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
  :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, CONST1left, _))
  :: rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val 
@@ -2947,114 +2961,127 @@ end)
  in ( LrTable.NT 73, ( result, outer_attrs1left, types1right), rest671
 )
 end
-|  ( 165, ( ( _, ( MlyValue.ntVOID enum_items1, enum_items1left, 
-enum_items1right)) :: rest671)) => let val  result = MlyValue.ntVOID
- (fn _ => ( let val  enum_items1 = enum_items1 ()
- in ()
-end; ()))
+|  ( 165, ( ( _, ( MlyValue.enum_items enum_items1, enum_items1left, 
+enum_items1right)) :: rest671)) => let val  result = 
+MlyValue.maybe_enum_items (fn _ => let val  (enum_items as enum_items1
+) = enum_items1 ()
+ in (enum_items)
+end)
  in ( LrTable.NT 77, ( result, enum_items1left, enum_items1right), 
 rest671)
 end
-|  ( 166, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
+|  ( 166, ( rest671)) => let val  result = MlyValue.maybe_enum_items
+ (fn _ => ([]))
  in ( LrTable.NT 77, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 167, ( ( _, ( MlyValue.ntVOID maybe_comma1, _, maybe_comma1right)
-) :: ( _, ( MlyValue.ntVOID enum_items_expansion1, _, _)) :: ( _, ( 
-MlyValue.ntVOID enum_item1, enum_item1left, _)) :: rest671)) => let
- val  result = MlyValue.ntVOID (fn _ => ( let val  enum_item1 = 
-enum_item1 ()
- val  enum_items_expansion1 = enum_items_expansion1 ()
+) :: ( _, ( MlyValue.enum_items_expansion enum_items_expansion1, _, _)
+) :: ( _, ( MlyValue.enum_item enum_item1, enum_item1left, _)) :: 
+rest671)) => let val  result = MlyValue.enum_items (fn _ => let val  (
+enum_item as enum_item1) = enum_item1 ()
+ val  (enum_items_expansion as enum_items_expansion1) = 
+enum_items_expansion1 ()
  val  maybe_comma1 = maybe_comma1 ()
- in (yaccLog("enum_items"))
-end; ()))
+ in (yaccLog("enum_items"); enum_item::enum_items_expansion)
+end)
  in ( LrTable.NT 76, ( result, enum_item1left, maybe_comma1right), 
 rest671)
 end
-|  ( 168, ( ( _, ( MlyValue.ntVOID enum_item1, _, enum_item1right)) ::
- _ :: ( _, ( MlyValue.ntVOID enum_items_expansion1, 
+|  ( 168, ( ( _, ( MlyValue.enum_item enum_item1, _, enum_item1right))
+ :: _ :: ( _, ( MlyValue.enum_items_expansion enum_items_expansion1, 
 enum_items_expansion1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  enum_items_expansion1 = 
-enum_items_expansion1 ()
- val  enum_item1 = enum_item1 ()
- in ()
-end; ()))
+MlyValue.enum_items_expansion (fn _ => let val  (enum_items_expansion
+ as enum_items_expansion1) = enum_items_expansion1 ()
+ val  (enum_item as enum_item1) = enum_item1 ()
+ in (enum_item::enum_items_expansion)
+end)
  in ( LrTable.NT 78, ( result, enum_items_expansion1left, 
 enum_item1right), rest671)
 end
-|  ( 169, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
+|  ( 169, ( rest671)) => let val  result = 
+MlyValue.enum_items_expansion (fn _ => (nil))
  in ( LrTable.NT 78, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 170, ( ( _, ( MlyValue.ntVOID enum_item_tuple1, _, 
+|  ( 170, ( ( _, ( MlyValue.enum_item_tuple enum_item_tuple1, _, 
 enum_item_tuple1right)) :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _
 , ( MlyValue.outer_attrs outer_attrs1, outer_attrs1left, _)) :: 
-rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-outer_attrs1 = outer_attrs1 ()
- val  IDENT1 = IDENT1 ()
- val  enum_item_tuple1 = enum_item_tuple1 ()
- in ()
-end; ()))
+rest671)) => let val  result = MlyValue.enum_item (fn _ => let val  (
+outer_attrs as outer_attrs1) = outer_attrs1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (enum_item_tuple as enum_item_tuple1) = enum_item_tuple1 ()
+ in (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_tuple)))
+
+end)
  in ( LrTable.NT 79, ( result, outer_attrs1left, enum_item_tuple1right
 ), rest671)
 end
-|  ( 171, ( ( _, ( MlyValue.ntVOID enum_item_struct1, _, 
+|  ( 171, ( ( _, ( MlyValue.enum_item_struct enum_item_struct1, _, 
 enum_item_struct1right)) :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: (
  _, ( MlyValue.outer_attrs outer_attrs1, outer_attrs1left, _)) :: 
-rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-outer_attrs1 = outer_attrs1 ()
- val  IDENT1 = IDENT1 ()
- val  enum_item_struct1 = enum_item_struct1 ()
- in ()
-end; ()))
+rest671)) => let val  result = MlyValue.enum_item (fn _ => let val  (
+outer_attrs as outer_attrs1) = outer_attrs1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (enum_item_struct as enum_item_struct1) = enum_item_struct1 ()
+ in (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_struct)))
+
+end)
  in ( LrTable.NT 79, ( result, outer_attrs1left, 
 enum_item_struct1right), rest671)
 end
-|  ( 172, ( ( _, ( MlyValue.ntVOID enum_item_discriminant1, _, 
-enum_item_discriminant1right)) :: ( _, ( MlyValue.IDENT IDENT1, _, _))
- :: ( _, ( MlyValue.outer_attrs outer_attrs1, outer_attrs1left, _)) ::
- rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-outer_attrs1 = outer_attrs1 ()
- val  IDENT1 = IDENT1 ()
- val  enum_item_discriminant1 = enum_item_discriminant1 ()
- in ()
-end; ()))
+|  ( 172, ( ( _, ( MlyValue.enum_item_discriminant 
+enum_item_discriminant1, _, enum_item_discriminant1right)) :: ( _, ( 
+MlyValue.IDENT IDENT1, _, _)) :: ( _, ( MlyValue.outer_attrs 
+outer_attrs1, outer_attrs1left, _)) :: rest671)) => let val  result = 
+MlyValue.enum_item (fn _ => let val  (outer_attrs as outer_attrs1) = 
+outer_attrs1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (enum_item_discriminant as enum_item_discriminant1) = 
+enum_item_discriminant1 ()
+ in (
+EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_discriminant))
+)
+end)
  in ( LrTable.NT 79, ( result, outer_attrs1left, 
 enum_item_discriminant1right), rest671)
 end
 |  ( 173, ( ( _, ( MlyValue.IDENT IDENT1, _, IDENT1right)) :: ( _, ( 
 MlyValue.outer_attrs outer_attrs1, outer_attrs1left, _)) :: rest671))
- => let val  result = MlyValue.ntVOID (fn _ => ( let val  outer_attrs1
- = outer_attrs1 ()
- val  IDENT1 = IDENT1 ()
- in (yaccLog("enum_item: branch 4"))
-end; ()))
+ => let val  result = MlyValue.enum_item (fn _ => let val  (
+outer_attrs as outer_attrs1) = outer_attrs1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ in (
+yaccLog("enum_item: branch 4"); EnumItem (outer_attrs, Identifer(IDENT), NONE)
+)
+end)
  in ( LrTable.NT 79, ( result, outer_attrs1left, IDENT1right), rest671
 )
 end
 |  ( 174, ( ( _, ( _, _, RPARENT1right)) :: ( _, ( 
 MlyValue.maybe_tuple_fields maybe_tuple_fields1, _, _)) :: ( _, ( _, 
-LPARENT1left, _)) :: rest671)) => let val  result = MlyValue.ntVOID
- (fn _ => ( let val  maybe_tuple_fields1 = maybe_tuple_fields1 ()
- in ()
-end; ()))
+LPARENT1left, _)) :: rest671)) => let val  result = 
+MlyValue.enum_item_tuple (fn _ => let val  (maybe_tuple_fields as 
+maybe_tuple_fields1) = maybe_tuple_fields1 ()
+ in (EnumItemTuple (maybe_tuple_fields))
+end)
  in ( LrTable.NT 80, ( result, LPARENT1left, RPARENT1right), rest671)
 
 end
 |  ( 175, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( 
 MlyValue.maybe_struct_fields maybe_struct_fields1, _, _)) :: ( _, ( _,
- LBRACE1left, _)) :: rest671)) => let val  result = MlyValue.ntVOID
- (fn _ => ( let val  maybe_struct_fields1 = maybe_struct_fields1 ()
- in ()
-end; ()))
+ LBRACE1left, _)) :: rest671)) => let val  result = 
+MlyValue.enum_item_struct (fn _ => let val  (maybe_struct_fields as 
+maybe_struct_fields1) = maybe_struct_fields1 ()
+ in (EnumItemStruct (maybe_struct_fields))
+end)
  in ( LrTable.NT 81, ( result, LBRACE1left, RBRACE1right), rest671)
 
 end
-|  ( 176, ( ( _, ( MlyValue.ntVOID expression1, _, expression1right))
- :: ( _, ( _, EQ1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  expression1 = expression1 ()
- in ()
-end; ()))
+|  ( 176, ( ( _, ( MlyValue.expression expression1, _, 
+expression1right)) :: ( _, ( _, EQ1left, _)) :: rest671)) => let val  
+result = MlyValue.enum_item_discriminant (fn _ => let val  (expression
+ as expression1) = expression1 ()
+ in (EnumItemDiscriminant (expression))
+end)
  in ( LrTable.NT 82, ( result, EQ1left, expression1right), rest671)
 
 end
@@ -3270,7 +3297,7 @@ CONST1left, _)) :: rest671)) => let val  result = MlyValue.ntVOID (fn
 end; ()))
  in ( LrTable.NT 102, ( result, CONST1left, SEMI1right), rest671)
 end
-|  ( 198, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.ntVOID 
+|  ( 198, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.expression 
 expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
  :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, CONST1left, _))
  :: rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val 
@@ -3966,9 +3993,9 @@ end
 end
 |  ( 267, ( ( _, ( MlyValue.INTEGER_LIT INTEGER_LIT1, INTEGER_LIT1left
 , INTEGER_LIT1right)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  INTEGER_LIT1 = INTEGER_LIT1 ()
- in ()
-end; ()))
+MlyValue.expression (fn _ => let val  INTEGER_LIT1 = INTEGER_LIT1 ()
+ in (Expression)
+end)
  in ( LrTable.NT 65, ( result, INTEGER_LIT1left, INTEGER_LIT1right), 
 rest671)
 end

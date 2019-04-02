@@ -51,13 +51,13 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | function of ItemType | func_qualifier of FunctionQualifier list | maybe_unsafe | abi of Abi | maybe_abi of Abi option
         | func_parameters of FunctionParam list | maybe_func_parameters of FunctionParam list| func_param of FunctionParam | func_parameters_expansion of FunctionParam list
         | func_return_type of Type | maybe_func_return_type of Type option
-        | block_expression of BlockExpression | maybe_statements | expression
+        | block_expression of BlockExpression | maybe_statements | expression of Expression
         | struct_struct of StructType| struct_fields of StructField list | struct_field of StructField 
         | maybe_struct_fields of StructField list | struct_fields_expansion of StructField list
         | tuple_struct of StructType | tuple_fields of TupleField list | tuple_field of TupleField 
         | maybe_tuple_fields of TupleField list | tuple_fields_expansion of TupleField list
-        | enum_items | maybe_enum_items | enum_items_expansion | enum_item | enum_item_tuple | enum_item_struct 
-        | enum_item_discriminant
+        | enum_items of EnumItem list | maybe_enum_items of EnumItem list | enum_items_expansion of EnumItem list 
+        | enum_item of EnumItem | enum_item_tuple of EnumItemType | enum_item_struct of EnumItemType | enum_item_discriminant of EnumItemType
         | type_alias of ItemType
         | constant_item
         | maybe_trait_super | maybe_type_param_bounds of TypeParamBounds option | type_param_bounds of TypeParamBounds
@@ -260,7 +260,9 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
         | struct_struct                                         (yaccLog("struct struct"); Struct (struct_struct))
         | tuple_struct                                          (yaccLog("tuple struct"); Struct (tuple_struct))
         | ENUM IDENT maybe_generics maybe_where_clause
-            LBRACE maybe_enum_items RBRACE                      (yaccLog("enumeration"); Enumeration)
+            LBRACE maybe_enum_items RBRACE                      (yaccLog("enumeration"); 
+                                                                Enumeration (Identifer(IDENT), maybe_generics, 
+                                                                maybe_where_clause, maybe_enum_items))
         | UNION IDENT maybe_generics maybe_where_clause 
             LBRACE struct_fields RBRACE                         (yaccLog("Union"); Union)
         | constant_item                                         (yaccLog("ConstantItem"); ConstantItem)
@@ -356,21 +358,21 @@ tuple_fields_expansion:
 tuple_field: outer_attrs visibility types                       (TupleField (outer_attrs, visibility, types))
             | outer_attrs types                                 (TupleField (outer_attrs, DefaultVis, types))
 
-maybe_enum_items: enum_items                                    ()
-                |                                               ()
-enum_items: enum_item enum_items_expansion maybe_comma          (yaccLog("enum_items"))
+maybe_enum_items: enum_items                                    (enum_items)
+                |                                               ([])
+enum_items: enum_item enum_items_expansion maybe_comma          (yaccLog("enum_items"); enum_item::enum_items_expansion)
 enum_items_expansion: 
                     (* This is a left recursion to solve COMMA conflicts *)
-                    enum_items_expansion COMMA enum_item        ()
-                    |                                           ()
-enum_item: outer_attrs IDENT enum_item_tuple                    ()
-            | outer_attrs IDENT enum_item_struct                ()
-            | outer_attrs IDENT enum_item_discriminant          ()
-            | outer_attrs IDENT                                 (yaccLog("enum_item: branch 4"))
+                    enum_items_expansion COMMA enum_item        (enum_item::enum_items_expansion)
+                    |                                           (nil)
+enum_item: outer_attrs IDENT enum_item_tuple                    (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_tuple)))
+            | outer_attrs IDENT enum_item_struct                (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_struct)))
+            | outer_attrs IDENT enum_item_discriminant          (EnumItem (outer_attrs, Identifer(IDENT), SOME(enum_item_discriminant)))
+            | outer_attrs IDENT                                 (yaccLog("enum_item: branch 4"); EnumItem (outer_attrs, Identifer(IDENT), NONE))
 
-enum_item_tuple: LPARENT maybe_tuple_fields RPARENT             ()
-enum_item_struct: LBRACE maybe_struct_fields RBRACE             ()
-enum_item_discriminant: EQ expression                           ()
+enum_item_tuple: LPARENT maybe_tuple_fields RPARENT             (EnumItemTuple (maybe_tuple_fields))
+enum_item_struct: LBRACE maybe_struct_fields RBRACE             (EnumItemStruct (maybe_struct_fields))
+enum_item_discriminant: EQ expression                           (EnumItemDiscriminant (expression))
 
 trait_items: trait_item trait_items                             ()
             |                                                   ()
@@ -509,4 +511,4 @@ named_func_parameters_with_variadics:
                 COMMA DOTDOTDOT                                 ()
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    (BlockExpression)
 maybe_statements:                                               ()
-expression: INTEGER_LIT                                         ()
+expression: INTEGER_LIT                                         (Expression)

@@ -22,7 +22,7 @@ sig
                         wh:WhereClause option, be:BlockExpression}
         | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
         | Struct of StructType
-        | Enumeration
+        | Enumeration of (Identifer * Generics option * WhereClause option * EnumItem list)
         | Union
         | ConstantItem
         | StaticItem
@@ -58,6 +58,13 @@ sig
     and LifetimeParam = LifetimeParam of (OuterAttribute option * Lifetime * LifetimeBounds option)
     and TypeParamBounds = TypeParamBounds of TypeParamBound list
     and TypeParamBound = LTB of Lifetime | TB of TraitBound
+    
+    and EnumItem = EnumItem of (OuterAttribute list * Identifer * EnumItemType option)
+    and EnumItemType = EnumItemTuple of TupleField list 
+                    | EnumItemStruct of StructField list 
+                    | EnumItemDiscriminant of Expression
+    and Expression = Expression
+
     and TypePath = TypePath
     and Pattern = Pattern
     and Type = Type
@@ -93,7 +100,7 @@ struct
                         wh:WhereClause option, be:BlockExpression}
         | TypeAlias of (Identifer * Generics option * WhereClause option * Type)
         | Struct of StructType
-        | Enumeration
+        | Enumeration of (Identifer * Generics option * WhereClause option * EnumItem list)
         | Union
         | ConstantItem
         | StaticItem
@@ -129,6 +136,13 @@ struct
     and LifetimeParam = LifetimeParam of (OuterAttribute option * Lifetime * LifetimeBounds option)
     and TypeParamBounds = TypeParamBounds of TypeParamBound list
     and TypeParamBound = LTB of Lifetime | TB of TraitBound
+
+    and EnumItem = EnumItem of (OuterAttribute list * Identifer * EnumItemType option)
+    and EnumItemType = EnumItemTuple of TupleField list 
+                    | EnumItemStruct of StructField list 
+                    | EnumItemDiscriminant of Expression
+    and Expression = Expression
+
     and TypePath = TypePath
     and Pattern = Pattern
     and Type = Type

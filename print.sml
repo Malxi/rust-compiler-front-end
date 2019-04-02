@@ -138,6 +138,24 @@ struct
                     out ")"
                     )
                 | ItemType(A.Struct(st), d) = (StructType(st, d))
+                | ItemType(A.Enumeration(id, mgen, mwh, eitList), d) = 
+                    (
+                        out "Enumeration (";
+                        nextLine(d);
+                        out "name: ";
+                        Identifer(id, d);
+                        nextLine(d);
+                        out "generic: ";
+                        GenericsOption(mgen, d);
+                        nextLine(d);
+                        out "where: ";
+                        WhereClauseOption(mwh, d);
+                        nextLine(d);
+                        out "enumItems: ";
+                        outList (d+1) EnumItem eitList false;
+                        nextLine(d);
+                        out ")"
+                    )
                 | ItemType (_, d) =
                     (out "ItemType()")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
@@ -317,6 +335,31 @@ struct
                     Type(ty, d);
                     out ")"
                 )
+            and EnumItemType(A.EnumItemTuple(tfList), d) =
+                    (outList (d+1) TupleField tfList false)
+                | EnumItemType(A.EnumItemStruct(sfList), d) =
+                    (outList (d+1) StructField sfList false)
+                |EnumItemType(A.EnumItemDiscriminant(exp), d) =
+                    (Expression(exp, d))
+            and EnumItem(A.EnumItem(outerAttrs, id, SOME(et)), d) =
+                (
+                    out "EnumItem (";
+                    outList (d) OuterAttribute outerAttrs false;
+                    out ",";
+                    Identifer(id, d);
+                    out ",";
+                    EnumItemType(et, d);
+                    out ")"
+                )
+                | EnumItem(A.EnumItem(outerAttrs, id, NONE), d) =
+                (
+                    out "EnumItem (";
+                    outList (d) OuterAttribute outerAttrs false;
+                    out ",";
+                    Identifer(id, d);
+                    out ")"
+                )
+            and Expression(A.Expression, d) = (out "Expression ()")
             and OuterAttributeOption(SOME(outAttr), d) = (OuterAttribute(outAttr, d))
                 | OuterAttributeOption(NONE, d) = ()
             and TypeParamBoundsOption(SOME(tpbs), d) = (TypeParamBounds(tpbs, d))
