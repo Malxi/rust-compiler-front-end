@@ -24,8 +24,8 @@ sig
         | Struct of StructType
         | Enumeration of (Identifer * Generics option * WhereClause option * EnumItem list)
         | Union of (Identifer * Generics option * WhereClause option * StructField list)
-        | ConstantItem
-        | StaticItem
+        | ConstantItem of (Identifer * Type * Expression)
+        | StaticItem of (Mutability * Identifer * Type * Expression)
         | Trait
         | Implementation
         | ExternBlock
@@ -65,6 +65,8 @@ sig
                     | EnumItemDiscriminant of Expression
     and Expression = Expression
 
+    and Mutability = Mut | NonMut
+
     and TypePath = TypePath
     and Pattern = Pattern
     and Type = Type
@@ -102,8 +104,8 @@ struct
         | Struct of StructType
         | Enumeration of (Identifer * Generics option * WhereClause option * EnumItem list)
         | Union of (Identifer * Generics option * WhereClause option * StructField list)
-        | ConstantItem
-        | StaticItem
+        | ConstantItem of (Identifer * Type * Expression)
+        | StaticItem of (Mutability * Identifer * Type * Expression)
         | Trait
         | Implementation
         | ExternBlock
@@ -142,6 +144,8 @@ struct
                     | EnumItemStruct of StructField list 
                     | EnumItemDiscriminant of Expression
     and Expression = Expression
+
+    and Mutability = Mut | NonMut
 
     and TypePath = TypePath
     and Pattern = Pattern

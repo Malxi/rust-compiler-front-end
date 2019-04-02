@@ -58,8 +58,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | maybe_tuple_fields of TupleField list | tuple_fields_expansion of TupleField list
         | enum_items of EnumItem list | maybe_enum_items of EnumItem list | enum_items_expansion of EnumItem list 
         | enum_item of EnumItem | enum_item_tuple of EnumItemType | enum_item_struct of EnumItemType | enum_item_discriminant of EnumItemType
-        | type_alias of ItemType
-        | constant_item
+        | type_alias of ItemType | constant_item of ItemType
         | maybe_trait_super | maybe_type_param_bounds of TypeParamBounds option | type_param_bounds of TypeParamBounds
         | type_param_bounds_expansion of TypeParamBound list | type_param_bound of TypeParamBound
         | lifetime of Lifetime | lifetime_bounds of LifetimeBounds | lifetime_bounds_expansion of Lifetime list | maybe_lifetime
@@ -266,9 +265,9 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
         | UNION IDENT maybe_generics maybe_where_clause 
             LBRACE struct_fields RBRACE                         (yaccLog("Union"); Union (Identifer(IDENT), maybe_generics, 
                                                                                         maybe_where_clause, struct_fields))
-        | constant_item                                         (yaccLog("ConstantItem"); ConstantItem)
-        | STATIC MUT IDENT COLON types EQ expression SEMI       (yaccLog("StaticItem"); StaticItem)
-        | STATIC IDENT COLON types EQ expression SEMI           (yaccLog("StaticItem"); StaticItem)
+        | constant_item                                         (yaccLog("ConstantItem"); constant_item)
+        | STATIC MUT IDENT COLON types EQ expression SEMI       (yaccLog("StaticItem"); StaticItem (Mut, Identifer(IDENT), types, expression))
+        | STATIC IDENT COLON types EQ expression SEMI           (yaccLog("StaticItem"); StaticItem (NonMut, Identifer(IDENT), types, expression))
         | maybe_unsafe TRAIT IDENT maybe_generics
             maybe_trait_super maybe_where_clause
             LBRACE trait_items RBRACE                           (yaccLog("Trait"); Trait)
@@ -278,7 +277,7 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
 
 type_alias: TYPE IDENT maybe_generics maybe_where_clause
             EQ types SEMI                                       (TypeAlias (Identifer(IDENT), maybe_generics, maybe_where_clause, types))        
-constant_item: CONST IDENT COLON types EQ expression SEMI       ()
+constant_item: CONST IDENT COLON types EQ expression SEMI       (ConstantItem (Identifer(IDENT), types, expression))
 
 function: func_qualifier FN IDENT maybe_generics
             LPARENT maybe_func_parameters RPARENT

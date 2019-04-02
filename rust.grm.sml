@@ -1264,6 +1264,7 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | type_param_bounds_expansion of unit ->  (TypeParamBound list)
  | type_param_bounds of unit ->  (TypeParamBounds)
  | maybe_type_param_bounds of unit ->  (TypeParamBounds option)
+ | constant_item of unit ->  (ItemType)
  | type_alias of unit ->  (ItemType)
  | enum_item_discriminant of unit ->  (EnumItemType)
  | enum_item_struct of unit ->  (EnumItemType)
@@ -2474,11 +2475,11 @@ yaccLog("Union"); Union (Identifer(IDENT), maybe_generics,
 end)
  in ( LrTable.NT 20, ( result, UNION1left, RBRACE1right), rest671)
 end
-|  ( 113, ( ( _, ( MlyValue.ntVOID constant_item1, constant_item1left,
- constant_item1right)) :: rest671)) => let val  result = 
-MlyValue.item_type (fn _ => let val  constant_item1 = constant_item1
- ()
- in (yaccLog("ConstantItem"); ConstantItem)
+|  ( 113, ( ( _, ( MlyValue.constant_item constant_item1, 
+constant_item1left, constant_item1right)) :: rest671)) => let val  
+result = MlyValue.item_type (fn _ => let val  (constant_item as 
+constant_item1) = constant_item1 ()
+ in (yaccLog("ConstantItem"); constant_item)
 end)
  in ( LrTable.NT 20, ( result, constant_item1left, constant_item1right
 ), rest671)
@@ -2487,10 +2488,12 @@ end
 expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
  :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: _ :: ( _, ( _, STATIC1left
 , _)) :: rest671)) => let val  result = MlyValue.item_type (fn _ =>
- let val  IDENT1 = IDENT1 ()
- val  types1 = types1 ()
- val  expression1 = expression1 ()
- in (yaccLog("StaticItem"); StaticItem)
+ let val  (IDENT as IDENT1) = IDENT1 ()
+ val  (types as types1) = types1 ()
+ val  (expression as expression1) = expression1 ()
+ in (
+yaccLog("StaticItem"); StaticItem (Mut, Identifer(IDENT), types, expression)
+)
 end)
  in ( LrTable.NT 20, ( result, STATIC1left, SEMI1right), rest671)
 end
@@ -2498,10 +2501,12 @@ end
 expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
  :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, STATIC1left, _))
  :: rest671)) => let val  result = MlyValue.item_type (fn _ => let
- val  IDENT1 = IDENT1 ()
- val  types1 = types1 ()
- val  expression1 = expression1 ()
- in (yaccLog("StaticItem"); StaticItem)
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (types as types1) = types1 ()
+ val  (expression as expression1) = expression1 ()
+ in (
+yaccLog("StaticItem"); StaticItem (NonMut, Identifer(IDENT), types, expression)
+)
 end)
  in ( LrTable.NT 20, ( result, STATIC1left, SEMI1right), rest671)
 end
@@ -2569,12 +2574,12 @@ end
 |  ( 121, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.expression 
 expression1, _, _)) :: _ :: ( _, ( MlyValue.types types1, _, _)) :: _
  :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, CONST1left, _))
- :: rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val 
- IDENT1 = IDENT1 ()
- val  types1 = types1 ()
- val  expression1 = expression1 ()
- in ()
-end; ()))
+ :: rest671)) => let val  result = MlyValue.constant_item (fn _ => let
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (types as types1) = types1 ()
+ val  (expression as expression1) = expression1 ()
+ in (ConstantItem (Identifer(IDENT), types, expression))
+end)
  in ( LrTable.NT 84, ( result, CONST1left, SEMI1right), rest671)
 end
 |  ( 122, ( ( _, ( MlyValue.block_expression block_expression1, _, 
@@ -3620,7 +3625,7 @@ end; ()))
  in ( LrTable.NT 118, ( result, outer_attrs1left, 
 marco_invocation_semi1right), rest671)
 end
-|  ( 233, ( ( _, ( MlyValue.ntVOID constant_item1, _, 
+|  ( 233, ( ( _, ( MlyValue.constant_item constant_item1, _, 
 constant_item1right)) :: ( _, ( MlyValue.ntVOID maybe_visibility1, _,
  _)) :: ( _, ( MlyValue.outer_attrs outer_attrs1, outer_attrs1left, _)
 ) :: rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let
@@ -3762,9 +3767,10 @@ end; ()))
  in ( LrTable.NT 121, ( result, maybe_visibility1left, 
 type_alias1right), rest671)
 end
-|  ( 244, ( ( _, ( MlyValue.ntVOID constant_item1, constant_item1left,
- constant_item1right)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  constant_item1 = constant_item1 ()
+|  ( 244, ( ( _, ( MlyValue.constant_item constant_item1, 
+constant_item1left, constant_item1right)) :: rest671)) => let val  
+result = MlyValue.ntVOID (fn _ => ( let val  constant_item1 = 
+constant_item1 ()
  in ()
 end; ()))
  in ( LrTable.NT 121, ( result, constant_item1left, 

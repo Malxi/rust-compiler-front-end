@@ -171,6 +171,10 @@ struct
                         nextLine(d);
                         out ")"
                     )
+                | ItemType(A.ConstantItem(id, ty, exp), d) =
+                    (out "ConstantItem ("; Identifer(id, d); out ","; Type(ty, d); out ","; Expression(exp, d); out ")")
+                | ItemType(A.StaticItem(m, id, ty, exp), d) =
+                    (out "StaticItem ("; Mutability(m, d); out ","; Identifer(id, d); out ","; Type(ty, d); out ","; Expression(exp, d); out ")")
                 | ItemType (_, d) =
                     (out "ItemType()")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
@@ -375,6 +379,8 @@ struct
                     out ")"
                 )
             and Expression(A.Expression, d) = (out "Expression ()")
+            and Mutability(A.Mut, d) = (out "mut")
+                | Mutability(A.NonMut, d) = (out "non-mut")
             and OuterAttributeOption(SOME(outAttr), d) = (OuterAttribute(outAttr, d))
                 | OuterAttributeOption(NONE, d) = ()
             and TypeParamBoundsOption(SOME(tpbs), d) = (TypeParamBounds(tpbs, d))
