@@ -42,12 +42,12 @@ In sml interactive system
 + Type alias
 + Structs
 + Enumerations
-### Processing
-+ Literal expression
-+ Items
 + Unions
 + Constant Item
 + Static Item
 + Trait
 + Implementations
+### Processing
++ Literal expression
++ Items
 + Extern blocks

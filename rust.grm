@@ -41,7 +41,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
         | patterns of Pattern| types of Type
-        | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility
+        | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility of Visibility option
         | where_clause of WhereClause | maybe_where_clause of WhereClause option | where_clause_expansion of WhereClauseItem list
         | where_clause_item of WhereClauseItem | lifetime_where_clause_item of WhereClauseItem | type_bound_where_clause_item of WhereClauseItem
         | lifetime_params of LifetimeParam list | lifetime_param of LifetimeParam | lifetime_params_expansion of LifetimeParam list
@@ -70,9 +70,10 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | trait_func_parameters of TraitFunctionParam list | trait_func_param of TraitFunctionParam 
         | maybe_trait_func_parameters of TraitFunctionParam list | trait_func_parameters_expansion of TraitFunctionParam list
         | self_param of SelfParam| maybe_and_or_lifetime | maybe_mut of Mutability
-        | inherent_impl | trait_impl | inherent_impl_items | inherent_impl_items_expansion | inherent_impl_item
-        | trait_impl_items | trait_impl_items_expansion | trait_impl_item
-        | method
+        | inherent_impl of ItemType | trait_impl of ItemType
+        | inherent_impl_items of InherentImplItem list | inherent_impl_items_expansion of InherentImplItem list | inherent_impl_item of InherentImplItem
+        | trait_impl_items  of TraitImplItem list | trait_impl_items_expansion of TraitImplItem list | trait_impl_item of TraitImplItem
+        | method of Method
         | extern_block | external_items | external_item | external_static_item | external_func_item | maybe_named_func_parameters
         | named_func_parameters | named_func_parameters_expansion | named_func_param | named_func_parameters_with_variadics
 %pos int
@@ -106,8 +107,8 @@ item: outer_attrs vis_item                                      (VisItemType (re
 vis_item: item_type                                             (VisItem(DefaultVis, item_type))
         | visibility item_type                                  (VisItem(visibility, item_type))
 
-maybe_visibility: visibility                                    ()
-                    |                                           ()
+maybe_visibility: visibility                                    (SOME(visibility))
+                    |                                           (NONE)
 
 visibility: PUB                                                 (PubVis)
         | PUB LPARENT CARET RPARENT                             (CrateVis)
@@ -277,8 +278,8 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
                                                                     tyb=maybe_colon_type_bounds, wh=maybe_where_clause, 
                                                                     traitItems=rev(trait_items)
                                                                 }))
-        | inherent_impl                                         (yaccLog("inherent_impl"); Implementation)
-        | trait_impl                                            (yaccLog("trait_impl"); Implementation)
+        | inherent_impl                                         (yaccLog("inherent_impl"); inherent_impl)
+        | trait_impl                                            (yaccLog("trait_impl"); trait_impl)
         | extern_block                                          (yaccLog("extern_block"); ExternBlock)
 
 type_alias: TYPE IDENT maybe_generics maybe_where_clause
@@ -386,7 +387,7 @@ trait_item: outer_attrs trait_func                              (TraitItem (oute
             | outer_attrs trait_method                          (TraitItem (outer_attrs, trait_method))
             | outer_attrs trait_const                           (TraitItem (outer_attrs, trait_const))
             | outer_attrs trait_type                            (TraitItem (outer_attrs, trait_type))
-            | outer_attrs marco_invocation_semi                 (TraitItem (outer_attrs, MIS(marco_invocation_semi)))
+            | outer_attrs marco_invocation_semi                 (TraitItem (outer_attrs, TraitMIS(marco_invocation_semi)))
 
 trait_func: trait_func_decl SEMI                                (TraitFunc (trait_func_decl, NONE))
             | trait_func_decl block_expression                  (TraitFunc (trait_func_decl, SOME (block_expression)))
@@ -462,37 +463,52 @@ self_param: AND maybe_mut SELFVALUE                             (SelfParamLT (NO
             | maybe_mut SELFVALUE COLON types                   (SelfParamTY (maybe_mut, SOME(types)))
 
 inherent_impl: IMPL maybe_generics types maybe_where_clause
-                LBRACE inner_attrs inherent_impl_items RBRACE   ()
-inherent_impl_items: inherent_impl_item inherent_impl_items     ()
-                    |                                           ()
-inherent_impl_item: outer_attrs marco_invocation_semi           ()
+                LBRACE inner_attrs inherent_impl_items RBRACE   (InherentImpl ({
+                                                                    generic=maybe_generics, ty=types, wh=maybe_where_clause, 
+                                                                    innerAttrs=inner_attrs, implItems=inherent_impl_items
+                                                                }))
+inherent_impl_items: inherent_impl_items inherent_impl_item     (inherent_impl_item::inherent_impl_items)
+                    |                                           (nil)
+inherent_impl_item: outer_attrs marco_invocation_semi           (InherentImplItemMarco (outer_attrs, marco_invocation_semi))
                     | outer_attrs maybe_visibility 
-                        constant_item                           ()
-                    | outer_attrs maybe_visibility function     ()
-                    | outer_attrs maybe_visibility method       ()
+                        constant_item                           (InherentImplItemType (outer_attrs, maybe_visibility, constant_item))
+                    | outer_attrs maybe_visibility function     (InherentImplItemType (outer_attrs, maybe_visibility, function))
+                    | outer_attrs maybe_visibility method       (InherentImplItemMethod (outer_attrs, maybe_visibility, method))
 trait_impl:  IMPL maybe_generics type_path
             FOR types maybe_where_clause LBRACE
-            inner_attrs trait_impl_items RBRACE                 ()
+            inner_attrs trait_impl_items RBRACE                 (TraitImpl({
+                                                                    unsafe=NONE, generic=maybe_generics, neg=false, typath=type_path, ty=types,
+                                                                    wh=maybe_where_clause, innerAttrs=inner_attrs, implItems=trait_impl_items
+                                                                }))
             |IMPL maybe_generics NOT type_path
             FOR types maybe_where_clause LBRACE
-            inner_attrs trait_impl_items RBRACE                 ()
+            inner_attrs trait_impl_items RBRACE                 (TraitImpl({
+                                                                    unsafe=NONE, generic=maybe_generics, neg=true, typath=type_path, ty=types,
+                                                                    wh=maybe_where_clause, innerAttrs=inner_attrs, implItems=trait_impl_items
+                                                                }))
             | UNSAFE IMPL maybe_generics  type_path
             FOR types maybe_where_clause LBRACE
-            inner_attrs trait_impl_items RBRACE                 ()
+            inner_attrs trait_impl_items RBRACE                 (TraitImpl({
+                                                                    unsafe=SOME(Unsafe), generic=maybe_generics, neg=false, typath=type_path, ty=types,
+                                                                    wh=maybe_where_clause, innerAttrs=inner_attrs, implItems=trait_impl_items
+                                                                }))
             | UNSAFE IMPL maybe_generics NOT type_path
             FOR types maybe_where_clause LBRACE
-            inner_attrs trait_impl_items RBRACE                 ()
-trait_impl_items: trait_impl_item trait_impl_items              ()
-                |                                               ()
-trait_impl_item: outer_attrs marco_invocation_semi              ()
-                | maybe_visibility type_alias                   ()
-                | constant_item                                 ()
-                | function                                      ()
-                | method                                        ()
+            inner_attrs trait_impl_items RBRACE                 (TraitImpl({
+                                                                    unsafe=SOME(Unsafe), generic=maybe_generics, neg=true, typath=type_path, ty=types,
+                                                                    wh=maybe_where_clause, innerAttrs=inner_attrs, implItems=trait_impl_items
+                                                                }))
+trait_impl_items: trait_impl_items trait_impl_item              (trait_impl_item::trait_impl_items)
+                |                                               (nil)
+trait_impl_item: outer_attrs marco_invocation_semi              (TraitImplItemMarco (outer_attrs, marco_invocation_semi))
+                | outer_attrs maybe_visibility type_alias       (TraitImplItemType (outer_attrs, maybe_visibility, type_alias))
+                | outer_attrs maybe_visibility constant_item    (TraitImplItemType (outer_attrs, maybe_visibility, constant_item))
+                | outer_attrs maybe_visibility function         (TraitImplItemType (outer_attrs, maybe_visibility, function))
+                | outer_attrs maybe_visibility method           (TraitImplItemMethod (outer_attrs, maybe_visibility, method))
 method: func_qualifier FN IDENT maybe_generics LPARENT
         self_param func_parameters_expansion maybe_comma RPARENT
         maybe_func_return_type maybe_where_clause 
-        block_expression                                        ()
+        block_expression                                        (Method)
 marco_invocation_semi: simple_path NOT(* need to be completed*)    (MacroInvocationSemi)
 
 extern_block: EXTERN maybe_abi LBRACE inner_attrs

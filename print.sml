@@ -202,6 +202,57 @@ struct
                         nextLine(d);
                         out ")"
                     end
+                | ItemType(A.InherentImpl(ihti), d) =
+                    let
+                        val {generic=generic, ty=ty, wh=wh, innerAttrs=innerAttrs, implItems=implItems} = ihti
+                    in
+                        out "InherentImpl (";
+                        nextLine(d);
+                        out "generic:";
+                        nextLine(d);
+                        GenericsOption(generic, d+1);
+                        nextLine(d);
+                        out "type: ";
+                        Type(ty, d+1);
+                        nextLine(d);
+                        outList (d+1) InnerAttribute innerAttrs false;
+                        nextLine(d);
+                        out "items: ";
+                        nextLine(d);
+                        outList (d+1) InherentImplItem implItems true;
+                        nextLine(d);
+                        out ")"
+                    end
+                | ItemType(A.TraitImpl(traitImpl), d) =
+                    let
+                        val {unsafe=unsafe, generic=generic, neg=neg, typath=typath, ty=ty, wh=wh, innerAttrs=innerAttrs, implItems=implItems} = traitImpl
+                    in
+                        out "TraitImpl (";
+                        nextLine(d);
+                        out "unsafe: ";
+                        UnsafeOption(unsafe, d+1);
+                        nextLine(d);
+                        out "generic:";
+                        nextLine(d);
+                        GenericsOption(generic, d+1);
+                        nextLine(d);
+                        out "neg: ";
+                        (if neg then out "true" else out "false");
+                        nextLine(d);
+                        out "type path: ";
+                        TypePath(typath, d);
+                        nextLine(d);
+                        out "type: ";
+                        Type(ty, d+1);
+                        nextLine(d);
+                        outList (d+1) InnerAttribute innerAttrs false;
+                        nextLine(d);
+                        out "items: ";
+                        nextLine(d);
+                        outList (d+1) TraitImplItem implItems true;
+                        nextLine(d);
+                        out ")"
+                    end
                 | ItemType (_, d) =
                     (out "ItemType()")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
@@ -443,7 +494,7 @@ struct
                     out ",";
                     TypeParamBoundsOption(mtybs, d+1)
                 )
-                | TraitItemType(A.MIS(mis), d) = (MacroInvocationSemi(mis, d+1))
+                | TraitItemType(A.TraitMIS(mis), d) = (MacroInvocationSemi(mis, d+1))
             and TraitFuncDecl(A.TraitFuncDecl(tfdecl), d) =
                 let
                     val {qualifier=qualifier, name=name, generic=generic, params=params, ret=ret, wh=wh} = tfdecl
@@ -511,6 +562,51 @@ struct
                     (Mutability (mut, d+1); TypeOption(mty, d+1))
             and BlockExpression(A.BlockExpression, d) = out "BlockExpression()"
             and MacroInvocationSemi(A.MacroInvocationSemi, d) = out "MacroInvocationSemi()"
+            and InherentImplItem(A.InherentImplItemMarco(outerAttr, mis), d) = 
+                (
+                    outList (d+1) OuterAttribute outerAttr false;
+                    out ",";
+                    MacroInvocationSemi(mis, d)
+                )
+                | InherentImplItem(A.InherentImplItemType(outerAttr, mvis, it), d) =
+                (
+                    outList (d+1) OuterAttribute outerAttr false;
+                    out ",";
+                    VisibilityOption(mvis, d+1);
+                    out ",";
+                    ItemType(it, d)
+                )
+                | InherentImplItem(A.InherentImplItemMethod(outerAttr, mvis, method), d) =
+                (
+                    outList (d+1) OuterAttribute outerAttr false;
+                    out ",";
+                    VisibilityOption(mvis, d+1);
+                    out ",";
+                    Method(method, d)
+                )
+            and TraitImplItem(A.TraitImplItemMarco(outerAttr, mis), d) = 
+                (
+                    outList (d+1) OuterAttribute outerAttr false;
+                    out ",";
+                    MacroInvocationSemi(mis, d)
+                )
+                | TraitImplItem(A.TraitImplItemType(outerAttr, mvis, it), d) =
+                (
+                    outList (d+1) OuterAttribute outerAttr false;
+                    out ",";
+                    VisibilityOption(mvis, d+1);
+                    out ",";
+                    ItemType(it, d)
+                )
+                | TraitImplItem(A.TraitImplItemMethod(outerAttr, mvis, method), d) =
+                (
+                    outList (d+1) OuterAttribute outerAttr false;
+                    out ",";
+                    VisibilityOption(mvis, d+1);
+                    out ",";
+                    Method(method, d)
+                )
+            and Method(A.Method, d) = out "Method ()"
             and ExpressionOption(SOME(exp), d) = Expression(exp, d)
                 | ExpressionOption(NONE, d) = ()
             and BlockExpressionOption(SOME(be), d) = BlockExpression(be, d)
@@ -529,6 +625,8 @@ struct
                 | WhereClauseOption(NONE, d) = ()
             and GenericsOption(SOME(g), d) = (Generics(g, d))
                             | GenericsOption(NONE, d) = ()
+            and VisibilityOption(SOME(v), d) = Visibility(v, d)
+                | VisibilityOption(NONE, d) = ()
         in
             Crate(ast, 0)
         end

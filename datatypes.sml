@@ -29,7 +29,13 @@ sig
         | Trait of {unsafe: Unsafe option, name:Identifer, generic:Generics option, 
                     tyb:TypeParamBounds option, wh:WhereClause option, 
                     traitItems: TraitItem list}
-        | Implementation
+        | InherentImpl of {generic:Generics option, ty:Type, wh:WhereClause option, 
+                        innerAttrs: InnerAttribute list, implItems:InherentImplItem list
+                        }
+        | TraitImpl of {
+            unsafe:Unsafe option, generic:Generics option, neg:bool, typath:TypePath, ty:Type,
+            wh:WhereClause option, innerAttrs:InnerAttribute list, implItems: TraitImplItem list
+            }
         | ExternBlock
     and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
                     | UnitStruct of (Identifer * Generics option * WhereClause option)
@@ -60,7 +66,7 @@ sig
     and LifetimeParam = LifetimeParam of (OuterAttribute option * Lifetime * LifetimeBounds option)
     and TypeParamBounds = TypeParamBounds of TypeParamBound list
     and TypeParamBound = LTB of Lifetime | TB of TraitBound
-    
+
     and EnumItem = EnumItem of (OuterAttribute list * Identifer * EnumItemType option)
     and EnumItemType = EnumItemTuple of TupleField list 
                     | EnumItemStruct of StructField list 
@@ -74,7 +80,7 @@ sig
                         | TraitMethod of (TraitMethodDecl * BlockExpression option)
                         | TraitConst of Identifer * Type * Expression option
                         | TraitType of Identifer * TypeParamBounds option
-                        | MIS of MacroInvocationSemi
+                        | TraitMIS of MacroInvocationSemi
     and TraitFuncDecl = TraitFuncDecl of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         params:TraitFunctionParam list, ret:Type option, 
                         wh:WhereClause option}
@@ -87,6 +93,14 @@ sig
     and MacroInvocationSemi = MacroInvocationSemi
 
     and Unsafe = Unsafe
+
+    and InherentImplItem = InherentImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+                            | InherentImplItemType of (OuterAttribute list * Visibility option * ItemType)
+                            | InherentImplItemMethod of (OuterAttribute list * Visibility option * Method)
+    and TraitImplItem = TraitImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+                        | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
+                        | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
+    and Method = Method
 
     and TypePath = TypePath
     and Pattern = Pattern
@@ -130,7 +144,13 @@ struct
         | Trait of {unsafe: Unsafe option, name:Identifer, generic:Generics option, 
                     tyb:TypeParamBounds option, wh:WhereClause option, 
                     traitItems: TraitItem list}
-        | Implementation
+        | InherentImpl of {generic:Generics option, ty:Type, wh:WhereClause option, 
+                        innerAttrs: InnerAttribute list, implItems:InherentImplItem list
+                        }
+        | TraitImpl of {
+            unsafe:Unsafe option, generic:Generics option, neg:bool, typath:TypePath, ty:Type,
+            wh:WhereClause option, innerAttrs:InnerAttribute list, implItems: TraitImplItem list
+            }
         | ExternBlock
     and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
                     | UnitStruct of (Identifer * Generics option * WhereClause option)
@@ -175,7 +195,7 @@ struct
                         | TraitMethod of (TraitMethodDecl * BlockExpression option)
                         | TraitConst of Identifer * Type * Expression option
                         | TraitType of Identifer * TypeParamBounds option
-                        | MIS of MacroInvocationSemi
+                        | TraitMIS of MacroInvocationSemi
     and TraitFuncDecl = TraitFuncDecl of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         params:TraitFunctionParam list, ret:Type option, 
                         wh:WhereClause option}
@@ -188,6 +208,14 @@ struct
     and MacroInvocationSemi = MacroInvocationSemi
 
     and Unsafe = Unsafe
+
+    and InherentImplItem = InherentImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+                            | InherentImplItemType of (OuterAttribute list * Visibility option * ItemType)
+                            | InherentImplItemMethod of (OuterAttribute list * Visibility option * Method)
+    and TraitImplItem = TraitImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+                        | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
+                        | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
+    and Method = Method
 
     and TypePath = TypePath
     and Pattern = Pattern
