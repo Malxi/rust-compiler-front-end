@@ -48,7 +48,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | type_params of TypeParam list | type_params_expansion of TypeParam list | type_param of TypeParam | maybe_type_param
         | maybe_lifetime_param | maybe_colon_lifetime_bounds of LifetimeBounds option | lifetime_param_tail | maybe_colon_type_bounds of TypeParamBounds option
         | maybe_comma | maybe_plus | maybe_ques | maybe_not | maybe_outer_attr of OuterAttribute option
-        | function of ItemType | func_qualifier of FunctionQualifier list | maybe_unsafe | abi of Abi | maybe_abi of Abi option
+        | function of ItemType | func_qualifier of FunctionQualifier list | maybe_unsafe of Unsafe option | abi of Abi | maybe_abi of Abi option
         | func_parameters of FunctionParam list | maybe_func_parameters of FunctionParam list| func_param of FunctionParam | func_parameters_expansion of FunctionParam list
         | func_return_type of Type | maybe_func_return_type of Type option
         | block_expression of BlockExpression | maybe_statements | expression of Expression
@@ -59,15 +59,17 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | enum_items of EnumItem list | maybe_enum_items of EnumItem list | enum_items_expansion of EnumItem list 
         | enum_item of EnumItem | enum_item_tuple of EnumItemType | enum_item_struct of EnumItemType | enum_item_discriminant of EnumItemType
         | type_alias of ItemType | constant_item of ItemType
-        | maybe_trait_super | maybe_type_param_bounds of TypeParamBounds option | type_param_bounds of TypeParamBounds
+        | maybe_type_param_bounds of TypeParamBounds option | type_param_bounds of TypeParamBounds
         | type_param_bounds_expansion of TypeParamBound list | type_param_bound of TypeParamBound
         | lifetime of Lifetime | lifetime_bounds of LifetimeBounds | lifetime_bounds_expansion of Lifetime list | maybe_lifetime
         | trait_bound of TraitBound | for_lifetimes of ForLifetimes | type_path of TypePath | maybe_for_lifetimes of ForLifetimes option
-        | trait_items | trait_item 
-        | trait_func | trait_method | trait_const | trait_type | marco_invocation_semi
-        | trait_func_decl | trait_method_decl | trait_func_parameters 
-        | trait_func_param | maybe_trait_func_parameters | trait_func_parameters_expansion
-        | self_param | maybe_and_or_lifetime | maybe_mut
+        | trait_items of TraitItem list | trait_item of TraitItem 
+        | trait_func of TraitItemType | trait_method of TraitItemType | trait_const of TraitItemType | trait_type of TraitItemType
+        | trait_func_decl of TraitFuncDecl | trait_method_decl of TraitMethodDecl
+        | marco_invocation_semi of MacroInvocationSemi
+        | trait_func_parameters of TraitFunctionParam list | trait_func_param of TraitFunctionParam 
+        | maybe_trait_func_parameters of TraitFunctionParam list | trait_func_parameters_expansion of TraitFunctionParam list
+        | self_param of SelfParam| maybe_and_or_lifetime | maybe_mut of Mutability
         | inherent_impl | trait_impl | inherent_impl_items | inherent_impl_items_expansion | inherent_impl_item
         | trait_impl_items | trait_impl_items_expansion | trait_impl_item
         | method
@@ -240,14 +242,14 @@ maybe_colon_type_bounds: COLON                                  (NONE)
 
 maybe_comma: COMMA                                              ()
             |                                                   ()
-maybe_mut: MUT                                                  ()
-            |                                                   ()
+maybe_mut: MUT                                                  (Mut)
+            |                                                   (NonMut)
 maybe_plus: PLUS                                                ()
             |                                                   ()
 maybe_ques: QUESTION                                            ()
             |                                                   ()
-maybe_unsafe: UNSAFE                                            ()
-            |                                                   ()
+maybe_unsafe: UNSAFE                                            (SOME(Unsafe))
+            |                                                   (NONE)
 
 item_type: MOD IDENT SEMI                                       (Module (Identifer(IDENT), NONE))
         | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (Identifer(IDENT), SOME(ModuleBody(rev(inner_attrs), rev(items)))))
@@ -269,8 +271,12 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
         | STATIC MUT IDENT COLON types EQ expression SEMI       (yaccLog("StaticItem"); StaticItem (Mut, Identifer(IDENT), types, expression))
         | STATIC IDENT COLON types EQ expression SEMI           (yaccLog("StaticItem"); StaticItem (NonMut, Identifer(IDENT), types, expression))
         | maybe_unsafe TRAIT IDENT maybe_generics
-            maybe_trait_super maybe_where_clause
-            LBRACE trait_items RBRACE                           (yaccLog("Trait"); Trait)
+            maybe_colon_type_bounds maybe_where_clause
+            LBRACE trait_items RBRACE                           (yaccLog("Trait"); Trait ({
+                                                                    unsafe=maybe_unsafe, name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    tyb=maybe_colon_type_bounds, wh=maybe_where_clause, 
+                                                                    traitItems=rev(trait_items)
+                                                                }))
         | inherent_impl                                         (yaccLog("inherent_impl"); Implementation)
         | trait_impl                                            (yaccLog("trait_impl"); Implementation)
         | extern_block                                          (yaccLog("extern_block"); ExternBlock)
@@ -374,48 +380,60 @@ enum_item_tuple: LPARENT maybe_tuple_fields RPARENT             (EnumItemTuple (
 enum_item_struct: LBRACE maybe_struct_fields RBRACE             (EnumItemStruct (maybe_struct_fields))
 enum_item_discriminant: EQ expression                           (EnumItemDiscriminant (expression))
 
-trait_items: trait_item trait_items                             ()
-            |                                                   ()
-trait_item: outer_attrs trait_func                              ()
-            | outer_attrs trait_method                          ()
-            | outer_attrs trait_const                           ()
-            | outer_attrs trait_type                            ()
-            | marco_invocation_semi                             ()
+trait_items: trait_items trait_item                             (trait_item::trait_items)
+            |                                                   (nil)
+trait_item: outer_attrs trait_func                              (TraitItem (outer_attrs, trait_func))
+            | outer_attrs trait_method                          (TraitItem (outer_attrs, trait_method))
+            | outer_attrs trait_const                           (TraitItem (outer_attrs, trait_const))
+            | outer_attrs trait_type                            (TraitItem (outer_attrs, trait_type))
+            | outer_attrs marco_invocation_semi                 (TraitItem (outer_attrs, MIS(marco_invocation_semi)))
 
-trait_func: trait_func_decl SEMI                                ()
-            | trait_func_decl block_expression                  ()
-trait_method: trait_method_decl SEMI                            ()
-            | block_expression                                  ()
+trait_func: trait_func_decl SEMI                                (TraitFunc (trait_func_decl, NONE))
+            | trait_func_decl block_expression                  (TraitFunc (trait_func_decl, SOME (block_expression)))
+trait_method: trait_method_decl SEMI                            (TraitMethod (trait_method_decl, NONE))
+            | trait_method_decl block_expression                (TraitMethod (trait_method_decl, SOME (block_expression)))
 trait_func_decl: func_qualifier FN IDENT maybe_generics
                     LPARENT maybe_trait_func_parameters 
-                    RPARENT maybe_func_return_type where_clause ()
-maybe_trait_func_parameters: trait_func_parameters              ()
-                                |                               ()
+                    RPARENT maybe_func_return_type 
+                    maybe_where_clause                          (TraitFuncDecl ({
+                                                                    qualifier=func_qualifier, name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    params=maybe_trait_func_parameters, ret=maybe_func_return_type, 
+                                                                    wh=maybe_where_clause
+                                                                }))
+maybe_trait_func_parameters: trait_func_parameters              (trait_func_parameters)
+                                |                               ([])
 trait_method_decl: func_qualifier FN IDENT maybe_generics
                     LPARENT self_param 
                     trait_func_parameters_expansion maybe_comma
                     RPARENT maybe_func_return_type
-                    maybe_where_clause                          ()
+                    maybe_where_clause                          (TraitMethodDecl({
+                                                                    qualifier=func_qualifier, name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    selfParam=self_param, params=trait_func_parameters_expansion, ret=maybe_func_return_type, 
+                                                                    wh=maybe_where_clause
+                                                                }))
 trait_func_parameters: trait_func_param 
-                trait_func_parameters_expansion maybe_comma     ()
+                trait_func_parameters_expansion maybe_comma     (trait_func_param::rev(trait_func_parameters_expansion))
 trait_func_parameters_expansion: 
-    trait_func_parameters_expansion COMMA trait_func_param      ()
-                            |                                   ()
-trait_func_param:  patterns COLON types                         ()
-                | types                                         ()
-trait_const: CONST IDENT COLON types SEMI                       ()
-            | CONST IDENT COLON types EQ expression SEMI        ()
-trait_type: TYPE IDENT maybe_trait_super SEMI                   ()
-maybe_trait_super: COLON maybe_type_param_bounds                ()
-                    |                                           ()
+    trait_func_parameters_expansion COMMA trait_func_param      (trait_func_param::trait_func_parameters_expansion)
+                            |                                   (nil)
+trait_func_param:  patterns COLON types                         (TraitFunctionParam (SOME(patterns), types))
+                | types                                         (TraitFunctionParam (NONE, types))
+trait_const: CONST IDENT COLON types SEMI                       (TraitConst (Identifer(IDENT), types, NONE))
+            | CONST IDENT COLON types EQ expression SEMI        (TraitConst (Identifer(IDENT), types, SOME(expression)))
+trait_type: TYPE IDENT maybe_colon_type_bounds SEMI             (TraitType (Identifer(IDENT), maybe_colon_type_bounds))
 maybe_type_param_bounds: type_param_bounds                      (SOME(type_param_bounds))
                         |                                       (NONE)
-type_param_bounds: type_param_bound type_param_bounds_expansion (TypeParamBounds(type_param_bound::rev(type_param_bounds_expansion)))
+(* type_param_bounds: type_param_bound type_param_bounds_expansion (TypeParamBounds(type_param_bound::rev(type_param_bounds_expansion)))
                     | type_param_bound 
                     type_param_bounds_expansion PLUS            (TypeParamBounds(type_param_bound::rev(type_param_bounds_expansion)))
 type_param_bounds_expansion: type_param_bounds_expansion
                             PLUS type_param_bound               (type_param_bound::type_param_bounds_expansion)
-                        |                                       (nil)
+                        |                                       (nil) *)
+type_param_bounds: type_param_bounds_expansion                   (TypeParamBounds(rev(type_param_bounds_expansion)))
+                    (* | type_param_bounds_expansion PLUS           (TypeParamBounds(rev(type_param_bounds_expansion))) *)
+type_param_bounds_expansion: type_param_bounds_expansion
+                            PLUS type_param_bound               (type_param_bound::type_param_bounds_expansion)
+                        | type_param_bound                      ([type_param_bound])
 type_param_bound: lifetime                                      (LTB(lifetime))
                 | trait_bound                                   (TB(trait_bound))
 
@@ -438,11 +456,10 @@ trait_bound: type_path                                          (TraitBound(NONE
                 maybe_for_lifetimes type_path RPARENT           (TraitBound(SOME(Sized), maybe_for_lifetimes, type_path))
 type_path: IDENT (* need to be completed *)                     (TypePath)
 
-self_param: maybe_and_or_lifetime maybe_mut SELFVALUE           ()
-            | maybe_mut SELFVALUE                               ()
-            | maybe_mut SELFVALUE COLON types                   ()
-maybe_and_or_lifetime: AND                                      ()
-                    | AND lifetime                              ()
+self_param: AND maybe_mut SELFVALUE                             (SelfParamLT (NONE, maybe_mut))
+            | AND lifetime maybe_mut SELFVALUE                  (SelfParamLT (SOME(lifetime), maybe_mut))
+            | maybe_mut SELFVALUE                               (SelfParamTY (maybe_mut, NONE))
+            | maybe_mut SELFVALUE COLON types                   (SelfParamTY (maybe_mut, SOME(types)))
 
 inherent_impl: IMPL maybe_generics types maybe_where_clause
                 LBRACE inner_attrs inherent_impl_items RBRACE   ()
@@ -476,7 +493,7 @@ method: func_qualifier FN IDENT maybe_generics LPARENT
         self_param func_parameters_expansion maybe_comma RPARENT
         maybe_func_return_type maybe_where_clause 
         block_expression                                        ()
-marco_invocation_semi: simple_path NOT(* need to be completed*)    ()
+marco_invocation_semi: simple_path NOT(* need to be completed*)    (MacroInvocationSemi)
 
 extern_block: EXTERN maybe_abi LBRACE inner_attrs
             external_items RBRACE                               ()

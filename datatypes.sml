@@ -26,7 +26,9 @@ sig
         | Union of (Identifer * Generics option * WhereClause option * StructField list)
         | ConstantItem of (Identifer * Type * Expression)
         | StaticItem of (Mutability * Identifer * Type * Expression)
-        | Trait
+        | Trait of {unsafe: Unsafe option, name:Identifer, generic:Generics option, 
+                    tyb:TypeParamBounds option, wh:WhereClause option, 
+                    traitItems: TraitItem list}
         | Implementation
         | ExternBlock
     and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
@@ -67,6 +69,25 @@ sig
 
     and Mutability = Mut | NonMut
 
+    and TraitItem = TraitItem of (OuterAttribute list * TraitItemType)
+    and TraitItemType = TraitFunc of (TraitFuncDecl * BlockExpression option) 
+                        | TraitMethod of (TraitMethodDecl * BlockExpression option)
+                        | TraitConst of Identifer * Type * Expression option
+                        | TraitType of Identifer * TypeParamBounds option
+                        | MIS of MacroInvocationSemi
+    and TraitFuncDecl = TraitFuncDecl of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
+                        params:TraitFunctionParam list, ret:Type option, 
+                        wh:WhereClause option}
+    and TraitFunctionParam = TraitFunctionParam of (Pattern option * Type)
+    and TraitMethodDecl = TraitMethodDecl of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
+                        selfParam: SelfParam, params:TraitFunctionParam list, ret:Type option, 
+                        wh:WhereClause option}
+    and SelfParam = SelfParamLT of (Lifetime option * Mutability) | SelfParamTY of (Mutability * Type option)
+
+    and MacroInvocationSemi = MacroInvocationSemi
+
+    and Unsafe = Unsafe
+
     and TypePath = TypePath
     and Pattern = Pattern
     and Type = Type
@@ -106,7 +127,9 @@ struct
         | Union of (Identifer * Generics option * WhereClause option * StructField list)
         | ConstantItem of (Identifer * Type * Expression)
         | StaticItem of (Mutability * Identifer * Type * Expression)
-        | Trait
+        | Trait of {unsafe: Unsafe option, name:Identifer, generic:Generics option, 
+                    tyb:TypeParamBounds option, wh:WhereClause option, 
+                    traitItems: TraitItem list}
         | Implementation
         | ExternBlock
     and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
@@ -146,6 +169,25 @@ struct
     and Expression = Expression
 
     and Mutability = Mut | NonMut
+
+    and TraitItem = TraitItem of (OuterAttribute list * TraitItemType)
+    and TraitItemType = TraitFunc of (TraitFuncDecl * BlockExpression option) 
+                        | TraitMethod of (TraitMethodDecl * BlockExpression option)
+                        | TraitConst of Identifer * Type * Expression option
+                        | TraitType of Identifer * TypeParamBounds option
+                        | MIS of MacroInvocationSemi
+    and TraitFuncDecl = TraitFuncDecl of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
+                        params:TraitFunctionParam list, ret:Type option, 
+                        wh:WhereClause option}
+    and TraitFunctionParam = TraitFunctionParam of (Pattern option * Type)
+    and TraitMethodDecl = TraitMethodDecl of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
+                        selfParam: SelfParam, params:TraitFunctionParam list, ret:Type option, 
+                        wh:WhereClause option}
+    and SelfParam = SelfParamLT of (Lifetime option * Mutability) | SelfParamTY of (Mutability * Type option)
+
+    and MacroInvocationSemi = MacroInvocationSemi
+
+    and Unsafe = Unsafe
 
     and TypePath = TypePath
     and Pattern = Pattern

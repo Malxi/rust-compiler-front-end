@@ -13,15 +13,15 @@ struct
 
             fun outList d f l r = 
                 let
-                    fun sep(r) = if r then nextLine(d) else out ""
+                    fun sep r d = if r then nextLine d else out ""
                     val ind = if r then d else 0
-                    val inc = if r then 0 else 0
+                    val inc = if r then 1 else 0
                     fun travel d f [a] = (f(a, d+inc))
-                        | travel d f (h::t) = (f(h, d+inc); out ", "; sep(r); travel (d+inc) f t)
+                        | travel d f (h::t) = (f(h, d+inc); out ", "; sep r d; travel (d+inc) f t)
                         | travel d f nil = ()
 
-                    fun start d f [a] = (f(a, 0))
-                        | start d f (h::t) = (f(h, 0); out ", "; sep(r); travel (d+inc) f t)
+                    fun start d f [a] = (f(a, d))
+                        | start d f (h::t) = (f(h, d); out ", "; sep r d; travel (d+inc) f t)
                         | start d f nil = ()
                 in
                     (out "["; start ind f l; out "]")
@@ -65,9 +65,9 @@ struct
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
             and Item(A.VisItemType(outerAttrs, visItem), d) = 
-                    (indent d; out "VisItemType("; nextLine(d+1); VisItem(visItem, d+1); out ")")
+                    (out "VisItemType("; nextLine(d); VisItem(visItem, d+1); out ")")
                 | Item(A.MarcoItemType(marcoItem), d) = 
-                    (indent d; out "MarcoItemType("; out ")")
+                    (out "MarcoItemType("; out ")")
             and VisItem(A.VisItem(visibility, itemType), d) =
                 (out "VisItem (";
                 nextLine(d);
@@ -104,22 +104,22 @@ struct
                         val {qualifier=qualifier, name=name, generic=generic, params=params, ret=ret, wh=wh, be=be} = func
                     in
                         (out "Function (";
-                        nextLine(d+1);
+                        nextLine(d);
                         out "qualifier: ";
                         outList (d+1) FunctionQualifier qualifier false;
-                        nextLine(d+1);
+                        nextLine(d);
                         out "name: ";
                         Identifer(name, 0);
-                        nextLine(d+1);
+                        nextLine(d);
                         out "generics: ";
                         GenericsOption(generic, d+1);
-                        nextLine(d+1);
+                        nextLine(d);
                         out "param: ";
                         outList (d+1) FunctionParam params false;
-                        nextLine(d+1);
+                        nextLine(d);
                         out "ret: ";
                         TypeOption(ret, d+1);
-                        nextLine(d+1);
+                        nextLine(d);
                         out "wh: ";
                         WhereClauseOption(wh, d+1);
                         nextLine(d);
@@ -175,6 +175,33 @@ struct
                     (out "ConstantItem ("; Identifer(id, d); out ","; Type(ty, d); out ","; Expression(exp, d); out ")")
                 | ItemType(A.StaticItem(m, id, ty, exp), d) =
                     (out "StaticItem ("; Mutability(m, d); out ","; Identifer(id, d); out ","; Type(ty, d); out ","; Expression(exp, d); out ")")
+                | ItemType(A.Trait(trait), d) = 
+                    let
+                        val {unsafe=unsafe, name=name, generic=generic, tyb=tyb, wh=wh, traitItems=traitItems} = trait
+                    in
+                        out "Trait (";
+                        nextLine(d);
+                        out "unsafe: ";
+                        UnsafeOption(unsafe, d+1);
+                        nextLine(d);
+                        out "name: ";
+                        Identifer(name, d+1);
+                        nextLine(d);
+                        out "generics: ";
+                        GenericsOption(generic, d+1);
+                        nextLine(d);
+                        out "type param bounds: ";
+                        TypeParamBoundsOption(tyb, d+1);
+                        nextLine(d);
+                        out "where: ";
+                        WhereClauseOption(wh, d+1);
+                        nextLine(d);
+                        out "trait items: ";
+                        nextLine(d);
+                        outList (d+1) TraitItem traitItems true;
+                        nextLine(d);
+                        out ")"
+                    end
                 | ItemType (_, d) =
                     (out "ItemType()")
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
@@ -244,7 +271,7 @@ struct
                 out ")"
                 )
             and TypeParamBounds(A.TypeParamBounds(tpbList), d) = 
-                (indent d; outList (d+1) TypeParamBound tpbList false)
+                (outList (d+1) TypeParamBound tpbList false)
             and TypeParamBound(A.LTB(lt), d) = Lifetime(lt, d)
                 | TypeParamBound(A.TB(tb), d) = TraitBound(tb, d)
             and TraitBound(A.TraitBound(NONE, NONE, tyPath), d) =
@@ -381,6 +408,115 @@ struct
             and Expression(A.Expression, d) = (out "Expression ()")
             and Mutability(A.Mut, d) = (out "mut")
                 | Mutability(A.NonMut, d) = (out "non-mut")
+            and Unsafe(A.Unsafe, d) = out "unsafe"
+            and TraitItem(A.TraitItem(outerAttrs, tity), d) =
+                (
+                    out "TraitItem (";
+                    nextLine(d);
+                    outList (d+1) OuterAttribute outerAttrs false;
+                    out ",";
+                    nextLine(d);
+                    TraitItemType(tity, d+1);
+                    out ")"
+                )
+            and TraitItemType(A.TraitFunc(tfdecl, mbexp), d) = 
+                (
+                    TraitFuncDecl(tfdecl, d+1);
+                    nextLine(d);
+                    BlockExpressionOption(mbexp, d+1)
+                )
+                | TraitItemType(A.TraitMethod(tmdecl, mbexp), d) = 
+                (
+                    TraitMethodDecl(tmdecl, d+1);
+                    nextLine(d);
+                    BlockExpressionOption(mbexp, d+1)
+                )
+                | TraitItemType(A.TraitConst(id, ty, mexp), d) = (
+                    Identifer(id, d+1);
+                    out ",";
+                    Type(ty, d+1);
+                    ExpressionOption(mexp, d+1)
+                )
+                | TraitItemType(A.TraitType(id, mtybs), d) = 
+                (
+                    Identifer(id, d+1);
+                    out ",";
+                    TypeParamBoundsOption(mtybs, d+1)
+                )
+                | TraitItemType(A.MIS(mis), d) = (MacroInvocationSemi(mis, d+1))
+            and TraitFuncDecl(A.TraitFuncDecl(tfdecl), d) =
+                let
+                    val {qualifier=qualifier, name=name, generic=generic, params=params, ret=ret, wh=wh} = tfdecl
+                in
+                    out "TraitFuncDecl (";
+                    nextLine(d);
+                    out "qualifier: ";
+                    outList (d+1) FunctionQualifier qualifier false;
+                    nextLine(d);
+                    out "name: ";
+                    Identifer(name, 0);
+                    nextLine(d);
+                    out "generics: ";
+                    GenericsOption(generic, d+1);
+                    nextLine(d);
+                    out "param: ";
+                    outList (d+1) TraitFunctionParam params false;
+                    nextLine(d);
+                    out "ret: ";
+                    TypeOption(ret, d+1);
+                    nextLine(d);
+                    out "wh: ";
+                    WhereClauseOption(wh, d+1);
+                    nextLine(d);
+                    out ")"
+                end
+            and TraitMethodDecl(A.TraitMethodDecl(tmdecl), d) =
+                let
+                    val {qualifier=qualifier, name=name, generic=generic, selfParam=selfParam, params=params, ret=ret, wh=wh} = tmdecl
+                in
+                    out "TraitFuncDecl (";
+                    nextLine(d);
+                    out "qualifier: ";
+                    outList (d+1) FunctionQualifier qualifier false;
+                    nextLine(d);
+                    out "name: ";
+                    Identifer(name, 0);
+                    nextLine(d);
+                    out "generics: ";
+                    GenericsOption(generic, d+1);
+                    nextLine(d);
+                    out "selfparam: ";
+                    SelfParam(selfParam, d);
+                    nextLine(d);
+                    out "param: ";
+                    outList (d+1) TraitFunctionParam params false;
+                    nextLine(d);
+                    out "ret: ";
+                    TypeOption(ret, d+1);
+                    nextLine(d);
+                    out "wh: ";
+                    WhereClauseOption(wh, d+1);
+                    nextLine(d);
+                    out ")"
+                end
+            and TraitFunctionParam(A.TraitFunctionParam(SOME(pat), ty), d) =
+                (Pattern(pat, d); out ":"; Type(ty, d))
+                | TraitFunctionParam(A.TraitFunctionParam(NONE, ty), d) =
+                (Type(ty, d))
+            and SelfParam(A.SelfParamLT(SOME(lt), mut), d) =
+                    (Lifetime(lt, d+1); out ","; Mutability (mut, d+1))
+                | SelfParam(A.SelfParamLT(NONE, mut), d) =
+                    (Mutability (mut, d+1))
+                | SelfParam(A.SelfParamTY(mut, mty), d) =
+                    (Mutability (mut, d+1); TypeOption(mty, d+1))
+            and BlockExpression(A.BlockExpression, d) = out "BlockExpression()"
+            and MacroInvocationSemi(A.MacroInvocationSemi, d) = out "MacroInvocationSemi()"
+            and ExpressionOption(SOME(exp), d) = Expression(exp, d)
+                | ExpressionOption(NONE, d) = ()
+            and BlockExpressionOption(SOME(be), d) = BlockExpression(be, d)
+                | BlockExpressionOption(NONE, d) = ()
+            and UnsafeOption(SOME(s), d) = Unsafe(s, d)
+                | UnsafeOption(NONE, d) = ()
             and OuterAttributeOption(SOME(outAttr), d) = (OuterAttribute(outAttr, d))
                 | OuterAttributeOption(NONE, d) = ()
             and TypeParamBoundsOption(SOME(tpbs), d) = (TypeParamBounds(tpbs, d))
