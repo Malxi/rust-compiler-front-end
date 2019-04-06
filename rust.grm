@@ -74,8 +74,11 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | inherent_impl_items of InherentImplItem list | inherent_impl_items_expansion of InherentImplItem list | inherent_impl_item of InherentImplItem
         | trait_impl_items  of TraitImplItem list | trait_impl_items_expansion of TraitImplItem list | trait_impl_item of TraitImplItem
         | method of Method
-        | extern_block | external_items | external_item | external_static_item | external_func_item | maybe_named_func_parameters
-        | named_func_parameters | named_func_parameters_expansion | named_func_param | named_func_parameters_with_variadics
+        | extern_block of ItemType | external_items of ExternalItem list| external_item of ExternalItem 
+        | external_static_item of ExternalItemType | external_func_item of ExternalItemType
+        | maybe_named_func_parameters of ExternFunctionParameter
+        | named_func_parameters of ExternFunctionParameter | named_func_parameters_expansion of NamedFunctionParam list
+        | named_func_parameters_with_variadics of ExternFunctionParameter| named_func_param of NamedFunctionParam
 %pos int
 %eop EOF
 %noshift EOF
@@ -280,7 +283,7 @@ item_type: MOD IDENT SEMI                                       (Module (Identif
                                                                 }))
         | inherent_impl                                         (yaccLog("inherent_impl"); inherent_impl)
         | trait_impl                                            (yaccLog("trait_impl"); trait_impl)
-        | extern_block                                          (yaccLog("extern_block"); ExternBlock)
+        | extern_block                                          (yaccLog("extern_block"); extern_block)
 
 type_alias: TYPE IDENT maybe_generics maybe_where_clause
             EQ types SEMI                                       (TypeAlias (Identifer(IDENT), maybe_generics, maybe_where_clause, types))        
@@ -508,40 +511,52 @@ trait_impl_item: outer_attrs marco_invocation_semi              (TraitImplItemMa
 method: func_qualifier FN IDENT maybe_generics LPARENT
         self_param func_parameters_expansion maybe_comma RPARENT
         maybe_func_return_type maybe_where_clause 
-        block_expression                                        (Method)
+        block_expression                                        (Method ({
+                                                                    qualifier=func_qualifier, name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    selfParam=self_param, params=rev(func_parameters_expansion), 
+                                                                    ret=maybe_func_return_type, wh=maybe_where_clause, be=block_expression
+                                                                }))
 marco_invocation_semi: simple_path NOT(* need to be completed*)    (MacroInvocationSemi)
 
 extern_block: EXTERN maybe_abi LBRACE inner_attrs
-            external_items RBRACE                               ()
-external_items: external_items external_item                    ()
-            |                                                   ()
+            external_items RBRACE                               (ExternBlock (maybe_abi, inner_attrs, external_items))
+external_items: external_items external_item                    (external_item::external_items)
+            |                                                   (nil)
 external_item: outer_attrs 
-                maybe_visibility external_static_item           ()
+                maybe_visibility external_static_item           (ExternalItem (outer_attrs, maybe_visibility, external_static_item))
             | outer_attrs
-                maybe_visibility external_func_item             ()
-external_static_item: STATIC maybe_mut IDENT COLON types SEMI   ()
+                maybe_visibility external_func_item             (ExternalItem (outer_attrs, maybe_visibility, external_func_item))
+external_static_item: STATIC maybe_mut IDENT COLON types SEMI   (ExternalStaticItem (maybe_mut, Identifer(IDENT), types))
 external_func_item: FN IDENT maybe_generics LPARENT
                 maybe_named_func_parameters RPARENT
                 maybe_func_return_type maybe_where_clause
-                SEMI                                            ()
+                SEMI                                            (ExternalFunctionItem ({
+                                                                    name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    params=maybe_named_func_parameters, ret=maybe_func_return_type, 
+                                                                    wh=maybe_where_clause
+                                                                }))
             |   FN IDENT maybe_generics LPARENT
                 named_func_parameters_with_variadics RPARENT
                 maybe_func_return_type maybe_where_clause
-                SEMI                                            ()
+                SEMI                                            (ExternalFunctionItem ({
+                                                                    name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    params=named_func_parameters_with_variadics, ret=maybe_func_return_type, 
+                                                                    wh=maybe_where_clause
+                                                                }))
 
-maybe_named_func_parameters: named_func_parameters              ()
-                        |                                       ()
+maybe_named_func_parameters: named_func_parameters              (named_func_parameters)
+                        |                                       (ExternFunctionParameter ({params=[], var=false}))
 named_func_parameters: named_func_param 
-                named_func_parameters_expansion maybe_comma     ()
+                named_func_parameters_expansion maybe_comma     (ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=false}))
 named_func_parameters_expansion: 
-    named_func_parameters_expansion COMMA named_func_param      ()
-                    |                                           ()
-named_func_param: IDENT COLON types                             ()
-                 |UNDERSCORE COLON types                        ()
+    named_func_parameters_expansion COMMA named_func_param      (named_func_param::named_func_parameters_expansion)
+                    |                                           (nil)
+named_func_param: IDENT COLON types                             (NamedFunctionParam (SOME(Identifer(IDENT)), types))
+                 | UNDERSCORE COLON types                       (NamedFunctionParam (NONE, types))
 named_func_parameters_with_variadics:
                 (* For convenient, this production is rewrote *)
                 named_func_param named_func_parameters_expansion 
-                COMMA DOTDOTDOT                                 ()
+                COMMA DOTDOTDOT                                 (ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=true}))
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    (BlockExpression)
 maybe_statements:                                               ()
 expression: INTEGER_LIT                                         (Expression)

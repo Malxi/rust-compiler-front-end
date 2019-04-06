@@ -4907,8 +4907,8 @@ state 427:
 
 	maybe_named_func_parameters	goto 442
 	named_func_parameters	goto 441
-	named_func_param	goto 440
-	named_func_parameters_with_variadics	goto 439
+	named_func_parameters_with_variadics	goto 440
+	named_func_param	goto 439
 
 	.	reduce by rule 254
 
@@ -5028,23 +5028,23 @@ state 438:
 
 state 439:
 
-	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics . RPARENT maybe_func_return_type maybe_where_clause SEMI 
-
-	RPARENT	shift 451
-
-
-	.	error
-
-
-state 440:
-
 	named_func_parameters : named_func_param . named_func_parameters_expansion maybe_comma 
 	named_func_parameters_with_variadics : named_func_param . named_func_parameters_expansion COMMA DOTDOTDOT 
 
 
-	named_func_parameters_expansion	goto 452
+	named_func_parameters_expansion	goto 451
 
 	.	reduce by rule 257
+
+
+state 440:
+
+	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics . RPARENT maybe_func_return_type maybe_where_clause SEMI 
+
+	RPARENT	shift 452
+
+
+	.	error
 
 
 state 441:
@@ -5149,27 +5149,27 @@ state 450:
 
 state 451:
 
+	named_func_parameters : named_func_param named_func_parameters_expansion . maybe_comma 
+	named_func_parameters_expansion : named_func_parameters_expansion . COMMA named_func_param 
+	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion . COMMA DOTDOTDOT 
+
+	COMMA	shift 461
+
+	maybe_comma	goto 460
+
+	.	reduce by rule 93
+
+
+state 452:
+
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT . maybe_func_return_type maybe_where_clause SEMI 
 
 	RARROW	shift 319
 
 	func_return_type	goto 318
-	maybe_func_return_type	goto 460
+	maybe_func_return_type	goto 462
 
 	.	reduce by rule 146
-
-
-state 452:
-
-	named_func_parameters : named_func_param named_func_parameters_expansion . maybe_comma 
-	named_func_parameters_expansion : named_func_parameters_expansion . COMMA named_func_param 
-	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion . COMMA DOTDOTDOT 
-
-	COMMA	shift 462
-
-	maybe_comma	goto 461
-
-	.	reduce by rule 93
 
 
 state 453:
@@ -5271,18 +5271,6 @@ state 459:
 
 state 460:
 
-	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type . maybe_where_clause SEMI 
-
-	WHERE	shift 137
-
-	where_clause	goto 136
-	maybe_where_clause	goto 477
-
-	.	reduce by rule 57
-
-
-state 461:
-
 	named_func_parameters : named_func_param named_func_parameters_expansion maybe_comma .  (reduce by rule 255)
 
 
@@ -5290,7 +5278,7 @@ state 461:
 	.	reduce by rule 255
 
 
-state 462:
+state 461:
 
 	maybe_comma : COMMA .  (reduce by rule 92)
 	named_func_parameters_expansion : named_func_parameters_expansion COMMA . named_func_param 
@@ -5298,11 +5286,23 @@ state 462:
 
 	IDENT	shift 444
 	UNDERSCORE	shift 443
-	DOTDOTDOT	shift 479
+	DOTDOTDOT	shift 478
 
-	named_func_param	goto 478
+	named_func_param	goto 477
 
 	.	reduce by rule 92
+
+
+state 462:
+
+	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type . maybe_where_clause SEMI 
+
+	WHERE	shift 137
+
+	where_clause	goto 136
+	maybe_where_clause	goto 479
+
+	.	reduce by rule 57
 
 
 state 463:
@@ -5454,16 +5454,6 @@ state 476:
 
 state 477:
 
-	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause . SEMI 
-
-	SEMI	shift 490
-
-
-	.	error
-
-
-state 478:
-
 	named_func_parameters_expansion : named_func_parameters_expansion COMMA named_func_param .  (reduce by rule 256)
 
 
@@ -5471,13 +5461,23 @@ state 478:
 	.	reduce by rule 256
 
 
-state 479:
+state 478:
 
 	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion COMMA DOTDOTDOT .  (reduce by rule 260)
 
 
 
 	.	reduce by rule 260
+
+
+state 479:
+
+	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause . SEMI 
+
+	SEMI	shift 490
+
+
+	.	error
 
 
 state 480:

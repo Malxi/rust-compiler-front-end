@@ -112,7 +112,7 @@ struct
                         Identifer(name, 0);
                         nextLine(d);
                         out "generics: ";
-                        GenericsOption(generic, d+1);
+                        (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
                         nextLine(d);
                         out "param: ";
                         outList (d+1) FunctionParam params false;
@@ -122,6 +122,10 @@ struct
                         nextLine(d);
                         out "wh: ";
                         WhereClauseOption(wh, d+1);
+                        nextLine(d);
+                        out "be: ";
+                        nextLine(d);
+                        BlockExpression(be, d+1);
                         nextLine(d);
                         out ")"
                         )
@@ -146,7 +150,7 @@ struct
                         Identifer(id, d);
                         nextLine(d);
                         out "generic: ";
-                        GenericsOption(mgen, d);
+                        (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) mgen;
                         nextLine(d);
                         out "where: ";
                         WhereClauseOption(mwh, d);
@@ -161,7 +165,7 @@ struct
                         out "Union (";
                         nextLine(d);
                         out "generics: ";
-                        GenericsOption(mgen, d);
+                        (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) mgen;
                         nextLine(d);
                         out "where: ";
                         WhereClauseOption(mwh, d);
@@ -188,7 +192,7 @@ struct
                         Identifer(name, d+1);
                         nextLine(d);
                         out "generics: ";
-                        GenericsOption(generic, d+1);
+                        (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
                         nextLine(d);
                         out "type param bounds: ";
                         TypeParamBoundsOption(tyb, d+1);
@@ -209,8 +213,7 @@ struct
                         out "InherentImpl (";
                         nextLine(d);
                         out "generic:";
-                        nextLine(d);
-                        GenericsOption(generic, d+1);
+                        (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
                         nextLine(d);
                         out "type: ";
                         Type(ty, d+1);
@@ -233,14 +236,13 @@ struct
                         UnsafeOption(unsafe, d+1);
                         nextLine(d);
                         out "generic:";
-                        nextLine(d);
-                        GenericsOption(generic, d+1);
+                        (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
                         nextLine(d);
                         out "neg: ";
                         (if neg then out "true" else out "false");
                         nextLine(d);
                         out "type path: ";
-                        TypePath(typath, d);
+                        TypePath(typath, d+1);
                         nextLine(d);
                         out "type: ";
                         Type(ty, d+1);
@@ -253,8 +255,15 @@ struct
                         nextLine(d);
                         out ")"
                     end
-                | ItemType (_, d) =
-                    (out "ItemType()")
+                | ItemType(A.ExternBlock(mabi, innerAttrs, etiList), d) =
+                    (
+                        out ("ExternBlock (");
+                        nextLine(d);
+                        outList (d+1) InnerAttribute innerAttrs false;
+                        nextLine(d);
+                        outList (d+1) ExternalItem etiList true;
+                        out ")"
+                    )
             and ModuleBody(A.ModuleBody(innerAttrs, items), d) = 
                 (out "Body (";
                 nextLine(d);
@@ -287,7 +296,8 @@ struct
             and Generics(A.Generics(generics), d) = 
                 (out "Generics (";
                 GenericParams(generics, d+1);
-                outln ""; indent d; out ")"
+                nextLine(d);
+                out ")"
                 )
             and GenericParams(A.GenericParams(lifetimeParams, typeParams), d) =
                 (nextLine(d);
@@ -367,7 +377,7 @@ struct
                     Identifer(id, d+1);
                     nextLine(d);
                     out "generic: ";
-                    GenericsOption(mgen, d+1);
+                    (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) mgen;
                     nextLine(d);
                     out "where: ";
                     WhereClauseOption(mwh, d+1);
@@ -385,7 +395,7 @@ struct
                     Identifer(id, d+1);
                     nextLine(d);
                     out "generic: ";
-                    GenericsOption(mgen, d+1);
+                    (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) mgen;
                     nextLine(d);
                     out "where: ";
                     WhereClauseOption(mwh, d+1);
@@ -400,7 +410,7 @@ struct
                     Identifer(id, d+1);
                     nextLine(d);
                     out "generic: ";
-                    GenericsOption(mgen, d+1);
+                    (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) mgen;
                     nextLine(d);
                     out "tuple filed: ";
                     outList (d+1) TupleField tpList false;
@@ -508,7 +518,7 @@ struct
                     Identifer(name, 0);
                     nextLine(d);
                     out "generics: ";
-                    GenericsOption(generic, d+1);
+                    (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
                     nextLine(d);
                     out "param: ";
                     outList (d+1) TraitFunctionParam params false;
@@ -534,7 +544,7 @@ struct
                     Identifer(name, 0);
                     nextLine(d);
                     out "generics: ";
-                    GenericsOption(generic, d+1);
+                    (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
                     nextLine(d);
                     out "selfparam: ";
                     SelfParam(selfParam, d);
@@ -564,49 +574,175 @@ struct
             and MacroInvocationSemi(A.MacroInvocationSemi, d) = out "MacroInvocationSemi()"
             and InherentImplItem(A.InherentImplItemMarco(outerAttr, mis), d) = 
                 (
+                    out "InherentImplItemMarco (";
+                    nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
-                    MacroInvocationSemi(mis, d)
+                    nextLine(d);
+                    MacroInvocationSemi(mis, d+1);
+                    nextLine(d);
+                    out ")"
                 )
                 | InherentImplItem(A.InherentImplItemType(outerAttr, mvis, it), d) =
                 (
+                    out "InherentImplItemType (";
+                    nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
+                    nextLine(d);
                     VisibilityOption(mvis, d+1);
                     out ",";
-                    ItemType(it, d)
+                    nextLine(d);
+                    ItemType(it, d+1);
+                    nextLine(d);
+                    out ")"
+                    
                 )
                 | InherentImplItem(A.InherentImplItemMethod(outerAttr, mvis, method), d) =
                 (
+                    out "InherentImplItemMethod (";
+                    nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
+                    nextLine(d);
                     VisibilityOption(mvis, d+1);
                     out ",";
-                    Method(method, d)
+                    nextLine(d);
+                    Method(method, d+1);
+                    nextLine(d);
+                    out ")"
                 )
             and TraitImplItem(A.TraitImplItemMarco(outerAttr, mis), d) = 
                 (
+                    out "TraitImplItemMarco (";
+                    nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
-                    MacroInvocationSemi(mis, d)
+                    nextLine(d);
+                    MacroInvocationSemi(mis, d+1);
+                    nextLine(d);
+                    out ")"
                 )
                 | TraitImplItem(A.TraitImplItemType(outerAttr, mvis, it), d) =
                 (
+                    out "TraitImplItemType (";
+                    nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
+                    nextLine(d);
                     VisibilityOption(mvis, d+1);
                     out ",";
-                    ItemType(it, d)
+                    nextLine(d);
+                    ItemType(it, d+1);
+                    nextLine(d);
+                    out ")"
                 )
                 | TraitImplItem(A.TraitImplItemMethod(outerAttr, mvis, method), d) =
                 (
+                    out "TraitImplItemMethod (";
+                    nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
+                    nextLine(d);
                     VisibilityOption(mvis, d+1);
                     out ",";
-                    Method(method, d)
+                    nextLine(d);
+                    Method(method, d+1);
+                    nextLine(d);
+                    out ")"
                 )
-            and Method(A.Method, d) = out "Method ()"
+            and Method(A.Method(method), d) = 
+                let
+                    val {qualifier=qualifier, name=name, generic=generic, selfParam=selfParam, params=params, ret=ret, wh=wh, be=be} = method
+                in
+                    out "Method (";
+                    nextLine(d);
+                    out "qualifier: ";
+                    outList (d+1) FunctionQualifier qualifier false;
+                    nextLine(d);
+                    out "name: ";
+                    Identifer(name, 0);
+                    nextLine(d);
+                    out "generics: ";
+                    (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
+                    nextLine(d);
+                    out "selfparam: ";
+                    SelfParam(selfParam, d);
+                    nextLine(d);
+                    out "param: ";
+                    outList (d+1) FunctionParam params false;
+                    nextLine(d);
+                    out "ret: ";
+                    TypeOption(ret, d+1);
+                    nextLine(d);
+                    out "wh: ";
+                    WhereClauseOption(wh, d+1);
+                    nextLine(d);
+                    out "be: ";
+                    nextLine(d);
+                    BlockExpression(be, d+1);
+                    nextLine(d);
+                    out ")"
+                end
+            and ExternalItem(A.ExternalItem(outerAttrs, mvis, etity), d) =
+                (
+                    out "ExternalItem (";
+                    nextLine(d);
+                    outList (d+1) OuterAttribute outerAttrs false;
+                    (fn SOME(a) => (nextLine(d); Visibility(a, d+1))| NONE => ()) mvis;
+                    nextLine(d);
+                    ExternalItemType(etity, d+1);
+                    nextLine(d);
+                    out ")"
+                )
+            and ExternalItemType(A.ExternalStaticItem(mut, id, ty), d) =
+                (
+                    out "ExternalStaticItem (";
+                    nextLine(d);
+                    Mutability(mut, d);
+                    out ",";
+                    Identifer(id, d);
+                    out ",";
+                    Type(ty, d);
+                    nextLine(d);
+                    out ")"
+                )
+                | ExternalItemType(A.ExternalFunctionItem(efi), d) =
+                let
+                    val {name=name, generic=generic, params=params, ret=ret, wh=wh} = efi
+                in
+                    out "ExternalFunctionItem (";
+                    nextLine(d);
+                    out "name: ";
+                    Identifer(name, d);
+                    nextLine(d);
+                    out "generics: ";
+                    (fn SOME(g) => (nextLine(d); Generics(g, d)) | NONE => ()) generic;
+                    nextLine(d);
+                    out "param: ";
+                    ExternFunctionParameter(params, d+1);
+                    nextLine(d);
+                    out "ret: ";
+                    TypeOption(ret, d+1);
+                    nextLine(d);
+                    out "wh: ";
+                    WhereClauseOption(wh, d+1);
+                    nextLine(d);
+                    out ")"
+                end
+            and ExternFunctionParameter(A.ExternFunctionParameter(efps), d) =
+                let
+                    val {params=params, var=var} = efps
+                in
+                    outList (d+1) NamedFunctionParam params false;
+                    out ",";
+                    (fn true => out "true" | false => out "false") var
+                end
+            and NamedFunctionParam(A.NamedFunctionParam(mid, ty), d) =
+                (
+                    (fn SOME(id) => (Identifer(id, d+1); out ":") | NONE => ()) mid;
+                    Type(ty, d+1)
+                )
             and ExpressionOption(SOME(exp), d) = Expression(exp, d)
                 | ExpressionOption(NONE, d) = ()
             and BlockExpressionOption(SOME(be), d) = BlockExpression(be, d)
@@ -624,9 +760,11 @@ struct
             and WhereClauseOption(SOME(wh), d) = WhereClause(wh, d)
                 | WhereClauseOption(NONE, d) = ()
             and GenericsOption(SOME(g), d) = (Generics(g, d))
-                            | GenericsOption(NONE, d) = ()
+                | GenericsOption(NONE, d) = ()
             and VisibilityOption(SOME(v), d) = Visibility(v, d)
                 | VisibilityOption(NONE, d) = ()
+            and AbiOption(SOME(a), d) = Abi(a, d)
+                | AbiOption(NONE, d) = ()
         in
             Crate(ast, 0)
         end

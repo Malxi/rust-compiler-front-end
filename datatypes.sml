@@ -36,7 +36,7 @@ sig
             unsafe:Unsafe option, generic:Generics option, neg:bool, typath:TypePath, ty:Type,
             wh:WhereClause option, innerAttrs:InnerAttribute list, implItems: TraitImplItem list
             }
-        | ExternBlock
+        | ExternBlock of (Abi option * InnerAttribute list * ExternalItem list)
     and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
                     | UnitStruct of (Identifer * Generics option * WhereClause option)
                     | TupleStruct of (Identifer * Generics option * TupleField list * WhereClause option)
@@ -100,7 +100,16 @@ sig
     and TraitImplItem = TraitImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
                         | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
                         | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
-    and Method = Method
+    and Method = Method of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
+                        selfParam: SelfParam, params:FunctionParam list, ret:Type option, 
+                        wh:WhereClause option, be:BlockExpression}
+    
+    and ExternalItem = ExternalItem of (OuterAttribute list * Visibility option * ExternalItemType)
+    and ExternalItemType = ExternalStaticItem of (Mutability * Identifer * Type)
+                            | ExternalFunctionItem of {name:Identifer, generic:Generics option, 
+                            params:ExternFunctionParameter, ret:Type option, wh:WhereClause option}
+    and ExternFunctionParameter = ExternFunctionParameter of {params:NamedFunctionParam list, var:bool}
+    and NamedFunctionParam = NamedFunctionParam of (Identifer option * Type)
 
     and TypePath = TypePath
     and Pattern = Pattern
@@ -151,7 +160,7 @@ struct
             unsafe:Unsafe option, generic:Generics option, neg:bool, typath:TypePath, ty:Type,
             wh:WhereClause option, innerAttrs:InnerAttribute list, implItems: TraitImplItem list
             }
-        | ExternBlock
+        | ExternBlock of (Abi option * InnerAttribute list * ExternalItem list)
     and StructType = StructStruct of (Identifer * Generics option * WhereClause option * StructField list)
                     | UnitStruct of (Identifer * Generics option * WhereClause option)
                     | TupleStruct of (Identifer * Generics option * TupleField list * WhereClause option)
@@ -215,7 +224,16 @@ struct
     and TraitImplItem = TraitImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
                         | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
                         | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
-    and Method = Method
+    and Method = Method of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
+                        selfParam: SelfParam, params:FunctionParam list, ret:Type option, 
+                        wh:WhereClause option, be:BlockExpression}
+
+    and ExternalItem = ExternalItem of (OuterAttribute list * Visibility option * ExternalItemType)
+    and ExternalItemType = ExternalStaticItem of (Mutability * Identifer * Type)
+                            | ExternalFunctionItem of {name:Identifer, generic:Generics option, 
+                            params:ExternFunctionParameter, ret:Type option, wh:WhereClause option}
+    and ExternFunctionParameter = ExternFunctionParameter of {params:NamedFunctionParam list, var:bool}
+    and NamedFunctionParam = NamedFunctionParam of (Identifer option * Type)
 
     and TypePath = TypePath
     and Pattern = Pattern

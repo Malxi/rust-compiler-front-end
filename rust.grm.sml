@@ -196,7 +196,7 @@ val table=let val actionRows =
 \\001\000\117\000\100\001\000\000\
 \\001\000\117\000\138\001\000\000\
 \\001\000\117\000\155\001\000\000\
-\\001\000\117\000\197\001\000\000\
+\\001\000\117\000\198\001\000\000\
 \\001\000\117\000\199\001\000\000\
 \\001\000\117\000\229\001\000\000\
 \\001\000\117\000\248\001\000\000\
@@ -303,14 +303,14 @@ val table=let val actionRows =
 \\095\002\025\000\048\000\029\000\047\000\055\000\046\000\069\000\059\000\
 \\072\000\045\000\106\000\058\000\110\000\043\000\112\000\057\000\000\000\
 \\095\002\055\000\228\000\000\000\
-\\095\002\055\000\190\001\098\000\189\001\101\000\225\001\000\000\
+\\095\002\055\000\190\001\098\000\189\001\101\000\224\001\000\000\
 \\095\002\055\000\220\001\000\000\
 \\096\002\103\000\181\000\000\000\
 \\096\002\103\000\037\001\000\000\
 \\096\002\103\000\062\001\000\000\
 \\096\002\103\000\068\001\000\000\
 \\096\002\103\000\089\001\000\000\
-\\096\002\103\000\208\001\000\000\
+\\096\002\103\000\207\001\000\000\
 \\096\002\103\000\240\001\000\000\
 \\097\002\000\000\
 \\098\002\021\000\120\001\000\000\
@@ -586,17 +586,17 @@ val actionRowNumbers =
 \\071\000\137\001\061\000\158\001\
 \\231\000\098\000\061\000\132\000\
 \\139\001\146\001\144\001\143\001\
-\\145\001\231\000\099\000\151\000\
-\\161\001\157\001\152\000\113\000\
+\\145\001\231\000\099\000\161\001\
+\\151\000\157\001\152\000\113\000\
 \\114\000\139\000\105\001\081\000\
-\\165\001\140\000\154\001\056\001\
-\\006\001\056\001\061\000\061\000\
+\\165\001\140\000\154\001\006\001\
+\\056\001\056\001\061\000\061\000\
 \\023\000\103\001\073\000\022\000\
-\\221\000\159\001\255\000\221\000\
+\\159\001\255\000\221\000\221\000\
 \\163\001\162\001\038\000\100\001\
 \\153\000\100\001\096\001\102\001\
 \\115\000\010\001\085\000\100\000\
-\\053\001\101\000\160\001\164\001\
+\\053\001\160\001\164\001\101\000\
 \\102\000\127\001\007\001\056\001\
 \\007\001\061\000\039\000\009\001\
 \\104\001\003\001\156\001\155\001\
@@ -1065,9 +1065,7 @@ val gotoT =
 \\000\000\
 \\027\000\067\000\028\000\193\001\000\000\
 \\000\000\
-\\000\000\
-\\130\000\196\001\000\000\
-\\000\000\
+\\130\000\195\001\000\000\
 \\000\000\
 \\000\000\
 \\000\000\
@@ -1077,8 +1075,10 @@ val gotoT =
 \\000\000\
 \\000\000\
 \\000\000\
-\\062\000\062\001\063\000\204\001\000\000\
-\\048\000\205\001\000\000\
+\\000\000\
+\\000\000\
+\\048\000\204\001\000\000\
+\\062\000\062\001\063\000\206\001\000\000\
 \\062\000\062\001\063\000\207\001\000\000\
 \\026\000\208\001\000\000\
 \\026\000\209\001\000\000\
@@ -1088,9 +1088,9 @@ val gotoT =
 \\066\000\219\001\000\000\
 \\025\000\225\000\058\000\224\000\059\000\223\000\060\000\222\000\
 \\111\000\220\001\113\000\210\001\000\000\
-\\031\000\136\000\032\000\221\001\000\000\
 \\000\000\
-\\131\000\222\001\000\000\
+\\132\000\221\001\000\000\
+\\031\000\136\000\032\000\223\001\000\000\
 \\031\000\136\000\032\000\224\001\000\000\
 \\000\000\
 \\000\000\
@@ -1217,7 +1217,16 @@ datatype svalue = VOID | ntVOID of unit ->  unit
  | BYTE_STR_LIT of unit ->  (string) | BYTE_LIT of unit ->  (int)
  | RAW_STR_LIT of unit ->  (string) | STR_LIT of unit ->  (string)
  | CHAR_LIT of unit ->  (int) | IDENT of unit ->  (string)
- | method of unit ->  (Method)
+ | named_func_param of unit ->  (NamedFunctionParam)
+ | named_func_parameters_with_variadics of unit ->  (ExternFunctionParameter)
+ | named_func_parameters_expansion of unit ->  (NamedFunctionParam list)
+ | named_func_parameters of unit ->  (ExternFunctionParameter)
+ | maybe_named_func_parameters of unit ->  (ExternFunctionParameter)
+ | external_func_item of unit ->  (ExternalItemType)
+ | external_static_item of unit ->  (ExternalItemType)
+ | external_item of unit ->  (ExternalItem)
+ | external_items of unit ->  (ExternalItem list)
+ | extern_block of unit ->  (ItemType) | method of unit ->  (Method)
  | trait_impl_item of unit ->  (TraitImplItem)
  | trait_impl_items_expansion of unit ->  (TraitImplItem list)
  | trait_impl_items of unit ->  (TraitImplItem list)
@@ -2547,11 +2556,11 @@ end)
  in ( LrTable.NT 20, ( result, trait_impl1left, trait_impl1right), 
 rest671)
 end
-|  ( 119, ( ( _, ( MlyValue.ntVOID extern_block1, extern_block1left, 
-extern_block1right)) :: rest671)) => let val  result = 
-MlyValue.item_type (fn _ => let val  (extern_block as extern_block1) =
- extern_block1 ()
- in (yaccLog("extern_block"); ExternBlock)
+|  ( 119, ( ( _, ( MlyValue.extern_block extern_block1, 
+extern_block1left, extern_block1right)) :: rest671)) => let val  
+result = MlyValue.item_type (fn _ => let val  (extern_block as 
+extern_block1) = extern_block1 ()
+ in (yaccLog("extern_block"); extern_block)
 end)
  in ( LrTable.NT 20, ( result, extern_block1left, extern_block1right),
  rest671)
@@ -3874,16 +3883,26 @@ self_param1, _, _)) :: _ :: ( _, ( MlyValue.maybe_generics
 maybe_generics1, _, _)) :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: _
  :: ( _, ( MlyValue.func_qualifier func_qualifier1, 
 func_qualifier1left, _)) :: rest671)) => let val  result = 
-MlyValue.method (fn _ => let val  func_qualifier1 = func_qualifier1 ()
- val  IDENT1 = IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  self_param1 = self_param1 ()
- val  func_parameters_expansion1 = func_parameters_expansion1 ()
+MlyValue.method (fn _ => let val  (func_qualifier as func_qualifier1)
+ = func_qualifier1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (self_param as self_param1) = self_param1 ()
+ val  (func_parameters_expansion as func_parameters_expansion1) = 
+func_parameters_expansion1 ()
  val  maybe_comma1 = maybe_comma1 ()
- val  maybe_func_return_type1 = maybe_func_return_type1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- val  block_expression1 = block_expression1 ()
- in (Method)
+ val  (maybe_func_return_type as maybe_func_return_type1) = 
+maybe_func_return_type1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ val  (block_expression as block_expression1) = block_expression1 ()
+ in (
+Method ({
+                                                                    qualifier=func_qualifier, name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    selfParam=self_param, params=rev(func_parameters_expansion), 
+                                                                    ret=maybe_func_return_type, wh=maybe_where_clause, be=block_expression
+                                                                })
+)
 end)
  in ( LrTable.NT 121, ( result, func_qualifier1left, 
 block_expression1right), rest671)
@@ -3897,169 +3916,214 @@ end)
  in ( LrTable.NT 105, ( result, simple_path1left, NOT1right), rest671)
 
 end
-|  ( 245, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( MlyValue.ntVOID 
-external_items1, _, _)) :: ( _, ( MlyValue.inner_attrs inner_attrs1, _
-, _)) :: _ :: ( _, ( MlyValue.maybe_abi maybe_abi1, _, _)) :: ( _, ( _
-, EXTERN1left, _)) :: rest671)) => let val  result = MlyValue.ntVOID
- (fn _ => ( let val  maybe_abi1 = maybe_abi1 ()
- val  inner_attrs1 = inner_attrs1 ()
- val  external_items1 = external_items1 ()
- in ()
-end; ()))
+|  ( 245, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( 
+MlyValue.external_items external_items1, _, _)) :: ( _, ( 
+MlyValue.inner_attrs inner_attrs1, _, _)) :: _ :: ( _, ( 
+MlyValue.maybe_abi maybe_abi1, _, _)) :: ( _, ( _, EXTERN1left, _)) ::
+ rest671)) => let val  result = MlyValue.extern_block (fn _ => let
+ val  (maybe_abi as maybe_abi1) = maybe_abi1 ()
+ val  (inner_attrs as inner_attrs1) = inner_attrs1 ()
+ val  (external_items as external_items1) = external_items1 ()
+ in (ExternBlock (maybe_abi, inner_attrs, external_items))
+end)
  in ( LrTable.NT 122, ( result, EXTERN1left, RBRACE1right), rest671)
 
 end
-|  ( 246, ( ( _, ( MlyValue.ntVOID external_item1, _, 
-external_item1right)) :: ( _, ( MlyValue.ntVOID external_items1, 
-external_items1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  external_items1 = external_items1
- ()
- val  external_item1 = external_item1 ()
- in ()
-end; ()))
+|  ( 246, ( ( _, ( MlyValue.external_item external_item1, _, 
+external_item1right)) :: ( _, ( MlyValue.external_items 
+external_items1, external_items1left, _)) :: rest671)) => let val  
+result = MlyValue.external_items (fn _ => let val  (external_items as 
+external_items1) = external_items1 ()
+ val  (external_item as external_item1) = external_item1 ()
+ in (external_item::external_items)
+end)
  in ( LrTable.NT 123, ( result, external_items1left, 
 external_item1right), rest671)
 end
-|  ( 247, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
+|  ( 247, ( rest671)) => let val  result = MlyValue.external_items (fn
+ _ => (nil))
  in ( LrTable.NT 123, ( result, defaultPos, defaultPos), rest671)
 end
-|  ( 248, ( ( _, ( MlyValue.ntVOID external_static_item1, _, 
-external_static_item1right)) :: ( _, ( MlyValue.maybe_visibility 
+|  ( 248, ( ( _, ( MlyValue.external_static_item external_static_item1
+, _, external_static_item1right)) :: ( _, ( MlyValue.maybe_visibility 
 maybe_visibility1, _, _)) :: ( _, ( MlyValue.outer_attrs outer_attrs1,
  outer_attrs1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  outer_attrs1 = outer_attrs1 ()
- val  maybe_visibility1 = maybe_visibility1 ()
- val  external_static_item1 = external_static_item1 ()
- in ()
-end; ()))
+MlyValue.external_item (fn _ => let val  (outer_attrs as outer_attrs1)
+ = outer_attrs1 ()
+ val  (maybe_visibility as maybe_visibility1) = maybe_visibility1 ()
+ val  (external_static_item as external_static_item1) = 
+external_static_item1 ()
+ in (
+ExternalItem (outer_attrs, maybe_visibility, external_static_item))
+
+end)
  in ( LrTable.NT 124, ( result, outer_attrs1left, 
 external_static_item1right), rest671)
 end
-|  ( 249, ( ( _, ( MlyValue.ntVOID external_func_item1, _, 
-external_func_item1right)) :: ( _, ( MlyValue.maybe_visibility 
+|  ( 249, ( ( _, ( MlyValue.external_func_item external_func_item1, _,
+ external_func_item1right)) :: ( _, ( MlyValue.maybe_visibility 
 maybe_visibility1, _, _)) :: ( _, ( MlyValue.outer_attrs outer_attrs1,
  outer_attrs1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  outer_attrs1 = outer_attrs1 ()
- val  maybe_visibility1 = maybe_visibility1 ()
- val  external_func_item1 = external_func_item1 ()
- in ()
-end; ()))
+MlyValue.external_item (fn _ => let val  (outer_attrs as outer_attrs1)
+ = outer_attrs1 ()
+ val  (maybe_visibility as maybe_visibility1) = maybe_visibility1 ()
+ val  (external_func_item as external_func_item1) = 
+external_func_item1 ()
+ in (ExternalItem (outer_attrs, maybe_visibility, external_func_item))
+
+end)
  in ( LrTable.NT 124, ( result, outer_attrs1left, 
 external_func_item1right), rest671)
 end
 |  ( 250, ( ( _, ( _, _, SEMI1right)) :: ( _, ( MlyValue.types types1,
  _, _)) :: _ :: ( _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( 
 MlyValue.maybe_mut maybe_mut1, _, _)) :: ( _, ( _, STATIC1left, _)) ::
- rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-maybe_mut1 = maybe_mut1 ()
- val  IDENT1 = IDENT1 ()
- val  types1 = types1 ()
- in ()
-end; ()))
+ rest671)) => let val  result = MlyValue.external_static_item (fn _ =>
+ let val  (maybe_mut as maybe_mut1) = maybe_mut1 ()
+ val  (IDENT as IDENT1) = IDENT1 ()
+ val  (types as types1) = types1 ()
+ in (ExternalStaticItem (maybe_mut, Identifer(IDENT), types))
+end)
  in ( LrTable.NT 125, ( result, STATIC1left, SEMI1right), rest671)
 end
 |  ( 251, ( ( _, ( _, _, SEMI1right)) :: ( _, ( 
 MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: ( _, ( 
 MlyValue.maybe_func_return_type maybe_func_return_type1, _, _)) :: _
- :: ( _, ( MlyValue.ntVOID maybe_named_func_parameters1, _, _)) :: _
- :: ( _, ( MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
+ :: ( _, ( MlyValue.maybe_named_func_parameters 
+maybe_named_func_parameters1, _, _)) :: _ :: ( _, ( 
+MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
 MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, FN1left, _)) :: rest671))
- => let val  result = MlyValue.ntVOID (fn _ => ( let val  IDENT1 = 
-IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  maybe_named_func_parameters1 = maybe_named_func_parameters1 ()
- val  maybe_func_return_type1 = maybe_func_return_type1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- in ()
-end; ()))
+ => let val  result = MlyValue.external_func_item (fn _ => let val  (
+IDENT as IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (maybe_named_func_parameters as maybe_named_func_parameters1) = 
+maybe_named_func_parameters1 ()
+ val  (maybe_func_return_type as maybe_func_return_type1) = 
+maybe_func_return_type1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ in (
+ExternalFunctionItem ({
+                                                                    name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    params=maybe_named_func_parameters, ret=maybe_func_return_type, 
+                                                                    wh=maybe_where_clause
+                                                                })
+)
+end)
  in ( LrTable.NT 126, ( result, FN1left, SEMI1right), rest671)
 end
 |  ( 252, ( ( _, ( _, _, SEMI1right)) :: ( _, ( 
 MlyValue.maybe_where_clause maybe_where_clause1, _, _)) :: ( _, ( 
 MlyValue.maybe_func_return_type maybe_func_return_type1, _, _)) :: _
- :: ( _, ( MlyValue.ntVOID named_func_parameters_with_variadics1, _, _
-)) :: _ :: ( _, ( MlyValue.maybe_generics maybe_generics1, _, _)) :: (
- _, ( MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, FN1left, _)) :: 
-rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-IDENT1 = IDENT1 ()
- val  maybe_generics1 = maybe_generics1 ()
- val  named_func_parameters_with_variadics1 = 
+ :: ( _, ( MlyValue.named_func_parameters_with_variadics 
+named_func_parameters_with_variadics1, _, _)) :: _ :: ( _, ( 
+MlyValue.maybe_generics maybe_generics1, _, _)) :: ( _, ( 
+MlyValue.IDENT IDENT1, _, _)) :: ( _, ( _, FN1left, _)) :: rest671))
+ => let val  result = MlyValue.external_func_item (fn _ => let val  (
+IDENT as IDENT1) = IDENT1 ()
+ val  (maybe_generics as maybe_generics1) = maybe_generics1 ()
+ val  (named_func_parameters_with_variadics as 
+named_func_parameters_with_variadics1) = 
 named_func_parameters_with_variadics1 ()
- val  maybe_func_return_type1 = maybe_func_return_type1 ()
- val  maybe_where_clause1 = maybe_where_clause1 ()
- in ()
-end; ()))
+ val  (maybe_func_return_type as maybe_func_return_type1) = 
+maybe_func_return_type1 ()
+ val  (maybe_where_clause as maybe_where_clause1) = 
+maybe_where_clause1 ()
+ in (
+ExternalFunctionItem ({
+                                                                    name=Identifer(IDENT), generic=maybe_generics, 
+                                                                    params=named_func_parameters_with_variadics, ret=maybe_func_return_type, 
+                                                                    wh=maybe_where_clause
+                                                                })
+)
+end)
  in ( LrTable.NT 126, ( result, FN1left, SEMI1right), rest671)
 end
-|  ( 253, ( ( _, ( MlyValue.ntVOID named_func_parameters1, 
-named_func_parameters1left, named_func_parameters1right)) :: rest671))
- => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-named_func_parameters1 = named_func_parameters1 ()
- in ()
-end; ()))
+|  ( 253, ( ( _, ( MlyValue.named_func_parameters 
+named_func_parameters1, named_func_parameters1left, 
+named_func_parameters1right)) :: rest671)) => let val  result = 
+MlyValue.maybe_named_func_parameters (fn _ => let val  (
+named_func_parameters as named_func_parameters1) = 
+named_func_parameters1 ()
+ in (named_func_parameters)
+end)
  in ( LrTable.NT 127, ( result, named_func_parameters1left, 
 named_func_parameters1right), rest671)
 end
-|  ( 254, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
+|  ( 254, ( rest671)) => let val  result = 
+MlyValue.maybe_named_func_parameters (fn _ => (
+ExternFunctionParameter ({params=[], var=false})))
  in ( LrTable.NT 127, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 255, ( ( _, ( MlyValue.ntVOID maybe_comma1, _, maybe_comma1right)
-) :: ( _, ( MlyValue.ntVOID named_func_parameters_expansion1, _, _))
- :: ( _, ( MlyValue.ntVOID named_func_param1, named_func_param1left, _
-)) :: rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let
- val  named_func_param1 = named_func_param1 ()
- val  named_func_parameters_expansion1 = 
-named_func_parameters_expansion1 ()
+) :: ( _, ( MlyValue.named_func_parameters_expansion 
+named_func_parameters_expansion1, _, _)) :: ( _, ( 
+MlyValue.named_func_param named_func_param1, named_func_param1left, _)
+) :: rest671)) => let val  result = MlyValue.named_func_parameters (fn
+ _ => let val  (named_func_param as named_func_param1) = 
+named_func_param1 ()
+ val  (named_func_parameters_expansion as 
+named_func_parameters_expansion1) = named_func_parameters_expansion1
+ ()
  val  maybe_comma1 = maybe_comma1 ()
- in ()
-end; ()))
+ in (
+ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=false})
+)
+end)
  in ( LrTable.NT 128, ( result, named_func_param1left, 
 maybe_comma1right), rest671)
 end
-|  ( 256, ( ( _, ( MlyValue.ntVOID named_func_param1, _, 
-named_func_param1right)) :: _ :: ( _, ( MlyValue.ntVOID 
+|  ( 256, ( ( _, ( MlyValue.named_func_param named_func_param1, _, 
+named_func_param1right)) :: _ :: ( _, ( 
+MlyValue.named_func_parameters_expansion 
 named_func_parameters_expansion1, named_func_parameters_expansion1left
-, _)) :: rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let
- val  named_func_parameters_expansion1 = 
-named_func_parameters_expansion1 ()
- val  named_func_param1 = named_func_param1 ()
- in ()
-end; ()))
+, _)) :: rest671)) => let val  result = 
+MlyValue.named_func_parameters_expansion (fn _ => let val  (
+named_func_parameters_expansion as named_func_parameters_expansion1) =
+ named_func_parameters_expansion1 ()
+ val  (named_func_param as named_func_param1) = named_func_param1 ()
+ in (named_func_param::named_func_parameters_expansion)
+end)
  in ( LrTable.NT 129, ( result, named_func_parameters_expansion1left, 
 named_func_param1right), rest671)
 end
-|  ( 257, ( rest671)) => let val  result = MlyValue.ntVOID (fn _ => ()
-)
+|  ( 257, ( rest671)) => let val  result = 
+MlyValue.named_func_parameters_expansion (fn _ => (nil))
  in ( LrTable.NT 129, ( result, defaultPos, defaultPos), rest671)
 end
 |  ( 258, ( ( _, ( MlyValue.types types1, _, types1right)) :: _ :: ( _
 , ( MlyValue.IDENT IDENT1, IDENT1left, _)) :: rest671)) => let val  
-result = MlyValue.ntVOID (fn _ => ( let val  IDENT1 = IDENT1 ()
- val  types1 = types1 ()
- in ()
-end; ()))
- in ( LrTable.NT 130, ( result, IDENT1left, types1right), rest671)
+result = MlyValue.named_func_param (fn _ => let val  (IDENT as IDENT1)
+ = IDENT1 ()
+ val  (types as types1) = types1 ()
+ in (NamedFunctionParam (SOME(Identifer(IDENT)), types))
+end)
+ in ( LrTable.NT 131, ( result, IDENT1left, types1right), rest671)
 end
 |  ( 259, ( ( _, ( MlyValue.types types1, _, types1right)) :: _ :: ( _
 , ( _, UNDERSCORE1left, _)) :: rest671)) => let val  result = 
-MlyValue.ntVOID (fn _ => ( let val  types1 = types1 ()
- in ()
-end; ()))
- in ( LrTable.NT 130, ( result, UNDERSCORE1left, types1right), rest671
+MlyValue.named_func_param (fn _ => let val  (types as types1) = types1
+ ()
+ in (NamedFunctionParam (NONE, types))
+end)
+ in ( LrTable.NT 131, ( result, UNDERSCORE1left, types1right), rest671
 )
 end
 |  ( 260, ( ( _, ( _, _, DOTDOTDOT1right)) :: _ :: ( _, ( 
-MlyValue.ntVOID named_func_parameters_expansion1, _, _)) :: ( _, ( 
-MlyValue.ntVOID named_func_param1, named_func_param1left, _)) :: 
-rest671)) => let val  result = MlyValue.ntVOID (fn _ => ( let val  
-named_func_param1 = named_func_param1 ()
- val  named_func_parameters_expansion1 = 
-named_func_parameters_expansion1 ()
- in ()
-end; ()))
- in ( LrTable.NT 131, ( result, named_func_param1left, DOTDOTDOT1right
+MlyValue.named_func_parameters_expansion 
+named_func_parameters_expansion1, _, _)) :: ( _, ( 
+MlyValue.named_func_param named_func_param1, named_func_param1left, _)
+) :: rest671)) => let val  result = 
+MlyValue.named_func_parameters_with_variadics (fn _ => let val  (
+named_func_param as named_func_param1) = named_func_param1 ()
+ val  (named_func_parameters_expansion as 
+named_func_parameters_expansion1) = named_func_parameters_expansion1
+ ()
+ in (
+ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=true})
+)
+end)
+ in ( LrTable.NT 130, ( result, named_func_param1left, DOTDOTDOT1right
 ), rest671)
 end
 |  ( 261, ( ( _, ( _, _, RBRACE1right)) :: ( _, ( MlyValue.ntVOID 

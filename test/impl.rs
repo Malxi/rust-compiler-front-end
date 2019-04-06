@@ -23,6 +23,11 @@ impl Shape for Circle {
     }
 }
 
+impl Shape for Circle {
+    fn add(a:int, b:int) {}
+    fn add<T>(T a, T b) {}
+}
+
 
 impl<T> Seq for Vec {
     /* ... */
@@ -30,3 +35,13 @@ impl<T> Seq for Vec {
 impl Seq for u32 {
     /* Treat the integer as a sequence of bits */
 }
+
+extern {
+    fn foo(x: i32, ...);
+}
+
+// Interface to the Windows API
+extern "stdcall" { }
+
+#[link(name = "crypto")]
+extern { }
