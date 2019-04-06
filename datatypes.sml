@@ -11,7 +11,7 @@ sig
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
-    and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
+    and Item = VisItemType of (OuterAttribute list * VisItem) | MacroItemType of MacroItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
         Module of (Identifer * ModuleBody option)
@@ -45,7 +45,7 @@ sig
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
-    and MarcoItem = MarcoItem
+    and MacroItem = MacroItem
     and Identifer = Identifer of string
     and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
     and Abi = Abi of string
@@ -94,10 +94,10 @@ sig
 
     and Unsafe = Unsafe
 
-    and InherentImplItem = InherentImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+    and InherentImplItem = InherentImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
                             | InherentImplItemType of (OuterAttribute list * Visibility option * ItemType)
                             | InherentImplItemMethod of (OuterAttribute list * Visibility option * Method)
-    and TraitImplItem = TraitImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+    and TraitImplItem = TraitImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
                         | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
                         | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
     and Method = Method of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
@@ -135,7 +135,7 @@ struct
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
-    and Item = VisItemType of (OuterAttribute list * VisItem) | MarcoItemType of MarcoItem
+    and Item = VisItemType of (OuterAttribute list * VisItem) | MacroItemType of MacroItem
     and VisItem = VisItem of (Visibility * ItemType)
     and ItemType = 
         Module of (Identifer * ModuleBody option)
@@ -169,7 +169,7 @@ struct
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
     and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
-    and MarcoItem = MarcoItem
+    and MacroItem = MacroItem
     and Identifer = Identifer of string
     and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
     and Abi = Abi of string
@@ -218,10 +218,10 @@ struct
 
     and Unsafe = Unsafe
 
-    and InherentImplItem = InherentImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+    and InherentImplItem = InherentImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
                             | InherentImplItemType of (OuterAttribute list * Visibility option * ItemType)
                             | InherentImplItemMethod of (OuterAttribute list * Visibility option * Method)
-    and TraitImplItem = TraitImplItemMarco of (OuterAttribute list * MacroInvocationSemi)
+    and TraitImplItem = TraitImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
                         | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
                         | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
     and Method = Method of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 

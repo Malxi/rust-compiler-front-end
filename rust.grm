@@ -37,7 +37,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | lit_exp of LiteralExpression
         | path | simple_path of PathSeg list | simple_path_segment of PathSeg
         | exp | program
-        | item of Item | vis_item of VisItem | macro_item of MarcoItem
+        | item of Item | vis_item of VisItem | macro_item
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
         | patterns of Pattern| types of Type
@@ -66,7 +66,9 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | trait_items of TraitItem list | trait_item of TraitItem 
         | trait_func of TraitItemType | trait_method of TraitItemType | trait_const of TraitItemType | trait_type of TraitItemType
         | trait_func_decl of TraitFuncDecl | trait_method_decl of TraitMethodDecl
-        | marco_invocation_semi of MacroInvocationSemi
+        | macro_invocation_semi of MacroInvocationSemi | macro_rules_definition | macro_rules_def
+        | macro_rules | macro_rules_expansion | macro_rule | macro_matcher | macro_transcriber | macro_match | macro_matches
+        | macro_frag_spec | macro_rep_sep | macro_kleene_op
         | trait_func_parameters of TraitFunctionParam list | trait_func_param of TraitFunctionParam 
         | maybe_trait_func_parameters of TraitFunctionParam list | trait_func_parameters_expansion of TraitFunctionParam list
         | self_param of SelfParam| maybe_and_or_lifetime | maybe_mut of Mutability
@@ -79,6 +81,8 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | maybe_named_func_parameters of ExternFunctionParameter
         | named_func_parameters of ExternFunctionParameter | named_func_parameters_expansion of NamedFunctionParam list
         | named_func_parameters_with_variadics of ExternFunctionParameter| named_func_param of NamedFunctionParam
+        | token_trees | token_tree | delim_token_tree 
+        | token_ep_delim | token_ep_delim_kleene | token_ep_delim_dollar | token_ep_delim_kleene_dollar
 %pos int
 %eop EOF
 %noshift EOF
@@ -105,8 +109,57 @@ items: items item                                              (item::items)
         |                                                      ([])
 
 item: outer_attrs vis_item                                      (VisItemType (rev(outer_attrs), vis_item))
-        (* | macro_item                                            (MarcoItemType (macro_item)) *)
+        | macro_item                                            (MacroItemType (MacroItem))
 
+(* -----Macro------ *)
+macro_item: macro_invocation_semi                               (yaccLog("macro_invocation_semi"))
+            | macro_rules_definition                            (yaccLog("macro_rules_definition"))
+
+macro_invocation_semi: simple_path NOT 
+                        LPARENT token_trees RPARENT SEMI        (MacroInvocationSemi)
+                    | simple_path NOT 
+                        LBRACKET token_trees RBRACKET SEMI      (MacroInvocationSemi)
+                    | simple_path NOT 
+                        LBRACE token_trees RBRACE               (MacroInvocationSemi)
+
+token_trees: token_trees token_tree                             ()
+            |                                                   ()
+token_tree: token_ep_delim                                      ()
+            | delim_token_tree                                  ()
+delim_token_tree: LPARENT token_trees RPARENT                   ()
+                | LBRACKET token_trees RBRACKET                 ()
+                | LBRACE token_trees RBRACE                     ()
+
+(* the simple_path must be [macro_rules] *)
+macro_rules_definition: simple_path NOT IDENT macro_rules_def   ()
+macro_rules_def: LPARENT macro_rules RPARENT SEMI               ()
+            | LBRACKET macro_rules RBRACKET SEMI                ()
+            | LBRACE macro_rules RBRACE                         ()
+macro_rules: macro_rule macro_rules_expansion SEMI              ()
+            | macro_rule macro_rules_expansion                  ()
+macro_rules_expansion: macro_rules_expansion SEMI macro_rule    ()
+                    |                                           ()
+macro_rule: macro_matcher FATARROW macro_transcriber            (yaccLog("macro_rule"))
+macro_matcher: LPARENT macro_matches RPARENT                    ()
+            | LBRACKET macro_matches RBRACKET                   ()
+            | LBRACE macro_matches RBRACE                       ()
+macro_matches: macro_matches macro_match                        ()
+            |                                                   ()
+macro_match: token_ep_delim_dollar                              ()
+            | macro_matcher                                     ()
+            | DOLLAR IDENT COLON macro_frag_spec                ()
+            | DOLLAR LPARENT macro_match macro_matches RPARENT 
+                macro_kleene_op                                 ()
+            | DOLLAR LPARENT macro_match macro_matches RPARENT 
+                macro_rep_sep macro_kleene_op                   ()     
+macro_frag_spec: IDENT                                          ()
+macro_rep_sep: token_ep_delim_kleene                            ()
+macro_kleene_op: STAR                                           ()
+                | PLUS                                          ()
+                | QUESTION                                      ()
+macro_transcriber: delim_token_tree                             ()
+
+(* ------VisItem------ *)
 vis_item: item_type                                             (VisItem(DefaultVis, item_type))
         | visibility item_type                                  (VisItem(visibility, item_type))
 
@@ -133,9 +186,6 @@ use_tree_multi: LBRACE use_tree
 use_tree_multi_expansion: use_tree_multi_expansion
                             COMMA use_tree                      (use_tree::use_tree_multi_expansion)
                         |                                       (nil)                       
-
-
-macro_item:                                                     (MarcoItem)
 
 inner_attrs: inner_attrs inner_attr                             (yaccLog("inner_attrs"); inner_attr::inner_attrs)
             |                                                   ([])
@@ -390,7 +440,7 @@ trait_item: outer_attrs trait_func                              (TraitItem (oute
             | outer_attrs trait_method                          (TraitItem (outer_attrs, trait_method))
             | outer_attrs trait_const                           (TraitItem (outer_attrs, trait_const))
             | outer_attrs trait_type                            (TraitItem (outer_attrs, trait_type))
-            | outer_attrs marco_invocation_semi                 (TraitItem (outer_attrs, TraitMIS(marco_invocation_semi)))
+            | outer_attrs macro_invocation_semi                 (TraitItem (outer_attrs, TraitMIS(macro_invocation_semi)))
 
 trait_func: trait_func_decl SEMI                                (TraitFunc (trait_func_decl, NONE))
             | trait_func_decl block_expression                  (TraitFunc (trait_func_decl, SOME (block_expression)))
@@ -472,7 +522,7 @@ inherent_impl: IMPL maybe_generics types maybe_where_clause
                                                                 }))
 inherent_impl_items: inherent_impl_items inherent_impl_item     (inherent_impl_item::inherent_impl_items)
                     |                                           (nil)
-inherent_impl_item: outer_attrs marco_invocation_semi           (InherentImplItemMarco (outer_attrs, marco_invocation_semi))
+inherent_impl_item: outer_attrs macro_invocation_semi           (InherentImplItemMacro (outer_attrs, macro_invocation_semi))
                     | outer_attrs maybe_visibility 
                         constant_item                           (InherentImplItemType (outer_attrs, maybe_visibility, constant_item))
                     | outer_attrs maybe_visibility function     (InherentImplItemType (outer_attrs, maybe_visibility, function))
@@ -503,7 +553,7 @@ trait_impl:  IMPL maybe_generics type_path
                                                                 }))
 trait_impl_items: trait_impl_items trait_impl_item              (trait_impl_item::trait_impl_items)
                 |                                               (nil)
-trait_impl_item: outer_attrs marco_invocation_semi              (TraitImplItemMarco (outer_attrs, marco_invocation_semi))
+trait_impl_item: outer_attrs macro_invocation_semi              (TraitImplItemMacro (outer_attrs, macro_invocation_semi))
                 | outer_attrs maybe_visibility type_alias       (TraitImplItemType (outer_attrs, maybe_visibility, type_alias))
                 | outer_attrs maybe_visibility constant_item    (TraitImplItemType (outer_attrs, maybe_visibility, constant_item))
                 | outer_attrs maybe_visibility function         (TraitImplItemType (outer_attrs, maybe_visibility, function))
@@ -516,7 +566,6 @@ method: func_qualifier FN IDENT maybe_generics LPARENT
                                                                     selfParam=self_param, params=rev(func_parameters_expansion), 
                                                                     ret=maybe_func_return_type, wh=maybe_where_clause, be=block_expression
                                                                 }))
-marco_invocation_semi: simple_path NOT(* need to be completed*)    (MacroInvocationSemi)
 
 extern_block: EXTERN maybe_abi LBRACE inner_attrs
             external_items RBRACE                               (ExternBlock (maybe_abi, inner_attrs, external_items))
@@ -560,3 +609,123 @@ named_func_parameters_with_variadics:
 block_expression: LBRACE inner_attrs maybe_statements RBRACE    (BlockExpression)
 maybe_statements:                                               ()
 expression: INTEGER_LIT                                         (Expression)
+
+
+(* -----token------- *)
+token_ep_delim_kleene_dollar: AS                                ()
+            | BREAK                                             ()
+            | CONST                                             ()
+            | CONTINUE                                          ()
+            | CRATE                                             ()
+            | ELSE                                              ()
+            | ENUM                                              ()
+            | EXTERN                                            ()
+            | FALSE                                             ()
+            | FN                                                ()
+            | FOR                                               ()
+            | IF                                                ()
+            | IMPL                                              ()
+            | IN                                                ()
+            | LET                                               ()
+            | LOOP                                              ()
+            | MATCH                                             ()
+            | MOD                                               ()
+            | MOVE                                              ()
+            | MUT                                               ()
+            | PUB                                               ()
+            | REF                                               ()
+            | RETURN                                            ()
+            | SELFVALUE                                         ()
+            | SELFTYPE                                          ()
+            | STATIC                                            ()
+            | STRUCT                                            ()
+            | SUPER                                             ()
+            | TRAIT                                             ()
+            | TRUE                                              ()
+            | TYPE                                              ()
+            | UNSAFE                                            ()
+            | USE                                               ()
+            | WHERE                                             ()
+            | WHILE                                             ()
+            | DYN                                               ()
+            | ABSTRACT                                          ()
+            | BECOME                                            ()
+            | BOX                                               ()
+            | DO                                                ()
+            | FINAL                                             ()
+            | MACRO                                             ()
+            | OVERRIDE                                          ()
+            | PRIV                                              ()
+            | TYPEOF                                            ()
+            | UNSIZED                                           ()
+            | VIRTUAL                                           ()
+            | YIELD                                             ()
+            | ASYNC                                             ()
+            | AWAIT                                             ()
+            | TRY                                               ()
+            | UNION                                             ()
+            | STATICLIFETIME                                    ()
+            | IDENT                                             ()
+            | CHAR_LIT                                          ()
+            | STR_LIT                                           ()
+            | RAW_STR_LIT                                       ()
+            | BYTE_LIT                                          ()
+            | BYTE_STR_LIT                                      ()
+            | RAW_BYTE_STR_LIT                                  ()
+            | INTEGER_LIT                                       ()
+            | TUPLE_INDEX                                       ()
+            | FLOAT_LIT                                         ()
+            | LIFETIME_OR_LABEL                                 ()
+            | LIFETIME_TOKEN                                    ()
+            | MINUS                                             ()
+            | SLASH                                             ()
+            | PERCENT                                           ()
+            | CARET                                             ()
+            | NOT                                               ()
+            | AND                                               ()
+            | OR                                                ()
+            | ANDAND                                            ()
+            | OROR                                              ()
+            | SHL                                               ()
+            | SHR                                               ()
+            | PLUSEQ                                            ()
+            | MINUSEQ                                           ()
+            | STAREQ                                            ()
+            | SLASHEQ                                           ()
+            | PERCENTEQ                                         ()
+            | CARETEQ                                           ()
+            | ANDEQ                                             ()
+            | OREQ                                              ()
+            | SHLEQ                                             ()
+            | SHREQ                                             ()
+            | EQ                                                ()
+            | EQEQ                                              ()
+            | NE                                                ()
+            | GT                                                ()
+            | LT                                                ()
+            | GE                                                ()
+            | LE                                                ()
+            | AT                                                ()
+            | UNDERSCORE                                        ()
+            | DOT                                               ()
+            | DOTDOT                                            ()
+            | DOTDOTDOT                                         ()
+            | DOTDOTEQ                                          ()
+            | COMMA                                             ()
+            | SEMI                                              ()
+            | COLON                                             ()
+            | PATHSEP                                           ()
+            | RARROW                                            ()
+            | FATARROW                                          ()
+            | POUND                                             ()
+            | INNER_DOC_COMMENT                                 ()
+            | OUTER_DOC_COMMENT                                 ()
+            | SHEBANG                                           ()
+token_ep_delim_kleene: token_ep_delim_kleene_dollar             ()
+                    | DOLLAR                                    ()
+token_ep_delim_dollar: token_ep_delim_kleene_dollar             ()
+                | PLUS                                          ()
+                | STAR                                          ()
+                | QUESTION                                      ()
+token_ep_delim: token_ep_delim_dollar                           ()
+                | DOLLAR                                        ()

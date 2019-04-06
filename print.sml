@@ -66,8 +66,8 @@ struct
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
             and Item(A.VisItemType(outerAttrs, visItem), d) = 
                     (out "VisItemType("; nextLine(d); VisItem(visItem, d+1); out ")")
-                | Item(A.MarcoItemType(marcoItem), d) = 
-                    (out "MarcoItemType("; out ")")
+                | Item(A.MacroItemType(marcoItem), d) = 
+                    (out "MacroItemType("; out ")")
             and VisItem(A.VisItem(visibility, itemType), d) =
                 (out "VisItem (";
                 nextLine(d);
@@ -572,9 +572,9 @@ struct
                     (Mutability (mut, d+1); TypeOption(mty, d+1))
             and BlockExpression(A.BlockExpression, d) = out "BlockExpression()"
             and MacroInvocationSemi(A.MacroInvocationSemi, d) = out "MacroInvocationSemi()"
-            and InherentImplItem(A.InherentImplItemMarco(outerAttr, mis), d) = 
+            and InherentImplItem(A.InherentImplItemMacro(outerAttr, mis), d) = 
                 (
-                    out "InherentImplItemMarco (";
+                    out "InherentImplItemMacro (";
                     nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
@@ -612,9 +612,9 @@ struct
                     nextLine(d);
                     out ")"
                 )
-            and TraitImplItem(A.TraitImplItemMarco(outerAttr, mis), d) = 
+            and TraitImplItem(A.TraitImplItemMacro(outerAttr, mis), d) = 
                 (
-                    out "TraitImplItemMarco (";
+                    out "TraitImplItemMacro (";
                     nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
