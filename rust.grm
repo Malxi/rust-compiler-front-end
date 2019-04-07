@@ -1,6 +1,8 @@
 (* rust.yacc *)
 open DataTypes
+
 fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
+fun error(pos, msg) = ErrorMsg.error pos
 
 %%
 %term EOF
@@ -13,11 +15,12 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | ASYNC | AWAIT | TRY
     | UNION | STATICLIFETIME
     | IDENT of string
-    | CHAR_LIT of int 
+    | CHAR_LIT of string 
         | STR_LIT of string | RAW_STR_LIT of string
-        | BYTE_LIT of int | BYTE_STR_LIT of string | RAW_BYTE_STR_LIT of string
-        | INTEGER_LIT of LargeInt.int | TUPLE_INDEX of int 
-        | FLOAT_LIT of real
+        | BYTE_LIT of string | BYTE_STR_LIT of string | RAW_BYTE_STR_LIT of string
+        | INTEGER_LIT of string | TUPLE_INDEX of string 
+        | FLOAT_LIT of string
+        | INTEGER_SUFFIX of string | FLOAT_SUFFIX of string
     | LIFETIME_OR_LABEL of string | LIFETIME_TOKEN of string
     | PLUS | MINUS | STAR | SLASH | PERCENT | CARET
         | NOT | AND | OR | ANDAND | OROR | SHL | SHR
@@ -33,8 +36,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
-        | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner 
-        | lit_exp of LiteralExpression
+        | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner
         | path | simple_path of PathSeg list | simple_path_segment of PathSeg
         | exp | program
         | item of Item | vis_item of VisItem | macro_item
@@ -51,7 +53,6 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | function of ItemType | func_qualifier of FunctionQualifier list | maybe_unsafe of Unsafe option | abi of Abi | maybe_abi of Abi option
         | func_parameters of FunctionParam list | maybe_func_parameters of FunctionParam list| func_param of FunctionParam | func_parameters_expansion of FunctionParam list
         | func_return_type of Type | maybe_func_return_type of Type option
-        | block_expression of BlockExpression | maybe_statements | expression of Expression
         | struct_struct of StructType| struct_fields of StructField list | struct_field of StructField 
         | maybe_struct_fields of StructField list | struct_fields_expansion of StructField list
         | tuple_struct of StructType | tuple_fields of TupleField list | tuple_field of TupleField 
@@ -66,7 +67,7 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | trait_items of TraitItem list | trait_item of TraitItem 
         | trait_func of TraitItemType | trait_method of TraitItemType | trait_const of TraitItemType | trait_type of TraitItemType
         | trait_func_decl of TraitFuncDecl | trait_method_decl of TraitMethodDecl
-        | macro_invocation_semi of MacroInvocationSemi | macro_rules_definition | macro_rules_def
+        | macro_invocation | macro_invocation_semi of MacroInvocationSemi | macro_rules_definition | macro_rules_def
         | macro_rules | macro_rules_expansion | macro_rule | macro_matcher | macro_transcriber | macro_match | macro_matches
         | macro_frag_spec | macro_rep_sep | macro_kleene_op
         | trait_func_parameters of TraitFunctionParam list | trait_func_param of TraitFunctionParam 
@@ -81,7 +82,16 @@ fun yaccLog(msg) = ErrorMsg.yaccLog (msg)
         | maybe_named_func_parameters of ExternFunctionParameter
         | named_func_parameters of ExternFunctionParameter | named_func_parameters_expansion of NamedFunctionParam list
         | named_func_parameters_with_variadics of ExternFunctionParameter| named_func_param of NamedFunctionParam
-        | token_trees | token_tree | delim_token_tree 
+
+        | maybe_statements | statement | let_statement | exp_statement 
+        | lit_exp_without_suffix of LiteralExpression
+        | expression of Expression
+        | exp_without_block | lit_exp of LiteralExpression | str_lit of Token | bool_lit of Token
+        | path_exp | op_exp | grouped_exp | array_exp | index_exp | tuple_exp | tuple_index_exp | struct_exp
+        | enum_var_exp | call_exp | method_call_exp | field_exp | closure_exp | continue_exp | break_exp | range_exp | return_exp
+        | exp_with_block | block_exp of BlockExpression | unsafe_block_exp | loop_exp | if_exp | if_let_exp | match_exp
+
+        | token_trees | token_tree | delim_token_tree
         | token_ep_delim | token_ep_delim_kleene | token_ep_delim_dollar | token_ep_delim_kleene_dollar
 %pos int
 %eop EOF
@@ -112,6 +122,8 @@ item: outer_attrs vis_item                                      (VisItemType (re
         | macro_item                                            (MacroItemType (MacroItem))
 
 (* -----Macro------ *)
+macro_invocation: simple_path NOT delim_token_tree              ()
+
 macro_item: macro_invocation_semi                               (yaccLog("macro_invocation_semi"))
             | macro_rules_definition                            (yaccLog("macro_rules_definition"))
 
@@ -197,7 +209,7 @@ maybe_outer_attr: outer_attr                                    (SOME(outer_attr
 inner_attr: SHEBANG LBRACKET meta_item RBRACKET                 (yaccLog("inner_attr"); InnerAttribute(meta_item))
 outer_attr: POUND LBRACKET meta_item RBRACKET                   (OuterAttribute meta_item)
 
-meta_item: simple_path EQ lit_exp                               (AttrKVPair(SimplePath(rev(simple_path)), lit_exp))
+meta_item: simple_path EQ lit_exp_without_suffix                (AttrKVPair(SimplePath(rev(simple_path)), lit_exp_without_suffix))
         | simple_path LPARENT meta_seq RPARENT                  (AttrSubs(SimplePath(rev(simple_path)), SOME(meta_seq)))
         | simple_path LPARENT RPARENT                           (AttrSubs(SimplePath(rev(simple_path)), NONE))
         | simple_path %prec LOWER_THAN_LPARENT                  (AttrName (SimplePath(rev(simple_path))))
@@ -209,9 +221,7 @@ meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
                     meta_seq_expansion                          (meta_item_inner::meta_seq_expansion)
                     |                                           (nil)
 meta_item_inner: meta_item                                      (MetaItem(meta_item))
-                | lit_exp                                       (MetaLit(lit_exp))
-
-lit_exp:STR_LIT                                                 (yaccLog("lit_exp "^STR_LIT); LiteralExpression(STR_LIT))
+                | lit_exp_without_suffix                        (MetaLit(lit_exp_without_suffix))
 
 patterns: IDENT                                                 (Pattern)
 types: IDENT                                                    (Type)
@@ -343,10 +353,10 @@ function: func_qualifier FN IDENT maybe_generics
             LPARENT maybe_func_parameters RPARENT
             maybe_func_return_type
             maybe_where_clause
-            block_expression                                    (Function({ qualifier=func_qualifier, generic=maybe_generics,
+            block_exp                                           (Function({ qualifier=func_qualifier, generic=maybe_generics,
                                                                             name=Identifer(IDENT), params=maybe_func_parameters,
                                                                             ret=maybe_func_return_type, wh=maybe_where_clause,
-                                                                            be=block_expression
+                                                                            be=block_exp
                                                                         })
                                                                 )
 
@@ -367,7 +377,7 @@ maybe_abi: abi                                                  (SOME(abi))
         |                                                       (NONE)
 
 abi: STR_LIT                                                    (Abi(STR_LIT))
-    | RAW_BYTE_STR_LIT                                          (Abi(RAW_BYTE_STR_LIT))
+    | RAW_STR_LIT                                               (Abi(RAW_STR_LIT))
 
 maybe_func_parameters: func_parameters                          (func_parameters)
                     |                                           ([])
@@ -443,9 +453,9 @@ trait_item: outer_attrs trait_func                              (TraitItem (oute
             | outer_attrs macro_invocation_semi                 (TraitItem (outer_attrs, TraitMIS(macro_invocation_semi)))
 
 trait_func: trait_func_decl SEMI                                (TraitFunc (trait_func_decl, NONE))
-            | trait_func_decl block_expression                  (TraitFunc (trait_func_decl, SOME (block_expression)))
+            | trait_func_decl block_exp                         (TraitFunc (trait_func_decl, SOME (block_exp)))
 trait_method: trait_method_decl SEMI                            (TraitMethod (trait_method_decl, NONE))
-            | trait_method_decl block_expression                (TraitMethod (trait_method_decl, SOME (block_expression)))
+            | trait_method_decl block_exp                       (TraitMethod (trait_method_decl, SOME (block_exp)))
 trait_func_decl: func_qualifier FN IDENT maybe_generics
                     LPARENT maybe_trait_func_parameters 
                     RPARENT maybe_func_return_type 
@@ -561,10 +571,10 @@ trait_impl_item: outer_attrs macro_invocation_semi              (TraitImplItemMa
 method: func_qualifier FN IDENT maybe_generics LPARENT
         self_param func_parameters_expansion maybe_comma RPARENT
         maybe_func_return_type maybe_where_clause 
-        block_expression                                        (Method ({
+        block_exp                                               (Method ({
                                                                     qualifier=func_qualifier, name=Identifer(IDENT), generic=maybe_generics, 
                                                                     selfParam=self_param, params=rev(func_parameters_expansion), 
-                                                                    ret=maybe_func_return_type, wh=maybe_where_clause, be=block_expression
+                                                                    ret=maybe_func_return_type, wh=maybe_where_clause, be=block_exp
                                                                 }))
 
 extern_block: EXTERN maybe_abi LBRACE inner_attrs
@@ -606,10 +616,29 @@ named_func_parameters_with_variadics:
                 (* For convenient, this production is rewrote *)
                 named_func_param named_func_parameters_expansion 
                 COMMA DOTDOTDOT                                 (ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=true}))
-block_expression: LBRACE inner_attrs maybe_statements RBRACE    (BlockExpression)
-maybe_statements:                                               ()
-expression: INTEGER_LIT                                         (Expression)
 
+(* ------Statements and Expression------ *)
+block_exp: LBRACE inner_attrs maybe_statements RBRACE           (BlockExpression)
+maybe_statements:                                               ()
+expression: exp_without_block                                   (Expression)
+
+exp_without_block: outer_attrs lit_exp                          ()
+
+lit_exp: lit_exp_without_suffix                                 (lit_exp_without_suffix)
+        | INTEGER_LIT INTEGER_SUFFIX                            (LiteralExpression(IntegerLit(INTEGER_LIT, SOME(INTEGER_SUFFIX), Pos(INTEGER_LITleft))))
+        | FLOAT_LIT FLOAT_SUFFIX                                (LiteralExpression(FloatLit(FLOAT_LIT, SOME(FLOAT_SUFFIX), Pos(FLOAT_LITleft))))
+lit_exp_without_suffix: str_lit                                 (LiteralExpression(str_lit))
+                | bool_lit                                      (LiteralExpression(bool_lit))
+                | CHAR_LIT                                      (LiteralExpression(CharLit(CHAR_LIT, Pos(CHAR_LITleft))))
+                | BYTE_LIT                                      (LiteralExpression(ByteLit(BYTE_LIT, Pos(BYTE_LITleft))))
+                | INTEGER_LIT                                   (LiteralExpression(IntegerLit(INTEGER_LIT, NONE, Pos(INTEGER_LITleft))))
+                | FLOAT_LIT                                     (LiteralExpression(FloatLit(FLOAT_LIT, NONE, Pos(FLOAT_LITleft))))
+bool_lit: TRUE                                                  (True(Pos(TRUEleft)))
+        | FALSE                                                 (False(Pos(FALSEleft)))
+str_lit: STR_LIT                                                (StrLit(STR_LIT, Pos(STR_LITleft)))
+        | RAW_STR_LIT                                           (RawStrLit(RAW_STR_LIT, Pos(RAW_STR_LITleft)))
+        | BYTE_STR_LIT                                          (ByteStrLit(BYTE_STR_LIT, Pos(BYTE_STR_LITleft)))
+        | RAW_BYTE_STR_LIT                                      (RawByteStrLit(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)))                     
 
 (* -----token------- *)
 token_ep_delim_kleene_dollar: AS                                ()
@@ -721,6 +750,8 @@ token_ep_delim_kleene_dollar: AS                                ()
             | INNER_DOC_COMMENT                                 ()
             | OUTER_DOC_COMMENT                                 ()
             | SHEBANG                                           ()
+            | INTEGER_SUFFIX                                    ()
+            | FLOAT_SUFFIX                                      ()
 token_ep_delim_kleene: token_ep_delim_kleene_dollar             ()
                     | DOLLAR                                    ()
 token_ep_delim_dollar: token_ep_delim_kleene_dollar             ()

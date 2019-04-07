@@ -7,9 +7,9 @@ In sml interactive system
 + Parse SHEBANG_LINE for solve SHEBANG conflict
 + Fix grammar bug (lex bug ignores some token)
 + Fix many productions (replace maybe_productions with terminals to solve shift/reduce conflicts)
++ Literal tokens take original text with suffix
 ### Goal
 + To modify lex comments datatype
-+ Literal parse in lex or yacc?
 + Add a suffix option for literals
 + Solve conflicts of function qualifier
 + Complete simple path

@@ -77,10 +77,10 @@ fun lexLog(pos, msg) = ErrorMsg.lexLog (pos, msg)
 val lsharp = ref 0
 val rsharp = ref 0
 
-val strList = ref (nil:char list)
+val strList = ref (nil:string list)
 val strpos = ref (0:int)
-fun strAppend(s:char) = strList := s::(!strList)
-fun strMake() = (implode(rev(!strList)))
+fun strAppend(s:string) = strList := s::(!strList)
+fun strMake() = (concat(rev(!strList)))
 fun strPop(nil, _) = nil 
     | strPop(h::t, 0) = h :: t 
     | strPop(h::t, n) = strPop(t, n-1)
@@ -93,69 +93,6 @@ fun strip(s, ch) =
     in
         implode (rev(remove(chs)))
     end
-
-fun toChar(text:string) = 
-    let
-        val cc = String.explode (text)
-        val c = hd(cc)
-    in
-        (* app print ["char literal: ", Char.toCString c, "\n"]; *)
-        c
-    end
-
-fun escape(text:string, pos:int) = 
-    let
-        val chs = String.explode text
-
-        fun hex2dec (nil, v) = v
-            | hex2dec (#"a"::t, v) = hex2dec(t, v*16+10)
-            | hex2dec (#"A"::t, v) = hex2dec(t, v*16+10)
-            | hex2dec (#"b"::t, v) = hex2dec(t, v*16+11)
-            | hex2dec (#"B"::t, v) = hex2dec(t, v*16+11)
-            | hex2dec (#"c"::t, v) = hex2dec(t, v*16+12)
-            | hex2dec (#"C"::t, v) = hex2dec(t, v*16+12)
-            | hex2dec (#"d"::t, v) = hex2dec(t, v*16+13)
-            | hex2dec (#"D"::t, v) = hex2dec(t, v*16+13)
-            | hex2dec (#"e"::t, v) = hex2dec(t, v*16+14)
-            | hex2dec (#"E"::t, v) = hex2dec(t, v*16+14)
-            | hex2dec (#"f"::t, v) = hex2dec(t, v*16+15)
-            | hex2dec (#"F"::t, v) = hex2dec(t, v*16+15)
-            | hex2dec (h::t, v) = hex2dec(t, v*16+ (ord h) - (ord #"0"))
-        
-        fun unicode (nil, v) = v
-            | unicode (#"{"::t, v) = unicode(t, v)
-            | unicode (#"}"::t, v) = unicode(t, v)
-            | unicode (#"_"::t, v) = unicode(t, v)
-            | unicode (h::t, v) = unicode(t, v*16+ (ord h) - (ord #"0"))
-        (* 
-            This function convert char literal to a string for Char.fromString.
-            However, Char.fromString can not work when unicode point is in ordinal range of the alphabet.
-        *)
-        fun convert (nil) = Char.ord #"\000"
-            | convert (#"x"::t) = hex2dec(t, 0)
-            | convert (#"u"::t) = unicode(t, 0)
-            | convert (#"n"::t) = Char.ord #"\n"
-            | convert (#"r"::t) = Char.ord #"\r"
-            | convert (#"t"::t) = Char.ord #"\t"
-            | convert (#"0"::t) = Char.ord #"\000"
-            | convert (#"\092"::t) = Char.ord #"\092"
-            | convert (#"'"::t) = Char.ord #"'"
-            | convert (#"\""::t) = Char.ord #"\""
-            | convert (h::t) = Char.ord (toChar(implode([#"\092", h])))
-    in
-        case chs of
-        (#"\092"::t) => convert(t)
-        | _ => (ErrorMsg.error pos ("illegal escape " ^ text);0)
-    end
-
-fun toInteger(text:string) = case LargeInt.fromString(text) of 
-                            SOME v => v
-                            | _ => 0
- 
-fun toFloat(text:string) = case Real.fromString(text) of 
-                            SOME v => v
-                            | _ => 0.0
-
 
 fun eof(fileName:string) = 
     let 
@@ -199,11 +136,12 @@ bin_lit = 0b({bin_digit}|_)*{bin_digit}({bin_digit}|_)*;
 oct_lit = 0o({oct_digit}|_)*{oct_digit}({oct_digit}|_)*;
 hex_lit = 0x({hex_digit}|_)*{hex_digit}({hex_digit}|_)*;
 integer_suffix = (u8|u16|u32|u64|u128|usize|i8|i16|i32|i64|i128|isize);
-integer_lit = ({dec_lit}|{bin_lit}|{oct_lit}|{hex_lit}){integer_suffix}?;
+integer_lit = ({dec_lit}|{bin_lit}|{oct_lit}|{hex_lit});
 
 float_exponent = (e|E)("+"|"-")?({dec_digit}|_)*{dec_digit}({dec_digit}|_)*;
 float_suffix = (f32|f64);
-float_lit = {dec_lit}("."|{float_exponent}|"."{dec_lit}{float_exponent}?|("."{dec_lit})?{float_exponent}?{float_suffix});   
+float_lit = {dec_lit}("."|{float_exponent}|"."{dec_lit}{float_exponent}?);
+float_lit_with_suffix = {dec_lit}(("."{dec_lit})?{float_exponent}?);
 
 ascii = ([\000-\127]);
 ascii_char = ([^' \\ \n \r \t \128-\255]);
@@ -225,7 +163,7 @@ shebang_line = ("#!"([^\[\n])*\n);
 
 <INITIAL>{bom}                    => (
                                         (if not (!lin = 1) then
-                                            ErrorMsg.error yypos ("Unexpected utf8 bom [INITIAL] " ^ yytext)
+                                            ErrorMsg.error yypos ("[INITIAL] Unexpected utf8 bom " ^ yytext)
                                         else ());
                                         continue()
                                     );
@@ -347,8 +285,8 @@ shebang_line = ("#!"([^\[\n])*\n);
 <INNER_BLOCK_DOC>.                 => (doc:=(!doc)^yytext; continue());
 <OUTER_BLOCK_DOC>.                 => (doc:=(!doc)^yytext; continue());  
 
-
-<SUFFIX>{ident}            => (YYBEGIN INITIAL; continue());
+<SUFFIX>{integer_suffix}   => (lexLog(yypos, "<Suffix> "^yytext); YYBEGIN INITIAL; Tokens.INTEGER_SUFFIX(yytext, yypos, yypos+size yytext));
+<SUFFIX>{float_suffix}     => (lexLog(yypos, "<Suffix> "^yytext); YYBEGIN INITIAL; Tokens.FLOAT_SUFFIX(yytext, yypos, yypos+size yytext));
 <SUFFIX>(.|\n)             => (YYBEGIN INITIAL; REJECT());
 <SUFFIX>(.|\n)             => (lexLog(yypos, "break"); YYBEGIN INITIAL; continue());
 
@@ -415,34 +353,29 @@ shebang_line = ("#!"([^\[\n])*\n);
                                         lexLog(yypos, "<LIFETIME_OR_LABEL> "^yytext);
                                         Tokens.LIFETIME_OR_LABEL(yytext, yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>{quote_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext));
+                                        Tokens.CHAR_LIT(strip(yytext, #"'"), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>{ascii_escape}"'"     => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext));
+                                        Tokens.CHAR_LIT(strip(yytext, #"'"), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>{unicode_escape}"'"   => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos-1+size yytext));
+                                        Tokens.CHAR_LIT(strip(yytext, #"'"), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>."'"                  => (YYBEGIN INITIAL; lexLog(yypos, yytext); 
-                                        Tokens.CHAR_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos-1+size yytext));
+                                        Tokens.CHAR_LIT(strip(yytext, #"'"), yypos, yypos-1+size yytext));
 <LIFE_OR_CHAR>[\128-\255]{2,4}"'"   => (YYBEGIN INITIAL; lexLog(yypos, yytext);
-                                        Tokens.CHAR_LIT(decodeChar(strip(yytext, #"'"), UTF8), yypos, yypos-1+size yytext));
+                                        Tokens.CHAR_LIT(strip(yytext, #"'"), yypos, yypos-1+size yytext));
 
 <INITIAL>"\""              => (YYBEGIN STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<String>"); continue());
 <STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos, "Tokens.STR_LIT "^strMake()); Tokens.STR_LIT(strMake(), !strpos, yypos));           
-<STR>{quote_escape}        => (strAppend(Char.chr(escape(yytext, yypos))); continue());
-<STR>{ascii_escape}        => (strAppend(Char.chr(escape(yytext, yypos))); continue());
-<STR>{unicode_escape}      => (
-                                (* here is a bug. This will raise a exception 
-                                when unicode point is bigger than 255 *)
-                                strAppend(Char.chr(escape(yytext, yypos))); 
-                                continue()
-                            );
+<STR>{quote_escape}        => (strAppend(yytext); continue());
+<STR>{ascii_escape}        => (strAppend(yytext); continue());
+<STR>{unicode_escape}      => (strAppend(yytext); continue());
 <STR>{str_continue}        => (lexLog(yypos, "String \\n"); incLine(yypos);  continue());
-<STR>\n                    => (strAppend(toChar(yytext)); incLine(yypos);  continue());
-<STR>.                     => (strAppend(toChar(yytext)); continue());
+<STR>\n                    => (strAppend(yytext); incLine(yypos);  continue());
+<STR>.                     => (strAppend(yytext); continue());
 
 <INITIAL>"r\""             => (YYBEGIN R_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Raw string>"); continue());
 <R_STR>"\""                => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.RAW_STR_LIT(strMake(), !strpos, yypos));
-<R_STR>"\n"                => (incLine(yypos);  strAppend(toChar yytext); continue());
-<R_STR>.                   => (strAppend(toChar yytext); continue());
+<R_STR>"\n"                => (incLine(yypos);  strAppend(yytext); continue());
+<R_STR>.                   => (strAppend(yytext); continue());
 
 <INITIAL>"r#"              => (
                                 YYBEGIN R_STR_BEGIN;
@@ -461,7 +394,7 @@ shebang_line = ("#!"([^\[\n])*\n);
 <R_STR_BEGIN>.           => (ErrorMsg.error yypos ("illegal character[R_STR_BEGIN] " ^ yytext); continue());
 <R_STR_BODY>"\"#"        => (
                                 lexLog(yypos, "<Raw string(#) end>");
-                                app strAppend [#"\"", #"#"];
+                                app strAppend ["\"", "#"];
                                 rsharp := 1;
                                 if !rsharp = !lsharp then
                                     (YYBEGIN INITIAL;
@@ -472,10 +405,10 @@ shebang_line = ("#!"([^\[\n])*\n);
                                     (YYBEGIN R_STR_END;
                                     continue())
                             );
-<R_STR_BODY>"\n"         => (incLine(yypos);  strAppend(toChar yytext); continue());
-<R_STR_BODY>.            => (strAppend(toChar yytext); continue());
+<R_STR_BODY>"\n"         => (incLine(yypos);  strAppend(yytext); continue());
+<R_STR_BODY>.            => (strAppend(yytext); continue());
 <R_STR_END>"#"           => (
-                                strAppend(toChar yytext);
+                                strAppend(yytext);
                                 rsharp := !rsharp+1;
                                 if !lsharp = !rsharp then
                                     (YYBEGIN INITIAL;
@@ -486,7 +419,7 @@ shebang_line = ("#!"([^\[\n])*\n);
                                     (continue())
                             );
 <R_STR_END>[^#]          => (
-                                strAppend(toChar yytext);
+                                strAppend(yytext);
                                 YYBEGIN R_STR_BODY;
                                 rsharp := 0;
                                 continue()
@@ -496,34 +429,34 @@ shebang_line = ("#!"([^\[\n])*\n);
 <BYTE>"\\\''"              => (
                                 YYBEGIN INITIAL; 
                                 lexLog(yypos, yytext); 
-                                Tokens.BYTE_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos+size yytext)
+                                Tokens.BYTE_LIT(strip(yytext, #"'"), yypos, yypos+size yytext)
                             );
 <BYTE>{byte_escape}"'"     => (
                                 YYBEGIN INITIAL; 
                                 lexLog(yypos, yytext); 
-                                Tokens.BYTE_LIT(escape(strip(yytext, #"'"), yypos), yypos, yypos+size yytext)
+                                Tokens.BYTE_LIT(strip(yytext, #"'"), yypos, yypos+size yytext)
                             );
 <BYTE>{ascii_char}"'"      => (
                                 YYBEGIN INITIAL; 
                                 lexLog(yypos, yytext);
-                                Tokens.BYTE_LIT(Char.ord(toChar(strip(yytext, #"'"))), yypos, yypos+size yytext)
+                                Tokens.BYTE_LIT(strip(yytext, #"'"), yypos, yypos+size yytext)
                             );
 <BYTE>"\n'"                 => (YYBEGIN INITIAL; incLine(yypos);  continue());
 <BYTE>."'"                  => (YYBEGIN INITIAL; ErrorMsg.error yypos ("illegal character[BYTE] " ^ yytext); continue());
 
 <INITIAL>"b\""                  => (YYBEGIN BYTE_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Byte string>"); continue());
 <BYTE_STR>"\""                  => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.BYTE_STR_LIT(strMake(), !strpos, yypos));           
-<BYTE_STR>{ascii_str}           => (strAppend(toChar(yytext)); continue());
-<BYTE_STR>"\\\""                => (strAppend(Char.chr(escape(yytext, yypos))); continue());
-<BYTE_STR>{byte_escape}         => (strAppend(Char.chr(escape(yytext, yypos))); continue());
+<BYTE_STR>{ascii_str}           => (strAppend(yytext); continue());
+<BYTE_STR>"\\\""                => (strAppend(yytext); continue());
+<BYTE_STR>{byte_escape}         => (strAppend(yytext); continue());
 <BYTE_STR>{str_continue}        => (lexLog(yypos, "String \\n"); incLine(yypos);  continue());
-<BYTE_STR>"\n"                  => (strAppend(toChar(yytext)); incLine(yypos);  continue());
-<BYTE_STR>.                     => (strAppend(toChar(yytext)); continue());
+<BYTE_STR>"\n"                  => (strAppend(yytext); incLine(yypos);  continue());
+<BYTE_STR>.                     => (strAppend(yytext); continue());
 
 <INITIAL>"br\""           => (YYBEGIN BR_STR; strList:=nil; strpos:=yypos; lexLog(yypos, "<Raw byte string>"); continue());
 <BR_STR>"\""              => (YYBEGIN INITIAL; lexLog(!strpos,strMake()); Tokens.RAW_BYTE_STR_LIT(strMake(), !strpos, yypos));
-<BR_STR>"\n"              => (incLine(yypos);  strAppend(toChar yytext); continue());
-<BR_STR>{ascii}           => (strAppend(toChar yytext); continue());
+<BR_STR>"\n"              => (incLine(yypos);  strAppend(yytext); continue());
+<BR_STR>{ascii}           => (strAppend(yytext); continue());
 <BR_STR>.                 => (ErrorMsg.error yypos ("illegal character[BR_STR] " ^ yytext); continue());
 
 <INITIAL>"br#"            => (YYBEGIN BR_STR_BEGIN; lsharp := 1; rsharp := 0; lexLog(yypos, "<Raw byte string(#)>"); continue());
@@ -534,7 +467,7 @@ shebang_line = ("#!"([^\[\n])*\n);
                                     continue());
 <BR_STR_BEGIN>.           => (ErrorMsg.error yypos ("illegal character[BR_STR_BEGIN] " ^ yytext); continue());
 <BR_STR_BODY>"\"#"        => (
-                                app strAppend [#"\"", #"#"];
+                                app strAppend ["\"", "#"];
                                 rsharp := 1;
                                 if !rsharp = !lsharp then
                                     (YYBEGIN INITIAL;
@@ -545,11 +478,11 @@ shebang_line = ("#!"([^\[\n])*\n);
                                     (YYBEGIN BR_STR_END;
                                     continue())
                             );
-<BR_STR_BODY>"\n"         => (incLine(yypos);  strAppend(toChar yytext); continue());
-<BR_STR_BODY>{ascii}      => (strAppend(toChar yytext); continue());
+<BR_STR_BODY>"\n"         => (incLine(yypos);  strAppend(yytext); continue());
+<BR_STR_BODY>{ascii}      => (strAppend(yytext); continue());
 <BR_STR_BODY>.            => (ErrorMsg.error yypos ("illegal character[BR_STR_BODY] " ^ yytext); continue());
 <BR_STR_END>"#"           => (
-                                    strAppend(toChar yytext);
+                                    strAppend(yytext);
                                     rsharp := !rsharp+1;
                                     if !lsharp = !rsharp then
                                         (YYBEGIN INITIAL;
@@ -561,7 +494,7 @@ shebang_line = ("#!"([^\[\n])*\n);
                             );
 <BR_STR_END>[^#]          => (
                                 (if (toChar yytext) < #"\128" then
-                                    strAppend(toChar yytext)
+                                    strAppend(yytext)
                                 else
                                     (ErrorMsg.error yypos ("illegal character[BR_STR_END] " ^ yytext))
                                 );
@@ -577,12 +510,19 @@ shebang_line = ("#!"([^\[\n])*\n);
                             );
 
 <INITIAL>{integer_lit}     => (
-                                lexLog(yypos, "<Integer> "^yytext); 
-                                Tokens.INTEGER_LIT(toInteger(yytext), yypos, yypos+size yytext)
+                                lexLog(yypos, "<Integer> "^yytext);
+                                YYBEGIN SUFFIX;
+                                Tokens.INTEGER_LIT(yytext, yypos, yypos+size yytext)
                             );
 <INITIAL>{float_lit}       => (
-                                lexLog(yypos, "<Float> "^yytext); 
-                                Tokens.FLOAT_LIT(toFloat(yytext), yypos, yypos+size yytext)
+                                lexLog(yypos, "<Float> "^yytext);
+                                Tokens.FLOAT_LIT(yytext, yypos, yypos+size yytext)
+                            );
+<INITIAL>{float_lit_with_suffix}      
+                            => (
+                                lexLog(yypos, "<Float> "^yytext);
+                                YYBEGIN SUFFIX;
+                                Tokens.FLOAT_LIT(yytext, yypos, yypos+size yytext)
                             );
 
 <INITIAL>"<<="             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHLEQ(yypos, yypos+size yytext));

@@ -1,235 +1,238 @@
-as 
-break 
-const 
-continue 
-crate 
-else 
-enum 
-extern 
-false 
-fn 
-for 
-if 
-impl 
-in 
-let 
-loop 
-match 
-mod 
-move 
-mut 
-pub 
-ref 
-return 
-self 
-Self 
-static 
-struct 
-super 
-trait 
-true 
-type 
-unsafe 
-use 
-where 
-while 
-dyn
-abstract 
-become 
-box 
-do 
-final 
-macro 
-override 
-priv 
-typeof 
-unsized 
-virtual 
-yield 
-async 
-await 
-try 
-union 
-'static 
+// as 
+// break 
+// const 
+// continue 
+// crate 
+// else 
+// enum 
+// extern 
+// false 
+// fn 
+// for 
+// if 
+// impl 
+// in 
+// let 
+// loop 
+// match 
+// mod 
+// move 
+// mut 
+// pub 
+// ref 
+// return 
+// self 
+// Self 
+// static 
+// struct 
+// super 
+// trait 
+// true 
+// type 
+// unsafe 
+// use 
+// where 
+// while 
+// dyn
+// abstract 
+// become 
+// box 
+// do 
+// final 
+// macro 
+// override 
+// priv 
+// typeof 
+// unsized 
+// virtual 
+// yield 
+// async 
+// await 
+// try 
+// union 
+// 'static 
 
-Identifier
-'a'
-'\''
-'\n'
-'\r'
-'\n'
-'\x41'
-'\u{0045}'
-'中'
-// if
-"ZDSADAz中文\
-23321\
-22222\
-21212"
+// Identifier
+// 'a'
+// '\''
+// '\n'
+// '\r'
+// '\n'
+// '\x41'
+// '\u{0045}'
+// '中'
+// // if
+// "ZDSADAz中文\
+// 23321\
+// 22222\
+// 21212"
 
-"\z"
-
-
-"foo"; r"foo";                     // foo
-"\"foo\""; r#""foo""#;             // "foo"
-
-"foo #\"# bar";
-r##"foo #"# bar"##;                // foo #"# bar
-
-"\x52"; "R"; r"R";                 // R
-"\\x52"; r"\x52";                  // \x52
-
-b'a'  b'\x32' b'\n'
-
-b"122222"
-br"122\12s'
-tttztz中"
+// "\z"
 
 
-b"foo"; br"foo";                     // foo
-b"\"foo\""; br#""foo""#;             // "foo"
+// "foo"; r"foo";                     // foo
+// "\"foo\""; r#""foo""#;             // "foo"
 
-b"foo #\"# bar";
-br##"foo #"# bar"##;                 // foo #"# bar
+// "foo #\"# bar";
+// r##"foo #"# bar"##;                // foo #"# bar
 
-b"\x52"; b"R"; br"R";                // R
-b"\\x52"; br"\x52";                  // \x52
+// "\x52"; "R"; r"R";                 // R
+// "\\x52"; r"\x52";                  // \x52
 
-123;                               // type i32
-123i32;                            // type i32
-123u32;                            // type u32
-123_u32;                           // type u32
-let a: u64 = 123;                  // type u64
+// b'a'  b'\x32' b'\n'
 
-0xff;                              // type i32
-0xff_u8;                           // type u8
+// b"122222"
+// br"122\12s'
+// tttztz中"
 
-0o70;                              // type i32
-0o70_i16;                          // type i16
 
-0b1111_1111_1001_0000;             // type i32
-0b1111_1111_1001_0000i64;          // type i64
-0b________1;                       // type i32
+// b"foo"; br"foo";                     // foo
+// b"\"foo\""; br#""foo""#;             // "foo"
 
-0usize;                            // type usize
+// b"foo #\"# bar";
+// br##"foo #"# bar"##;                 // foo #"# bar
 
-123.0f64;        // type f64
-0.1f64;          // type f64
-0.1f32;          // type f32
-12E+99_f64;      // type f64
-let x: f64 = 2.; // type f64
+// b"\x52"; b"R"; br"R";                // R
+// b"\\x52"; br"\x52";                  // \x52
 
-+
--
-*
-/
-%
-^
-!
-&
-|
-&&
-||
-<<
->>
-+=
--=
-*=
-/=
-%=
-^=
-&=
-|=
-<<=
->>=
-=
-==
-!=
->
-<
->=
-<=
-@
-_
-.
-..
-...
-..=
-,
-;
-:
-::
-->
-=>
-#
-$
-?
+// 123;                               // type i32
+// 123i32;                            // type i32
+// 123u32;                            // type u32
+// 123_u32;                           // type u32
+// let a: u64 = 123;                  // type u64
 
-//! A doc comment that applies to the implicit anonymous module of this crate
+// 0xff;                              // type i32
+// 0xff_u8;                           // type u8
 
-pub mod outer_module {
+// 0o70;                              // type i32
+// 0o70_i16;                          // type i16
 
-    //!  - Inner line doc
-    //!! - Still an inner line doc (but with a bang at the beginning)
+// 0b1111_1111_1001_0000;             // type i32
+// 0b1111_1111_1001_0000i64;          // type i64
+// 0b________1;                       // type i32
 
-    /*!  - Inner block doc */
-    /*!! - Still an inner block doc (but with a bang at the beginning) */
+// 0usize;                            // type usize
 
-    //   - Only a comment
-    ///  - Outer line doc (exactly 3 slashes)
-    //// - Only a comment
+// 123.0f64;        // type f64
+// 0.1f64;          // type f64
+// 0.1f32;          // type f32
+// 12E+99_f64;      // type f64
+// let x: f64 = 2.; // type f64
 
-    /*   - Only a comment */
-    /**  - Outer block doc (exactly) 2 asterisks */
-    /*** - Only a comment */
+// +
+// -
+// *
+// /
+// %
+// ^
+// !
+// &
+// |
+// &&
+// ||
+// <<
+// >>
+// +=
+// -=
+// *=
+// /=
+// %=
+// ^=
+// &=
+// |=
+// <<=
+// >>=
+// =
+// ==
+// !=
+// >
+// <
+// >=
+// <=
+// @
+// _
+// .
+// ..
+// ...
+// ..=
+// ,
+// ;
+// :
+// ::
+// ->
+// =>
+// #
+// $
+// ?
 
-    pub mod inner_module {}
+// //! A doc comment that applies to the implicit anonymous module of this crate
 
-    pub mod nested_comments {
-        /* In Rust /* we can /* nest comments */ */ */
+// pub mod outer_module {
 
-        // All three types of block comments can contain or be nested inside
-        // any other type:
+//     //!  - Inner line doc
+//     //!! - Still an inner line doc (but with a bang at the beginning)
 
-        /*   /* */  /** */  /*! */  */
-        /*! 233 /* */  /** */  /*! dsdas */  */
-        /**  /* */  /** */  /*! */  */
-        pub mod dummy_item {}
-    }
+//     /*!  - Inner block doc */
+//     /*!! - Still an inner block doc (but with a bang at the beginning) */
 
-    pub mod degenerate_cases {
-        // empty inner line doc
-        //!
+//     //   - Only a comment
+//     ///  - Outer line doc (exactly 3 slashes)
+//     //// - Only a comment
 
-        // empty inner block doc
-        /*!*/
+//     /*   - Only a comment */
+//     /**  - Outer block doc (exactly) 2 asterisks */
+//     /*** - Only a comment */
 
-        // empty line comment
-        //
+//     pub mod inner_module {}
 
-        // empty outer line doc
-        ///
+//     pub mod nested_comments {
+//         /* In Rust /* we can /* nest comments */ */ */
 
-        // empty block comment
-        /**/
+//         // All three types of block comments can contain or be nested inside
+//         // any other type:
 
-        pub mod dummy_item {}
+//         /*   /* */  /** */  /*! */  */
+//         /*! 233 /* */  /** */  /*! dsdas */  */
+//         /**  /* */  /** */  /*! */  */
+//         pub mod dummy_item {}
+//     }
 
-        // empty 2-asterisk block isn't a doc block, it is a block comment
-        /***/
+//     pub mod degenerate_cases {
+//         // empty inner line doc
+//         //!
 
-    }
+//         // empty inner block doc
+//         /*!*/
 
-    /* The next one isn't allowed because outer doc comments
-       require an item that will receive the doc */
-    /// Where is my item?
-    /**/
+//         // empty line comment
+//         //
 
-}
+//         // empty outer line doc
+//         ///
 
-fn func (num:&'a i32) {
+//         // empty block comment
+//         /**/
+
+//         pub mod dummy_item {}
+
+//         // empty 2-asterisk block isn't a doc block, it is a block comment
+//         /***/
+
+//     }
+
+//     /* The next one isn't allowed because outer doc comments
+//        require an item that will receive the doc */
+//     /// Where is my item?
+//     /**/
+
+// }
+
+// fn func (num:&'a i32) {
     
-}
+// }
 
-// This is a example in raw-string-literal-ambiguity.md
-r#"233"#"
+// // This is a example in raw-string-literal-ambiguity.md
+// r#"233"#"
+
+123u32
+12.1f32

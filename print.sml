@@ -27,6 +27,10 @@ struct
                     (out "["; start ind f l; out "]")
                 end
 
+            fun Token(A.StrLit(s, pos), d) = (out s)
+                | Token(A.RawStrLit(s, pos), d) = (out s)
+                | Token(_, d) = ()
+
             fun Crate(A.Crate(shebang, innerAttrs, items), d) = 
                     (indent d; outln "Crate ("; Shebang(shebang, d+1); outln ","; 
                     outList (d+1) InnerAttribute innerAttrs true; outln ",";
@@ -52,7 +56,7 @@ struct
                 | PathSeg(A.DCratePat, d) = (out ("$crate"))
                 | PathSeg(A.SuperPat, d) = (out ("super"))
                 | PathSeg(A.DefaultPat, d) = (out ("root"))
-            and LiteralExpression (A.LiteralExpression s, d) = (indent d; out s)
+            and LiteralExpression (A.LiteralExpression(tk), d) = (Token(tk, d))
             and MetaSeq((SOME metaSeq), d) = 
                     let 
                         fun helper((A.MetaSeq metaItemInnerList), d) = (indent d; outList (0) MetaItemInner metaItemInnerList true)

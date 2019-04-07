@@ -7,7 +7,7 @@ sig
     and OuterAttribute = OuterAttribute of MetaItem
     and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaSeq option
     and MetaSeq = MetaSeq of MetaItemInner list
-    and LiteralExpression = LiteralExpression of string
+    and LiteralExpression = LiteralExpression of Token
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
@@ -115,6 +115,13 @@ sig
     and Pattern = Pattern
     and Type = Type
     and BlockExpression = BlockExpression
+
+    and Token = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
+                | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
+                | IntegerLit of (string * string option * Pos) | FloatLit of (string * string option * Pos)
+                | True of Pos | False of Pos
+    and Pos = Pos of int
+
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
                     | I8 of Word8.word | I16 of Word.word | I32 of Word32.word 
@@ -131,7 +138,7 @@ struct
     and OuterAttribute = OuterAttribute of MetaItem
     and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaSeq option
     and MetaSeq = MetaSeq of MetaItemInner list
-    and LiteralExpression = LiteralExpression of string
+    and LiteralExpression = LiteralExpression of Token
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
@@ -239,6 +246,14 @@ struct
     and Pattern = Pattern
     and Type = Type
     and BlockExpression = BlockExpression
+
+    and Token = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
+                | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
+                | IntegerLit of (string * string option * Pos) | FloatLit of (string * string option * Pos)
+                | True of Pos | False of Pos
+                
+    and Pos = Pos of int
+
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
                     | U64 of Word64.word | U128 of LargeInt.int
                     | I8 of Word8.word | I16 of Word.word | I32 of Word32.word 

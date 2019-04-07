@@ -2,6 +2,7 @@ signature CONVERT =
 sig
     datatype encoding = UTF8 | UTF32
     exception EncodingError of string
+    val toChar : string -> char
     val decode : string * encoding -> int list
     val decodeChar : string * encoding -> int
 end
@@ -10,6 +11,69 @@ structure Convert : CONVERT =
 struct
     datatype encoding = UTF8 | UTF32
     exception EncodingError of string
+
+    fun toChar(text:string) = 
+    let
+        val cc = String.explode (text)
+        val c = hd(cc)
+    in
+        (* app print ["char literal: ", Char.toCString c, "\n"]; *)
+        c
+    end
+
+    fun toInteger(text:string) = case LargeInt.fromString(text) of 
+                                SOME v => v
+                                | _ => 0
+    
+    fun toFloat(text:string) = case Real.fromString(text) of 
+                                SOME v => v
+                                | _ => 0.0
+
+    fun escape(text:string, pos:int) = 
+    let
+        val chs = String.explode text
+
+        fun hex2dec (nil, v) = v
+            | hex2dec (#"a"::t, v) = hex2dec(t, v*16+10)
+            | hex2dec (#"A"::t, v) = hex2dec(t, v*16+10)
+            | hex2dec (#"b"::t, v) = hex2dec(t, v*16+11)
+            | hex2dec (#"B"::t, v) = hex2dec(t, v*16+11)
+            | hex2dec (#"c"::t, v) = hex2dec(t, v*16+12)
+            | hex2dec (#"C"::t, v) = hex2dec(t, v*16+12)
+            | hex2dec (#"d"::t, v) = hex2dec(t, v*16+13)
+            | hex2dec (#"D"::t, v) = hex2dec(t, v*16+13)
+            | hex2dec (#"e"::t, v) = hex2dec(t, v*16+14)
+            | hex2dec (#"E"::t, v) = hex2dec(t, v*16+14)
+            | hex2dec (#"f"::t, v) = hex2dec(t, v*16+15)
+            | hex2dec (#"F"::t, v) = hex2dec(t, v*16+15)
+            | hex2dec (h::t, v) = hex2dec(t, v*16+ (ord h) - (ord #"0"))
+        
+        fun unicode (nil, v) = v
+            | unicode (#"{"::t, v) = unicode(t, v)
+            | unicode (#"}"::t, v) = unicode(t, v)
+            | unicode (#"_"::t, v) = unicode(t, v)
+            | unicode (h::t, v) = unicode(t, v*16+ (ord h) - (ord #"0"))
+        (* 
+            This function convert char literal to a string for Char.fromString.
+            However, Char.fromString can not work when unicode point is in ordinal range of the alphabet.
+        *)
+        fun convert (nil) = Char.ord #"\000"
+            | convert (#"x"::t) = hex2dec(t, 0)
+            | convert (#"u"::t) = unicode(t, 0)
+            | convert (#"n"::t) = Char.ord #"\n"
+            | convert (#"r"::t) = Char.ord #"\r"
+            | convert (#"t"::t) = Char.ord #"\t"
+            | convert (#"0"::t) = Char.ord #"\000"
+            | convert (#"\092"::t) = Char.ord #"\092"
+            | convert (#"'"::t) = Char.ord #"'"
+            | convert (#"\""::t) = Char.ord #"\""
+            | convert (h::t) = Char.ord (toChar(implode([#"\092", h])))
+    in
+        case chs of
+        (#"\092"::t) => convert(t)
+        | _ => (ErrorMsg.error pos ("illegal escape " ^ text);0)
+    end
+
     fun readN(0, v, t) = 
         if v > 0x10FFFF then
             raise EncodingError ("Point ("^Int.toString(v)^") is too large.")

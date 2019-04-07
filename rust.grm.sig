@@ -62,15 +62,17 @@ val MINUS:  'a * 'a -> (svalue,'a) token
 val PLUS:  'a * 'a -> (svalue,'a) token
 val LIFETIME_TOKEN: (string) *  'a * 'a -> (svalue,'a) token
 val LIFETIME_OR_LABEL: (string) *  'a * 'a -> (svalue,'a) token
-val FLOAT_LIT: (real) *  'a * 'a -> (svalue,'a) token
-val TUPLE_INDEX: (int) *  'a * 'a -> (svalue,'a) token
-val INTEGER_LIT: (LargeInt.int) *  'a * 'a -> (svalue,'a) token
+val FLOAT_SUFFIX: (string) *  'a * 'a -> (svalue,'a) token
+val INTEGER_SUFFIX: (string) *  'a * 'a -> (svalue,'a) token
+val FLOAT_LIT: (string) *  'a * 'a -> (svalue,'a) token
+val TUPLE_INDEX: (string) *  'a * 'a -> (svalue,'a) token
+val INTEGER_LIT: (string) *  'a * 'a -> (svalue,'a) token
 val RAW_BYTE_STR_LIT: (string) *  'a * 'a -> (svalue,'a) token
 val BYTE_STR_LIT: (string) *  'a * 'a -> (svalue,'a) token
-val BYTE_LIT: (int) *  'a * 'a -> (svalue,'a) token
+val BYTE_LIT: (string) *  'a * 'a -> (svalue,'a) token
 val RAW_STR_LIT: (string) *  'a * 'a -> (svalue,'a) token
 val STR_LIT: (string) *  'a * 'a -> (svalue,'a) token
-val CHAR_LIT: (int) *  'a * 'a -> (svalue,'a) token
+val CHAR_LIT: (string) *  'a * 'a -> (svalue,'a) token
 val IDENT: (string) *  'a * 'a -> (svalue,'a) token
 val STATICLIFETIME:  'a * 'a -> (svalue,'a) token
 val UNION:  'a * 'a -> (svalue,'a) token
