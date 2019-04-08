@@ -136,12 +136,11 @@ bin_lit = 0b({bin_digit}|_)*{bin_digit}({bin_digit}|_)*;
 oct_lit = 0o({oct_digit}|_)*{oct_digit}({oct_digit}|_)*;
 hex_lit = 0x({hex_digit}|_)*{hex_digit}({hex_digit}|_)*;
 integer_suffix = (u8|u16|u32|u64|u128|usize|i8|i16|i32|i64|i128|isize);
-integer_lit = ({dec_lit}|{bin_lit}|{oct_lit}|{hex_lit});
+integer_lit = ({dec_lit}|{bin_lit}|{oct_lit}|{hex_lit})({integer_suffix})?;
 
 float_exponent = (e|E)("+"|"-")?({dec_digit}|_)*{dec_digit}({dec_digit}|_)*;
 float_suffix = (f32|f64);
-float_lit = {dec_lit}("."|{float_exponent}|"."{dec_lit}{float_exponent}?);
-float_lit_with_suffix = {dec_lit}(("."{dec_lit})?{float_exponent}?);
+float_lit = {dec_lit}("."|{float_exponent}|"."{dec_lit}{float_exponent}?|("."{dec_lit})?{float_exponent}?{float_suffix});
 
 ascii = ([\000-\127]);
 ascii_char = ([^' \\ \n \r \t \128-\255]);
@@ -284,11 +283,6 @@ shebang_line = ("#!"([^\[\n])*\n);
 <BLOCK_COMMENT>.                   => (continue());
 <INNER_BLOCK_DOC>.                 => (doc:=(!doc)^yytext; continue());
 <OUTER_BLOCK_DOC>.                 => (doc:=(!doc)^yytext; continue());  
-
-<SUFFIX>{integer_suffix}   => (lexLog(yypos, "<Suffix> "^yytext); YYBEGIN INITIAL; Tokens.INTEGER_SUFFIX(yytext, yypos, yypos+size yytext));
-<SUFFIX>{float_suffix}     => (lexLog(yypos, "<Suffix> "^yytext); YYBEGIN INITIAL; Tokens.FLOAT_SUFFIX(yytext, yypos, yypos+size yytext));
-<SUFFIX>(.|\n)             => (YYBEGIN INITIAL; REJECT());
-<SUFFIX>(.|\n)             => (lexLog(yypos, "break"); YYBEGIN INITIAL; continue());
 
 <INITIAL>"_"               => (lexLog(yypos, "<Punctuation>"^yytext); Tokens.UNDERSCORE(yypos, yypos+size yytext));
 <INITIAL>"as"              => (lexLog(yypos, yytext); Tokens.AS(yypos, yypos+size yytext));
@@ -511,17 +505,10 @@ shebang_line = ("#!"([^\[\n])*\n);
 
 <INITIAL>{integer_lit}     => (
                                 lexLog(yypos, "<Integer> "^yytext);
-                                YYBEGIN SUFFIX;
                                 Tokens.INTEGER_LIT(yytext, yypos, yypos+size yytext)
                             );
 <INITIAL>{float_lit}       => (
                                 lexLog(yypos, "<Float> "^yytext);
-                                Tokens.FLOAT_LIT(yytext, yypos, yypos+size yytext)
-                            );
-<INITIAL>{float_lit_with_suffix}      
-                            => (
-                                lexLog(yypos, "<Float> "^yytext);
-                                YYBEGIN SUFFIX;
                                 Tokens.FLOAT_LIT(yytext, yypos, yypos+size yytext)
                             );
 

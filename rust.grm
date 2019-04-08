@@ -43,7 +43,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
         | patterns of Pattern| types of Type
-        | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility of Visibility option
+        | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility of Visibility
         | where_clause of WhereClause | maybe_where_clause of WhereClause option | where_clause_expansion of WhereClauseItem list
         | where_clause_item of WhereClauseItem | lifetime_where_clause_item of WhereClauseItem | type_bound_where_clause_item of WhereClauseItem
         | lifetime_params of LifetimeParam list | lifetime_param of LifetimeParam | lifetime_params_expansion of LifetimeParam list
@@ -83,11 +83,12 @@ fun error(pos, msg) = ErrorMsg.error pos
         | named_func_parameters of ExternFunctionParameter | named_func_parameters_expansion of NamedFunctionParam list
         | named_func_parameters_with_variadics of ExternFunctionParameter| named_func_param of NamedFunctionParam
 
-        | maybe_statements | statement | let_statement | exp_statement 
-        | lit_exp_without_suffix of LiteralExpression
+        | maybe_statements | statements |statements_expansion | statement | let_statement | exp_statement 
         | expression of Expression
         | exp_without_block | lit_exp of LiteralExpression | str_lit of TokenType | bool_lit of TokenType
-        | path_exp | op_exp | grouped_exp | array_exp | index_exp | tuple_exp | tuple_index_exp | struct_exp
+        | path_exp | op_exp | grouped_exp 
+        | array_exp | array_elements | array_elements_expansion
+        | index_exp | tuple_exp | tuple_index_exp | struct_exp
         | enum_var_exp | call_exp | method_call_exp | field_exp | closure_exp | continue_exp | break_exp | range_exp | return_exp
         | exp_with_block | block_exp of BlockExpression | unsafe_block_exp | loop_exp | if_exp | if_let_exp | match_exp
 
@@ -200,11 +201,10 @@ macro_kleene_op: STAR                                           ()
 macro_transcriber: delim_token_tree                             ()
 
 (* ------VisItem------ *)
-vis_item: item_type                                             (VisItem(DefaultVis, item_type))
-        | visibility item_type                                  (VisItem(visibility, item_type))
+vis_item: maybe_visibility item_type                            (VisItem(DefaultVis, item_type))
 
-maybe_visibility: visibility                                    (SOME(visibility))
-                    |                                           (NONE)
+maybe_visibility: visibility                                    (visibility)
+                    |                                           (DefaultVis)
 
 visibility: PUB                                                 (PubVis)
         | PUB LPARENT CARET RPARENT                             (CrateVis)
@@ -237,7 +237,7 @@ maybe_outer_attr: outer_attr                                    (SOME(outer_attr
 inner_attr: SHEBANG LBRACKET meta_item RBRACKET                 (yaccLog("inner_attr"); InnerAttribute(meta_item))
 outer_attr: POUND LBRACKET meta_item RBRACKET                   (OuterAttribute meta_item)
 
-meta_item: simple_path EQ lit_exp_without_suffix                (AttrKVPair(SimplePath(rev(simple_path)), lit_exp_without_suffix))
+meta_item: simple_path EQ lit_exp                               (AttrKVPair(SimplePath(rev(simple_path)), lit_exp))
         | simple_path LPARENT meta_seq RPARENT                  (AttrSubs(SimplePath(rev(simple_path)), SOME(meta_seq)))
         | simple_path LPARENT RPARENT                           (AttrSubs(SimplePath(rev(simple_path)), NONE))
         | simple_path %prec LOWER_THAN_LPARENT                  (AttrName (SimplePath(rev(simple_path))))
@@ -249,7 +249,7 @@ meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
                     meta_seq_expansion                          (meta_item_inner::meta_seq_expansion)
                     |                                           (nil)
 meta_item_inner: meta_item                                      (MetaItem(meta_item))
-                | lit_exp_without_suffix                        (MetaLit(lit_exp_without_suffix))
+                | lit_exp                                       (MetaLit(lit_exp))
 
 patterns: IDENT                                                 (Pattern)
 types: IDENT                                                    (Type)
@@ -343,7 +343,8 @@ maybe_ques: QUESTION                                            ()
 maybe_unsafe: UNSAFE                                            (SOME(Unsafe))
             |                                                   (NONE)
 
-item_type: MOD IDENT SEMI                                       (Module (Identifer(IDENT), NONE))
+item_type: 
+        MOD IDENT SEMI                                       (Module (Identifer(IDENT), NONE))
         | MOD IDENT LBRACE inner_attrs items RBRACE             (Module (Identifer(IDENT), SOME(ModuleBody(rev(inner_attrs), rev(items)))))
         | EXTERN CARET IDENT SEMI                               (yaccLog("extern crate "^IDENT); ExternCrate (Identifer(IDENT), NONE))
         | EXTERN CARET IDENT AS IDENT SEMI                      (yaccLog("extern crate "^IDENT1^" as"^IDENT2); ExternCrate (Identifer(IDENT1), SOME(Identifer(IDENT2))))
@@ -647,21 +648,40 @@ named_func_parameters_with_variadics:
 
 (* ------Statements and Expression------ *)
 block_exp: LBRACE inner_attrs maybe_statements RBRACE           (BlockExpression)
-maybe_statements:                                               ()
+maybe_statements: statements                                    ()
+                |                                               ()
+statements: statements_expansion                                ()
+            | statements_expansion exp_without_block            ()
+            | exp_without_block                                 ()
+statements_expansion: statements_expansion statement            ()
+                    | statement                                 ()
+statement: (* need to be completed *)
+            SEMI                                                ()
+            | item                                              ()
+            | let_statement                                     ()
+            | exp_statement                                     ()
+            (* item contain macro item *)
+            (* | macro_invocation_semi                             () *)
+let_statement: outer_attrs LET patterns SEMI                    ()
+            | outer_attrs LET patterns COLON types SEMI         ()
+            | outer_attrs LET patterns EQ expression SEMI       ()
+            | outer_attrs LET patterns 
+                COLON types EQ expression SEMI                  ()
+exp_statement: exp_without_block SEMI                           ()
+            (* | exp_with_block                                    () *)
 expression: exp_without_block                                   (Expression)
 
 exp_without_block: outer_attrs lit_exp                          ()
                 | op_exp                                        ()
+                | outer_attrs grouped_exp                       ()
+                | outer_attrs array_exp                         (yaccLog("array_exp hit"))
 
-lit_exp: lit_exp_without_suffix                                 (lit_exp_without_suffix)
-        | INTEGER_LIT INTEGER_SUFFIX                            (LiteralExpression(IntegerLit(INTEGER_LIT, SOME(INTEGER_SUFFIX), Pos(INTEGER_LITleft))))
-        | FLOAT_LIT FLOAT_SUFFIX                                (LiteralExpression(FloatLit(FLOAT_LIT, SOME(FLOAT_SUFFIX), Pos(FLOAT_LITleft))))
-lit_exp_without_suffix: str_lit                                 (LiteralExpression(str_lit))
-                | bool_lit                                      (LiteralExpression(bool_lit))
-                | CHAR_LIT                                      (LiteralExpression(CharLit(CHAR_LIT, Pos(CHAR_LITleft))))
-                | BYTE_LIT                                      (LiteralExpression(ByteLit(BYTE_LIT, Pos(BYTE_LITleft))))
-                | INTEGER_LIT                                   (LiteralExpression(IntegerLit(INTEGER_LIT, NONE, Pos(INTEGER_LITleft))))
-                | FLOAT_LIT                                     (LiteralExpression(FloatLit(FLOAT_LIT, NONE, Pos(FLOAT_LITleft))))
+lit_exp: str_lit                                                (LiteralExpression(str_lit))
+        | bool_lit                                              (LiteralExpression(bool_lit))
+        | CHAR_LIT                                              (LiteralExpression(CharLit(CHAR_LIT, Pos(CHAR_LITleft))))
+        | BYTE_LIT                                              (LiteralExpression(ByteLit(BYTE_LIT, Pos(BYTE_LITleft))))
+        | INTEGER_LIT                                           (LiteralExpression(IntegerLit(INTEGER_LIT, Pos(INTEGER_LITleft))))
+        | FLOAT_LIT                                             (LiteralExpression(FloatLit(FLOAT_LIT, Pos(FLOAT_LITleft))))
 bool_lit: TRUE                                                  (True(Pos(TRUEleft)))
         | FALSE                                                 (False(Pos(FALSEleft)))
 str_lit: STR_LIT                                                (StrLit(STR_LIT, Pos(STR_LITleft)))
@@ -717,6 +737,16 @@ op_exp: (* borrow expression*)
         | expression CARETEQ expression                         ()
         | expression SHLEQ expression                           ()
         | expression SHREQ expression                           ()
+
+grouped_exp: LPARENT inner_attrs expression                     ()
+
+array_exp: LBRACKET inner_attrs array_elements RBRACKET         ()
+            | LBRACKET inner_attrs RBRACKET                     ()
+array_elements: expression SEMI expression                      ()
+            | array_elements_expansion maybe_comma              ()
+array_elements_expansion: array_elements_expansion 
+                        COMMA expression                        ()
+                        | expression                            () 
 
 (* ------type------ *)
 type_no_bounds: type_path                                       ()

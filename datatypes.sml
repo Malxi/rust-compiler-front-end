@@ -95,16 +95,16 @@ sig
     and Unsafe = Unsafe
 
     and InherentImplItem = InherentImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
-                            | InherentImplItemType of (OuterAttribute list * Visibility option * ItemType)
-                            | InherentImplItemMethod of (OuterAttribute list * Visibility option * Method)
+                            | InherentImplItemType of (OuterAttribute list * Visibility * ItemType)
+                            | InherentImplItemMethod of (OuterAttribute list * Visibility * Method)
     and TraitImplItem = TraitImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
-                        | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
-                        | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
+                        | TraitImplItemType of (OuterAttribute list * Visibility * ItemType)
+                        | TraitImplItemMethod of (OuterAttribute list * Visibility * Method)
     and Method = Method of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         selfParam: SelfParam, params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
     
-    and ExternalItem = ExternalItem of (OuterAttribute list * Visibility option * ExternalItemType)
+    and ExternalItem = ExternalItem of (OuterAttribute list * Visibility * ExternalItemType)
     and ExternalItemType = ExternalStaticItem of (Mutability * Identifer * Type)
                             | ExternalFunctionItem of {name:Identifer, generic:Generics option, 
                             params:ExternFunctionParameter, ret:Type option, wh:WhereClause option}
@@ -118,7 +118,7 @@ sig
 
     and TokenType = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
                 | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
-                | IntegerLit of (string * string option * Pos) | FloatLit of (string * string option * Pos)
+                | IntegerLit of (string * Pos) | FloatLit of (string * Pos)
                 | True of Pos | False of Pos
     and Pos = Pos of int
 
@@ -226,16 +226,16 @@ struct
     and Unsafe = Unsafe
 
     and InherentImplItem = InherentImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
-                            | InherentImplItemType of (OuterAttribute list * Visibility option * ItemType)
-                            | InherentImplItemMethod of (OuterAttribute list * Visibility option * Method)
+                            | InherentImplItemType of (OuterAttribute list * Visibility * ItemType)
+                            | InherentImplItemMethod of (OuterAttribute list * Visibility * Method)
     and TraitImplItem = TraitImplItemMacro of (OuterAttribute list * MacroInvocationSemi)
-                        | TraitImplItemType of (OuterAttribute list * Visibility option * ItemType)
-                        | TraitImplItemMethod of (OuterAttribute list * Visibility option * Method)
+                        | TraitImplItemType of (OuterAttribute list * Visibility * ItemType)
+                        | TraitImplItemMethod of (OuterAttribute list * Visibility * Method)
     and Method = Method of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         selfParam: SelfParam, params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
 
-    and ExternalItem = ExternalItem of (OuterAttribute list * Visibility option * ExternalItemType)
+    and ExternalItem = ExternalItem of (OuterAttribute list * Visibility * ExternalItemType)
     and ExternalItemType = ExternalStaticItem of (Mutability * Identifer * Type)
                             | ExternalFunctionItem of {name:Identifer, generic:Generics option, 
                             params:ExternFunctionParameter, ret:Type option, wh:WhereClause option}
@@ -249,7 +249,7 @@ struct
 
     and TokenType = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
                 | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
-                | IntegerLit of (string * string option * Pos) | FloatLit of (string * string option * Pos)
+                | IntegerLit of (string * Pos) | FloatLit of (string * Pos)
                 | True of Pos | False of Pos
                 
     and Pos = Pos of int

@@ -587,14 +587,14 @@ struct
                     nextLine(d);
                     out ")"
                 )
-                | InherentImplItem(A.InherentImplItemType(outerAttr, mvis, it), d) =
+                | InherentImplItem(A.InherentImplItemType(outerAttr, vis, it), d) =
                 (
                     out "InherentImplItemType (";
                     nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
                     nextLine(d);
-                    VisibilityOption(mvis, d+1);
+                    Visibility(vis, d+1);
                     out ",";
                     nextLine(d);
                     ItemType(it, d+1);
@@ -602,14 +602,14 @@ struct
                     out ")"
                     
                 )
-                | InherentImplItem(A.InherentImplItemMethod(outerAttr, mvis, method), d) =
+                | InherentImplItem(A.InherentImplItemMethod(outerAttr, vis, method), d) =
                 (
                     out "InherentImplItemMethod (";
                     nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
                     nextLine(d);
-                    VisibilityOption(mvis, d+1);
+                    Visibility(vis, d+1);
                     out ",";
                     nextLine(d);
                     Method(method, d+1);
@@ -627,28 +627,28 @@ struct
                     nextLine(d);
                     out ")"
                 )
-                | TraitImplItem(A.TraitImplItemType(outerAttr, mvis, it), d) =
+                | TraitImplItem(A.TraitImplItemType(outerAttr, vis, it), d) =
                 (
                     out "TraitImplItemType (";
                     nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
                     nextLine(d);
-                    VisibilityOption(mvis, d+1);
+                    Visibility(vis, d+1);
                     out ",";
                     nextLine(d);
                     ItemType(it, d+1);
                     nextLine(d);
                     out ")"
                 )
-                | TraitImplItem(A.TraitImplItemMethod(outerAttr, mvis, method), d) =
+                | TraitImplItem(A.TraitImplItemMethod(outerAttr, vis, method), d) =
                 (
                     out "TraitImplItemMethod (";
                     nextLine(d);
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
                     nextLine(d);
-                    VisibilityOption(mvis, d+1);
+                    Visibility(vis, d+1);
                     out ",";
                     nextLine(d);
                     Method(method, d+1);
@@ -688,12 +688,12 @@ struct
                     nextLine(d);
                     out ")"
                 end
-            and ExternalItem(A.ExternalItem(outerAttrs, mvis, etity), d) =
+            and ExternalItem(A.ExternalItem(outerAttrs, vis, etity), d) =
                 (
                     out "ExternalItem (";
                     nextLine(d);
                     outList (d+1) OuterAttribute outerAttrs false;
-                    (fn SOME(a) => (nextLine(d); Visibility(a, d+1))| NONE => ()) mvis;
+                    Visibility(vis, d+1);
                     nextLine(d);
                     ExternalItemType(etity, d+1);
                     nextLine(d);

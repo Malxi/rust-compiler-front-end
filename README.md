@@ -16,6 +16,7 @@ In sml interactive system
 + Extra work for ambiguous tokens
 (generics: GT-SHR;
 generic args: GT-SHR, GT-GE, GT-SHRQG, LT-SHL)
++ Add outer attributes for operator expression will cause shift/reduce conflicts
 
 ## Tools
 + convert for encoding and decoding
