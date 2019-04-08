@@ -13,7 +13,9 @@ In sml interactive system
 + Add a suffix option for literals
 + Solve conflicts of function qualifier
 + Complete simple path
-+ Extra work for ambiguous tokens (GT and SHR)
++ Extra work for ambiguous tokens
+(generics: GT-SHR;
+generic args: GT-SHR, GT-GE, GT-SHRQG, LT-SHL)
 
 ## Tools
 + convert for encoding and decoding

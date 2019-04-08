@@ -15,7 +15,7 @@ state 0:
 
 	SHEBANG_LINE	shift 2
 
-	crate	goto 726
+	crate	goto 803
 	inner_attrs	goto 1
 
 	.	reduce by rule 66
@@ -2149,20 +2149,20 @@ state 140:
 
 state 141:
 
-	lit_exp_without_suffix : bool_lit .  (reduce by rule 305)
+	lit_exp_without_suffix : bool_lit .  (reduce by rule 306)
 
 
 
-	.	reduce by rule 305
+	.	reduce by rule 306
 
 
 state 142:
 
-	lit_exp_without_suffix : str_lit .  (reduce by rule 304)
+	lit_exp_without_suffix : str_lit .  (reduce by rule 305)
 
 
 
-	.	reduce by rule 304
+	.	reduce by rule 305
 
 
 state 143:
@@ -2216,92 +2216,92 @@ state 147:
 
 state 148:
 
-	lit_exp_without_suffix : FLOAT_LIT .  (reduce by rule 309)
-
-
-
-	.	reduce by rule 309
-
-
-state 149:
-
-	lit_exp_without_suffix : INTEGER_LIT .  (reduce by rule 308)
-
-
-
-	.	reduce by rule 308
-
-
-state 150:
-
-	str_lit : RAW_BYTE_STR_LIT .  (reduce by rule 315)
-
-
-
-	.	reduce by rule 315
-
-
-state 151:
-
-	str_lit : BYTE_STR_LIT .  (reduce by rule 314)
-
-
-
-	.	reduce by rule 314
-
-
-state 152:
-
-	lit_exp_without_suffix : BYTE_LIT .  (reduce by rule 307)
-
-
-
-	.	reduce by rule 307
-
-
-state 153:
-
-	str_lit : RAW_STR_LIT .  (reduce by rule 313)
-
-
-
-	.	reduce by rule 313
-
-
-state 154:
-
-	str_lit : STR_LIT .  (reduce by rule 312)
-
-
-
-	.	reduce by rule 312
-
-
-state 155:
-
-	lit_exp_without_suffix : CHAR_LIT .  (reduce by rule 306)
-
-
-
-	.	reduce by rule 306
-
-
-state 156:
-
-	bool_lit : TRUE .  (reduce by rule 310)
+	lit_exp_without_suffix : FLOAT_LIT .  (reduce by rule 310)
 
 
 
 	.	reduce by rule 310
 
 
-state 157:
+state 149:
 
-	bool_lit : FALSE .  (reduce by rule 311)
+	lit_exp_without_suffix : INTEGER_LIT .  (reduce by rule 309)
+
+
+
+	.	reduce by rule 309
+
+
+state 150:
+
+	str_lit : RAW_BYTE_STR_LIT .  (reduce by rule 316)
+
+
+
+	.	reduce by rule 316
+
+
+state 151:
+
+	str_lit : BYTE_STR_LIT .  (reduce by rule 315)
+
+
+
+	.	reduce by rule 315
+
+
+state 152:
+
+	lit_exp_without_suffix : BYTE_LIT .  (reduce by rule 308)
+
+
+
+	.	reduce by rule 308
+
+
+state 153:
+
+	str_lit : RAW_STR_LIT .  (reduce by rule 314)
+
+
+
+	.	reduce by rule 314
+
+
+state 154:
+
+	str_lit : STR_LIT .  (reduce by rule 313)
+
+
+
+	.	reduce by rule 313
+
+
+state 155:
+
+	lit_exp_without_suffix : CHAR_LIT .  (reduce by rule 307)
+
+
+
+	.	reduce by rule 307
+
+
+state 156:
+
+	bool_lit : TRUE .  (reduce by rule 311)
 
 
 
 	.	reduce by rule 311
+
+
+state 157:
+
+	bool_lit : FALSE .  (reduce by rule 312)
+
+
+
+	.	reduce by rule 312
 
 
 state 158:
@@ -2315,20 +2315,20 @@ state 158:
 
 state 159:
 
-	token_ep_delim_dollar : token_ep_delim_kleene_dollar .  (reduce by rule 429)
+	token_ep_delim_dollar : token_ep_delim_kleene_dollar .  (reduce by rule 469)
 
 
 
-	.	reduce by rule 429
+	.	reduce by rule 469
 
 
 state 160:
 
-	token_ep_delim : token_ep_delim_dollar .  (reduce by rule 433)
+	token_ep_delim : token_ep_delim_dollar .  (reduce by rule 473)
 
 
 
-	.	reduce by rule 433
+	.	reduce by rule 473
 
 
 state 161:
@@ -2360,29 +2360,29 @@ state 163:
 
 state 164:
 
-	token_ep_delim_kleene_dollar : SHEBANG .  (reduce by rule 424)
+	token_ep_delim_kleene_dollar : SHEBANG .  (reduce by rule 464)
 
 
 
-	.	reduce by rule 424
+	.	reduce by rule 464
 
 
 state 165:
 
-	token_ep_delim_kleene_dollar : OUTER_DOC_COMMENT .  (reduce by rule 423)
+	token_ep_delim_kleene_dollar : OUTER_DOC_COMMENT .  (reduce by rule 463)
 
 
 
-	.	reduce by rule 423
+	.	reduce by rule 463
 
 
 state 166:
 
-	token_ep_delim_kleene_dollar : INNER_DOC_COMMENT .  (reduce by rule 422)
+	token_ep_delim_kleene_dollar : INNER_DOC_COMMENT .  (reduce by rule 462)
 
 
 
-	.	reduce by rule 422
+	.	reduce by rule 462
 
 
 state 167:
@@ -2427,1010 +2427,1010 @@ state 170:
 
 state 171:
 
-	token_ep_delim_dollar : QUESTION .  (reduce by rule 432)
+	token_ep_delim_dollar : QUESTION .  (reduce by rule 472)
 
 
 
-	.	reduce by rule 432
+	.	reduce by rule 472
 
 
 state 172:
 
-	token_ep_delim : DOLLAR .  (reduce by rule 434)
+	token_ep_delim : DOLLAR .  (reduce by rule 474)
+
+
+
+	.	reduce by rule 474
+
+
+state 173:
+
+	token_ep_delim_kleene_dollar : POUND .  (reduce by rule 461)
+
+
+
+	.	reduce by rule 461
+
+
+state 174:
+
+	token_ep_delim_kleene_dollar : FATARROW .  (reduce by rule 460)
+
+
+
+	.	reduce by rule 460
+
+
+state 175:
+
+	token_ep_delim_kleene_dollar : RARROW .  (reduce by rule 459)
+
+
+
+	.	reduce by rule 459
+
+
+state 176:
+
+	token_ep_delim_kleene_dollar : PATHSEP .  (reduce by rule 458)
+
+
+
+	.	reduce by rule 458
+
+
+state 177:
+
+	token_ep_delim_kleene_dollar : COLON .  (reduce by rule 457)
+
+
+
+	.	reduce by rule 457
+
+
+state 178:
+
+	token_ep_delim_kleene_dollar : SEMI .  (reduce by rule 456)
+
+
+
+	.	reduce by rule 456
+
+
+state 179:
+
+	token_ep_delim_kleene_dollar : COMMA .  (reduce by rule 455)
+
+
+
+	.	reduce by rule 455
+
+
+state 180:
+
+	token_ep_delim_kleene_dollar : DOTDOTEQ .  (reduce by rule 454)
+
+
+
+	.	reduce by rule 454
+
+
+state 181:
+
+	token_ep_delim_kleene_dollar : DOTDOTDOT .  (reduce by rule 453)
+
+
+
+	.	reduce by rule 453
+
+
+state 182:
+
+	token_ep_delim_kleene_dollar : DOTDOT .  (reduce by rule 452)
+
+
+
+	.	reduce by rule 452
+
+
+state 183:
+
+	token_ep_delim_kleene_dollar : DOT .  (reduce by rule 451)
+
+
+
+	.	reduce by rule 451
+
+
+state 184:
+
+	token_ep_delim_kleene_dollar : UNDERSCORE .  (reduce by rule 450)
+
+
+
+	.	reduce by rule 450
+
+
+state 185:
+
+	token_ep_delim_kleene_dollar : AT .  (reduce by rule 449)
+
+
+
+	.	reduce by rule 449
+
+
+state 186:
+
+	token_ep_delim_kleene_dollar : LE .  (reduce by rule 448)
+
+
+
+	.	reduce by rule 448
+
+
+state 187:
+
+	token_ep_delim_kleene_dollar : GE .  (reduce by rule 447)
+
+
+
+	.	reduce by rule 447
+
+
+state 188:
+
+	token_ep_delim_kleene_dollar : LT .  (reduce by rule 446)
+
+
+
+	.	reduce by rule 446
+
+
+state 189:
+
+	token_ep_delim_kleene_dollar : GT .  (reduce by rule 445)
+
+
+
+	.	reduce by rule 445
+
+
+state 190:
+
+	token_ep_delim_kleene_dollar : NE .  (reduce by rule 444)
+
+
+
+	.	reduce by rule 444
+
+
+state 191:
+
+	token_ep_delim_kleene_dollar : EQEQ .  (reduce by rule 443)
+
+
+
+	.	reduce by rule 443
+
+
+state 192:
+
+	token_ep_delim_kleene_dollar : EQ .  (reduce by rule 442)
+
+
+
+	.	reduce by rule 442
+
+
+state 193:
+
+	token_ep_delim_kleene_dollar : SHREQ .  (reduce by rule 441)
+
+
+
+	.	reduce by rule 441
+
+
+state 194:
+
+	token_ep_delim_kleene_dollar : SHLEQ .  (reduce by rule 440)
+
+
+
+	.	reduce by rule 440
+
+
+state 195:
+
+	token_ep_delim_kleene_dollar : OREQ .  (reduce by rule 439)
+
+
+
+	.	reduce by rule 439
+
+
+state 196:
+
+	token_ep_delim_kleene_dollar : ANDEQ .  (reduce by rule 438)
+
+
+
+	.	reduce by rule 438
+
+
+state 197:
+
+	token_ep_delim_kleene_dollar : CARETEQ .  (reduce by rule 437)
+
+
+
+	.	reduce by rule 437
+
+
+state 198:
+
+	token_ep_delim_kleene_dollar : PERCENTEQ .  (reduce by rule 436)
+
+
+
+	.	reduce by rule 436
+
+
+state 199:
+
+	token_ep_delim_kleene_dollar : SLASHEQ .  (reduce by rule 435)
+
+
+
+	.	reduce by rule 435
+
+
+state 200:
+
+	token_ep_delim_kleene_dollar : STAREQ .  (reduce by rule 434)
 
 
 
 	.	reduce by rule 434
 
 
-state 173:
-
-	token_ep_delim_kleene_dollar : POUND .  (reduce by rule 421)
-
-
-
-	.	reduce by rule 421
-
-
-state 174:
-
-	token_ep_delim_kleene_dollar : FATARROW .  (reduce by rule 420)
-
-
-
-	.	reduce by rule 420
-
-
-state 175:
-
-	token_ep_delim_kleene_dollar : RARROW .  (reduce by rule 419)
-
-
-
-	.	reduce by rule 419
-
-
-state 176:
-
-	token_ep_delim_kleene_dollar : PATHSEP .  (reduce by rule 418)
-
-
-
-	.	reduce by rule 418
-
-
-state 177:
-
-	token_ep_delim_kleene_dollar : COLON .  (reduce by rule 417)
-
-
-
-	.	reduce by rule 417
-
-
-state 178:
-
-	token_ep_delim_kleene_dollar : SEMI .  (reduce by rule 416)
-
-
-
-	.	reduce by rule 416
-
-
-state 179:
-
-	token_ep_delim_kleene_dollar : COMMA .  (reduce by rule 415)
-
-
-
-	.	reduce by rule 415
-
-
-state 180:
-
-	token_ep_delim_kleene_dollar : DOTDOTEQ .  (reduce by rule 414)
-
-
-
-	.	reduce by rule 414
-
-
-state 181:
-
-	token_ep_delim_kleene_dollar : DOTDOTDOT .  (reduce by rule 413)
-
-
-
-	.	reduce by rule 413
-
-
-state 182:
-
-	token_ep_delim_kleene_dollar : DOTDOT .  (reduce by rule 412)
-
-
-
-	.	reduce by rule 412
-
-
-state 183:
-
-	token_ep_delim_kleene_dollar : DOT .  (reduce by rule 411)
-
-
-
-	.	reduce by rule 411
-
-
-state 184:
-
-	token_ep_delim_kleene_dollar : UNDERSCORE .  (reduce by rule 410)
-
-
-
-	.	reduce by rule 410
-
-
-state 185:
-
-	token_ep_delim_kleene_dollar : AT .  (reduce by rule 409)
-
-
-
-	.	reduce by rule 409
-
-
-state 186:
-
-	token_ep_delim_kleene_dollar : LE .  (reduce by rule 408)
-
-
-
-	.	reduce by rule 408
-
-
-state 187:
-
-	token_ep_delim_kleene_dollar : GE .  (reduce by rule 407)
-
-
-
-	.	reduce by rule 407
-
-
-state 188:
-
-	token_ep_delim_kleene_dollar : LT .  (reduce by rule 406)
-
-
-
-	.	reduce by rule 406
-
-
-state 189:
-
-	token_ep_delim_kleene_dollar : GT .  (reduce by rule 405)
-
-
-
-	.	reduce by rule 405
-
-
-state 190:
-
-	token_ep_delim_kleene_dollar : NE .  (reduce by rule 404)
-
-
-
-	.	reduce by rule 404
-
-
-state 191:
-
-	token_ep_delim_kleene_dollar : EQEQ .  (reduce by rule 403)
-
-
-
-	.	reduce by rule 403
-
-
-state 192:
-
-	token_ep_delim_kleene_dollar : EQ .  (reduce by rule 402)
-
-
-
-	.	reduce by rule 402
-
-
-state 193:
-
-	token_ep_delim_kleene_dollar : SHREQ .  (reduce by rule 401)
-
-
-
-	.	reduce by rule 401
-
-
-state 194:
-
-	token_ep_delim_kleene_dollar : SHLEQ .  (reduce by rule 400)
-
-
-
-	.	reduce by rule 400
-
-
-state 195:
-
-	token_ep_delim_kleene_dollar : OREQ .  (reduce by rule 399)
-
-
-
-	.	reduce by rule 399
-
-
-state 196:
-
-	token_ep_delim_kleene_dollar : ANDEQ .  (reduce by rule 398)
-
-
-
-	.	reduce by rule 398
-
-
-state 197:
-
-	token_ep_delim_kleene_dollar : CARETEQ .  (reduce by rule 397)
-
-
-
-	.	reduce by rule 397
-
-
-state 198:
-
-	token_ep_delim_kleene_dollar : PERCENTEQ .  (reduce by rule 396)
-
-
-
-	.	reduce by rule 396
-
-
-state 199:
-
-	token_ep_delim_kleene_dollar : SLASHEQ .  (reduce by rule 395)
-
-
-
-	.	reduce by rule 395
-
-
-state 200:
-
-	token_ep_delim_kleene_dollar : STAREQ .  (reduce by rule 394)
-
-
-
-	.	reduce by rule 394
-
-
 state 201:
 
-	token_ep_delim_kleene_dollar : MINUSEQ .  (reduce by rule 393)
+	token_ep_delim_kleene_dollar : MINUSEQ .  (reduce by rule 433)
 
 
 
-	.	reduce by rule 393
+	.	reduce by rule 433
 
 
 state 202:
 
-	token_ep_delim_kleene_dollar : PLUSEQ .  (reduce by rule 392)
+	token_ep_delim_kleene_dollar : PLUSEQ .  (reduce by rule 432)
 
 
 
-	.	reduce by rule 392
+	.	reduce by rule 432
 
 
 state 203:
 
-	token_ep_delim_kleene_dollar : SHR .  (reduce by rule 391)
-
-
-
-	.	reduce by rule 391
-
-
-state 204:
-
-	token_ep_delim_kleene_dollar : SHL .  (reduce by rule 390)
-
-
-
-	.	reduce by rule 390
-
-
-state 205:
-
-	token_ep_delim_kleene_dollar : OROR .  (reduce by rule 389)
-
-
-
-	.	reduce by rule 389
-
-
-state 206:
-
-	token_ep_delim_kleene_dollar : ANDAND .  (reduce by rule 388)
-
-
-
-	.	reduce by rule 388
-
-
-state 207:
-
-	token_ep_delim_kleene_dollar : OR .  (reduce by rule 387)
-
-
-
-	.	reduce by rule 387
-
-
-state 208:
-
-	token_ep_delim_kleene_dollar : AND .  (reduce by rule 386)
-
-
-
-	.	reduce by rule 386
-
-
-state 209:
-
-	token_ep_delim_kleene_dollar : NOT .  (reduce by rule 385)
-
-
-
-	.	reduce by rule 385
-
-
-state 210:
-
-	token_ep_delim_kleene_dollar : CARET .  (reduce by rule 384)
-
-
-
-	.	reduce by rule 384
-
-
-state 211:
-
-	token_ep_delim_kleene_dollar : PERCENT .  (reduce by rule 383)
-
-
-
-	.	reduce by rule 383
-
-
-state 212:
-
-	token_ep_delim_kleene_dollar : SLASH .  (reduce by rule 382)
-
-
-
-	.	reduce by rule 382
-
-
-state 213:
-
-	token_ep_delim_dollar : STAR .  (reduce by rule 431)
+	token_ep_delim_kleene_dollar : SHR .  (reduce by rule 431)
 
 
 
 	.	reduce by rule 431
 
 
-state 214:
+state 204:
 
-	token_ep_delim_kleene_dollar : MINUS .  (reduce by rule 381)
-
-
-
-	.	reduce by rule 381
-
-
-state 215:
-
-	token_ep_delim_dollar : PLUS .  (reduce by rule 430)
+	token_ep_delim_kleene_dollar : SHL .  (reduce by rule 430)
 
 
 
 	.	reduce by rule 430
 
 
-state 216:
+state 205:
 
-	token_ep_delim_kleene_dollar : LIFETIME_TOKEN .  (reduce by rule 380)
-
-
-
-	.	reduce by rule 380
-
-
-state 217:
-
-	token_ep_delim_kleene_dollar : LIFETIME_OR_LABEL .  (reduce by rule 379)
+	token_ep_delim_kleene_dollar : OROR .  (reduce by rule 429)
 
 
 
-	.	reduce by rule 379
+	.	reduce by rule 429
 
 
-state 218:
+state 206:
 
-	token_ep_delim_kleene_dollar : FLOAT_SUFFIX .  (reduce by rule 426)
+	token_ep_delim_kleene_dollar : ANDAND .  (reduce by rule 428)
+
+
+
+	.	reduce by rule 428
+
+
+state 207:
+
+	token_ep_delim_kleene_dollar : OR .  (reduce by rule 427)
+
+
+
+	.	reduce by rule 427
+
+
+state 208:
+
+	token_ep_delim_kleene_dollar : AND .  (reduce by rule 426)
 
 
 
 	.	reduce by rule 426
 
 
-state 219:
+state 209:
 
-	token_ep_delim_kleene_dollar : INTEGER_SUFFIX .  (reduce by rule 425)
+	token_ep_delim_kleene_dollar : NOT .  (reduce by rule 425)
 
 
 
 	.	reduce by rule 425
 
 
+state 210:
+
+	token_ep_delim_kleene_dollar : CARET .  (reduce by rule 424)
+
+
+
+	.	reduce by rule 424
+
+
+state 211:
+
+	token_ep_delim_kleene_dollar : PERCENT .  (reduce by rule 423)
+
+
+
+	.	reduce by rule 423
+
+
+state 212:
+
+	token_ep_delim_kleene_dollar : SLASH .  (reduce by rule 422)
+
+
+
+	.	reduce by rule 422
+
+
+state 213:
+
+	token_ep_delim_dollar : STAR .  (reduce by rule 471)
+
+
+
+	.	reduce by rule 471
+
+
+state 214:
+
+	token_ep_delim_kleene_dollar : MINUS .  (reduce by rule 421)
+
+
+
+	.	reduce by rule 421
+
+
+state 215:
+
+	token_ep_delim_dollar : PLUS .  (reduce by rule 470)
+
+
+
+	.	reduce by rule 470
+
+
+state 216:
+
+	token_ep_delim_kleene_dollar : LIFETIME_TOKEN .  (reduce by rule 420)
+
+
+
+	.	reduce by rule 420
+
+
+state 217:
+
+	token_ep_delim_kleene_dollar : LIFETIME_OR_LABEL .  (reduce by rule 419)
+
+
+
+	.	reduce by rule 419
+
+
+state 218:
+
+	token_ep_delim_kleene_dollar : FLOAT_SUFFIX .  (reduce by rule 466)
+
+
+
+	.	reduce by rule 466
+
+
+state 219:
+
+	token_ep_delim_kleene_dollar : INTEGER_SUFFIX .  (reduce by rule 465)
+
+
+
+	.	reduce by rule 465
+
+
 state 220:
 
-	token_ep_delim_kleene_dollar : FLOAT_LIT .  (reduce by rule 378)
+	token_ep_delim_kleene_dollar : FLOAT_LIT .  (reduce by rule 418)
+
+
+
+	.	reduce by rule 418
+
+
+state 221:
+
+	token_ep_delim_kleene_dollar : TUPLE_INDEX .  (reduce by rule 417)
+
+
+
+	.	reduce by rule 417
+
+
+state 222:
+
+	token_ep_delim_kleene_dollar : INTEGER_LIT .  (reduce by rule 416)
+
+
+
+	.	reduce by rule 416
+
+
+state 223:
+
+	token_ep_delim_kleene_dollar : RAW_BYTE_STR_LIT .  (reduce by rule 415)
+
+
+
+	.	reduce by rule 415
+
+
+state 224:
+
+	token_ep_delim_kleene_dollar : BYTE_STR_LIT .  (reduce by rule 414)
+
+
+
+	.	reduce by rule 414
+
+
+state 225:
+
+	token_ep_delim_kleene_dollar : BYTE_LIT .  (reduce by rule 413)
+
+
+
+	.	reduce by rule 413
+
+
+state 226:
+
+	token_ep_delim_kleene_dollar : RAW_STR_LIT .  (reduce by rule 412)
+
+
+
+	.	reduce by rule 412
+
+
+state 227:
+
+	token_ep_delim_kleene_dollar : STR_LIT .  (reduce by rule 411)
+
+
+
+	.	reduce by rule 411
+
+
+state 228:
+
+	token_ep_delim_kleene_dollar : CHAR_LIT .  (reduce by rule 410)
+
+
+
+	.	reduce by rule 410
+
+
+state 229:
+
+	token_ep_delim_kleene_dollar : IDENT .  (reduce by rule 409)
+
+
+
+	.	reduce by rule 409
+
+
+state 230:
+
+	token_ep_delim_kleene_dollar : STATICLIFETIME .  (reduce by rule 408)
+
+
+
+	.	reduce by rule 408
+
+
+state 231:
+
+	token_ep_delim_kleene_dollar : UNION .  (reduce by rule 407)
+
+
+
+	.	reduce by rule 407
+
+
+state 232:
+
+	token_ep_delim_kleene_dollar : TRY .  (reduce by rule 406)
+
+
+
+	.	reduce by rule 406
+
+
+state 233:
+
+	token_ep_delim_kleene_dollar : AWAIT .  (reduce by rule 405)
+
+
+
+	.	reduce by rule 405
+
+
+state 234:
+
+	token_ep_delim_kleene_dollar : ASYNC .  (reduce by rule 404)
+
+
+
+	.	reduce by rule 404
+
+
+state 235:
+
+	token_ep_delim_kleene_dollar : YIELD .  (reduce by rule 403)
+
+
+
+	.	reduce by rule 403
+
+
+state 236:
+
+	token_ep_delim_kleene_dollar : VIRTUAL .  (reduce by rule 402)
+
+
+
+	.	reduce by rule 402
+
+
+state 237:
+
+	token_ep_delim_kleene_dollar : UNSIZED .  (reduce by rule 401)
+
+
+
+	.	reduce by rule 401
+
+
+state 238:
+
+	token_ep_delim_kleene_dollar : TYPEOF .  (reduce by rule 400)
+
+
+
+	.	reduce by rule 400
+
+
+state 239:
+
+	token_ep_delim_kleene_dollar : PRIV .  (reduce by rule 399)
+
+
+
+	.	reduce by rule 399
+
+
+state 240:
+
+	token_ep_delim_kleene_dollar : OVERRIDE .  (reduce by rule 398)
+
+
+
+	.	reduce by rule 398
+
+
+state 241:
+
+	token_ep_delim_kleene_dollar : MACRO .  (reduce by rule 397)
+
+
+
+	.	reduce by rule 397
+
+
+state 242:
+
+	token_ep_delim_kleene_dollar : FINAL .  (reduce by rule 396)
+
+
+
+	.	reduce by rule 396
+
+
+state 243:
+
+	token_ep_delim_kleene_dollar : DO .  (reduce by rule 395)
+
+
+
+	.	reduce by rule 395
+
+
+state 244:
+
+	token_ep_delim_kleene_dollar : BOX .  (reduce by rule 394)
+
+
+
+	.	reduce by rule 394
+
+
+state 245:
+
+	token_ep_delim_kleene_dollar : BECOME .  (reduce by rule 393)
+
+
+
+	.	reduce by rule 393
+
+
+state 246:
+
+	token_ep_delim_kleene_dollar : ABSTRACT .  (reduce by rule 392)
+
+
+
+	.	reduce by rule 392
+
+
+state 247:
+
+	token_ep_delim_kleene_dollar : DYN .  (reduce by rule 391)
+
+
+
+	.	reduce by rule 391
+
+
+state 248:
+
+	token_ep_delim_kleene_dollar : WHILE .  (reduce by rule 390)
+
+
+
+	.	reduce by rule 390
+
+
+state 249:
+
+	token_ep_delim_kleene_dollar : WHERE .  (reduce by rule 389)
+
+
+
+	.	reduce by rule 389
+
+
+state 250:
+
+	token_ep_delim_kleene_dollar : USE .  (reduce by rule 388)
+
+
+
+	.	reduce by rule 388
+
+
+state 251:
+
+	token_ep_delim_kleene_dollar : UNSAFE .  (reduce by rule 387)
+
+
+
+	.	reduce by rule 387
+
+
+state 252:
+
+	token_ep_delim_kleene_dollar : TYPE .  (reduce by rule 386)
+
+
+
+	.	reduce by rule 386
+
+
+state 253:
+
+	token_ep_delim_kleene_dollar : TRUE .  (reduce by rule 385)
+
+
+
+	.	reduce by rule 385
+
+
+state 254:
+
+	token_ep_delim_kleene_dollar : TRAIT .  (reduce by rule 384)
+
+
+
+	.	reduce by rule 384
+
+
+state 255:
+
+	token_ep_delim_kleene_dollar : SUPER .  (reduce by rule 383)
+
+
+
+	.	reduce by rule 383
+
+
+state 256:
+
+	token_ep_delim_kleene_dollar : STRUCT .  (reduce by rule 382)
+
+
+
+	.	reduce by rule 382
+
+
+state 257:
+
+	token_ep_delim_kleene_dollar : STATIC .  (reduce by rule 381)
+
+
+
+	.	reduce by rule 381
+
+
+state 258:
+
+	token_ep_delim_kleene_dollar : SELFTYPE .  (reduce by rule 380)
+
+
+
+	.	reduce by rule 380
+
+
+state 259:
+
+	token_ep_delim_kleene_dollar : SELFVALUE .  (reduce by rule 379)
+
+
+
+	.	reduce by rule 379
+
+
+state 260:
+
+	token_ep_delim_kleene_dollar : RETURN .  (reduce by rule 378)
 
 
 
 	.	reduce by rule 378
 
 
-state 221:
+state 261:
 
-	token_ep_delim_kleene_dollar : TUPLE_INDEX .  (reduce by rule 377)
+	token_ep_delim_kleene_dollar : REF .  (reduce by rule 377)
 
 
 
 	.	reduce by rule 377
 
 
-state 222:
+state 262:
 
-	token_ep_delim_kleene_dollar : INTEGER_LIT .  (reduce by rule 376)
+	token_ep_delim_kleene_dollar : PUB .  (reduce by rule 376)
 
 
 
 	.	reduce by rule 376
 
 
-state 223:
+state 263:
 
-	token_ep_delim_kleene_dollar : RAW_BYTE_STR_LIT .  (reduce by rule 375)
+	token_ep_delim_kleene_dollar : MUT .  (reduce by rule 375)
 
 
 
 	.	reduce by rule 375
 
 
-state 224:
+state 264:
 
-	token_ep_delim_kleene_dollar : BYTE_STR_LIT .  (reduce by rule 374)
+	token_ep_delim_kleene_dollar : MOVE .  (reduce by rule 374)
 
 
 
 	.	reduce by rule 374
 
 
-state 225:
+state 265:
 
-	token_ep_delim_kleene_dollar : BYTE_LIT .  (reduce by rule 373)
+	token_ep_delim_kleene_dollar : MOD .  (reduce by rule 373)
 
 
 
 	.	reduce by rule 373
 
 
-state 226:
+state 266:
 
-	token_ep_delim_kleene_dollar : RAW_STR_LIT .  (reduce by rule 372)
+	token_ep_delim_kleene_dollar : MATCH .  (reduce by rule 372)
 
 
 
 	.	reduce by rule 372
 
 
-state 227:
+state 267:
 
-	token_ep_delim_kleene_dollar : STR_LIT .  (reduce by rule 371)
+	token_ep_delim_kleene_dollar : LOOP .  (reduce by rule 371)
 
 
 
 	.	reduce by rule 371
 
 
-state 228:
+state 268:
 
-	token_ep_delim_kleene_dollar : CHAR_LIT .  (reduce by rule 370)
+	token_ep_delim_kleene_dollar : LET .  (reduce by rule 370)
 
 
 
 	.	reduce by rule 370
 
 
-state 229:
+state 269:
 
-	token_ep_delim_kleene_dollar : IDENT .  (reduce by rule 369)
+	token_ep_delim_kleene_dollar : IN .  (reduce by rule 369)
 
 
 
 	.	reduce by rule 369
 
 
-state 230:
+state 270:
 
-	token_ep_delim_kleene_dollar : STATICLIFETIME .  (reduce by rule 368)
+	token_ep_delim_kleene_dollar : IMPL .  (reduce by rule 368)
 
 
 
 	.	reduce by rule 368
 
 
-state 231:
+state 271:
 
-	token_ep_delim_kleene_dollar : UNION .  (reduce by rule 367)
+	token_ep_delim_kleene_dollar : IF .  (reduce by rule 367)
 
 
 
 	.	reduce by rule 367
 
 
-state 232:
+state 272:
 
-	token_ep_delim_kleene_dollar : TRY .  (reduce by rule 366)
+	token_ep_delim_kleene_dollar : FOR .  (reduce by rule 366)
 
 
 
 	.	reduce by rule 366
 
 
-state 233:
+state 273:
 
-	token_ep_delim_kleene_dollar : AWAIT .  (reduce by rule 365)
+	token_ep_delim_kleene_dollar : FN .  (reduce by rule 365)
 
 
 
 	.	reduce by rule 365
 
 
-state 234:
+state 274:
 
-	token_ep_delim_kleene_dollar : ASYNC .  (reduce by rule 364)
+	token_ep_delim_kleene_dollar : FALSE .  (reduce by rule 364)
 
 
 
 	.	reduce by rule 364
 
 
-state 235:
+state 275:
 
-	token_ep_delim_kleene_dollar : YIELD .  (reduce by rule 363)
+	token_ep_delim_kleene_dollar : EXTERN .  (reduce by rule 363)
 
 
 
 	.	reduce by rule 363
 
 
-state 236:
+state 276:
 
-	token_ep_delim_kleene_dollar : VIRTUAL .  (reduce by rule 362)
+	token_ep_delim_kleene_dollar : ENUM .  (reduce by rule 362)
 
 
 
 	.	reduce by rule 362
 
 
-state 237:
+state 277:
 
-	token_ep_delim_kleene_dollar : UNSIZED .  (reduce by rule 361)
+	token_ep_delim_kleene_dollar : ELSE .  (reduce by rule 361)
 
 
 
 	.	reduce by rule 361
 
 
-state 238:
+state 278:
 
-	token_ep_delim_kleene_dollar : TYPEOF .  (reduce by rule 360)
+	token_ep_delim_kleene_dollar : CRATE .  (reduce by rule 360)
 
 
 
 	.	reduce by rule 360
 
 
-state 239:
+state 279:
 
-	token_ep_delim_kleene_dollar : PRIV .  (reduce by rule 359)
+	token_ep_delim_kleene_dollar : CONTINUE .  (reduce by rule 359)
 
 
 
 	.	reduce by rule 359
 
 
-state 240:
+state 280:
 
-	token_ep_delim_kleene_dollar : OVERRIDE .  (reduce by rule 358)
+	token_ep_delim_kleene_dollar : CONST .  (reduce by rule 358)
 
 
 
 	.	reduce by rule 358
 
 
-state 241:
+state 281:
 
-	token_ep_delim_kleene_dollar : MACRO .  (reduce by rule 357)
+	token_ep_delim_kleene_dollar : BREAK .  (reduce by rule 357)
 
 
 
 	.	reduce by rule 357
 
 
-state 242:
+state 282:
 
-	token_ep_delim_kleene_dollar : FINAL .  (reduce by rule 356)
+	token_ep_delim_kleene_dollar : AS .  (reduce by rule 356)
 
 
 
 	.	reduce by rule 356
-
-
-state 243:
-
-	token_ep_delim_kleene_dollar : DO .  (reduce by rule 355)
-
-
-
-	.	reduce by rule 355
-
-
-state 244:
-
-	token_ep_delim_kleene_dollar : BOX .  (reduce by rule 354)
-
-
-
-	.	reduce by rule 354
-
-
-state 245:
-
-	token_ep_delim_kleene_dollar : BECOME .  (reduce by rule 353)
-
-
-
-	.	reduce by rule 353
-
-
-state 246:
-
-	token_ep_delim_kleene_dollar : ABSTRACT .  (reduce by rule 352)
-
-
-
-	.	reduce by rule 352
-
-
-state 247:
-
-	token_ep_delim_kleene_dollar : DYN .  (reduce by rule 351)
-
-
-
-	.	reduce by rule 351
-
-
-state 248:
-
-	token_ep_delim_kleene_dollar : WHILE .  (reduce by rule 350)
-
-
-
-	.	reduce by rule 350
-
-
-state 249:
-
-	token_ep_delim_kleene_dollar : WHERE .  (reduce by rule 349)
-
-
-
-	.	reduce by rule 349
-
-
-state 250:
-
-	token_ep_delim_kleene_dollar : USE .  (reduce by rule 348)
-
-
-
-	.	reduce by rule 348
-
-
-state 251:
-
-	token_ep_delim_kleene_dollar : UNSAFE .  (reduce by rule 347)
-
-
-
-	.	reduce by rule 347
-
-
-state 252:
-
-	token_ep_delim_kleene_dollar : TYPE .  (reduce by rule 346)
-
-
-
-	.	reduce by rule 346
-
-
-state 253:
-
-	token_ep_delim_kleene_dollar : TRUE .  (reduce by rule 345)
-
-
-
-	.	reduce by rule 345
-
-
-state 254:
-
-	token_ep_delim_kleene_dollar : TRAIT .  (reduce by rule 344)
-
-
-
-	.	reduce by rule 344
-
-
-state 255:
-
-	token_ep_delim_kleene_dollar : SUPER .  (reduce by rule 343)
-
-
-
-	.	reduce by rule 343
-
-
-state 256:
-
-	token_ep_delim_kleene_dollar : STRUCT .  (reduce by rule 342)
-
-
-
-	.	reduce by rule 342
-
-
-state 257:
-
-	token_ep_delim_kleene_dollar : STATIC .  (reduce by rule 341)
-
-
-
-	.	reduce by rule 341
-
-
-state 258:
-
-	token_ep_delim_kleene_dollar : SELFTYPE .  (reduce by rule 340)
-
-
-
-	.	reduce by rule 340
-
-
-state 259:
-
-	token_ep_delim_kleene_dollar : SELFVALUE .  (reduce by rule 339)
-
-
-
-	.	reduce by rule 339
-
-
-state 260:
-
-	token_ep_delim_kleene_dollar : RETURN .  (reduce by rule 338)
-
-
-
-	.	reduce by rule 338
-
-
-state 261:
-
-	token_ep_delim_kleene_dollar : REF .  (reduce by rule 337)
-
-
-
-	.	reduce by rule 337
-
-
-state 262:
-
-	token_ep_delim_kleene_dollar : PUB .  (reduce by rule 336)
-
-
-
-	.	reduce by rule 336
-
-
-state 263:
-
-	token_ep_delim_kleene_dollar : MUT .  (reduce by rule 335)
-
-
-
-	.	reduce by rule 335
-
-
-state 264:
-
-	token_ep_delim_kleene_dollar : MOVE .  (reduce by rule 334)
-
-
-
-	.	reduce by rule 334
-
-
-state 265:
-
-	token_ep_delim_kleene_dollar : MOD .  (reduce by rule 333)
-
-
-
-	.	reduce by rule 333
-
-
-state 266:
-
-	token_ep_delim_kleene_dollar : MATCH .  (reduce by rule 332)
-
-
-
-	.	reduce by rule 332
-
-
-state 267:
-
-	token_ep_delim_kleene_dollar : LOOP .  (reduce by rule 331)
-
-
-
-	.	reduce by rule 331
-
-
-state 268:
-
-	token_ep_delim_kleene_dollar : LET .  (reduce by rule 330)
-
-
-
-	.	reduce by rule 330
-
-
-state 269:
-
-	token_ep_delim_kleene_dollar : IN .  (reduce by rule 329)
-
-
-
-	.	reduce by rule 329
-
-
-state 270:
-
-	token_ep_delim_kleene_dollar : IMPL .  (reduce by rule 328)
-
-
-
-	.	reduce by rule 328
-
-
-state 271:
-
-	token_ep_delim_kleene_dollar : IF .  (reduce by rule 327)
-
-
-
-	.	reduce by rule 327
-
-
-state 272:
-
-	token_ep_delim_kleene_dollar : FOR .  (reduce by rule 326)
-
-
-
-	.	reduce by rule 326
-
-
-state 273:
-
-	token_ep_delim_kleene_dollar : FN .  (reduce by rule 325)
-
-
-
-	.	reduce by rule 325
-
-
-state 274:
-
-	token_ep_delim_kleene_dollar : FALSE .  (reduce by rule 324)
-
-
-
-	.	reduce by rule 324
-
-
-state 275:
-
-	token_ep_delim_kleene_dollar : EXTERN .  (reduce by rule 323)
-
-
-
-	.	reduce by rule 323
-
-
-state 276:
-
-	token_ep_delim_kleene_dollar : ENUM .  (reduce by rule 322)
-
-
-
-	.	reduce by rule 322
-
-
-state 277:
-
-	token_ep_delim_kleene_dollar : ELSE .  (reduce by rule 321)
-
-
-
-	.	reduce by rule 321
-
-
-state 278:
-
-	token_ep_delim_kleene_dollar : CRATE .  (reduce by rule 320)
-
-
-
-	.	reduce by rule 320
-
-
-state 279:
-
-	token_ep_delim_kleene_dollar : CONTINUE .  (reduce by rule 319)
-
-
-
-	.	reduce by rule 319
-
-
-state 280:
-
-	token_ep_delim_kleene_dollar : CONST .  (reduce by rule 318)
-
-
-
-	.	reduce by rule 318
-
-
-state 281:
-
-	token_ep_delim_kleene_dollar : BREAK .  (reduce by rule 317)
-
-
-
-	.	reduce by rule 317
-
-
-state 282:
-
-	token_ep_delim_kleene_dollar : AS .  (reduce by rule 316)
-
-
-
-	.	reduce by rule 316
 
 
 state 283:
@@ -5073,10 +5073,16 @@ state 363:
 
 	item_type : STATIC IDENT COLON types EQ . expression SEMI 
 
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
 
-	outer_attrs	goto 438
-	expression	goto 437
-	exp_without_block	goto 436
+	outer_attrs	goto 439
+	expression	goto 438
+	exp_without_block	goto 437
+	op_exp	goto 436
 
 	.	reduce by rule 68
 
@@ -5085,7 +5091,7 @@ state 364:
 
 	item_type : STATIC MUT IDENT COLON types . EQ expression SEMI 
 
-	EQ	shift 439
+	EQ	shift 445
 
 
 	.	error
@@ -5111,7 +5117,7 @@ state 366:
 	CARET	shift 16
 	PATHSEP	shift 15
 	DOLLAR	shift 14
-	RBRACE	shift 440
+	RBRACE	shift 446
 
 	outer_attrs	goto 13
 	simple_path	goto 12
@@ -5131,7 +5137,7 @@ state 367:
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 441
+	maybe_where_clause	goto 447
 
 	.	reduce by rule 94
 
@@ -5141,7 +5147,7 @@ state 368:
 	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE . inner_attrs inherent_impl_items RBRACE 
 
 
-	inner_attrs	goto 442
+	inner_attrs	goto 448
 
 	.	reduce by rule 66
 
@@ -5152,7 +5158,7 @@ state 369:
 
 	IDENT	shift 310
 
-	types	goto 443
+	types	goto 449
 
 	.	error
 
@@ -5171,8 +5177,8 @@ state 371:
 	maybe_colon_lifetime_bounds : COLON . lifetime_bounds 
 
 
-	lifetime_bounds	goto 445
-	lifetime_bounds_expansion	goto 444
+	lifetime_bounds	goto 451
+	lifetime_bounds_expansion	goto 450
 
 	.	reduce by rule 247
 
@@ -5182,7 +5188,7 @@ state 372:
 	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds .  (reduce by rule 124)
 	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds . EQ types 
 
-	EQ	shift 446
+	EQ	shift 452
 
 
 	.	reduce by rule 124
@@ -5214,7 +5220,7 @@ state 375:
 	generic_params : lifetime_params COMMA type_params . COMMA 
 	type_params : type_params . COMMA type_param 
 
-	COMMA	shift 447
+	COMMA	shift 453
 
 
 	.	reduce by rule 114
@@ -5234,10 +5240,10 @@ state 377:
 	extern_block : EXTERN maybe_abi LBRACE inner_attrs external_items . RBRACE 
 	external_items : external_items . external_item 
 
-	RBRACE	shift 450
+	RBRACE	shift 456
 
-	outer_attrs	goto 449
-	external_item	goto 448
+	outer_attrs	goto 455
+	external_item	goto 454
 
 	.	reduce by rule 68
 
@@ -5246,7 +5252,7 @@ state 378:
 
 	item_type : EXTERN CARET IDENT AS IDENT . SEMI 
 
-	SEMI	shift 451
+	SEMI	shift 457
 
 
 	.	error
@@ -5260,10 +5266,10 @@ state 379:
 	POUND	reduce by rule 68
 	RBRACE	reduce by rule 203
 
-	outer_attrs	goto 455
-	enum_items	goto 454
-	maybe_enum_items	goto 453
-	enum_item	goto 452
+	outer_attrs	goto 461
+	enum_items	goto 460
+	maybe_enum_items	goto 459
+	enum_item	goto 458
 
 	.	error
 
@@ -5272,10 +5278,16 @@ state 380:
 
 	constant_item : CONST IDENT COLON types EQ . expression SEMI 
 
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
 
-	outer_attrs	goto 438
-	expression	goto 456
-	exp_without_block	goto 436
+	outer_attrs	goto 439
+	expression	goto 462
+	exp_without_block	goto 437
+	op_exp	goto 436
 
 	.	reduce by rule 68
 
@@ -5311,7 +5323,7 @@ state 382:
 	DOLLAR	shift 14
 
 	meta_item	goto 146
-	meta_item_inner	goto 457
+	meta_item_inner	goto 463
 	simple_path	goto 53
 	simple_path_segment	goto 11
 	lit_exp_without_suffix	goto 143
@@ -5375,7 +5387,7 @@ state 388:
 	LBRACKET	shift 289
 	LPARENT	shift 288
 
-	macro_rule	goto 458
+	macro_rule	goto 464
 	macro_matcher	goto 285
 
 	.	reduce by rule 23
@@ -5432,8 +5444,8 @@ state 394:
 	macro_match : DOLLAR . LPARENT macro_match macro_matches RPARENT macro_kleene_op 
 	macro_match : DOLLAR . LPARENT macro_match macro_matches RPARENT macro_rep_sep macro_kleene_op 
 
-	IDENT	shift 460
-	LPARENT	shift 459
+	IDENT	shift 466
+	LPARENT	shift 465
 
 
 	.	error
@@ -5470,7 +5482,7 @@ state 398:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_colon_type_bounds maybe_where_clause . LBRACE trait_items RBRACE 
 
-	LBRACE	shift 461
+	LBRACE	shift 467
 
 
 	.	error
@@ -5491,7 +5503,7 @@ state 400:
 
 	IDENT	shift 305
 
-	type_path	goto 462
+	type_path	goto 468
 
 	.	error
 
@@ -5528,7 +5540,7 @@ state 404:
 	type_param_bounds : type_param_bounds_expansion .  (reduce by rule 239)
 	type_param_bounds_expansion : type_param_bounds_expansion . PLUS type_param_bound 
 
-	PLUS	shift 463
+	PLUS	shift 469
 
 
 	.	reduce by rule 239
@@ -5549,10 +5561,10 @@ state 406:
 	trait_bound : LPARENT . QUESTION maybe_for_lifetimes type_path RPARENT 
 
 	FOR	shift 410
-	QUESTION	shift 465
+	QUESTION	shift 471
 
 	for_lifetimes	goto 420
-	maybe_for_lifetimes	goto 464
+	maybe_for_lifetimes	goto 470
 
 	.	reduce by rule 106
 
@@ -5564,7 +5576,7 @@ state 407:
 	FOR	shift 410
 
 	for_lifetimes	goto 420
-	maybe_for_lifetimes	goto 466
+	maybe_for_lifetimes	goto 472
 
 	.	reduce by rule 106
 
@@ -5592,7 +5604,7 @@ state 410:
 	for_lifetimes : FOR . LT lifetime_params GT 
 	for_lifetimes : FOR . LT GT 
 
-	LT	shift 467
+	LT	shift 473
 
 
 	.	error
@@ -5603,7 +5615,7 @@ state 411:
 	func_parameters : func_param . func_parameters_expansion maybe_comma 
 
 
-	func_parameters_expansion	goto 468
+	func_parameters_expansion	goto 474
 
 	.	reduce by rule 180
 
@@ -5612,7 +5624,7 @@ state 412:
 
 	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters . RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
-	RPARENT	shift 469
+	RPARENT	shift 475
 
 
 	.	error
@@ -5631,7 +5643,7 @@ state 414:
 
 	func_param : patterns . COLON types 
 
-	COLON	shift 470
+	COLON	shift 476
 
 
 	.	error
@@ -5651,7 +5663,7 @@ state 416:
 	struct_fields : struct_field . struct_fields_expansion maybe_comma 
 
 
-	struct_fields_expansion	goto 471
+	struct_fields_expansion	goto 477
 
 	.	reduce by rule 191
 
@@ -5660,7 +5672,7 @@ state 417:
 
 	item_type : UNION IDENT maybe_generics maybe_where_clause LBRACE struct_fields . RBRACE 
 
-	RBRACE	shift 472
+	RBRACE	shift 478
 
 
 	.	error
@@ -5673,11 +5685,11 @@ state 418:
 	struct_field : outer_attrs . IDENT COLON types 
 
 	PUB	shift 45
-	IDENT	shift 474
+	IDENT	shift 480
 	POUND	shift 38
 
 	outer_attr	goto 37
-	visibility	goto 473
+	visibility	goto 479
 
 	.	error
 
@@ -5688,7 +5700,7 @@ state 419:
 
 	IDENT	shift 310
 
-	types	goto 475
+	types	goto 481
 
 	.	error
 
@@ -5706,7 +5718,7 @@ state 421:
 
 	lifetime_where_clause_item : lifetime . COLON lifetime_bounds 
 
-	COLON	shift 476
+	COLON	shift 482
 
 
 	.	error
@@ -5735,7 +5747,7 @@ state 424:
 	where_clause : WHERE where_clause_expansion where_clause_item .  (reduce by rule 96)
 	where_clause_expansion : where_clause_expansion where_clause_item . COMMA 
 
-	COMMA	shift 477
+	COMMA	shift 483
 
 
 	.	reduce by rule 96
@@ -5766,7 +5778,7 @@ state 427:
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 478
+	maybe_where_clause	goto 484
 
 	.	reduce by rule 94
 
@@ -5777,7 +5789,7 @@ state 428:
 
 	IDENT	shift 310
 
-	types	goto 479
+	types	goto 485
 
 	.	error
 
@@ -5786,7 +5798,7 @@ state 429:
 
 	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ types . SEMI 
 
-	SEMI	shift 480
+	SEMI	shift 486
 
 
 	.	error
@@ -5796,7 +5808,7 @@ state 430:
 
 	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields . RBRACE 
 
-	RBRACE	shift 481
+	RBRACE	shift 487
 
 
 	.	error
@@ -5818,7 +5830,7 @@ state 432:
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 482
+	maybe_where_clause	goto 488
 
 	.	reduce by rule 94
 
@@ -5828,9 +5840,9 @@ state 433:
 	tuple_fields : tuple_field tuple_fields_expansion . maybe_comma 
 	tuple_fields_expansion : tuple_fields_expansion . COMMA tuple_field 
 
-	COMMA	shift 484
+	COMMA	shift 490
 
-	maybe_comma	goto 483
+	maybe_comma	goto 489
 
 	.	reduce by rule 130
 
@@ -5850,12 +5862,21 @@ state 435:
 
 	IDENT	shift 310
 
-	types	goto 485
+	types	goto 491
 
 	.	error
 
 
 state 436:
+
+	exp_without_block : op_exp .  (reduce by rule 301)
+
+
+
+	.	reduce by rule 301
+
+
+state 437:
 
 	expression : exp_without_block .  (reduce by rule 299)
 
@@ -5864,17 +5885,79 @@ state 436:
 	.	reduce by rule 299
 
 
-state 437:
+state 438:
 
 	item_type : STATIC IDENT COLON types EQ expression . SEMI 
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
 
-	SEMI	shift 486
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+	SEMI	shift 493
+	QUESTION	shift 492
 
 
 	.	error
 
 
-state 438:
+state 439:
 
 	outer_attrs : outer_attrs . outer_attr 
 	exp_without_block : outer_attrs . lit_exp 
@@ -5887,32 +5970,132 @@ state 438:
 	BYTE_LIT	shift 152
 	BYTE_STR_LIT	shift 151
 	RAW_BYTE_STR_LIT	shift 150
-	INTEGER_LIT	shift 490
-	FLOAT_LIT	shift 489
+	INTEGER_LIT	shift 527
+	FLOAT_LIT	shift 526
 	POUND	shift 38
 
 	outer_attr	goto 37
-	lit_exp_without_suffix	goto 488
-	lit_exp	goto 487
+	lit_exp_without_suffix	goto 525
+	lit_exp	goto 524
 	str_lit	goto 142
 	bool_lit	goto 141
 
 	.	error
 
 
-state 439:
+state 440:
 
-	item_type : STATIC MUT IDENT COLON types EQ . expression SEMI 
+	op_exp : ANDAND . expression 
+	op_exp : ANDAND . MUT expression 
 
+	MUT	shift 529
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
 
-	outer_attrs	goto 438
-	expression	goto 491
-	exp_without_block	goto 436
+	outer_attrs	goto 439
+	expression	goto 528
+	exp_without_block	goto 437
+	op_exp	goto 436
 
 	.	reduce by rule 68
 
 
-state 440:
+state 441:
+
+	op_exp : AND . expression 
+	op_exp : AND . MUT expression 
+
+	MUT	shift 531
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 530
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 442:
+
+	op_exp : NOT . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 532
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 443:
+
+	op_exp : STAR . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 533
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 444:
+
+	op_exp : MINUS . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 534
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 445:
+
+	item_type : STATIC MUT IDENT COLON types EQ . expression SEMI 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 535
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 446:
 
 	item_type : MOD IDENT LBRACE inner_attrs items RBRACE .  (reduce by rule 140)
 
@@ -5921,17 +6104,17 @@ state 440:
 	.	reduce by rule 140
 
 
-state 441:
+state 447:
 
 	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
 
-	LBRACE	shift 492
+	LBRACE	shift 536
 
 
 	.	error
 
 
-state 442:
+state 448:
 
 	inner_attrs : inner_attrs . inner_attr 
 	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs . inherent_impl_items RBRACE 
@@ -5939,24 +6122,24 @@ state 442:
 	SHEBANG	shift 5
 
 	inner_attr	goto 3
-	inherent_impl_items	goto 493
+	inherent_impl_items	goto 537
 
 	.	reduce by rule 264
 
 
-state 443:
+state 449:
 
 	trait_impl : IMPL maybe_generics NOT type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 494
+	maybe_where_clause	goto 538
 
 	.	reduce by rule 94
 
 
-state 444:
+state 450:
 
 	lifetime_bounds : lifetime_bounds_expansion .  (reduce by rule 244)
 	lifetime_bounds : lifetime_bounds_expansion . lifetime 
@@ -5965,12 +6148,12 @@ state 444:
 	STATICLIFETIME	shift 409
 	LIFETIME_OR_LABEL	shift 408
 
-	lifetime	goto 495
+	lifetime	goto 539
 
 	.	reduce by rule 244
 
 
-state 445:
+state 451:
 
 	maybe_colon_lifetime_bounds : COLON lifetime_bounds .  (reduce by rule 122)
 
@@ -5979,18 +6162,18 @@ state 445:
 	.	reduce by rule 122
 
 
-state 446:
+state 452:
 
 	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds EQ . types 
 
 	IDENT	shift 310
 
-	types	goto 496
+	types	goto 540
 
 	.	error
 
 
-state 447:
+state 453:
 
 	generic_params : lifetime_params COMMA type_params COMMA .  (reduce by rule 115)
 	type_params : type_params COMMA . type_param 
@@ -6006,7 +6189,7 @@ state 447:
 	.	error
 
 
-state 448:
+state 454:
 
 	external_items : external_items external_item .  (reduce by rule 282)
 
@@ -6015,7 +6198,7 @@ state 448:
 	.	reduce by rule 282
 
 
-state 449:
+state 455:
 
 	outer_attrs : outer_attrs . outer_attr 
 	external_item : outer_attrs . maybe_visibility external_static_item 
@@ -6025,13 +6208,13 @@ state 449:
 	POUND	shift 38
 
 	outer_attr	goto 37
-	visibility	goto 498
-	maybe_visibility	goto 497
+	visibility	goto 542
+	maybe_visibility	goto 541
 
 	.	reduce by rule 47
 
 
-state 450:
+state 456:
 
 	extern_block : EXTERN maybe_abi LBRACE inner_attrs external_items RBRACE .  (reduce by rule 281)
 
@@ -6040,7 +6223,7 @@ state 450:
 	.	reduce by rule 281
 
 
-state 451:
+state 457:
 
 	item_type : EXTERN CARET IDENT AS IDENT SEMI .  (reduce by rule 142)
 
@@ -6049,27 +6232,27 @@ state 451:
 	.	reduce by rule 142
 
 
-state 452:
+state 458:
 
 	enum_items : enum_item . enum_items_expansion maybe_comma 
 
 
-	enum_items_expansion	goto 499
+	enum_items_expansion	goto 543
 
 	.	reduce by rule 206
 
 
-state 453:
+state 459:
 
 	item_type : ENUM IDENT maybe_generics maybe_where_clause LBRACE maybe_enum_items . RBRACE 
 
-	RBRACE	shift 500
+	RBRACE	shift 544
 
 
 	.	error
 
 
-state 454:
+state 460:
 
 	maybe_enum_items : enum_items .  (reduce by rule 202)
 
@@ -6078,7 +6261,7 @@ state 454:
 	.	reduce by rule 202
 
 
-state 455:
+state 461:
 
 	outer_attrs : outer_attrs . outer_attr 
 	enum_item : outer_attrs . IDENT enum_item_tuple 
@@ -6086,7 +6269,7 @@ state 455:
 	enum_item : outer_attrs . IDENT enum_item_discriminant 
 	enum_item : outer_attrs . IDENT 
 
-	IDENT	shift 501
+	IDENT	shift 545
 	POUND	shift 38
 
 	outer_attr	goto 37
@@ -6094,27 +6277,89 @@ state 455:
 	.	error
 
 
-state 456:
+state 462:
 
 	constant_item : CONST IDENT COLON types EQ expression . SEMI 
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
 
-	SEMI	shift 502
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+	SEMI	shift 546
+	QUESTION	shift 492
 
 
 	.	error
 
 
-state 457:
+state 463:
 
 	meta_seq_expansion : LPARENT COMMA meta_item_inner . RPARENT meta_seq_expansion 
 
-	RPARENT	shift 503
+	RPARENT	shift 547
 
 
 	.	error
 
 
-state 458:
+state 464:
 
 	macro_rules_expansion : macro_rules_expansion SEMI macro_rule .  (reduce by rule 25)
 
@@ -6123,7 +6368,7 @@ state 458:
 	.	reduce by rule 25
 
 
-state 459:
+state 465:
 
 	macro_match : DOLLAR LPARENT . macro_match macro_matches RPARENT macro_kleene_op 
 	macro_match : DOLLAR LPARENT . macro_match macro_matches RPARENT macro_rep_sep macro_kleene_op 
@@ -6248,34 +6493,34 @@ state 459:
 	SHEBANG	shift 164
 
 	macro_matcher	goto 392
-	macro_match	goto 504
+	macro_match	goto 548
 	token_ep_delim_dollar	goto 390
 	token_ep_delim_kleene_dollar	goto 159
 
 	.	error
 
 
-state 460:
+state 466:
 
 	macro_match : DOLLAR IDENT . COLON macro_frag_spec 
 
-	COLON	shift 505
+	COLON	shift 549
 
 
 	.	error
 
 
-state 461:
+state 467:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_colon_type_bounds maybe_where_clause LBRACE . trait_items RBRACE 
 
 
-	trait_items	goto 506
+	trait_items	goto 550
 
 	.	reduce by rule 215
 
 
-state 462:
+state 468:
 
 	trait_bound : for_lifetimes type_path .  (reduce by rule 253)
 
@@ -6284,7 +6529,7 @@ state 462:
 	.	reduce by rule 253
 
 
-state 463:
+state 469:
 
 	type_param_bounds_expansion : type_param_bounds_expansion PLUS . type_param_bound 
 
@@ -6295,7 +6540,7 @@ state 463:
 	QUESTION	shift 407
 	LPARENT	shift 406
 
-	type_param_bound	goto 507
+	type_param_bound	goto 551
 	lifetime	goto 402
 	trait_bound	goto 401
 	for_lifetimes	goto 400
@@ -6304,104 +6549,104 @@ state 463:
 	.	error
 
 
-state 464:
+state 470:
 
 	trait_bound : LPARENT maybe_for_lifetimes . type_path RPARENT 
 
 	IDENT	shift 305
 
-	type_path	goto 508
-
-	.	error
-
-
-state 465:
-
-	trait_bound : LPARENT QUESTION . maybe_for_lifetimes type_path RPARENT 
-
-	FOR	shift 410
-
-	for_lifetimes	goto 420
-	maybe_for_lifetimes	goto 509
-
-	.	reduce by rule 106
-
-
-state 466:
-
-	trait_bound : QUESTION maybe_for_lifetimes . type_path 
-
-	IDENT	shift 305
-
-	type_path	goto 510
-
-	.	error
-
-
-state 467:
-
-	for_lifetimes : FOR LT . lifetime_params GT 
-	for_lifetimes : FOR LT . GT 
-
-	GT	shift 513
-	POUND	shift 38
-
-	outer_attr	goto 134
-	lifetime_params	goto 512
-	lifetime_param	goto 131
-	maybe_outer_attr	goto 511
-
-	.	reduce by rule 70
-
-
-state 468:
-
-	func_parameters : func_param func_parameters_expansion . maybe_comma 
-	func_parameters_expansion : func_parameters_expansion . COMMA func_param 
-
-	COMMA	shift 515
-
-	maybe_comma	goto 514
-
-	.	reduce by rule 130
-
-
-state 469:
-
-	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT . maybe_func_return_type maybe_where_clause block_exp 
-
-	RARROW	shift 518
-
-	func_return_type	goto 517
-	maybe_func_return_type	goto 516
-
-	.	reduce by rule 183
-
-
-state 470:
-
-	func_param : patterns COLON . types 
-
-	IDENT	shift 310
-
-	types	goto 519
+	type_path	goto 552
 
 	.	error
 
 
 state 471:
 
-	struct_fields : struct_field struct_fields_expansion . maybe_comma 
-	struct_fields_expansion : struct_fields_expansion . COMMA struct_field 
+	trait_bound : LPARENT QUESTION . maybe_for_lifetimes type_path RPARENT 
 
-	COMMA	shift 521
+	FOR	shift 410
 
-	maybe_comma	goto 520
+	for_lifetimes	goto 420
+	maybe_for_lifetimes	goto 553
+
+	.	reduce by rule 106
+
+
+state 472:
+
+	trait_bound : QUESTION maybe_for_lifetimes . type_path 
+
+	IDENT	shift 305
+
+	type_path	goto 554
+
+	.	error
+
+
+state 473:
+
+	for_lifetimes : FOR LT . lifetime_params GT 
+	for_lifetimes : FOR LT . GT 
+
+	GT	shift 557
+	POUND	shift 38
+
+	outer_attr	goto 134
+	lifetime_params	goto 556
+	lifetime_param	goto 131
+	maybe_outer_attr	goto 555
+
+	.	reduce by rule 70
+
+
+state 474:
+
+	func_parameters : func_param func_parameters_expansion . maybe_comma 
+	func_parameters_expansion : func_parameters_expansion . COMMA func_param 
+
+	COMMA	shift 559
+
+	maybe_comma	goto 558
 
 	.	reduce by rule 130
 
 
-state 472:
+state 475:
+
+	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT . maybe_func_return_type maybe_where_clause block_exp 
+
+	RARROW	shift 562
+
+	func_return_type	goto 561
+	maybe_func_return_type	goto 560
+
+	.	reduce by rule 183
+
+
+state 476:
+
+	func_param : patterns COLON . types 
+
+	IDENT	shift 310
+
+	types	goto 563
+
+	.	error
+
+
+state 477:
+
+	struct_fields : struct_field struct_fields_expansion . maybe_comma 
+	struct_fields_expansion : struct_fields_expansion . COMMA struct_field 
+
+	COMMA	shift 565
+
+	maybe_comma	goto 564
+
+	.	reduce by rule 130
+
+
+state 478:
 
 	item_type : UNION IDENT maybe_generics maybe_where_clause LBRACE struct_fields RBRACE .  (reduce by rule 149)
 
@@ -6410,48 +6655,48 @@ state 472:
 	.	reduce by rule 149
 
 
-state 473:
+state 479:
 
 	struct_field : outer_attrs visibility . IDENT COLON types 
 
-	IDENT	shift 522
+	IDENT	shift 566
 
 
 	.	error
 
 
-state 474:
+state 480:
 
 	struct_field : outer_attrs IDENT . COLON types 
 
-	COLON	shift 523
+	COLON	shift 567
 
 
 	.	error
 
 
-state 475:
+state 481:
 
 	type_bound_where_clause_item : maybe_for_lifetimes types . COLON maybe_type_param_bounds 
 
-	COLON	shift 524
+	COLON	shift 568
 
 
 	.	error
 
 
-state 476:
+state 482:
 
 	lifetime_where_clause_item : lifetime COLON . lifetime_bounds 
 
 
-	lifetime_bounds	goto 525
-	lifetime_bounds_expansion	goto 444
+	lifetime_bounds	goto 569
+	lifetime_bounds_expansion	goto 450
 
 	.	reduce by rule 247
 
 
-state 477:
+state 483:
 
 	where_clause_expansion : where_clause_expansion where_clause_item COMMA .  (reduce by rule 97)
 
@@ -6460,29 +6705,29 @@ state 477:
 	.	reduce by rule 97
 
 
-state 478:
+state 484:
 
 	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
 
-	LBRACE	shift 526
+	LBRACE	shift 570
 
 
 	.	error
 
 
-state 479:
+state 485:
 
 	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types . maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 527
+	maybe_where_clause	goto 571
 
 	.	reduce by rule 94
 
 
-state 480:
+state 486:
 
 	type_alias : TYPE IDENT maybe_generics maybe_where_clause EQ types SEMI .  (reduce by rule 157)
 
@@ -6491,7 +6736,7 @@ state 480:
 	.	reduce by rule 157
 
 
-state 481:
+state 487:
 
 	struct_struct : STRUCT IDENT maybe_generics maybe_where_clause LBRACE maybe_struct_fields RBRACE .  (reduce by rule 185)
 
@@ -6500,17 +6745,17 @@ state 481:
 	.	reduce by rule 185
 
 
-state 482:
+state 488:
 
 	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause . SEMI 
 
-	SEMI	shift 528
+	SEMI	shift 572
 
 
 	.	error
 
 
-state 483:
+state 489:
 
 	tuple_fields : tuple_field tuple_fields_expansion maybe_comma .  (reduce by rule 197)
 
@@ -6519,7 +6764,7 @@ state 483:
 	.	reduce by rule 197
 
 
-state 484:
+state 490:
 
 	maybe_comma : COMMA .  (reduce by rule 129)
 	tuple_fields_expansion : tuple_fields_expansion COMMA . tuple_field 
@@ -6530,12 +6775,12 @@ state 484:
 	RPARENT	reduce by rule 129
 
 	outer_attrs	goto 362
-	tuple_field	goto 529
+	tuple_field	goto 573
 
 	.	error
 
 
-state 485:
+state 491:
 
 	tuple_field : outer_attrs visibility types .  (reduce by rule 200)
 
@@ -6544,7 +6789,16 @@ state 485:
 	.	reduce by rule 200
 
 
-state 486:
+state 492:
+
+	op_exp : expression QUESTION .  (reduce by rule 322)
+
+
+
+	.	reduce by rule 322
+
+
+state 493:
 
 	item_type : STATIC IDENT COLON types EQ expression SEMI .  (reduce by rule 152)
 
@@ -6553,7 +6807,541 @@ state 486:
 	.	reduce by rule 152
 
 
-state 487:
+state 494:
+
+	op_exp : expression LE . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 574
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 495:
+
+	op_exp : expression GE . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 575
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 496:
+
+	op_exp : expression LT . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 576
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 497:
+
+	op_exp : expression GT . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 577
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 498:
+
+	op_exp : expression NE . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 578
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 499:
+
+	op_exp : expression EQEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 579
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 500:
+
+	op_exp : expression EQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 580
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 501:
+
+	op_exp : expression SHREQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 581
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 502:
+
+	op_exp : expression SHLEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 582
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 503:
+
+	op_exp : expression OREQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 583
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 504:
+
+	op_exp : expression ANDEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 584
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 505:
+
+	op_exp : expression CARETEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 585
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 506:
+
+	op_exp : expression PERCENTEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 586
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 507:
+
+	op_exp : expression SLASHEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 587
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 508:
+
+	op_exp : expression STAREQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 588
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 509:
+
+	op_exp : expression MINUSEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 589
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 510:
+
+	op_exp : expression PLUSEQ . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 590
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 511:
+
+	op_exp : expression SHR . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 591
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 512:
+
+	op_exp : expression SHL . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 592
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 513:
+
+	op_exp : expression OROR . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 593
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 514:
+
+	op_exp : expression ANDAND . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 594
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 515:
+
+	op_exp : expression OR . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 595
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 516:
+
+	op_exp : expression AND . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 596
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 517:
+
+	op_exp : expression CARET . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 597
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 518:
+
+	op_exp : expression PERCENT . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 598
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 519:
+
+	op_exp : expression SLASH . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 599
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 520:
+
+	op_exp : expression STAR . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 600
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 521:
+
+	op_exp : expression MINUS . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 601
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 522:
+
+	op_exp : expression PLUS . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 602
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 523:
+
+	op_exp : expression AS . type_no_bounds 
+
+	IDENT	shift 305
+
+	type_path	goto 604
+	type_no_bounds	goto 603
+
+	.	error
+
+
+state 524:
 
 	exp_without_block : outer_attrs lit_exp .  (reduce by rule 300)
 
@@ -6562,92 +7350,419 @@ state 487:
 	.	reduce by rule 300
 
 
-state 488:
+state 525:
 
-	lit_exp : lit_exp_without_suffix .  (reduce by rule 301)
-
-
-
-	.	reduce by rule 301
+	lit_exp : lit_exp_without_suffix .  (reduce by rule 302)
 
 
-state 489:
 
-	lit_exp_without_suffix : FLOAT_LIT .  (reduce by rule 309)
+	.	reduce by rule 302
+
+
+state 526:
+
+	lit_exp_without_suffix : FLOAT_LIT .  (reduce by rule 310)
 	lit_exp : FLOAT_LIT . FLOAT_SUFFIX 
 
-	FLOAT_SUFFIX	shift 530
+	FLOAT_SUFFIX	shift 605
+
+
+	.	reduce by rule 310
+
+
+state 527:
+
+	lit_exp_without_suffix : INTEGER_LIT .  (reduce by rule 309)
+	lit_exp : INTEGER_LIT . INTEGER_SUFFIX 
+
+	INTEGER_SUFFIX	shift 606
 
 
 	.	reduce by rule 309
 
 
-state 490:
+state 528:
 
-	lit_exp_without_suffix : INTEGER_LIT .  (reduce by rule 308)
-	lit_exp : INTEGER_LIT . INTEGER_SUFFIX 
+	op_exp : ANDAND expression .  (reduce by rule 318)
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
 
-	INTEGER_SUFFIX	shift 531
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
 
 
-	.	reduce by rule 308
+	.	reduce by rule 318
 
 
-state 491:
+state 529:
 
-	item_type : STATIC MUT IDENT COLON types EQ expression . SEMI 
+	op_exp : ANDAND MUT . expression 
 
-	SEMI	shift 532
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
 
-
-	.	error
-
-
-state 492:
-
-	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
-
-
-	inner_attrs	goto 533
-
-	.	reduce by rule 66
-
-
-state 493:
-
-	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs inherent_impl_items . RBRACE 
-	inherent_impl_items : inherent_impl_items . inherent_impl_item 
-
-	RBRACE	shift 536
-
-	outer_attrs	goto 535
-	inherent_impl_item	goto 534
+	outer_attrs	goto 439
+	expression	goto 607
+	exp_without_block	goto 437
+	op_exp	goto 436
 
 	.	reduce by rule 68
 
 
-state 494:
+state 530:
 
-	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
+	op_exp : AND expression .  (reduce by rule 317)
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
 
-	LBRACE	shift 537
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 317
+
+
+state 531:
+
+	op_exp : AND MUT . expression 
+
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
+
+	outer_attrs	goto 439
+	expression	goto 608
+	exp_without_block	goto 437
+	op_exp	goto 436
+
+	.	reduce by rule 68
+
+
+state 532:
+
+	op_exp : expression . QUESTION 
+	op_exp : NOT expression .  (reduce by rule 324)
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+
+
+	.	reduce by rule 324
+
+
+state 533:
+
+	op_exp : STAR expression .  (reduce by rule 321)
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+
+
+	.	reduce by rule 321
+
+
+state 534:
+
+	op_exp : expression . QUESTION 
+	op_exp : MINUS expression .  (reduce by rule 323)
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+
+
+	.	reduce by rule 323
+
+
+state 535:
+
+	item_type : STATIC MUT IDENT COLON types EQ expression . SEMI 
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+	SEMI	shift 609
+	QUESTION	shift 492
 
 
 	.	error
 
 
-state 495:
+state 536:
+
+	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
+
+
+	inner_attrs	goto 610
+
+	.	reduce by rule 66
+
+
+state 537:
+
+	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs inherent_impl_items . RBRACE 
+	inherent_impl_items : inherent_impl_items . inherent_impl_item 
+
+	RBRACE	shift 613
+
+	outer_attrs	goto 612
+	inherent_impl_item	goto 611
+
+	.	reduce by rule 68
+
+
+state 538:
+
+	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
+
+	LBRACE	shift 614
+
+
+	.	error
+
+
+state 539:
 
 	lifetime_bounds : lifetime_bounds_expansion lifetime .  (reduce by rule 245)
 	lifetime_bounds_expansion : lifetime_bounds_expansion lifetime . PLUS 
 
-	PLUS	shift 538
+	PLUS	shift 615
 
 
 	.	reduce by rule 245
 
 
-state 496:
+state 540:
 
 	type_param : maybe_outer_attr IDENT maybe_colon_type_bounds EQ types .  (reduce by rule 125)
 
@@ -6656,21 +7771,21 @@ state 496:
 	.	reduce by rule 125
 
 
-state 497:
+state 541:
 
 	external_item : outer_attrs maybe_visibility . external_static_item 
 	external_item : outer_attrs maybe_visibility . external_func_item 
 
-	FN	shift 542
-	STATIC	shift 541
+	FN	shift 619
+	STATIC	shift 618
 
-	external_static_item	goto 540
-	external_func_item	goto 539
+	external_static_item	goto 617
+	external_func_item	goto 616
 
 	.	error
 
 
-state 498:
+state 542:
 
 	maybe_visibility : visibility .  (reduce by rule 46)
 
@@ -6679,19 +7794,19 @@ state 498:
 	.	reduce by rule 46
 
 
-state 499:
+state 543:
 
 	enum_items : enum_item enum_items_expansion . maybe_comma 
 	enum_items_expansion : enum_items_expansion . COMMA enum_item 
 
-	COMMA	shift 544
+	COMMA	shift 621
 
-	maybe_comma	goto 543
+	maybe_comma	goto 620
 
 	.	reduce by rule 130
 
 
-state 500:
+state 544:
 
 	item_type : ENUM IDENT maybe_generics maybe_where_clause LBRACE maybe_enum_items RBRACE .  (reduce by rule 148)
 
@@ -6700,25 +7815,25 @@ state 500:
 	.	reduce by rule 148
 
 
-state 501:
+state 545:
 
 	enum_item : outer_attrs IDENT . enum_item_tuple 
 	enum_item : outer_attrs IDENT . enum_item_struct 
 	enum_item : outer_attrs IDENT . enum_item_discriminant 
 	enum_item : outer_attrs IDENT .  (reduce by rule 210)
 
-	EQ	shift 550
-	LBRACE	shift 549
-	LPARENT	shift 548
+	EQ	shift 627
+	LBRACE	shift 626
+	LPARENT	shift 625
 
-	enum_item_tuple	goto 547
-	enum_item_struct	goto 546
-	enum_item_discriminant	goto 545
+	enum_item_tuple	goto 624
+	enum_item_struct	goto 623
+	enum_item_discriminant	goto 622
 
 	.	reduce by rule 210
 
 
-state 502:
+state 546:
 
 	constant_item : CONST IDENT COLON types EQ expression SEMI .  (reduce by rule 158)
 
@@ -6727,53 +7842,53 @@ state 502:
 	.	reduce by rule 158
 
 
-state 503:
+state 547:
 
 	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT . meta_seq_expansion 
 
 	LPARENT	shift 332
 
-	meta_seq_expansion	goto 551
+	meta_seq_expansion	goto 628
 
 	.	reduce by rule 80
 
 
-state 504:
+state 548:
 
 	macro_match : DOLLAR LPARENT macro_match . macro_matches RPARENT macro_kleene_op 
 	macro_match : DOLLAR LPARENT macro_match . macro_matches RPARENT macro_rep_sep macro_kleene_op 
 
 
-	macro_matches	goto 552
+	macro_matches	goto 629
 
 	.	reduce by rule 32
 
 
-state 505:
+state 549:
 
 	macro_match : DOLLAR IDENT COLON . macro_frag_spec 
 
-	IDENT	shift 554
+	IDENT	shift 631
 
-	macro_frag_spec	goto 553
+	macro_frag_spec	goto 630
 
 	.	error
 
 
-state 506:
+state 550:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_colon_type_bounds maybe_where_clause LBRACE trait_items . RBRACE 
 	trait_items : trait_items . trait_item 
 
-	RBRACE	shift 557
+	RBRACE	shift 634
 
-	outer_attrs	goto 556
-	trait_item	goto 555
+	outer_attrs	goto 633
+	trait_item	goto 632
 
 	.	reduce by rule 68
 
 
-state 507:
+state 551:
 
 	type_param_bounds_expansion : type_param_bounds_expansion PLUS type_param_bound .  (reduce by rule 240)
 
@@ -6782,28 +7897,28 @@ state 507:
 	.	reduce by rule 240
 
 
-state 508:
+state 552:
 
 	trait_bound : LPARENT maybe_for_lifetimes type_path . RPARENT 
 
-	RPARENT	shift 558
+	RPARENT	shift 635
 
 
 	.	error
 
 
-state 509:
+state 553:
 
 	trait_bound : LPARENT QUESTION maybe_for_lifetimes . type_path RPARENT 
 
 	IDENT	shift 305
 
-	type_path	goto 559
+	type_path	goto 636
 
 	.	error
 
 
-state 510:
+state 554:
 
 	trait_bound : QUESTION maybe_for_lifetimes type_path .  (reduce by rule 254)
 
@@ -6812,7 +7927,7 @@ state 510:
 	.	reduce by rule 254
 
 
-state 511:
+state 555:
 
 	lifetime_param : maybe_outer_attr . LIFETIME_OR_LABEL maybe_colon_lifetime_bounds 
 
@@ -6822,19 +7937,19 @@ state 511:
 	.	error
 
 
-state 512:
+state 556:
 
 	lifetime_params : lifetime_params . COMMA lifetime_param 
 	for_lifetimes : FOR LT lifetime_params . GT 
 
-	GT	shift 561
-	COMMA	shift 560
+	GT	shift 638
+	COMMA	shift 637
 
 
 	.	error
 
 
-state 513:
+state 557:
 
 	for_lifetimes : FOR LT GT .  (reduce by rule 108)
 
@@ -6843,7 +7958,7 @@ state 513:
 	.	reduce by rule 108
 
 
-state 514:
+state 558:
 
 	func_parameters : func_param func_parameters_expansion maybe_comma .  (reduce by rule 178)
 
@@ -6852,7 +7967,7 @@ state 514:
 	.	reduce by rule 178
 
 
-state 515:
+state 559:
 
 	maybe_comma : COMMA .  (reduce by rule 129)
 	func_parameters_expansion : func_parameters_expansion COMMA . func_param 
@@ -6860,24 +7975,24 @@ state 515:
 	IDENT	shift 415
 
 	patterns	goto 414
-	func_param	goto 562
+	func_param	goto 639
 
 	.	reduce by rule 129
 
 
-state 516:
+state 560:
 
 	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type . maybe_where_clause block_exp 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 563
+	maybe_where_clause	goto 640
 
 	.	reduce by rule 94
 
 
-state 517:
+state 561:
 
 	maybe_func_return_type : func_return_type .  (reduce by rule 182)
 
@@ -6886,18 +8001,18 @@ state 517:
 	.	reduce by rule 182
 
 
-state 518:
+state 562:
 
 	func_return_type : RARROW . types 
 
 	IDENT	shift 310
 
-	types	goto 564
+	types	goto 641
 
 	.	error
 
 
-state 519:
+state 563:
 
 	func_param : patterns COLON types .  (reduce by rule 181)
 
@@ -6906,7 +8021,7 @@ state 519:
 	.	reduce by rule 181
 
 
-state 520:
+state 564:
 
 	struct_fields : struct_field struct_fields_expansion maybe_comma .  (reduce by rule 189)
 
@@ -6915,7 +8030,7 @@ state 520:
 	.	reduce by rule 189
 
 
-state 521:
+state 565:
 
 	maybe_comma : COMMA .  (reduce by rule 129)
 	struct_fields_expansion : struct_fields_expansion COMMA . struct_field 
@@ -6926,33 +8041,33 @@ state 521:
 	RBRACE	reduce by rule 129
 
 	outer_attrs	goto 418
-	struct_field	goto 565
+	struct_field	goto 642
 
 	.	error
 
 
-state 522:
+state 566:
 
 	struct_field : outer_attrs visibility IDENT . COLON types 
 
-	COLON	shift 566
+	COLON	shift 643
 
 
 	.	error
 
 
-state 523:
+state 567:
 
 	struct_field : outer_attrs IDENT COLON . types 
 
 	IDENT	shift 310
 
-	types	goto 567
+	types	goto 644
 
 	.	error
 
 
-state 524:
+state 568:
 
 	type_bound_where_clause_item : maybe_for_lifetimes types COLON . maybe_type_param_bounds 
 
@@ -6963,8 +8078,8 @@ state 524:
 	QUESTION	shift 407
 	LPARENT	shift 406
 
-	maybe_type_param_bounds	goto 569
-	type_param_bounds	goto 568
+	maybe_type_param_bounds	goto 646
+	type_param_bounds	goto 645
 	type_param_bounds_expansion	goto 404
 	type_param_bound	goto 403
 	lifetime	goto 402
@@ -6975,7 +8090,7 @@ state 524:
 	.	reduce by rule 238
 
 
-state 525:
+state 569:
 
 	lifetime_where_clause_item : lifetime COLON lifetime_bounds .  (reduce by rule 101)
 
@@ -6984,27 +8099,27 @@ state 525:
 	.	reduce by rule 101
 
 
-state 526:
+state 570:
 
 	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
 
 
-	inner_attrs	goto 570
+	inner_attrs	goto 647
 
 	.	reduce by rule 66
 
 
-state 527:
+state 571:
 
 	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause . LBRACE inner_attrs trait_impl_items RBRACE 
 
-	LBRACE	shift 571
+	LBRACE	shift 648
 
 
 	.	error
 
 
-state 528:
+state 572:
 
 	tuple_struct : STRUCT IDENT maybe_generics LPARENT maybe_tuple_fields RPARENT maybe_where_clause SEMI .  (reduce by rule 194)
 
@@ -7013,7 +8128,7 @@ state 528:
 	.	reduce by rule 194
 
 
-state 529:
+state 573:
 
 	tuple_fields_expansion : tuple_fields_expansion COMMA tuple_field .  (reduce by rule 198)
 
@@ -7022,25 +8137,1831 @@ state 529:
 	.	reduce by rule 198
 
 
-state 530:
+state 574:
 
-	lit_exp : FLOAT_LIT FLOAT_SUFFIX .  (reduce by rule 303)
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression LE expression .  (reduce by rule 340)
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 340
+
+
+state 575:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression GE expression .  (reduce by rule 339)
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 339
+
+
+state 576:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression LT expression .  (reduce by rule 338)
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 338
+
+
+state 577:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression GT expression .  (reduce by rule 337)
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 337
+
+
+state 578:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression NE expression .  (reduce by rule 336)
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 336
+
+
+state 579:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression EQEQ expression .  (reduce by rule 335)
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 335
+
+
+state 580:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression EQ expression .  (reduce by rule 344)
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 344
+
+
+state 581:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+	op_exp : expression SHREQ expression .  (reduce by rule 354)
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 354
+
+
+state 582:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression SHLEQ expression .  (reduce by rule 353)
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 353
+
+
+state 583:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression OREQ expression .  (reduce by rule 351)
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 351
+
+
+state 584:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression ANDEQ expression .  (reduce by rule 350)
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 350
+
+
+state 585:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression CARETEQ expression .  (reduce by rule 352)
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 352
+
+
+state 586:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression PERCENTEQ expression .  (reduce by rule 349)
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 349
+
+
+state 587:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression SLASHEQ expression .  (reduce by rule 348)
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 348
+
+
+state 588:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression STAREQ expression .  (reduce by rule 347)
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 347
+
+
+state 589:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression MINUSEQ expression .  (reduce by rule 346)
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 346
+
+
+state 590:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression PLUSEQ expression .  (reduce by rule 345)
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 345
+
+
+state 591:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression SHR expression .  (reduce by rule 334)
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+
+
+	.	reduce by rule 334
+
+
+state 592:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression SHL expression .  (reduce by rule 333)
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+
+
+	.	reduce by rule 333
+
+
+state 593:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression OROR expression .  (reduce by rule 341)
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	SHL	shift 512
+	SHR	shift 511
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 341
+
+
+state 594:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression ANDAND expression .  (reduce by rule 342)
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	SHL	shift 512
+	SHR	shift 511
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+
+
+	.	reduce by rule 342
+
+
+state 595:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression OR expression .  (reduce by rule 331)
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 331
+
+
+state 596:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression AND expression .  (reduce by rule 330)
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 330
+
+
+state 597:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression CARET expression .  (reduce by rule 332)
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	AND	shift 516
+	SHL	shift 512
+	SHR	shift 511
+
+
+	.	reduce by rule 332
+
+
+state 598:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression PERCENT expression .  (reduce by rule 329)
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+
+
+	.	reduce by rule 329
+
+
+state 599:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression SLASH expression .  (reduce by rule 328)
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+
+
+	.	reduce by rule 328
+
+
+state 600:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression STAR expression .  (reduce by rule 327)
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+
+
+	.	reduce by rule 327
+
+
+state 601:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression MINUS expression .  (reduce by rule 326)
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+
+
+	.	reduce by rule 326
+
+
+state 602:
+
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression PLUS expression .  (reduce by rule 325)
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+
+
+	.	reduce by rule 325
+
+
+state 603:
+
+	op_exp : expression AS type_no_bounds .  (reduce by rule 343)
+
+
+
+	.	reduce by rule 343
+
+
+state 604:
+
+	type_no_bounds : type_path .  (reduce by rule 355)
+
+
+
+	.	reduce by rule 355
+
+
+state 605:
+
+	lit_exp : FLOAT_LIT FLOAT_SUFFIX .  (reduce by rule 304)
+
+
+
+	.	reduce by rule 304
+
+
+state 606:
+
+	lit_exp : INTEGER_LIT INTEGER_SUFFIX .  (reduce by rule 303)
 
 
 
 	.	reduce by rule 303
 
 
-state 531:
+state 607:
 
-	lit_exp : INTEGER_LIT INTEGER_SUFFIX .  (reduce by rule 302)
+	op_exp : ANDAND MUT expression .  (reduce by rule 320)
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+	QUESTION	shift 492
 
 
+	.	reduce by rule 320
 
-	.	reduce by rule 302
+
+state 608:
+
+	op_exp : AND MUT expression .  (reduce by rule 319)
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
+
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+	QUESTION	shift 492
 
 
-state 532:
+	.	reduce by rule 319
+
+
+state 609:
 
 	item_type : STATIC MUT IDENT COLON types EQ expression SEMI .  (reduce by rule 151)
 
@@ -7049,7 +9970,7 @@ state 532:
 	.	reduce by rule 151
 
 
-state 533:
+state 610:
 
 	inner_attrs : inner_attrs . inner_attr 
 	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
@@ -7057,12 +9978,12 @@ state 533:
 	SHEBANG	shift 5
 
 	inner_attr	goto 3
-	trait_impl_items	goto 572
+	trait_impl_items	goto 649
 
 	.	reduce by rule 274
 
 
-state 534:
+state 611:
 
 	inherent_impl_items : inherent_impl_items inherent_impl_item .  (reduce by rule 263)
 
@@ -7071,7 +9992,7 @@ state 534:
 	.	reduce by rule 263
 
 
-state 535:
+state 612:
 
 	outer_attrs : outer_attrs . outer_attr 
 	inherent_impl_item : outer_attrs . macro_invocation_semi 
@@ -7089,16 +10010,16 @@ state 535:
 	DOLLAR	shift 14
 
 	outer_attr	goto 37
-	simple_path	goto 575
+	simple_path	goto 652
 	simple_path_segment	goto 11
-	visibility	goto 498
-	maybe_visibility	goto 574
-	macro_invocation_semi	goto 573
+	visibility	goto 542
+	maybe_visibility	goto 651
+	macro_invocation_semi	goto 650
 
 	.	reduce by rule 47
 
 
-state 536:
+state 613:
 
 	inherent_impl : IMPL maybe_generics types maybe_where_clause LBRACE inner_attrs inherent_impl_items RBRACE .  (reduce by rule 262)
 
@@ -7107,17 +10028,17 @@ state 536:
 	.	reduce by rule 262
 
 
-state 537:
+state 614:
 
 	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
 
 
-	inner_attrs	goto 576
+	inner_attrs	goto 653
 
 	.	reduce by rule 66
 
 
-state 538:
+state 615:
 
 	lifetime_bounds_expansion : lifetime_bounds_expansion lifetime PLUS .  (reduce by rule 246)
 
@@ -7126,7 +10047,7 @@ state 538:
 	.	reduce by rule 246
 
 
-state 539:
+state 616:
 
 	external_item : outer_attrs maybe_visibility external_func_item .  (reduce by rule 285)
 
@@ -7135,7 +10056,7 @@ state 539:
 	.	reduce by rule 285
 
 
-state 540:
+state 617:
 
 	external_item : outer_attrs maybe_visibility external_static_item .  (reduce by rule 284)
 
@@ -7144,29 +10065,29 @@ state 540:
 	.	reduce by rule 284
 
 
-state 541:
+state 618:
 
 	external_static_item : STATIC . maybe_mut IDENT COLON types SEMI 
 
-	MUT	shift 578
+	MUT	shift 655
 
-	maybe_mut	goto 577
+	maybe_mut	goto 654
 
 	.	reduce by rule 132
 
 
-state 542:
+state 619:
 
 	external_func_item : FN . IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
 	external_func_item : FN . IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	IDENT	shift 579
+	IDENT	shift 656
 
 
 	.	error
 
 
-state 543:
+state 620:
 
 	enum_items : enum_item enum_items_expansion maybe_comma .  (reduce by rule 204)
 
@@ -7175,7 +10096,7 @@ state 543:
 	.	reduce by rule 204
 
 
-state 544:
+state 621:
 
 	maybe_comma : COMMA .  (reduce by rule 129)
 	enum_items_expansion : enum_items_expansion COMMA . enum_item 
@@ -7184,13 +10105,13 @@ state 544:
 	POUND	reduce by rule 68
 	RBRACE	reduce by rule 129
 
-	outer_attrs	goto 455
-	enum_item	goto 580
+	outer_attrs	goto 461
+	enum_item	goto 657
 
 	.	error
 
 
-state 545:
+state 622:
 
 	enum_item : outer_attrs IDENT enum_item_discriminant .  (reduce by rule 209)
 
@@ -7199,7 +10120,7 @@ state 545:
 	.	reduce by rule 209
 
 
-state 546:
+state 623:
 
 	enum_item : outer_attrs IDENT enum_item_struct .  (reduce by rule 208)
 
@@ -7208,7 +10129,7 @@ state 546:
 	.	reduce by rule 208
 
 
-state 547:
+state 624:
 
 	enum_item : outer_attrs IDENT enum_item_tuple .  (reduce by rule 207)
 
@@ -7217,7 +10138,7 @@ state 547:
 	.	reduce by rule 207
 
 
-state 548:
+state 625:
 
 	enum_item_tuple : LPARENT . maybe_tuple_fields RPARENT 
 
@@ -7229,12 +10150,12 @@ state 548:
 	outer_attrs	goto 362
 	tuple_fields	goto 361
 	tuple_field	goto 360
-	maybe_tuple_fields	goto 581
+	maybe_tuple_fields	goto 658
 
 	.	error
 
 
-state 549:
+state 626:
 
 	enum_item_struct : LBRACE . maybe_struct_fields RBRACE 
 
@@ -7246,24 +10167,30 @@ state 549:
 	outer_attrs	goto 418
 	struct_fields	goto 431
 	struct_field	goto 416
-	maybe_struct_fields	goto 582
+	maybe_struct_fields	goto 659
 
 	.	error
 
 
-state 550:
+state 627:
 
 	enum_item_discriminant : EQ . expression 
 
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
 
-	outer_attrs	goto 438
-	expression	goto 583
-	exp_without_block	goto 436
+	outer_attrs	goto 439
+	expression	goto 660
+	exp_without_block	goto 437
+	op_exp	goto 436
 
 	.	reduce by rule 68
 
 
-state 551:
+state 628:
 
 	meta_seq_expansion : LPARENT COMMA meta_item_inner RPARENT meta_seq_expansion .  (reduce by rule 79)
 
@@ -7272,7 +10199,7 @@ state 551:
 	.	reduce by rule 79
 
 
-state 552:
+state 629:
 
 	macro_match : DOLLAR LPARENT macro_match macro_matches . RPARENT macro_kleene_op 
 	macro_match : DOLLAR LPARENT macro_match macro_matches . RPARENT macro_rep_sep macro_kleene_op 
@@ -7393,7 +10320,7 @@ state 552:
 	LBRACE	shift 290
 	LBRACKET	shift 289
 	LPARENT	shift 288
-	RPARENT	shift 584
+	RPARENT	shift 661
 	INNER_DOC_COMMENT	shift 166
 	OUTER_DOC_COMMENT	shift 165
 	SHEBANG	shift 164
@@ -7406,7 +10333,7 @@ state 552:
 	.	error
 
 
-state 553:
+state 630:
 
 	macro_match : DOLLAR IDENT COLON macro_frag_spec .  (reduce by rule 35)
 
@@ -7415,7 +10342,7 @@ state 553:
 	.	reduce by rule 35
 
 
-state 554:
+state 631:
 
 	macro_frag_spec : IDENT .  (reduce by rule 38)
 
@@ -7424,7 +10351,7 @@ state 554:
 	.	reduce by rule 38
 
 
-state 555:
+state 632:
 
 	trait_items : trait_items trait_item .  (reduce by rule 214)
 
@@ -7433,7 +10360,7 @@ state 555:
 	.	reduce by rule 214
 
 
-state 556:
+state 633:
 
 	outer_attrs : outer_attrs . outer_attr 
 	trait_item : outer_attrs . trait_func 
@@ -7442,12 +10369,12 @@ state 556:
 	trait_item : outer_attrs . trait_type 
 	trait_item : outer_attrs . macro_invocation_semi 
 
-	CONST	shift 596
-	EXTERN	shift 595
+	CONST	shift 673
+	EXTERN	shift 672
 	SELFVALUE	shift 19
 	SUPER	shift 18
-	TYPE	shift 594
-	UNSAFE	shift 593
+	TYPE	shift 671
+	UNSAFE	shift 670
 	IDENT	shift 17
 	CARET	shift 16
 	PATHSEP	shift 15
@@ -7455,21 +10382,21 @@ state 556:
 	DOLLAR	shift 14
 
 	outer_attr	goto 37
-	simple_path	goto 575
+	simple_path	goto 652
 	simple_path_segment	goto 11
-	func_qualifier	goto 592
-	trait_func	goto 591
-	trait_method	goto 590
-	trait_const	goto 589
-	trait_type	goto 588
-	trait_func_decl	goto 587
-	trait_method_decl	goto 586
-	macro_invocation_semi	goto 585
+	func_qualifier	goto 669
+	trait_func	goto 668
+	trait_method	goto 667
+	trait_const	goto 666
+	trait_type	goto 665
+	trait_func_decl	goto 664
+	trait_method_decl	goto 663
+	macro_invocation_semi	goto 662
 
 	.	reduce by rule 171
 
 
-state 557:
+state 634:
 
 	item_type : maybe_unsafe TRAIT IDENT maybe_generics maybe_colon_type_bounds maybe_where_clause LBRACE trait_items RBRACE .  (reduce by rule 153)
 
@@ -7478,7 +10405,7 @@ state 557:
 	.	reduce by rule 153
 
 
-state 558:
+state 635:
 
 	trait_bound : LPARENT maybe_for_lifetimes type_path RPARENT .  (reduce by rule 255)
 
@@ -7487,17 +10414,17 @@ state 558:
 	.	reduce by rule 255
 
 
-state 559:
+state 636:
 
 	trait_bound : LPARENT QUESTION maybe_for_lifetimes type_path . RPARENT 
 
-	RPARENT	shift 597
+	RPARENT	shift 674
 
 
 	.	error
 
 
-state 560:
+state 637:
 
 	lifetime_params : lifetime_params COMMA . lifetime_param 
 
@@ -7505,12 +10432,12 @@ state 560:
 
 	outer_attr	goto 134
 	lifetime_param	goto 376
-	maybe_outer_attr	goto 511
+	maybe_outer_attr	goto 555
 
 	.	reduce by rule 70
 
 
-state 561:
+state 638:
 
 	for_lifetimes : FOR LT lifetime_params GT .  (reduce by rule 107)
 
@@ -7519,7 +10446,7 @@ state 561:
 	.	reduce by rule 107
 
 
-state 562:
+state 639:
 
 	func_parameters_expansion : func_parameters_expansion COMMA func_param .  (reduce by rule 179)
 
@@ -7528,18 +10455,18 @@ state 562:
 	.	reduce by rule 179
 
 
-state 563:
+state 640:
 
 	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause . block_exp 
 
-	LBRACE	shift 599
+	LBRACE	shift 676
 
-	block_exp	goto 598
+	block_exp	goto 675
 
 	.	error
 
 
-state 564:
+state 641:
 
 	func_return_type : RARROW types .  (reduce by rule 184)
 
@@ -7548,7 +10475,7 @@ state 564:
 	.	reduce by rule 184
 
 
-state 565:
+state 642:
 
 	struct_fields_expansion : struct_fields_expansion COMMA struct_field .  (reduce by rule 190)
 
@@ -7557,18 +10484,18 @@ state 565:
 	.	reduce by rule 190
 
 
-state 566:
+state 643:
 
 	struct_field : outer_attrs visibility IDENT COLON . types 
 
 	IDENT	shift 310
 
-	types	goto 600
+	types	goto 677
 
 	.	error
 
 
-state 567:
+state 644:
 
 	struct_field : outer_attrs IDENT COLON types .  (reduce by rule 193)
 
@@ -7577,7 +10504,7 @@ state 567:
 	.	reduce by rule 193
 
 
-state 568:
+state 645:
 
 	maybe_type_param_bounds : type_param_bounds .  (reduce by rule 237)
 
@@ -7586,7 +10513,7 @@ state 568:
 	.	reduce by rule 237
 
 
-state 569:
+state 646:
 
 	type_bound_where_clause_item : maybe_for_lifetimes types COLON maybe_type_param_bounds .  (reduce by rule 102)
 
@@ -7595,7 +10522,7 @@ state 569:
 	.	reduce by rule 102
 
 
-state 570:
+state 647:
 
 	inner_attrs : inner_attrs . inner_attr 
 	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
@@ -7603,35 +10530,35 @@ state 570:
 	SHEBANG	shift 5
 
 	inner_attr	goto 3
-	trait_impl_items	goto 601
+	trait_impl_items	goto 678
 
 	.	reduce by rule 274
 
 
-state 571:
+state 648:
 
 	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE . inner_attrs trait_impl_items RBRACE 
 
 
-	inner_attrs	goto 602
+	inner_attrs	goto 679
 
 	.	reduce by rule 66
 
 
-state 572:
+state 649:
 
 	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
 	trait_impl_items : trait_impl_items . trait_impl_item 
 
-	RBRACE	shift 605
+	RBRACE	shift 682
 
-	outer_attrs	goto 604
-	trait_impl_item	goto 603
+	outer_attrs	goto 681
+	trait_impl_item	goto 680
 
 	.	reduce by rule 68
 
 
-state 573:
+state 650:
 
 	inherent_impl_item : outer_attrs macro_invocation_semi .  (reduce by rule 265)
 
@@ -7640,39 +10567,39 @@ state 573:
 	.	reduce by rule 265
 
 
-state 574:
+state 651:
 
 	inherent_impl_item : outer_attrs maybe_visibility . constant_item 
 	inherent_impl_item : outer_attrs maybe_visibility . function 
 	inherent_impl_item : outer_attrs maybe_visibility . method 
 
 	CONST	shift 50
-	EXTERN	shift 595
-	UNSAFE	shift 593
+	EXTERN	shift 672
+	UNSAFE	shift 670
 
-	function	goto 609
-	func_qualifier	goto 608
-	constant_item	goto 607
-	method	goto 606
+	function	goto 686
+	func_qualifier	goto 685
+	constant_item	goto 684
+	method	goto 683
 
 	.	reduce by rule 171
 
 
-state 575:
+state 652:
 
 	simple_path : simple_path . PATHSEP simple_path_segment 
 	macro_invocation_semi : simple_path . NOT LPARENT token_trees RPARENT SEMI 
 	macro_invocation_semi : simple_path . NOT LBRACKET token_trees RBRACKET SEMI 
 	macro_invocation_semi : simple_path . NOT LBRACE token_trees RBRACE 
 
-	NOT	shift 610
+	NOT	shift 687
 	PATHSEP	shift 22
 
 
 	.	error
 
 
-state 576:
+state 653:
 
 	inner_attrs : inner_attrs . inner_attr 
 	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
@@ -7680,22 +10607,22 @@ state 576:
 	SHEBANG	shift 5
 
 	inner_attr	goto 3
-	trait_impl_items	goto 611
+	trait_impl_items	goto 688
 
 	.	reduce by rule 274
 
 
-state 577:
+state 654:
 
 	external_static_item : STATIC maybe_mut . IDENT COLON types SEMI 
 
-	IDENT	shift 612
+	IDENT	shift 689
 
 
 	.	error
 
 
-state 578:
+state 655:
 
 	maybe_mut : MUT .  (reduce by rule 131)
 
@@ -7704,7 +10631,7 @@ state 578:
 	.	reduce by rule 131
 
 
-state 579:
+state 656:
 
 	external_func_item : FN IDENT . maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
 	external_func_item : FN IDENT . maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
@@ -7712,12 +10639,12 @@ state 579:
 	LT	shift 81
 
 	generics	goto 80
-	maybe_generics	goto 613
+	maybe_generics	goto 690
 
 	.	reduce by rule 104
 
 
-state 580:
+state 657:
 
 	enum_items_expansion : enum_items_expansion COMMA enum_item .  (reduce by rule 205)
 
@@ -7726,36 +10653,98 @@ state 580:
 	.	reduce by rule 205
 
 
-state 581:
+state 658:
 
 	enum_item_tuple : LPARENT maybe_tuple_fields . RPARENT 
 
-	RPARENT	shift 614
+	RPARENT	shift 691
 
 
 	.	error
 
 
-state 582:
+state 659:
 
 	enum_item_struct : LBRACE maybe_struct_fields . RBRACE 
 
-	RBRACE	shift 615
+	RBRACE	shift 692
 
 
 	.	error
 
 
-state 583:
+state 660:
 
 	enum_item_discriminant : EQ expression .  (reduce by rule 213)
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
 
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+	QUESTION	shift 492
 
 
 	.	reduce by rule 213
 
 
-state 584:
+state 661:
 
 	macro_match : DOLLAR LPARENT macro_match macro_matches RPARENT . macro_kleene_op 
 	macro_match : DOLLAR LPARENT macro_match macro_matches RPARENT . macro_rep_sep macro_kleene_op 
@@ -7827,9 +10816,9 @@ state 584:
 	FLOAT_SUFFIX	shift 218
 	LIFETIME_OR_LABEL	shift 217
 	LIFETIME_TOKEN	shift 216
-	PLUS	shift 623
+	PLUS	shift 700
 	MINUS	shift 214
-	STAR	shift 622
+	STAR	shift 699
 	SLASH	shift 212
 	PERCENT	shift 211
 	CARET	shift 210
@@ -7870,21 +10859,21 @@ state 584:
 	RARROW	shift 175
 	FATARROW	shift 174
 	POUND	shift 173
-	DOLLAR	shift 621
-	QUESTION	shift 620
+	DOLLAR	shift 698
+	QUESTION	shift 697
 	INNER_DOC_COMMENT	shift 166
 	OUTER_DOC_COMMENT	shift 165
 	SHEBANG	shift 164
 
-	macro_rep_sep	goto 619
-	macro_kleene_op	goto 618
-	token_ep_delim_kleene	goto 617
-	token_ep_delim_kleene_dollar	goto 616
+	macro_rep_sep	goto 696
+	macro_kleene_op	goto 695
+	token_ep_delim_kleene	goto 694
+	token_ep_delim_kleene_dollar	goto 693
 
 	.	error
 
 
-state 585:
+state 662:
 
 	trait_item : outer_attrs macro_invocation_semi .  (reduce by rule 220)
 
@@ -7893,33 +10882,33 @@ state 585:
 	.	reduce by rule 220
 
 
-state 586:
+state 663:
 
 	trait_method : trait_method_decl . SEMI 
 	trait_method : trait_method_decl . block_exp 
 
-	SEMI	shift 625
-	LBRACE	shift 599
+	SEMI	shift 702
+	LBRACE	shift 676
 
-	block_exp	goto 624
+	block_exp	goto 701
 
 	.	error
 
 
-state 587:
+state 664:
 
 	trait_func : trait_func_decl . SEMI 
 	trait_func : trait_func_decl . block_exp 
 
-	SEMI	shift 627
-	LBRACE	shift 599
+	SEMI	shift 704
+	LBRACE	shift 676
 
-	block_exp	goto 626
+	block_exp	goto 703
 
 	.	error
 
 
-state 588:
+state 665:
 
 	trait_item : outer_attrs trait_type .  (reduce by rule 219)
 
@@ -7928,7 +10917,7 @@ state 588:
 	.	reduce by rule 219
 
 
-state 589:
+state 666:
 
 	trait_item : outer_attrs trait_const .  (reduce by rule 218)
 
@@ -7937,7 +10926,7 @@ state 589:
 	.	reduce by rule 218
 
 
-state 590:
+state 667:
 
 	trait_item : outer_attrs trait_method .  (reduce by rule 217)
 
@@ -7946,7 +10935,7 @@ state 590:
 	.	reduce by rule 217
 
 
-state 591:
+state 668:
 
 	trait_item : outer_attrs trait_func .  (reduce by rule 216)
 
@@ -7955,18 +10944,18 @@ state 591:
 	.	reduce by rule 216
 
 
-state 592:
+state 669:
 
 	trait_func_decl : func_qualifier . FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type maybe_where_clause 
 	trait_method_decl : func_qualifier . FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
-	FN	shift 628
+	FN	shift 705
 
 
 	.	error
 
 
-state 593:
+state 670:
 
 	func_qualifier : UNSAFE .  (reduce by rule 166)
 	func_qualifier : UNSAFE . EXTERN 
@@ -7978,17 +10967,17 @@ state 593:
 	.	reduce by rule 166
 
 
-state 594:
+state 671:
 
 	trait_type : TYPE . IDENT maybe_colon_type_bounds SEMI 
 
-	IDENT	shift 629
+	IDENT	shift 706
 
 
 	.	error
 
 
-state 595:
+state 672:
 
 	func_qualifier : EXTERN .  (reduce by rule 169)
 	func_qualifier : EXTERN . abi 
@@ -7996,12 +10985,12 @@ state 595:
 	STR_LIT	shift 86
 	RAW_STR_LIT	shift 85
 
-	abi	goto 630
+	abi	goto 707
 
 	.	reduce by rule 169
 
 
-state 596:
+state 673:
 
 	func_qualifier : CONST .  (reduce by rule 160)
 	func_qualifier : CONST . UNSAFE 
@@ -8014,13 +11003,13 @@ state 596:
 
 	EXTERN	shift 90
 	UNSAFE	shift 89
-	IDENT	shift 631
+	IDENT	shift 708
 
 
 	.	reduce by rule 160
 
 
-state 597:
+state 674:
 
 	trait_bound : LPARENT QUESTION maybe_for_lifetimes type_path RPARENT .  (reduce by rule 256)
 
@@ -8029,7 +11018,7 @@ state 597:
 	.	reduce by rule 256
 
 
-state 598:
+state 675:
 
 	function : func_qualifier FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_exp .  (reduce by rule 159)
 
@@ -8038,17 +11027,17 @@ state 598:
 	.	reduce by rule 159
 
 
-state 599:
+state 676:
 
 	block_exp : LBRACE . inner_attrs maybe_statements RBRACE 
 
 
-	inner_attrs	goto 632
+	inner_attrs	goto 709
 
 	.	reduce by rule 66
 
 
-state 600:
+state 677:
 
 	struct_field : outer_attrs visibility IDENT COLON types .  (reduce by rule 192)
 
@@ -8057,20 +11046,20 @@ state 600:
 	.	reduce by rule 192
 
 
-state 601:
+state 678:
 
 	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
 	trait_impl_items : trait_impl_items . trait_impl_item 
 
-	RBRACE	shift 633
+	RBRACE	shift 710
 
-	outer_attrs	goto 604
-	trait_impl_item	goto 603
+	outer_attrs	goto 681
+	trait_impl_item	goto 680
 
 	.	reduce by rule 68
 
 
-state 602:
+state 679:
 
 	inner_attrs : inner_attrs . inner_attr 
 	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs . trait_impl_items RBRACE 
@@ -8078,12 +11067,12 @@ state 602:
 	SHEBANG	shift 5
 
 	inner_attr	goto 3
-	trait_impl_items	goto 634
+	trait_impl_items	goto 711
 
 	.	reduce by rule 274
 
 
-state 603:
+state 680:
 
 	trait_impl_items : trait_impl_items trait_impl_item .  (reduce by rule 273)
 
@@ -8092,7 +11081,7 @@ state 603:
 	.	reduce by rule 273
 
 
-state 604:
+state 681:
 
 	outer_attrs : outer_attrs . outer_attr 
 	trait_impl_item : outer_attrs . macro_invocation_semi 
@@ -8111,16 +11100,16 @@ state 604:
 	DOLLAR	shift 14
 
 	outer_attr	goto 37
-	simple_path	goto 575
+	simple_path	goto 652
 	simple_path_segment	goto 11
-	visibility	goto 498
-	maybe_visibility	goto 636
-	macro_invocation_semi	goto 635
+	visibility	goto 542
+	maybe_visibility	goto 713
+	macro_invocation_semi	goto 712
 
 	.	reduce by rule 47
 
 
-state 605:
+state 682:
 
 	trait_impl : IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 269)
 
@@ -8129,7 +11118,7 @@ state 605:
 	.	reduce by rule 269
 
 
-state 606:
+state 683:
 
 	inherent_impl_item : outer_attrs maybe_visibility method .  (reduce by rule 268)
 
@@ -8138,7 +11127,7 @@ state 606:
 	.	reduce by rule 268
 
 
-state 607:
+state 684:
 
 	inherent_impl_item : outer_attrs maybe_visibility constant_item .  (reduce by rule 266)
 
@@ -8147,18 +11136,18 @@ state 607:
 	.	reduce by rule 266
 
 
-state 608:
+state 685:
 
 	function : func_qualifier . FN IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_exp 
 	method : func_qualifier . FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
-	FN	shift 637
+	FN	shift 714
 
 
 	.	error
 
 
-state 609:
+state 686:
 
 	inherent_impl_item : outer_attrs maybe_visibility function .  (reduce by rule 267)
 
@@ -8167,7 +11156,7 @@ state 609:
 	.	reduce by rule 267
 
 
-state 610:
+state 687:
 
 	macro_invocation_semi : simple_path NOT . LPARENT token_trees RPARENT SEMI 
 	macro_invocation_semi : simple_path NOT . LBRACKET token_trees RBRACKET SEMI 
@@ -8181,41 +11170,41 @@ state 610:
 	.	error
 
 
-state 611:
+state 688:
 
 	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
 	trait_impl_items : trait_impl_items . trait_impl_item 
 
-	RBRACE	shift 638
+	RBRACE	shift 715
 
-	outer_attrs	goto 604
-	trait_impl_item	goto 603
+	outer_attrs	goto 681
+	trait_impl_item	goto 680
 
 	.	reduce by rule 68
 
 
-state 612:
+state 689:
 
 	external_static_item : STATIC maybe_mut IDENT . COLON types SEMI 
 
-	COLON	shift 639
+	COLON	shift 716
 
 
 	.	error
 
 
-state 613:
+state 690:
 
 	external_func_item : FN IDENT maybe_generics . LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
 	external_func_item : FN IDENT maybe_generics . LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	LPARENT	shift 640
+	LPARENT	shift 717
 
 
 	.	error
 
 
-state 614:
+state 691:
 
 	enum_item_tuple : LPARENT maybe_tuple_fields RPARENT .  (reduce by rule 211)
 
@@ -8224,7 +11213,7 @@ state 614:
 	.	reduce by rule 211
 
 
-state 615:
+state 692:
 
 	enum_item_struct : LBRACE maybe_struct_fields RBRACE .  (reduce by rule 212)
 
@@ -8233,16 +11222,16 @@ state 615:
 	.	reduce by rule 212
 
 
-state 616:
+state 693:
 
-	token_ep_delim_kleene : token_ep_delim_kleene_dollar .  (reduce by rule 427)
-
-
-
-	.	reduce by rule 427
+	token_ep_delim_kleene : token_ep_delim_kleene_dollar .  (reduce by rule 467)
 
 
-state 617:
+
+	.	reduce by rule 467
+
+
+state 694:
 
 	macro_rep_sep : token_ep_delim_kleene .  (reduce by rule 39)
 
@@ -8251,7 +11240,7 @@ state 617:
 	.	reduce by rule 39
 
 
-state 618:
+state 695:
 
 	macro_match : DOLLAR LPARENT macro_match macro_matches RPARENT macro_kleene_op .  (reduce by rule 36)
 
@@ -8260,20 +11249,20 @@ state 618:
 	.	reduce by rule 36
 
 
-state 619:
+state 696:
 
 	macro_match : DOLLAR LPARENT macro_match macro_matches RPARENT macro_rep_sep . macro_kleene_op 
 
-	PLUS	shift 623
-	STAR	shift 622
-	QUESTION	shift 620
+	PLUS	shift 700
+	STAR	shift 699
+	QUESTION	shift 697
 
-	macro_kleene_op	goto 641
+	macro_kleene_op	goto 718
 
 	.	error
 
 
-state 620:
+state 697:
 
 	macro_kleene_op : QUESTION .  (reduce by rule 42)
 
@@ -8282,16 +11271,16 @@ state 620:
 	.	reduce by rule 42
 
 
-state 621:
+state 698:
 
-	token_ep_delim_kleene : DOLLAR .  (reduce by rule 428)
-
-
-
-	.	reduce by rule 428
+	token_ep_delim_kleene : DOLLAR .  (reduce by rule 468)
 
 
-state 622:
+
+	.	reduce by rule 468
+
+
+state 699:
 
 	macro_kleene_op : STAR .  (reduce by rule 40)
 
@@ -8300,7 +11289,7 @@ state 622:
 	.	reduce by rule 40
 
 
-state 623:
+state 700:
 
 	macro_kleene_op : PLUS .  (reduce by rule 41)
 
@@ -8309,7 +11298,7 @@ state 623:
 	.	reduce by rule 41
 
 
-state 624:
+state 701:
 
 	trait_method : trait_method_decl block_exp .  (reduce by rule 224)
 
@@ -8318,7 +11307,7 @@ state 624:
 	.	reduce by rule 224
 
 
-state 625:
+state 702:
 
 	trait_method : trait_method_decl SEMI .  (reduce by rule 223)
 
@@ -8327,7 +11316,7 @@ state 625:
 	.	reduce by rule 223
 
 
-state 626:
+state 703:
 
 	trait_func : trait_func_decl block_exp .  (reduce by rule 222)
 
@@ -8336,7 +11325,7 @@ state 626:
 	.	reduce by rule 222
 
 
-state 627:
+state 704:
 
 	trait_func : trait_func_decl SEMI .  (reduce by rule 221)
 
@@ -8345,29 +11334,29 @@ state 627:
 	.	reduce by rule 221
 
 
-state 628:
+state 705:
 
 	trait_func_decl : func_qualifier FN . IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type maybe_where_clause 
 	trait_method_decl : func_qualifier FN . IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
-	IDENT	shift 642
+	IDENT	shift 719
 
 
 	.	error
 
 
-state 629:
+state 706:
 
 	trait_type : TYPE IDENT . maybe_colon_type_bounds SEMI 
 
 	COLON	shift 348
 
-	maybe_colon_type_bounds	goto 643
+	maybe_colon_type_bounds	goto 720
 
 	.	reduce by rule 128
 
 
-state 630:
+state 707:
 
 	func_qualifier : EXTERN abi .  (reduce by rule 170)
 
@@ -8376,18 +11365,18 @@ state 630:
 	.	reduce by rule 170
 
 
-state 631:
+state 708:
 
 	trait_const : CONST IDENT . COLON types SEMI 
 	trait_const : CONST IDENT . COLON types EQ expression SEMI 
 
-	COLON	shift 644
+	COLON	shift 721
 
 
 	.	error
 
 
-state 632:
+state 709:
 
 	inner_attrs : inner_attrs . inner_attr 
 	block_exp : LBRACE inner_attrs . maybe_statements RBRACE 
@@ -8395,12 +11384,12 @@ state 632:
 	SHEBANG	shift 5
 
 	inner_attr	goto 3
-	maybe_statements	goto 645
+	maybe_statements	goto 722
 
 	.	reduce by rule 298
 
 
-state 633:
+state 710:
 
 	trait_impl : UNSAFE IMPL maybe_generics type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 271)
 
@@ -8409,20 +11398,20 @@ state 633:
 	.	reduce by rule 271
 
 
-state 634:
+state 711:
 
 	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items . RBRACE 
 	trait_impl_items : trait_impl_items . trait_impl_item 
 
-	RBRACE	shift 646
+	RBRACE	shift 723
 
-	outer_attrs	goto 604
-	trait_impl_item	goto 603
+	outer_attrs	goto 681
+	trait_impl_item	goto 680
 
 	.	reduce by rule 68
 
 
-state 635:
+state 712:
 
 	trait_impl_item : outer_attrs macro_invocation_semi .  (reduce by rule 275)
 
@@ -8431,7 +11420,7 @@ state 635:
 	.	reduce by rule 275
 
 
-state 636:
+state 713:
 
 	trait_impl_item : outer_attrs maybe_visibility . type_alias 
 	trait_impl_item : outer_attrs maybe_visibility . constant_item 
@@ -8439,31 +11428,31 @@ state 636:
 	trait_impl_item : outer_attrs maybe_visibility . method 
 
 	CONST	shift 50
-	EXTERN	shift 595
+	EXTERN	shift 672
 	TYPE	shift 42
-	UNSAFE	shift 593
+	UNSAFE	shift 670
 
-	function	goto 650
-	func_qualifier	goto 608
-	type_alias	goto 649
-	constant_item	goto 648
-	method	goto 647
+	function	goto 727
+	func_qualifier	goto 685
+	type_alias	goto 726
+	constant_item	goto 725
+	method	goto 724
 
 	.	reduce by rule 171
 
 
-state 637:
+state 714:
 
 	function : func_qualifier FN . IDENT maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_exp 
 	method : func_qualifier FN . IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
-	IDENT	shift 651
+	IDENT	shift 728
 
 
 	.	error
 
 
-state 638:
+state 715:
 
 	trait_impl : IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 270)
 
@@ -8472,34 +11461,34 @@ state 638:
 	.	reduce by rule 270
 
 
-state 639:
+state 716:
 
 	external_static_item : STATIC maybe_mut IDENT COLON . types SEMI 
 
 	IDENT	shift 310
 
-	types	goto 652
+	types	goto 729
 
 	.	error
 
 
-state 640:
+state 717:
 
 	external_func_item : FN IDENT maybe_generics LPARENT . maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI 
 	external_func_item : FN IDENT maybe_generics LPARENT . named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	IDENT	shift 658
-	UNDERSCORE	shift 657
+	IDENT	shift 735
+	UNDERSCORE	shift 734
 
-	maybe_named_func_parameters	goto 656
-	named_func_parameters	goto 655
-	named_func_parameters_with_variadics	goto 654
-	named_func_param	goto 653
+	maybe_named_func_parameters	goto 733
+	named_func_parameters	goto 732
+	named_func_parameters_with_variadics	goto 731
+	named_func_param	goto 730
 
 	.	reduce by rule 290
 
 
-state 641:
+state 718:
 
 	macro_match : DOLLAR LPARENT macro_match macro_matches RPARENT macro_rep_sep macro_kleene_op .  (reduce by rule 37)
 
@@ -8508,7 +11497,7 @@ state 641:
 	.	reduce by rule 37
 
 
-state 642:
+state 719:
 
 	trait_func_decl : func_qualifier FN IDENT . maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type maybe_where_clause 
 	trait_method_decl : func_qualifier FN IDENT . maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
@@ -8516,44 +11505,44 @@ state 642:
 	LT	shift 81
 
 	generics	goto 80
-	maybe_generics	goto 659
+	maybe_generics	goto 736
 
 	.	reduce by rule 104
 
 
-state 643:
+state 720:
 
 	trait_type : TYPE IDENT maybe_colon_type_bounds . SEMI 
 
-	SEMI	shift 660
+	SEMI	shift 737
 
 
 	.	error
 
 
-state 644:
+state 721:
 
 	trait_const : CONST IDENT COLON . types SEMI 
 	trait_const : CONST IDENT COLON . types EQ expression SEMI 
 
 	IDENT	shift 310
 
-	types	goto 661
+	types	goto 738
 
 	.	error
 
 
-state 645:
+state 722:
 
 	block_exp : LBRACE inner_attrs maybe_statements . RBRACE 
 
-	RBRACE	shift 662
+	RBRACE	shift 739
 
 
 	.	error
 
 
-state 646:
+state 723:
 
 	trait_impl : UNSAFE IMPL maybe_generics NOT type_path FOR types maybe_where_clause LBRACE inner_attrs trait_impl_items RBRACE .  (reduce by rule 272)
 
@@ -8562,7 +11551,7 @@ state 646:
 	.	reduce by rule 272
 
 
-state 647:
+state 724:
 
 	trait_impl_item : outer_attrs maybe_visibility method .  (reduce by rule 279)
 
@@ -8571,7 +11560,7 @@ state 647:
 	.	reduce by rule 279
 
 
-state 648:
+state 725:
 
 	trait_impl_item : outer_attrs maybe_visibility constant_item .  (reduce by rule 277)
 
@@ -8580,7 +11569,7 @@ state 648:
 	.	reduce by rule 277
 
 
-state 649:
+state 726:
 
 	trait_impl_item : outer_attrs maybe_visibility type_alias .  (reduce by rule 276)
 
@@ -8589,7 +11578,7 @@ state 649:
 	.	reduce by rule 276
 
 
-state 650:
+state 727:
 
 	trait_impl_item : outer_attrs maybe_visibility function .  (reduce by rule 278)
 
@@ -8598,7 +11587,7 @@ state 650:
 	.	reduce by rule 278
 
 
-state 651:
+state 728:
 
 	function : func_qualifier FN IDENT . maybe_generics LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_exp 
 	method : func_qualifier FN IDENT . maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp 
@@ -8606,43 +11595,43 @@ state 651:
 	LT	shift 81
 
 	generics	goto 80
-	maybe_generics	goto 663
+	maybe_generics	goto 740
 
 	.	reduce by rule 104
 
 
-state 652:
+state 729:
 
 	external_static_item : STATIC maybe_mut IDENT COLON types . SEMI 
 
-	SEMI	shift 664
+	SEMI	shift 741
 
 
 	.	error
 
 
-state 653:
+state 730:
 
 	named_func_parameters : named_func_param . named_func_parameters_expansion maybe_comma 
 	named_func_parameters_with_variadics : named_func_param . named_func_parameters_expansion COMMA DOTDOTDOT 
 
 
-	named_func_parameters_expansion	goto 665
+	named_func_parameters_expansion	goto 742
 
 	.	reduce by rule 293
 
 
-state 654:
+state 731:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics . RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	RPARENT	shift 666
+	RPARENT	shift 743
 
 
 	.	error
 
 
-state 655:
+state 732:
 
 	maybe_named_func_parameters : named_func_parameters .  (reduce by rule 289)
 
@@ -8651,48 +11640,48 @@ state 655:
 	.	reduce by rule 289
 
 
-state 656:
+state 733:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters . RPARENT maybe_func_return_type maybe_where_clause SEMI 
 
-	RPARENT	shift 667
+	RPARENT	shift 744
 
 
 	.	error
 
 
-state 657:
+state 734:
 
 	named_func_param : UNDERSCORE . COLON types 
 
-	COLON	shift 668
+	COLON	shift 745
 
 
 	.	error
 
 
-state 658:
+state 735:
 
 	named_func_param : IDENT . COLON types 
 
-	COLON	shift 669
+	COLON	shift 746
 
 
 	.	error
 
 
-state 659:
+state 736:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics . LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type maybe_where_clause 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics . LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
-	LPARENT	shift 670
+	LPARENT	shift 747
 
 
 	.	error
 
 
-state 660:
+state 737:
 
 	trait_type : TYPE IDENT maybe_colon_type_bounds SEMI .  (reduce by rule 236)
 
@@ -8701,19 +11690,19 @@ state 660:
 	.	reduce by rule 236
 
 
-state 661:
+state 738:
 
 	trait_const : CONST IDENT COLON types . SEMI 
 	trait_const : CONST IDENT COLON types . EQ expression SEMI 
 
-	EQ	shift 672
-	SEMI	shift 671
+	EQ	shift 749
+	SEMI	shift 748
 
 
 	.	error
 
 
-state 662:
+state 739:
 
 	block_exp : LBRACE inner_attrs maybe_statements RBRACE .  (reduce by rule 297)
 
@@ -8722,18 +11711,18 @@ state 662:
 	.	reduce by rule 297
 
 
-state 663:
+state 740:
 
 	function : func_qualifier FN IDENT maybe_generics . LPARENT maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_exp 
 	method : func_qualifier FN IDENT maybe_generics . LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
-	LPARENT	shift 673
+	LPARENT	shift 750
 
 
 	.	error
 
 
-state 664:
+state 741:
 
 	external_static_item : STATIC maybe_mut IDENT COLON types SEMI .  (reduce by rule 286)
 
@@ -8742,88 +11731,88 @@ state 664:
 	.	reduce by rule 286
 
 
-state 665:
+state 742:
 
 	named_func_parameters : named_func_param named_func_parameters_expansion . maybe_comma 
 	named_func_parameters_expansion : named_func_parameters_expansion . COMMA named_func_param 
 	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion . COMMA DOTDOTDOT 
 
-	COMMA	shift 675
+	COMMA	shift 752
 
-	maybe_comma	goto 674
+	maybe_comma	goto 751
 
 	.	reduce by rule 130
 
 
-state 666:
+state 743:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT . maybe_func_return_type maybe_where_clause SEMI 
 
-	RARROW	shift 518
+	RARROW	shift 562
 
-	func_return_type	goto 517
-	maybe_func_return_type	goto 676
+	func_return_type	goto 561
+	maybe_func_return_type	goto 753
 
 	.	reduce by rule 183
 
 
-state 667:
+state 744:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT . maybe_func_return_type maybe_where_clause SEMI 
 
-	RARROW	shift 518
+	RARROW	shift 562
 
-	func_return_type	goto 517
-	maybe_func_return_type	goto 677
+	func_return_type	goto 561
+	maybe_func_return_type	goto 754
 
 	.	reduce by rule 183
 
 
-state 668:
+state 745:
 
 	named_func_param : UNDERSCORE COLON . types 
 
 	IDENT	shift 310
 
-	types	goto 678
+	types	goto 755
 
 	.	error
 
 
-state 669:
+state 746:
 
 	named_func_param : IDENT COLON . types 
 
 	IDENT	shift 310
 
-	types	goto 679
+	types	goto 756
 
 	.	error
 
 
-state 670:
+state 747:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT . maybe_trait_func_parameters RPARENT maybe_func_return_type maybe_where_clause 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT . self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
-	MUT	shift 578
+	MUT	shift 655
 	SELFVALUE	reduce by rule 132
-	IDENT	shift 688
-	AND	shift 687
+	IDENT	shift 765
+	AND	shift 764
 	RPARENT	reduce by rule 227
 
-	patterns	goto 686
-	types	goto 685
-	trait_func_parameters	goto 684
-	trait_func_param	goto 683
-	maybe_trait_func_parameters	goto 682
-	self_param	goto 681
-	maybe_mut	goto 680
+	patterns	goto 763
+	types	goto 762
+	trait_func_parameters	goto 761
+	trait_func_param	goto 760
+	maybe_trait_func_parameters	goto 759
+	self_param	goto 758
+	maybe_mut	goto 757
 
 	.	error
 
 
-state 671:
+state 748:
 
 	trait_const : CONST IDENT COLON types SEMI .  (reduce by rule 234)
 
@@ -8832,40 +11821,46 @@ state 671:
 	.	reduce by rule 234
 
 
-state 672:
+state 749:
 
 	trait_const : CONST IDENT COLON types EQ . expression SEMI 
 
+	MINUS	shift 444
+	STAR	shift 443
+	NOT	shift 442
+	AND	shift 441
+	ANDAND	shift 440
 
-	outer_attrs	goto 438
-	expression	goto 689
-	exp_without_block	goto 436
+	outer_attrs	goto 439
+	expression	goto 766
+	exp_without_block	goto 437
+	op_exp	goto 436
 
 	.	reduce by rule 68
 
 
-state 673:
+state 750:
 
 	function : func_qualifier FN IDENT maybe_generics LPARENT . maybe_func_parameters RPARENT maybe_func_return_type maybe_where_clause block_exp 
 	method : func_qualifier FN IDENT maybe_generics LPARENT . self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
-	MUT	shift 578
+	MUT	shift 655
 	SELFVALUE	reduce by rule 132
 	IDENT	shift 415
-	AND	shift 687
+	AND	shift 764
 	RPARENT	reduce by rule 177
 
 	patterns	goto 414
 	func_parameters	goto 413
 	maybe_func_parameters	goto 412
 	func_param	goto 411
-	self_param	goto 690
-	maybe_mut	goto 680
+	self_param	goto 767
+	maybe_mut	goto 757
 
 	.	error
 
 
-state 674:
+state 751:
 
 	named_func_parameters : named_func_param named_func_parameters_expansion maybe_comma .  (reduce by rule 291)
 
@@ -8874,46 +11869,46 @@ state 674:
 	.	reduce by rule 291
 
 
-state 675:
+state 752:
 
 	maybe_comma : COMMA .  (reduce by rule 129)
 	named_func_parameters_expansion : named_func_parameters_expansion COMMA . named_func_param 
 	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion COMMA . DOTDOTDOT 
 
-	IDENT	shift 658
-	UNDERSCORE	shift 657
-	DOTDOTDOT	shift 692
+	IDENT	shift 735
+	UNDERSCORE	shift 734
+	DOTDOTDOT	shift 769
 
-	named_func_param	goto 691
+	named_func_param	goto 768
 
 	.	reduce by rule 129
 
 
-state 676:
+state 753:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type . maybe_where_clause SEMI 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 693
+	maybe_where_clause	goto 770
 
 	.	reduce by rule 94
 
 
-state 677:
+state 754:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type . maybe_where_clause SEMI 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 694
+	maybe_where_clause	goto 771
 
 	.	reduce by rule 94
 
 
-state 678:
+state 755:
 
 	named_func_param : UNDERSCORE COLON types .  (reduce by rule 295)
 
@@ -8922,7 +11917,7 @@ state 678:
 	.	reduce by rule 295
 
 
-state 679:
+state 756:
 
 	named_func_param : IDENT COLON types .  (reduce by rule 294)
 
@@ -8931,48 +11926,48 @@ state 679:
 	.	reduce by rule 294
 
 
-state 680:
+state 757:
 
 	self_param : maybe_mut . SELFVALUE 
 	self_param : maybe_mut . SELFVALUE COLON types 
 
-	SELFVALUE	shift 695
+	SELFVALUE	shift 772
 
 
 	.	error
 
 
-state 681:
+state 758:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param . trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 
 
-	trait_func_parameters_expansion	goto 696
+	trait_func_parameters_expansion	goto 773
 
 	.	reduce by rule 231
 
 
-state 682:
+state 759:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters . RPARENT maybe_func_return_type maybe_where_clause 
 
-	RPARENT	shift 697
+	RPARENT	shift 774
 
 
 	.	error
 
 
-state 683:
+state 760:
 
 	trait_func_parameters : trait_func_param . trait_func_parameters_expansion maybe_comma 
 
 
-	trait_func_parameters_expansion	goto 698
+	trait_func_parameters_expansion	goto 775
 
 	.	reduce by rule 231
 
 
-state 684:
+state 761:
 
 	maybe_trait_func_parameters : trait_func_parameters .  (reduce by rule 226)
 
@@ -8981,7 +11976,7 @@ state 684:
 	.	reduce by rule 226
 
 
-state 685:
+state 762:
 
 	trait_func_param : types .  (reduce by rule 233)
 
@@ -8990,32 +11985,32 @@ state 685:
 	.	reduce by rule 233
 
 
-state 686:
+state 763:
 
 	trait_func_param : patterns . COLON types 
 
-	COLON	shift 699
+	COLON	shift 776
 
 
 	.	error
 
 
-state 687:
+state 764:
 
 	self_param : AND . maybe_mut SELFVALUE 
 	self_param : AND . lifetime maybe_mut SELFVALUE 
 
-	MUT	shift 578
+	MUT	shift 655
 	STATICLIFETIME	shift 409
 	LIFETIME_OR_LABEL	shift 408
 
-	lifetime	goto 701
-	maybe_mut	goto 700
+	lifetime	goto 778
+	maybe_mut	goto 777
 
 	.	reduce by rule 132
 
 
-state 688:
+state 765:
 
 	patterns : IDENT .  (reduce by rule 83)
 	types : IDENT .  (reduce by rule 84)
@@ -9028,27 +12023,89 @@ state 688:
 	.	error
 
 
-state 689:
+state 766:
 
 	trait_const : CONST IDENT COLON types EQ expression . SEMI 
+	op_exp : expression . QUESTION 
+	op_exp : expression . PLUS expression 
+	op_exp : expression . MINUS expression 
+	op_exp : expression . STAR expression 
+	op_exp : expression . SLASH expression 
+	op_exp : expression . PERCENT expression 
+	op_exp : expression . AND expression 
+	op_exp : expression . OR expression 
+	op_exp : expression . CARET expression 
+	op_exp : expression . SHL expression 
+	op_exp : expression . SHR expression 
+	op_exp : expression . EQEQ expression 
+	op_exp : expression . NE expression 
+	op_exp : expression . GT expression 
+	op_exp : expression . LT expression 
+	op_exp : expression . GE expression 
+	op_exp : expression . LE expression 
+	op_exp : expression . OROR expression 
+	op_exp : expression . ANDAND expression 
+	op_exp : expression . AS type_no_bounds 
+	op_exp : expression . EQ expression 
+	op_exp : expression . PLUSEQ expression 
+	op_exp : expression . MINUSEQ expression 
+	op_exp : expression . STAREQ expression 
+	op_exp : expression . SLASHEQ expression 
+	op_exp : expression . PERCENTEQ expression 
+	op_exp : expression . ANDEQ expression 
+	op_exp : expression . OREQ expression 
+	op_exp : expression . CARETEQ expression 
+	op_exp : expression . SHLEQ expression 
+	op_exp : expression . SHREQ expression 
 
-	SEMI	shift 702
+	AS	shift 523
+	PLUS	shift 522
+	MINUS	shift 521
+	STAR	shift 520
+	SLASH	shift 519
+	PERCENT	shift 518
+	CARET	shift 517
+	AND	shift 516
+	OR	shift 515
+	ANDAND	shift 514
+	OROR	shift 513
+	SHL	shift 512
+	SHR	shift 511
+	PLUSEQ	shift 510
+	MINUSEQ	shift 509
+	STAREQ	shift 508
+	SLASHEQ	shift 507
+	PERCENTEQ	shift 506
+	CARETEQ	shift 505
+	ANDEQ	shift 504
+	OREQ	shift 503
+	SHLEQ	shift 502
+	SHREQ	shift 501
+	EQ	shift 500
+	EQEQ	shift 499
+	NE	shift 498
+	GT	shift 497
+	LT	shift 496
+	GE	shift 495
+	LE	shift 494
+	SEMI	shift 779
+	QUESTION	shift 492
 
 
 	.	error
 
 
-state 690:
+state 767:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param . func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
 
-	func_parameters_expansion	goto 703
+	func_parameters_expansion	goto 780
 
 	.	reduce by rule 180
 
 
-state 691:
+state 768:
 
 	named_func_parameters_expansion : named_func_parameters_expansion COMMA named_func_param .  (reduce by rule 292)
 
@@ -9057,7 +12114,7 @@ state 691:
 	.	reduce by rule 292
 
 
-state 692:
+state 769:
 
 	named_func_parameters_with_variadics : named_func_param named_func_parameters_expansion COMMA DOTDOTDOT .  (reduce by rule 296)
 
@@ -9066,106 +12123,106 @@ state 692:
 	.	reduce by rule 296
 
 
-state 693:
+state 770:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause . SEMI 
 
-	SEMI	shift 704
+	SEMI	shift 781
 
 
 	.	error
 
 
-state 694:
+state 771:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause . SEMI 
 
-	SEMI	shift 705
+	SEMI	shift 782
 
 
 	.	error
 
 
-state 695:
+state 772:
 
 	self_param : maybe_mut SELFVALUE .  (reduce by rule 260)
 	self_param : maybe_mut SELFVALUE . COLON types 
 
-	COLON	shift 706
+	COLON	shift 783
 
 
 	.	reduce by rule 260
 
 
-state 696:
+state 773:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion . maybe_comma RPARENT maybe_func_return_type maybe_where_clause 
 	trait_func_parameters_expansion : trait_func_parameters_expansion . COMMA trait_func_param 
 
-	COMMA	shift 708
+	COMMA	shift 785
 
-	maybe_comma	goto 707
+	maybe_comma	goto 784
 
 	.	reduce by rule 130
 
 
-state 697:
+state 774:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT . maybe_func_return_type maybe_where_clause 
 
-	RARROW	shift 518
+	RARROW	shift 562
 
-	func_return_type	goto 517
-	maybe_func_return_type	goto 709
+	func_return_type	goto 561
+	maybe_func_return_type	goto 786
 
 	.	reduce by rule 183
 
 
-state 698:
+state 775:
 
 	trait_func_parameters : trait_func_param trait_func_parameters_expansion . maybe_comma 
 	trait_func_parameters_expansion : trait_func_parameters_expansion . COMMA trait_func_param 
 
-	COMMA	shift 708
+	COMMA	shift 785
 
-	maybe_comma	goto 710
+	maybe_comma	goto 787
 
 	.	reduce by rule 130
 
 
-state 699:
+state 776:
 
 	trait_func_param : patterns COLON . types 
 
 	IDENT	shift 310
 
-	types	goto 711
+	types	goto 788
 
 	.	error
 
 
-state 700:
+state 777:
 
 	self_param : AND maybe_mut . SELFVALUE 
 
-	SELFVALUE	shift 712
+	SELFVALUE	shift 789
 
 
 	.	error
 
 
-state 701:
+state 778:
 
 	self_param : AND lifetime . maybe_mut SELFVALUE 
 
-	MUT	shift 578
+	MUT	shift 655
 
-	maybe_mut	goto 713
+	maybe_mut	goto 790
 
 	.	reduce by rule 132
 
 
-state 702:
+state 779:
 
 	trait_const : CONST IDENT COLON types EQ expression SEMI .  (reduce by rule 235)
 
@@ -9174,19 +12231,19 @@ state 702:
 	.	reduce by rule 235
 
 
-state 703:
+state 780:
 
 	func_parameters_expansion : func_parameters_expansion . COMMA func_param 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion . maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
-	COMMA	shift 515
+	COMMA	shift 559
 
-	maybe_comma	goto 714
+	maybe_comma	goto 791
 
 	.	reduce by rule 130
 
 
-state 704:
+state 781:
 
 	external_func_item : FN IDENT maybe_generics LPARENT named_func_parameters_with_variadics RPARENT maybe_func_return_type maybe_where_clause SEMI .  (reduce by rule 288)
 
@@ -9195,7 +12252,7 @@ state 704:
 	.	reduce by rule 288
 
 
-state 705:
+state 782:
 
 	external_func_item : FN IDENT maybe_generics LPARENT maybe_named_func_parameters RPARENT maybe_func_return_type maybe_where_clause SEMI .  (reduce by rule 287)
 
@@ -9204,54 +12261,54 @@ state 705:
 	.	reduce by rule 287
 
 
-state 706:
+state 783:
 
 	self_param : maybe_mut SELFVALUE COLON . types 
 
 	IDENT	shift 310
 
-	types	goto 715
+	types	goto 792
 
 	.	error
 
 
-state 707:
+state 784:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma . RPARENT maybe_func_return_type maybe_where_clause 
 
-	RPARENT	shift 716
+	RPARENT	shift 793
 
 
 	.	error
 
 
-state 708:
+state 785:
 
 	maybe_comma : COMMA .  (reduce by rule 129)
 	trait_func_parameters_expansion : trait_func_parameters_expansion COMMA . trait_func_param 
 
-	IDENT	shift 688
+	IDENT	shift 765
 
-	patterns	goto 686
-	types	goto 685
-	trait_func_param	goto 717
+	patterns	goto 763
+	types	goto 762
+	trait_func_param	goto 794
 
 	.	reduce by rule 129
 
 
-state 709:
+state 786:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type . maybe_where_clause 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 718
+	maybe_where_clause	goto 795
 
 	.	reduce by rule 94
 
 
-state 710:
+state 787:
 
 	trait_func_parameters : trait_func_param trait_func_parameters_expansion maybe_comma .  (reduce by rule 229)
 
@@ -9260,7 +12317,7 @@ state 710:
 	.	reduce by rule 229
 
 
-state 711:
+state 788:
 
 	trait_func_param : patterns COLON types .  (reduce by rule 232)
 
@@ -9269,7 +12326,7 @@ state 711:
 	.	reduce by rule 232
 
 
-state 712:
+state 789:
 
 	self_param : AND maybe_mut SELFVALUE .  (reduce by rule 258)
 
@@ -9278,27 +12335,27 @@ state 712:
 	.	reduce by rule 258
 
 
-state 713:
+state 790:
 
 	self_param : AND lifetime maybe_mut . SELFVALUE 
 
-	SELFVALUE	shift 719
+	SELFVALUE	shift 796
 
 
 	.	error
 
 
-state 714:
+state 791:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma . RPARENT maybe_func_return_type maybe_where_clause block_exp 
 
-	RPARENT	shift 720
+	RPARENT	shift 797
 
 
 	.	error
 
 
-state 715:
+state 792:
 
 	self_param : maybe_mut SELFVALUE COLON types .  (reduce by rule 261)
 
@@ -9307,19 +12364,19 @@ state 715:
 	.	reduce by rule 261
 
 
-state 716:
+state 793:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT . maybe_func_return_type maybe_where_clause 
 
-	RARROW	shift 518
+	RARROW	shift 562
 
-	func_return_type	goto 517
-	maybe_func_return_type	goto 721
+	func_return_type	goto 561
+	maybe_func_return_type	goto 798
 
 	.	reduce by rule 183
 
 
-state 717:
+state 794:
 
 	trait_func_parameters_expansion : trait_func_parameters_expansion COMMA trait_func_param .  (reduce by rule 230)
 
@@ -9328,7 +12385,7 @@ state 717:
 	.	reduce by rule 230
 
 
-state 718:
+state 795:
 
 	trait_func_decl : func_qualifier FN IDENT maybe_generics LPARENT maybe_trait_func_parameters RPARENT maybe_func_return_type maybe_where_clause .  (reduce by rule 225)
 
@@ -9337,7 +12394,7 @@ state 718:
 	.	reduce by rule 225
 
 
-state 719:
+state 796:
 
 	self_param : AND lifetime maybe_mut SELFVALUE .  (reduce by rule 259)
 
@@ -9346,43 +12403,43 @@ state 719:
 	.	reduce by rule 259
 
 
-state 720:
+state 797:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT . maybe_func_return_type maybe_where_clause block_exp 
 
-	RARROW	shift 518
+	RARROW	shift 562
 
-	func_return_type	goto 517
-	maybe_func_return_type	goto 722
+	func_return_type	goto 561
+	maybe_func_return_type	goto 799
 
 	.	reduce by rule 183
 
 
-state 721:
+state 798:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type . maybe_where_clause 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 723
+	maybe_where_clause	goto 800
 
 	.	reduce by rule 94
 
 
-state 722:
+state 799:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type . maybe_where_clause block_exp 
 
 	WHERE	shift 298
 
 	where_clause	goto 297
-	maybe_where_clause	goto 724
+	maybe_where_clause	goto 801
 
 	.	reduce by rule 94
 
 
-state 723:
+state 800:
 
 	trait_method_decl : func_qualifier FN IDENT maybe_generics LPARENT self_param trait_func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause .  (reduce by rule 228)
 
@@ -9391,18 +12448,18 @@ state 723:
 	.	reduce by rule 228
 
 
-state 724:
+state 801:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause . block_exp 
 
-	LBRACE	shift 599
+	LBRACE	shift 676
 
-	block_exp	goto 725
+	block_exp	goto 802
 
 	.	error
 
 
-state 725:
+state 802:
 
 	method : func_qualifier FN IDENT maybe_generics LPARENT self_param func_parameters_expansion maybe_comma RPARENT maybe_func_return_type maybe_where_clause block_exp .  (reduce by rule 280)
 
@@ -9411,7 +12468,7 @@ state 725:
 	.	reduce by rule 280
 
 
-state 726:
+state 803:
 
 
 	EOF	accept
@@ -9419,5 +12476,5 @@ state 726:
 
 	.	error
 
-1988 of 2822 action table entries left after compaction
-538 goto table entries
+2737 of 3839 action table entries left after compaction
+689 goto table entries

@@ -2,8 +2,10 @@ signature Rust_TOKENS =
 sig
 type ('a,'b) token
 type svalue
-val ABI:  'a * 'a -> (svalue,'a) token
-val LOWER_THAN_ABI:  'a * 'a -> (svalue,'a) token
+val RANGE:  'a * 'a -> (svalue,'a) token
+val FORTYPE:  'a * 'a -> (svalue,'a) token
+val SHIFTPLUS:  'a * 'a -> (svalue,'a) token
+val LAMBDA:  'a * 'a -> (svalue,'a) token
 val LOWER_THAN_LPARENT:  'a * 'a -> (svalue,'a) token
 val SHEBANG_LINE: (string) *  'a * 'a -> (svalue,'a) token
 val SHEBANG:  'a * 'a -> (svalue,'a) token

@@ -7,7 +7,7 @@ sig
     and OuterAttribute = OuterAttribute of MetaItem
     and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaSeq option
     and MetaSeq = MetaSeq of MetaItemInner list
-    and LiteralExpression = LiteralExpression of Token
+    and LiteralExpression = LiteralExpression of TokenType
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
@@ -116,7 +116,7 @@ sig
     and Type = Type
     and BlockExpression = BlockExpression
 
-    and Token = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
+    and TokenType = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
                 | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
                 | IntegerLit of (string * string option * Pos) | FloatLit of (string * string option * Pos)
                 | True of Pos | False of Pos
@@ -138,7 +138,7 @@ struct
     and OuterAttribute = OuterAttribute of MetaItem
     and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaSeq option
     and MetaSeq = MetaSeq of MetaItemInner list
-    and LiteralExpression = LiteralExpression of Token
+    and LiteralExpression = LiteralExpression of TokenType
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathSeg = IDPat of Identifer | SuperPat | SelfPat | CratePat | DCratePat | DefaultPat
@@ -247,7 +247,7 @@ struct
     and Type = Type
     and BlockExpression = BlockExpression
 
-    and Token = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
+    and TokenType = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
                 | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
                 | IntegerLit of (string * string option * Pos) | FloatLit of (string * string option * Pos)
                 | True of Pos | False of Pos

@@ -32,7 +32,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG | SHEBANG_LINE of string
-        | LOWER_THAN_LPARENT | LOWER_THAN_ABI | ABI
+    | LOWER_THAN_LPARENT | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
@@ -86,10 +86,12 @@ fun error(pos, msg) = ErrorMsg.error pos
         | maybe_statements | statement | let_statement | exp_statement 
         | lit_exp_without_suffix of LiteralExpression
         | expression of Expression
-        | exp_without_block | lit_exp of LiteralExpression | str_lit of Token | bool_lit of Token
+        | exp_without_block | lit_exp of LiteralExpression | str_lit of TokenType | bool_lit of TokenType
         | path_exp | op_exp | grouped_exp | array_exp | index_exp | tuple_exp | tuple_index_exp | struct_exp
         | enum_var_exp | call_exp | method_call_exp | field_exp | closure_exp | continue_exp | break_exp | range_exp | return_exp
         | exp_with_block | block_exp of BlockExpression | unsafe_block_exp | loop_exp | if_exp | if_let_exp | match_exp
+
+        | type_no_bounds
 
         | token_trees | token_tree | delim_token_tree
         | token_ep_delim | token_ep_delim_kleene | token_ep_delim_dollar | token_ep_delim_kleene_dollar
@@ -104,10 +106,36 @@ fun error(pos, msg) = ErrorMsg.error pos
         ABSTRACT BECOME BOX DO FINAL MACRO OVERRIDE
         PRIV TYPEOF UNSIZED VIRTUAL YIELD
 
+%nonassoc LAMBDA
+%nonassoc SELFVALUE
+%nonassoc MUT
+%nonassoc IDENT
+%nonassoc SHIFTPLUS
+%nonassoc RARROW COLON
+%nonassoc FORTYPE
+%nonassoc FOR
+%nonassoc QUESTION
+%nonassoc BOX
+%nonassoc DOTDOT
+%nonassoc RETURN YIELD
+
+%right EQ SHLEQ SHREQ PLUSEQ MINUSEQ ANDEQ OREQ STAREQ SLASHEQ CARETEQ PERCENTEQ
+%left OROR
+%left ANDAND
+%left EQEQ NE
+%left LT GT LE GE
+%left OR
+%left CARET
+%left AND
+%left SHL SHR
+%left PLUS MINUS
+%nonassoc AS
+%left STAR SLASH PERCENT
+
+%nonassoc NOT
 %nonassoc LOWER_THAN_LPARENT
-%nonassoc LPARENT
-%nonassoc LOWER_THAN_ABI
-%nonassoc ABI
+%nonassoc LBRACE LBRACKET LPARENT DOT
+
 
 %verbose
 
@@ -623,6 +651,7 @@ maybe_statements:                                               ()
 expression: exp_without_block                                   (Expression)
 
 exp_without_block: outer_attrs lit_exp                          ()
+                | op_exp                                        ()
 
 lit_exp: lit_exp_without_suffix                                 (lit_exp_without_suffix)
         | INTEGER_LIT INTEGER_SUFFIX                            (LiteralExpression(IntegerLit(INTEGER_LIT, SOME(INTEGER_SUFFIX), Pos(INTEGER_LITleft))))
@@ -638,7 +667,59 @@ bool_lit: TRUE                                                  (True(Pos(TRUEle
 str_lit: STR_LIT                                                (StrLit(STR_LIT, Pos(STR_LITleft)))
         | RAW_STR_LIT                                           (RawStrLit(RAW_STR_LIT, Pos(RAW_STR_LITleft)))
         | BYTE_STR_LIT                                          (ByteStrLit(BYTE_STR_LIT, Pos(BYTE_STR_LITleft)))
-        | RAW_BYTE_STR_LIT                                      (RawByteStrLit(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)))                     
+        | RAW_BYTE_STR_LIT                                      (RawByteStrLit(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)))
+
+op_exp: (* borrow expression*)
+        AND expression                                          ()
+        | ANDAND expression                                     ()
+        | AND MUT expression                                    ()
+        | ANDAND MUT expression                                 ()
+        (* dereference expression*)
+        | STAR expression                                       ()
+        (* question mark operator *)
+        | expression QUESTION                                   ()
+        (* negation expression *)
+        | MINUS expression                                      ()
+        | NOT expression                                        ()
+        (* arithmetic or logical expression *)
+        | expression PLUS expression                            ()
+        | expression MINUS expression                           ()
+        | expression STAR expression                            ()
+        | expression SLASH expression                           ()
+        | expression PERCENT expression                         ()
+        | expression AND expression                             ()
+        | expression OR expression                              ()
+        | expression CARET expression                           ()
+        | expression SHL expression                             ()
+        | expression SHR expression                             ()
+        (* comparision expression  *)
+        | expression EQEQ expression                            ()
+        | expression NE expression                              ()
+        | expression GT expression                              ()
+        | expression LT expression                              ()
+        | expression GE expression                              ()
+        | expression LE expression                              ()
+        (* lazy boolean expression *)
+        | expression OROR expression                            ()
+        | expression ANDAND expression                          ()
+        (* type case expression *)
+        | expression AS type_no_bounds                          ()
+        (* assignment expression *)
+        | expression EQ expression                              ()
+        (* compound assignment expression *)
+        | expression PLUSEQ expression                          ()
+        | expression MINUSEQ expression                         ()
+        | expression STAREQ expression                          ()
+        | expression SLASHEQ expression                         ()
+        | expression PERCENTEQ expression                       ()
+        | expression ANDEQ expression                           ()
+        | expression OREQ expression                            ()
+        | expression CARETEQ expression                         ()
+        | expression SHLEQ expression                           ()
+        | expression SHREQ expression                           ()
+
+(* ------type------ *)
+type_no_bounds: type_path                                       ()
 
 (* -----token------- *)
 token_ep_delim_kleene_dollar: AS                                ()
