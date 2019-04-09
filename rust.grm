@@ -84,11 +84,14 @@ fun error(pos, msg) = ErrorMsg.error pos
         | named_func_parameters_with_variadics of ExternFunctionParameter| named_func_param of NamedFunctionParam
 
         | maybe_statements | statements |statements_expansion | statement | let_statement | exp_statement 
-        | expression of Expression
+        | expressions | expression of Expression
         | exp_without_block | lit_exp of LiteralExpression | str_lit of TokenType | bool_lit of TokenType
-        | path_exp | op_exp | grouped_exp 
-        | array_exp | array_elements | array_elements_expansion
-        | index_exp | tuple_exp | tuple_index_exp | struct_exp
+        | path_exp | path_in_exp | qualified_path_in_expression 
+        | op_exp | grouped_exp 
+        | array_exp | array_elements | array_elements_expansion | index_exp 
+        | tuple_exp | tuple_elements | tuple_elements_expansion | tuple_index_exp 
+        | struct_exp | struct_exp_struct | struct_exp_tuple | struct_exp_unit
+        | struct_exp_fields | struct_exp_fields_expansion | struct_base | struct_exp_field
         | enum_var_exp | call_exp | method_call_exp | field_exp | closure_exp | continue_exp | break_exp | range_exp | return_exp
         | exp_with_block | block_exp of BlockExpression | unsafe_block_exp | loop_exp | if_exp | if_let_exp | match_exp
 
@@ -671,10 +674,16 @@ exp_statement: exp_without_block SEMI                           ()
             (* | exp_with_block                                    () *)
 expression: exp_without_block                                   (Expression)
 
-exp_without_block: outer_attrs lit_exp                          ()
+exp_without_block: (* outer_attrs before exp *)
+                outer_attrs lit_exp                             ()
+                | path_exp                                      ()
                 | op_exp                                        ()
-                | outer_attrs grouped_exp                       ()
+                | grouped_exp                                   ()
                 | outer_attrs array_exp                         (yaccLog("array_exp hit"))
+                | index_exp                                     (yaccLog("index_exp hit"))
+                | tuple_exp                                     ()
+                | tuple_index_exp                               ()
+                | struct_exp                                    (yaccLog("struct_exp hit"))
 
 lit_exp: str_lit                                                (LiteralExpression(str_lit))
         | bool_lit                                              (LiteralExpression(bool_lit))
@@ -688,6 +697,9 @@ str_lit: STR_LIT                                                (StrLit(STR_LIT,
         | RAW_STR_LIT                                           (RawStrLit(RAW_STR_LIT, Pos(RAW_STR_LITleft)))
         | BYTE_STR_LIT                                          (ByteStrLit(BYTE_STR_LIT, Pos(BYTE_STR_LITleft)))
         | RAW_BYTE_STR_LIT                                      (RawByteStrLit(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)))
+
+path_exp: path_in_exp                                           ()
+path_in_exp: IDENT                                              ()
 
 op_exp: (* borrow expression*)
         AND expression                                          ()
@@ -738,7 +750,7 @@ op_exp: (* borrow expression*)
         | expression SHLEQ expression                           ()
         | expression SHREQ expression                           ()
 
-grouped_exp: LPARENT inner_attrs expression                     ()
+grouped_exp: LPARENT inner_attrs expression RPARENT             ()
 
 array_exp: LBRACKET inner_attrs array_elements RBRACKET         ()
             | LBRACKET inner_attrs RBRACKET                     ()
@@ -747,6 +759,45 @@ array_elements: expression SEMI expression                      ()
 array_elements_expansion: array_elements_expansion 
                         COMMA expression                        ()
                         | expression                            () 
+
+index_exp: expression LBRACKET expression RBRACKET              ()
+
+tuple_exp: LPARENT inner_attrs RPARENT                          ()
+            | LPARENT inner_attrs tuple_elements RPARENT        ()
+tuple_elements: tuple_elements_expansion                        ()
+            | tuple_elements_expansion expression               ()
+tuple_elements_expansion: tuple_elements_expansion 
+                        expression COMMA                        ()
+                        | expression COMMA                      ()
+
+tuple_index_exp: expression DOT INTEGER_LIT                     ()
+
+struct_exp: struct_exp_struct                                   ()
+            | struct_exp_tuple                                  ()
+            (* path_in_exp is ambigous with path exp *)
+            (* | struct_exp_unit                                   () *)
+struct_exp_struct: path_in_exp 
+                LBRACE inner_attrs struct_exp_fields RBRACE     ()        
+                | path_in_exp 
+                LBRACE inner_attrs struct_base RBRACE           ()
+                | path_in_exp LBRACE inner_attrs RBRACE         ()
+struct_exp_fields: struct_exp_fields_expansion                  ()
+                | struct_exp_fields_expansion COMMA             ()
+                | struct_exp_fields_expansion COMMA struct_base ()
+struct_exp_fields_expansion: struct_exp_fields_expansion
+                            COMMA struct_exp_field              ()
+                            | struct_exp_field                  ()
+struct_exp_field: IDENT                                         ()
+                | IDENT COLON expression                        ()
+                | INTEGER_LIT COLON expression                  ()
+struct_base: DOTDOT expression                                  ()
+struct_exp_tuple: path_in_exp 
+            LPARENT inner_attrs expressions RPARENT             ()
+            | path_in_exp 
+            LPARENT inner_attrs expressions COMMA RPARENT       ()
+expressions: expressions COMMA expression                       ()
+            | expression                                        ()
+struct_exp_unit: path_in_exp                                    ()
 
 (* ------type------ *)
 type_no_bounds: type_path                                       ()
