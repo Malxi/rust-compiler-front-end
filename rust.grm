@@ -32,12 +32,13 @@ fun error(pos, msg) = ErrorMsg.error pos
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG | SHEBANG_LINE of string
-    | LOWER_THAN_LPARENT | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
+    | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP
+    | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
         | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner
-        | path | simple_path of PathSeg list | simple_path_segment of PathSeg
+        | path | simple_path of PathSeg list | simple_path_segment of PathSeg | path_segment of PathSeg
         | exp | program
         | item of Item | vis_item of VisItem | macro_item
         | visibility of Visibility | item_type of ItemType
@@ -86,13 +87,18 @@ fun error(pos, msg) = ErrorMsg.error pos
         | maybe_statements | statements |statements_expansion | statement | let_statement | exp_statement 
         | expressions | expression of Expression
         | exp_without_block | lit_exp of LiteralExpression | str_lit of TokenType | bool_lit of TokenType
-        | path_exp | path_in_exp | qualified_path_in_expression 
+        | path_exp | path_in_exp | path_in_exp_with_generic | path_exp_segment
+        | generic_args | generic_args_lifetimes | generic_args_types | generic_args_bindings | generic_args_binding
+        | qualified_path_in_expression 
         | op_exp | grouped_exp 
         | array_exp | array_elements | array_elements_expansion | index_exp 
         | tuple_exp | tuple_elements | tuple_elements_expansion | tuple_index_exp 
         | struct_exp | struct_exp_struct | struct_exp_tuple | struct_exp_unit
         | struct_exp_fields | struct_exp_fields_expansion | struct_base | struct_exp_field
-        | enum_var_exp | call_exp | method_call_exp | field_exp | closure_exp | continue_exp | break_exp | range_exp | return_exp
+        | enum_var_exp | enum_exp_struct | enum_exp_tuple | enum_exp_field_less 
+        | enum_exp_fields | enum_exp_fields_expansion | enum_exp_field
+        | call_exp | call_params | call_params_expansion 
+        | method_call_exp | field_exp | closure_exp | continue_exp | break_exp | range_exp | return_exp
         | exp_with_block | block_exp of BlockExpression | unsafe_block_exp | loop_exp | if_exp | if_let_exp | match_exp
 
         | type_no_bounds
@@ -115,6 +121,8 @@ fun error(pos, msg) = ErrorMsg.error pos
 %nonassoc MUT
 %nonassoc IDENT
 %nonassoc SHIFTPLUS
+%nonassoc LOWER_THAN_PATHSEP
+%nonassoc PATHSEP
 %nonassoc RARROW COLON
 %nonassoc FORTYPE
 %nonassoc FOR
@@ -258,14 +266,55 @@ patterns: IDENT                                                 (Pattern)
 types: IDENT                                                    (Type)
 
 (* rewrite simple path production*)
-simple_path:  simple_path_segment                               ([simple_path_segment])
+(* simple_path:  simple_path_segment                               ([simple_path_segment])
             | PATHSEP simple_path_segment                       ([DefaultPat, simple_path_segment])
-            | simple_path PATHSEP simple_path_segment           (simple_path_segment::simple_path)
-simple_path_segment: IDENT                                      (IDPat(Identifer(IDENT)))
+            | simple_path PATHSEP simple_path_segment           (simple_path_segment::simple_path) *)
+simple_path: path_in_exp %prec LOWER_THAN_PATHSEP               ([])
+(* simple_path_segment: IDENT                                      (IDPat(Identifer(IDENT)))
                     | SUPER                                     (SuperPat)
                     | SELFVALUE                                 (SelfPat)
-                    | CARET                                     (CratePat)
-                    | DOLLAR CARET                              (DCratePat)
+                    | CRATE                                     (CratePat)
+                    | DOLLAR CRATE                              (DCratePat) *)
+simple_path_segment: path_segment  %prec LOWER_THAN_PATHSEP     (path_segment)
+path_segment: IDENT                                             (IDPat(Identifer(IDENT)))
+            | SUPER                                             (SuperPat)
+            | SELFVALUE                                         (SelfPat)
+            | CRATE                                             (CratePat)
+            | DOLLAR CRATE                                      (DCratePat)
+(* path_in_exp: simple_path                                        ()
+            | path_in_exp_with_generic                          () *)
+(* path_in_exp: path_in_exp_with_generic                           () *)
+path_in_exp: path_exp_segment                      ()
+            | PATHSEP path_exp_segment                          ()
+            | path_in_exp_with_generic PATHSEP path_exp_segment ()
+path_exp_segment: path_segment PATHSEP generic_args 
+                %prec PATHSEP                                   ()
+                | SELFTYPE PATHSEP generic_args 
+                %prec PATHSEP                                   ()
+                | path_segment %prec LOWER_THAN_PATHSEP         ()
+                | SELFTYPE %prec LOWER_THAN_PATHSEP             ()
+
+generic_args: LT GT                                             ()
+            | LT generic_args_lifetimes maybe_comma GT          ()
+            | LT generic_args_types maybe_comma GT              ()
+            | LT generic_args_bindings maybe_comma GT           ()
+            | LT generic_args_types 
+                COMMA generic_args_bindings maybe_comma GT      ()
+            | LT generic_args_lifetimes 
+                COMMA generic_args_types GT                     ()
+            | LT generic_args_lifetimes 
+                COMMA generic_args_bindings GT                  ()
+            | LT generic_args_lifetimes 
+                COMMA generic_args_types 
+                COMMA generic_args_bindings GT                  ()
+generic_args_lifetimes: generic_args_lifetimes COMMA lifetime   ()
+                        | lifetime                              ()
+generic_args_types: generic_args_types COMMA types              ()
+                    | types                                     ()
+generic_args_bindings: generic_args_bindings 
+                    COMMA generic_args_binding                  ()
+                    | generic_args_binding                      ()
+generic_args_binding: IDENT EQ types                            ()
 
 maybe_where_clause: where_clause                                (SOME(where_clause))
                     |                                           (NONE)
@@ -684,6 +733,10 @@ exp_without_block: (* outer_attrs before exp *)
                 | tuple_exp                                     ()
                 | tuple_index_exp                               ()
                 | struct_exp                                    (yaccLog("struct_exp hit"))
+                (* struct exp contains enum and call *)
+                (* | enum_var_exp                                  () *)
+                | call_exp                                      ()
+                | method_call_exp                               ()
 
 lit_exp: str_lit                                                (LiteralExpression(str_lit))
         | bool_lit                                              (LiteralExpression(bool_lit))
@@ -698,8 +751,8 @@ str_lit: STR_LIT                                                (StrLit(STR_LIT,
         | BYTE_STR_LIT                                          (ByteStrLit(BYTE_STR_LIT, Pos(BYTE_STR_LITleft)))
         | RAW_BYTE_STR_LIT                                      (RawByteStrLit(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)))
 
-path_exp: path_in_exp                                           ()
-path_in_exp: IDENT                                              ()
+path_exp: path_in_exp %prec LOWER_THAN_LPARENT                  ()
+
 
 op_exp: (* borrow expression*)
         AND expression                                          ()
@@ -792,12 +845,25 @@ struct_exp_field: IDENT                                         ()
                 | INTEGER_LIT COLON expression                  ()
 struct_base: DOTDOT expression                                  ()
 struct_exp_tuple: path_in_exp 
-            LPARENT inner_attrs expressions RPARENT             ()
+            LPARENT inner_attrs expressions RPARENT 
+            %prec LPARENT                                       ()
             | path_in_exp 
-            LPARENT inner_attrs expressions COMMA RPARENT       ()
+            LPARENT inner_attrs expressions COMMA RPARENT 
+            %prec LPARENT                                       ()
 expressions: expressions COMMA expression                       ()
             | expression                                        ()
 struct_exp_unit: path_in_exp                                    ()
+
+call_exp: expression LPARENT RPARENT                            ()
+        | expression LPARENT call_params RPARENT                ()
+call_params: call_params_expansion                              ()
+            | call_params_expansion COMMA                       ()
+call_params_expansion: call_params_expansion COMMA expression   ()
+                    | expression                                ()
+
+method_call_exp: expression DOT path_segment LPARENT RPARENT    ()
+                | expression DOT path_segment LPARENT
+                    call_params RPARENT                         ()
 
 (* ------type------ *)
 type_no_bounds: type_path                                       ()

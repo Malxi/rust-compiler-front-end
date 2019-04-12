@@ -53,6 +53,9 @@ fn exp() {
     NothingInMe {};
     TuplePoint(10.0, 20.0);
     TuplePoint { 0: 10.0, 1: 20.0 }; // Results in the same value as the above line
+
+    /* enum, call */
+    let three: i32 = add(1i32, 2i32);
 }
 
 
