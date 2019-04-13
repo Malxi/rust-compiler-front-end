@@ -39,7 +39,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
         | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner
         | path | simple_path of PathSeg list | simple_path_segment of PathSeg | path_segment of PathSeg
-        | exp | program
+        | type_path of TypePath | type_path_segment | type_path_fn | type_path_fn_inputs | type_path_fn_inputs_expansion
         | item of Item | vis_item of VisItem | macro_item
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
@@ -64,7 +64,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | maybe_type_param_bounds of TypeParamBounds option | type_param_bounds of TypeParamBounds
         | type_param_bounds_expansion of TypeParamBound list | type_param_bound of TypeParamBound
         | lifetime of Lifetime | lifetime_bounds of LifetimeBounds | lifetime_bounds_expansion of Lifetime list | maybe_lifetime
-        | trait_bound of TraitBound | for_lifetimes of ForLifetimes | type_path of TypePath | maybe_for_lifetimes of ForLifetimes option
+        | trait_bound of TraitBound | for_lifetimes of ForLifetimes | maybe_for_lifetimes of ForLifetimes option
         | trait_items of TraitItem list | trait_item of TraitItem 
         | trait_func of TraitItemType | trait_method of TraitItemType | trait_const of TraitItemType | trait_type of TraitItemType
         | trait_func_decl of TraitFuncDecl | trait_method_decl of TraitMethodDecl
@@ -276,7 +276,7 @@ simple_path: path_in_exp %prec LOWER_THAN_PATHSEP               ([])
                     | CRATE                                     (CratePat)
                     | DOLLAR CRATE                              (DCratePat) *)
 simple_path_segment: path_segment  %prec LOWER_THAN_PATHSEP     (path_segment)
-path_segment: IDENT                                             (IDPat(Identifer(IDENT)))
+path_segment: IDENT %prec LPARENT                               (IDPat(Identifer(IDENT)))
             | SUPER                                             (SuperPat)
             | SELFVALUE                                         (SelfPat)
             | CRATE                                             (CratePat)
@@ -316,6 +316,38 @@ generic_args_bindings: generic_args_bindings
                     | generic_args_binding                      ()
 generic_args_binding: IDENT EQ types                            ()
 
+(* type_path: IDENT need to be completed                     (TypePath) *)
+type_path: type_path PATHSEP type_path_segment                  (TypePath)
+            | PATHSEP type_path_segment                         (TypePath)
+            | type_path_segment                                 (TypePath)
+type_path_segment: path_segment PATHSEP generic_args 
+                %prec PATHSEP                                   ()
+                | SELFTYPE PATHSEP generic_args 
+                %prec PATHSEP                                   ()
+                | path_segment  generic_args 
+                %prec PATHSEP                                   ()
+                | SELFTYPE generic_args 
+                %prec PATHSEP                                   ()
+                | path_segment PATHSEP type_path_fn 
+                %prec PATHSEP                                   ()
+                | SELFTYPE PATHSEP type_path_fn 
+                %prec PATHSEP                                   ()
+                | path_segment  type_path_fn 
+                %prec PATHSEP                                   ()
+                | SELFTYPE type_path_fn 
+                %prec PATHSEP                                   ()
+                | path_segment %prec LOWER_THAN_PATHSEP         ()
+                | SELFTYPE %prec LOWER_THAN_PATHSEP             ()   
+type_path_fn: LPARENT RPARENT                                   ()
+            | LPARENT RPARENT RARROW types                      ()
+            | LPARENT type_path_fn_inputs RPARENT               ()
+            | LPARENT type_path_fn_inputs RPARENT RARROW types  ()
+type_path_fn_inputs: type_path_fn_inputs_expansion              ()
+                    | type_path_fn_inputs_expansion COMMA       ()
+type_path_fn_inputs_expansion: type_path_fn_inputs_expansion 
+                            COMMA types                         ()
+                            | types                             ()
+                
 maybe_where_clause: where_clause                                (SOME(where_clause))
                     |                                           (NONE)
 where_clause: WHERE where_clause_expansion                      (WhereClause (rev (where_clause_expansion)))
@@ -599,7 +631,7 @@ trait_bound: type_path                                          (TraitBound(NONE
             | LPARENT maybe_for_lifetimes type_path RPARENT     (TraitBound(NONE, maybe_for_lifetimes, type_path))
             | LPARENT QUESTION 
                 maybe_for_lifetimes type_path RPARENT           (TraitBound(SOME(Sized), maybe_for_lifetimes, type_path))
-type_path: IDENT (* need to be completed *)                     (TypePath)
+
 
 self_param: AND maybe_mut SELFVALUE                             (SelfParamLT (NONE, maybe_mut))
             | AND lifetime maybe_mut SELFVALUE                  (SelfParamLT (SOME(lifetime), maybe_mut))
@@ -737,6 +769,7 @@ exp_without_block: (* outer_attrs before exp *)
                 (* | enum_var_exp                                  () *)
                 | call_exp                                      ()
                 | method_call_exp                               ()
+                | field_exp                                     ()
 
 lit_exp: str_lit                                                (LiteralExpression(str_lit))
         | bool_lit                                              (LiteralExpression(bool_lit))
@@ -861,9 +894,14 @@ call_params: call_params_expansion                              ()
 call_params_expansion: call_params_expansion COMMA expression   ()
                     | expression                                ()
 
-method_call_exp: expression DOT path_segment LPARENT RPARENT    ()
-                | expression DOT path_segment LPARENT
-                    call_params RPARENT                         ()
+method_call_exp: expression DOT path_exp_segment LPARENT RPARENT 
+                    %prec LPARENT                               ()
+                | expression DOT path_exp_segment LPARENT
+                    call_params RPARENT  
+                    %prec LPARENT                               ()
+
+(* field_exp: expression DOT IDENT %prec LOWER_THAN_LPARENT        () *)
+field_exp: expression DOT path_exp_segment %prec LOWER_THAN_LPARENT        ()
 
 (* ------type------ *)
 type_no_bounds: type_path                                       ()
