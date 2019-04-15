@@ -2519,7 +2519,7 @@ fun yyAction165 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Tokens.DOTDOT> "^yytext); Tokens.DOTDOT(yypos, yypos+size yytext))
       end
 fun yyAction166 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
@@ -2597,7 +2597,7 @@ fun yyAction178 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "Tokens.EQ "^yytext); Tokens.EQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Tokens.EQ> "^yytext); Tokens.EQ(yypos, yypos+size yytext))
       end
 fun yyAction179 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)

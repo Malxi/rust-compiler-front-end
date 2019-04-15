@@ -56,6 +56,39 @@ fn exp() {
 
     /* enum, call */
     let three: i32 = add(1i32, 2i32);
+
+    /* field */
+    let a = &mut x.f1; // x.f1 borrowed mutably
+    let b = &x.f2;         // x.f2 borrowed immutably
+    let c = &x.f2;         // Can borrow again
+    let d = x.f3;           // Move out of x.f3
+
+    /* closure */
+    ten_times(|j| println("hello, {}", j));
+    // With type annotations
+    ten_times(|j: i32| -> () { println("hello, {}", j) });
+
+    let word = "konnichiwa".to_owned();
+    ten_times(move |j| println("{}, {}", word, j));
+
+    /* break */
+    break;
+    break break 2;
+    break 1+2
+
+    /* range */
+    //1..2;   // std::ops::Range
+    //3..;    // std::ops::RangeFrom
+    ..4;    // std::ops::RangeTo
+    ..;     // std::ops::RangeFull
+    //5..=6;  // std::ops::RangeInclusive
+    ..=7;   // std::ops::RangeToInclusive
+
+    /* macro */
+    println!("Hello!");
+    let x = vec![1,2,3];
+    //type N2 = Tuple!(i32, i32);
+    example!();
 }
 
 

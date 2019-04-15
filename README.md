@@ -8,6 +8,7 @@ In sml interactive system
 + Fix grammar bug (lex bug ignores some token)
 + Fix many productions (replace maybe_productions with terminals to solve shift/reduce conflicts)
 + Literal tokens take original text with suffix
++ SimplePath in Macro conflicts with PathInExpression in Item, so replacing SimplePath with PathInExpression, this idea comes from rust official parser.
 ### Goal
 + To modify lex comments datatype
 + Add a suffix option for literals
@@ -17,6 +18,8 @@ In sml interactive system
 (generics: GT-SHR;
 generic args: GT-SHR, GT-GE, GT-SHRQG, LT-SHL)
 + Add outer attributes for operator expression will cause shift/reduce conflicts
++ Extra work for ambiguous tokens
+(Float Literal: 1.; Range: 1..2)
 
 ## Tools
 + convert for encoding and decoding

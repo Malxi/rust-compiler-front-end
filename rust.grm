@@ -32,7 +32,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG | SHEBANG_LINE of string
-    | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP
+    | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP | LOWER_THAN_EXPR
     | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
@@ -97,8 +97,11 @@ fun error(pos, msg) = ErrorMsg.error pos
         | struct_exp_fields | struct_exp_fields_expansion | struct_base | struct_exp_field
         | enum_var_exp | enum_exp_struct | enum_exp_tuple | enum_exp_field_less 
         | enum_exp_fields | enum_exp_fields_expansion | enum_exp_field
-        | call_exp | call_params | call_params_expansion 
-        | method_call_exp | field_exp | closure_exp | continue_exp | break_exp | range_exp | return_exp
+        | call_exp | call_params | maybe_call_params | call_params_expansion 
+        | method_call_exp | field_exp 
+        | closure_exp | closure_parameters | closure_param | closure_parameters_expansion
+        | continue_exp | break_exp | range_exp 
+        | return_exp
         | exp_with_block | block_exp of BlockExpression | unsafe_block_exp | loop_exp | if_exp | if_let_exp | match_exp
 
         | type_no_bounds
@@ -131,7 +134,9 @@ fun error(pos, msg) = ErrorMsg.error pos
 %nonassoc DOTDOT
 %nonassoc RETURN YIELD
 
-%right EQ SHLEQ SHREQ PLUSEQ MINUSEQ ANDEQ OREQ STAREQ SLASHEQ CARETEQ PERCENTEQ
+%nonassoc LOWER_THAN_EXPR
+
+%right EQ SHLEQ SHREQ PLUSEQ MINUSEQ ANDEQ OREQ STAREQ SLASHEQ CARETEQ PERCENTEQ DOTDOTEQ
 %left OROR
 %left ANDAND
 %left EQEQ NE
@@ -148,6 +153,7 @@ fun error(pos, msg) = ErrorMsg.error pos
 %nonassoc LOWER_THAN_LPARENT
 %nonassoc LBRACE LBRACKET LPARENT DOT
 
+%nonassoc RANGE
 
 %verbose
 
@@ -162,16 +168,24 @@ item: outer_attrs vis_item                                      (VisItemType (re
         | macro_item                                            (MacroItemType (MacroItem))
 
 (* -----Macro------ *)
-macro_invocation: simple_path NOT delim_token_tree              ()
+(* macro_invocation: simple_path NOT delim_token_tree              () *)
+macro_invocation: path_in_exp NOT delim_token_tree              ()
 
 macro_item: macro_invocation_semi                               (yaccLog("macro_invocation_semi"))
             | macro_rules_definition                            (yaccLog("macro_rules_definition"))
 
-macro_invocation_semi: simple_path NOT 
+(* macro_invocation_semi: simple_path NOT 
                         LPARENT token_trees RPARENT SEMI        (MacroInvocationSemi)
                     | simple_path NOT 
                         LBRACKET token_trees RBRACKET SEMI      (MacroInvocationSemi)
                     | simple_path NOT 
+                        LBRACE token_trees RBRACE               (MacroInvocationSemi) *)
+
+macro_invocation_semi: path_in_exp NOT 
+                        LPARENT token_trees RPARENT SEMI        (MacroInvocationSemi)
+                    | path_in_exp NOT 
+                        LBRACKET token_trees RBRACKET SEMI      (MacroInvocationSemi)
+                    | path_in_exp NOT 
                         LBRACE token_trees RBRACE               (MacroInvocationSemi)
 
 token_trees: token_trees token_tree                             ()
@@ -183,7 +197,8 @@ delim_token_tree: LPARENT token_trees RPARENT                   ()
                 | LBRACE token_trees RBRACE                     ()
 
 (* the simple_path must be [macro_rules] *)
-macro_rules_definition: simple_path NOT IDENT macro_rules_def   ()
+(* macro_rules_definition: simple_path NOT IDENT macro_rules_def   () *)
+macro_rules_definition: path_in_exp NOT IDENT macro_rules_def   ()
 macro_rules_def: LPARENT macro_rules RPARENT SEMI               ()
             | LBRACKET macro_rules RBRACKET SEMI                ()
             | LBRACE macro_rules RBRACE                         ()
@@ -266,27 +281,25 @@ patterns: IDENT                                                 (Pattern)
 types: IDENT                                                    (Type)
 
 (* rewrite simple path production*)
-(* simple_path:  simple_path_segment                               ([simple_path_segment])
+simple_path:  simple_path_segment                               ([simple_path_segment])
             | PATHSEP simple_path_segment                       ([DefaultPat, simple_path_segment])
-            | simple_path PATHSEP simple_path_segment           (simple_path_segment::simple_path) *)
-simple_path: path_in_exp %prec LOWER_THAN_PATHSEP               ([])
+            | simple_path PATHSEP simple_path_segment           (simple_path_segment::simple_path)
+(* simple_path: path_in_exp %prec LOWER_THAN_PATHSEP               ([]) *)
 (* simple_path_segment: IDENT                                      (IDPat(Identifer(IDENT)))
                     | SUPER                                     (SuperPat)
                     | SELFVALUE                                 (SelfPat)
                     | CRATE                                     (CratePat)
                     | DOLLAR CRATE                              (DCratePat) *)
 simple_path_segment: path_segment  %prec LOWER_THAN_PATHSEP     (path_segment)
-path_segment: IDENT %prec LPARENT                               (IDPat(Identifer(IDENT)))
+path_segment: IDENT                                             (IDPat(Identifer(IDENT)))
             | SUPER                                             (SuperPat)
             | SELFVALUE                                         (SelfPat)
             | CRATE                                             (CratePat)
             | DOLLAR CRATE                                      (DCratePat)
-(* path_in_exp: simple_path                                        ()
-            | path_in_exp_with_generic                          () *)
-(* path_in_exp: path_in_exp_with_generic                           () *)
-path_in_exp: path_exp_segment                      ()
+
+path_in_exp: path_exp_segment                                   ()
             | PATHSEP path_exp_segment                          ()
-            | path_in_exp_with_generic PATHSEP path_exp_segment ()
+            | path_in_exp PATHSEP path_exp_segment              ()
 path_exp_segment: path_segment PATHSEP generic_args 
                 %prec PATHSEP                                   ()
                 | SELFTYPE PATHSEP generic_args 
@@ -316,26 +329,21 @@ generic_args_bindings: generic_args_bindings
                     | generic_args_binding                      ()
 generic_args_binding: IDENT EQ types                            ()
 
-(* type_path: IDENT need to be completed                     (TypePath) *)
-type_path: type_path PATHSEP type_path_segment                  (TypePath)
-            | PATHSEP type_path_segment                         (TypePath)
-            | type_path_segment                                 (TypePath)
+type_path: type_path_segment                                    (TypePath)
+        | PATHSEP type_path_segment                             (TypePath) 
+        | type_path PATHSEP type_path_segment                   (TypePath)
 type_path_segment: path_segment PATHSEP generic_args 
                 %prec PATHSEP                                   ()
                 | SELFTYPE PATHSEP generic_args 
                 %prec PATHSEP                                   ()
-                | path_segment  generic_args 
-                %prec PATHSEP                                   ()
-                | SELFTYPE generic_args 
-                %prec PATHSEP                                   ()
+                | path_segment  generic_args                    ()
+                | SELFTYPE generic_args                         ()
                 | path_segment PATHSEP type_path_fn 
                 %prec PATHSEP                                   ()
                 | SELFTYPE PATHSEP type_path_fn 
                 %prec PATHSEP                                   ()
-                | path_segment  type_path_fn 
-                %prec PATHSEP                                   ()
-                | SELFTYPE type_path_fn 
-                %prec PATHSEP                                   ()
+                | path_segment  type_path_fn                    ()
+                | SELFTYPE type_path_fn                         ()
                 | path_segment %prec LOWER_THAN_PATHSEP         ()
                 | SELFTYPE %prec LOWER_THAN_PATHSEP             ()   
 type_path_fn: LPARENT RPARENT                                   ()
@@ -731,7 +739,8 @@ named_func_parameters_with_variadics:
                 COMMA DOTDOTDOT                                 (ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=true}))
 
 (* ------Statements and Expression------ *)
-block_exp: LBRACE inner_attrs maybe_statements RBRACE           (BlockExpression)
+block_exp: LBRACE inner_attrs  RBRACE           (BlockExpression)
+        | LBRACE inner_attrs statements RBRACE           (BlockExpression)
 maybe_statements: statements                                    ()
                 |                                               ()
 statements: statements_expansion                                ()
@@ -754,22 +763,30 @@ let_statement: outer_attrs LET patterns SEMI                    ()
 exp_statement: exp_without_block SEMI                           ()
             (* | exp_with_block                                    () *)
 expression: exp_without_block                                   (Expression)
+            (* | exp_with_block                                    (Expression) *)
 
 exp_without_block: (* outer_attrs before exp *)
                 outer_attrs lit_exp                             ()
                 | path_exp                                      ()
                 | op_exp                                        ()
                 | grouped_exp                                   ()
-                | outer_attrs array_exp                         (yaccLog("array_exp hit"))
+                | array_exp                                     (yaccLog("array_exp hit"))
                 | index_exp                                     (yaccLog("index_exp hit"))
                 | tuple_exp                                     ()
                 | tuple_index_exp                               ()
                 | struct_exp                                    (yaccLog("struct_exp hit"))
-                (* struct exp contains enum and call *)
+                (* struct exp contains enum *)
                 (* | enum_var_exp                                  () *)
                 | call_exp                                      ()
                 | method_call_exp                               ()
                 | field_exp                                     ()
+                | closure_exp                                   (yaccLog("closure_exp hit"))
+                | continue_exp                                  ()
+                | break_exp                                     (yaccLog("break_exp hit"))
+                | range_exp                                     ()
+                | return_exp                                    ()
+                (* items contains macro_invocation *)
+                (* | macro_invocation                              () *)
 
 lit_exp: str_lit                                                (LiteralExpression(str_lit))
         | bool_lit                                              (LiteralExpression(bool_lit))
@@ -894,17 +911,86 @@ call_params: call_params_expansion                              ()
 call_params_expansion: call_params_expansion COMMA expression   ()
                     | expression                                ()
 
-method_call_exp: expression DOT path_exp_segment LPARENT RPARENT 
+(* method_call_exp: expression DOT path_exp_segment LPARENT RPARENT 
                     %prec LPARENT                               ()
                 | expression DOT path_exp_segment LPARENT
                     call_params RPARENT  
-                    %prec LPARENT                               ()
+                    %prec LPARENT                               () *)
 
-(* field_exp: expression DOT IDENT %prec LOWER_THAN_LPARENT        () *)
-field_exp: expression DOT path_exp_segment %prec LOWER_THAN_LPARENT        ()
+method_call_exp: expression DOT IDENT LPARENT
+                    maybe_call_params RPARENT                   ()
+                | expression DOT SUPER LPARENT
+                    maybe_call_params RPARENT                   ()
+                | expression DOT SELFVALUE LPARENT
+                    maybe_call_params RPARENT                   ()
+                | expression DOT SELFTYPE LPARENT
+                    maybe_call_params RPARENT                   ()
+                | expression DOT CRATE LPARENT
+                    maybe_call_params RPARENT                   ()
+                 | expression DOT DOLLAR CRATE LPARENT
+                    maybe_call_params RPARENT                   ()
+                | expression DOT IDENT PATHSEP generic_args
+                    LPARENT maybe_call_params RPARENT           ()
+                | expression DOT SUPER PATHSEP generic_args
+                    LPARENT maybe_call_params RPARENT           ()
+                | expression DOT SELFVALUE PATHSEP generic_args 
+                    LPARENT maybe_call_params RPARENT           ()
+                | expression DOT SELFTYPE PATHSEP generic_args
+                    LPARENT maybe_call_params RPARENT           ()
+                | expression DOT CRATE PATHSEP generic_args
+                    LPARENT maybe_call_params RPARENT           ()
+                | expression DOT DOLLAR CRATE PATHSEP generic_args 
+                    LPARENT maybe_call_params RPARENT           ()
+
+maybe_call_params: call_params                                  ()
+                |                                               ()
+
+field_exp: expression DOT IDENT                                 ()
+
+closure_exp: OR OR expression                                   ()
+            | OR OR RARROW type_no_bounds block_exp             ()
+            | MOVE OR OR expression                             ()
+            | MOVE OR OR RARROW type_no_bounds block_exp        ()
+            | OR closure_parameters OR expression               ()
+            | OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 ()
+            | MOVE OR closure_parameters OR expression          ()
+            | MOVE OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 ()
+closure_parameters: closure_param closure_parameters_expansion  ()
+                    | closure_param 
+                        closure_parameters_expansion COMMA      ()
+closure_parameters_expansion: closure_parameters_expansion 
+                            COMMA closure_param                 ()
+                            |                                   ()
+closure_param: patterns                                         ()
+                | patterns COLON types                          ()
+
+continue_exp: CONTINUE                                          ()
+            | CONTINUE LIFETIME_OR_LABEL                        ()
+
+break_exp: BREAK %prec LOWER_THAN_EXPR                          ()
+        | BREAK LIFETIME_OR_LABEL %prec LOWER_THAN_EXPR         ()
+        | BREAK expression %prec LOWER_THAN_EXPR                ()
+        | BREAK LIFETIME_OR_LABEL expression 
+            %prec LOWER_THAN_EXPR                               ()
+
+range_exp: expression DOTDOT expression                         (yaccLog("Range hit"))
+        | expression DOTDOT                                     (yaccLog("RangeFrom hit"))
+        | DOTDOT expression                                     (yaccLog("RangeTo hit"))
+        | DOTDOT                                                (yaccLog("RangeFull hit"))
+        | expression DOTDOTEQ expression                        (yaccLog("RangeInclusive hit"))
+        | DOTDOTEQ expression                                   (yaccLog("RangeToInclusive hit"))
+
+return_exp: RETURN                                              ()
+            | RETURN expression                                 ()
+
+exp_with_block: block_exp                                       ()
+            | UNSAFE block_exp                                  ()
 
 (* ------type------ *)
 type_no_bounds: type_path                                       ()
+                | LPARENT RPARENT                               ()
 
 (* -----token------- *)
 token_ep_delim_kleene_dollar: AS                                ()
