@@ -32,13 +32,15 @@ fun error(pos, msg) = ErrorMsg.error pos
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG | SHEBANG_LINE of string
-    | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP | LOWER_THAN_EXPR
+    | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP | LOWER_THAN_EXPR | LOWER_THAN_COLON
     | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
         | meta_seq of MetaSeq | meta_seq_expansion of MetaItemInner list | meta_item_inner of MetaItemInner
         | path | simple_path of PathSeg list | simple_path_segment of PathSeg | path_segment of PathSeg
+        | path_exp | path_in_exp | path_in_exp_with_generic | path_exp_segment
+        | qualified_path_in_exp | qualified_path_in_exp_expansion | qualified_path_type | qualified_path_in_type | qualified_path_in_type_expansion
         | type_path of TypePath | type_path_segment | type_path_fn | type_path_fn_inputs | type_path_fn_inputs_expansion
         | item of Item | vis_item of VisItem | macro_item
         | visibility of Visibility | item_type of ItemType
@@ -85,11 +87,9 @@ fun error(pos, msg) = ErrorMsg.error pos
         | named_func_parameters_with_variadics of ExternFunctionParameter| named_func_param of NamedFunctionParam
 
         | maybe_statements | statements |statements_expansion | statement | let_statement | exp_statement 
-        | expressions | expression of Expression
+        | expressions | expression of Expression | exp_nostruct | exp_nostruct_nolazybop
         | exp_without_block | lit_exp of LiteralExpression | str_lit of TokenType | bool_lit of TokenType
-        | path_exp | path_in_exp | path_in_exp_with_generic | path_exp_segment
         | generic_args | generic_args_lifetimes | generic_args_types | generic_args_bindings | generic_args_binding
-        | qualified_path_in_expression 
         | op_exp | grouped_exp 
         | array_exp | array_elements | array_elements_expansion | index_exp 
         | tuple_exp | tuple_elements | tuple_elements_expansion | tuple_index_exp 
@@ -102,8 +102,9 @@ fun error(pos, msg) = ErrorMsg.error pos
         | closure_exp | closure_parameters | closure_param | closure_parameters_expansion
         | continue_exp | break_exp | range_exp 
         | return_exp
-        | exp_with_block | block_exp of BlockExpression | unsafe_block_exp | loop_exp | if_exp | if_let_exp | match_exp
-
+        | exp_with_block | block_exp of BlockExpression | unsafe_block_exp 
+        | loop_exp | if_exp | if_let_exp 
+        | match_exp | match_arms | match_arms_expansion | match_arm | match_arm_patterns | match_arm_guard
         | type_no_bounds
 
         | token_trees | token_tree | delim_token_tree
@@ -126,6 +127,7 @@ fun error(pos, msg) = ErrorMsg.error pos
 %nonassoc SHIFTPLUS
 %nonassoc LOWER_THAN_PATHSEP
 %nonassoc PATHSEP
+%nonassoc LOWER_THAN_COLON
 %nonassoc RARROW COLON
 %nonassoc FORTYPE
 %nonassoc FOR
@@ -328,6 +330,20 @@ generic_args_bindings: generic_args_bindings
                     COMMA generic_args_binding                  ()
                     | generic_args_binding                      ()
 generic_args_binding: IDENT EQ types                            ()
+
+qualified_path_in_exp: qualified_path_type 
+                    qualified_path_in_exp_expansion             ()
+qualified_path_in_exp_expansion: qualified_path_in_exp_expansion
+                                PATHSEP path_exp_segment        ()
+                            | PATHSEP path_exp_segment          ()
+qualified_path_type: LT types GT                                ()
+                    | LT types AS type_path GT                  ()
+
+qualified_path_in_type: qualified_path_type
+                    qualified_path_in_type_expansion            ()
+qualified_path_in_type_expansion: qualified_path_in_type_expansion
+                                PATHSEP type_path_segment       ()
+                                | PATHSEP type_path_segment     ()
 
 type_path: type_path_segment                                    (TypePath)
         | PATHSEP type_path_segment                             (TypePath) 
@@ -739,10 +755,8 @@ named_func_parameters_with_variadics:
                 COMMA DOTDOTDOT                                 (ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=true}))
 
 (* ------Statements and Expression------ *)
-block_exp: LBRACE inner_attrs  RBRACE           (BlockExpression)
-        | LBRACE inner_attrs statements RBRACE           (BlockExpression)
-maybe_statements: statements                                    ()
-                |                                               ()
+block_exp: LBRACE inner_attrs RBRACE                            (BlockExpression)
+        | LBRACE inner_attrs statements RBRACE                  (BlockExpression)
 statements: statements_expansion                                ()
             | statements_expansion exp_without_block            ()
             | exp_without_block                                 ()
@@ -763,10 +777,10 @@ let_statement: outer_attrs LET patterns SEMI                    ()
 exp_statement: exp_without_block SEMI                           ()
             (* | exp_with_block                                    () *)
 expression: exp_without_block                                   (Expression)
-            (* | exp_with_block                                    (Expression) *)
+            | exp_with_block                                    (Expression)
 
 exp_without_block: (* outer_attrs before exp *)
-                outer_attrs lit_exp                             ()
+                 lit_exp                                        ()
                 | path_exp                                      ()
                 | op_exp                                        ()
                 | grouped_exp                                   ()
@@ -802,6 +816,7 @@ str_lit: STR_LIT                                                (StrLit(STR_LIT,
         | RAW_BYTE_STR_LIT                                      (RawByteStrLit(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)))
 
 path_exp: path_in_exp %prec LOWER_THAN_LPARENT                  ()
+        | qualified_path_in_exp                                 ()
 
 
 op_exp: (* borrow expression*)
@@ -986,7 +1001,55 @@ return_exp: RETURN                                              ()
             | RETURN expression                                 ()
 
 exp_with_block: block_exp                                       ()
-            | UNSAFE block_exp                                  ()
+            (* | UNSAFE block_exp                                  () *)
+            | loop_exp                                          ()
+            | if_exp                                            ()
+            | if_let_exp                                        ()
+            | match_exp                                         ()
+
+loop_exp: LIFETIME_OR_LABEL COLON LOOP block_exp                ()
+        | LOOP block_exp                                        ()
+        (* | LIFETIME_OR_LABEL WHILE exp_nostruct block_exp        ()
+        | WHILE exp_nostruct block_exp                          ()
+        | LIFETIME_OR_LABEL WHILE LET patterns EQ exp_nostruct
+            block_exp                                           ()
+        | WHILE LET patterns EQ exp_nostruct block_exp          ()
+        | LIFETIME_OR_LABEL FOR patterns IN exp_nostruct 
+            block_exp                                           ()
+        | FOR patterns IN exp_nostruct block_exp                ()    *)
+
+if_exp: IF exp_nostruct block_exp                               ()
+        | IF exp_nostruct block_exp ELSE block_exp              ()
+        | IF exp_nostruct block_exp ELSE if_exp                 ()
+        | IF exp_nostruct block_exp ELSE if_let_exp             ()
+
+if_let_exp: IF LET patterns EQ exp_nostruct_nolazybop block_exp ()
+        | IF LET patterns EQ exp_nostruct_nolazybop block_exp
+            ELSE block_exp                                      ()
+        | IF LET patterns EQ exp_nostruct_nolazybop block_exp
+            ELSE if_exp                                         ()
+        | IF LET patterns EQ exp_nostruct_nolazybop block_exp
+            ELSE if_let_exp                                     ()
+
+match_exp: MATCH exp_nostruct LBRACE inner_attrs RBRACE         ()
+        | MATCH exp_nostruct 
+            LBRACE inner_attrs match_arms RBRACE                ()
+match_arms: match_arms_expansion                                ()
+            | match_arms_expansion COMMA                        ()
+match_arms_expansion: 
+                    (* match_arms_expansion 
+                        COMMA match_arm FATARROW block_exp      () *)
+                    match_arms_expansion 
+                        COMMA match_arm FATARROW expression     ()
+                    (* | match_arm FATARROW block_exp              () *)
+                    | match_arm FATARROW expression             ()
+match_arm: outer_attrs match_arm_patterns                       ()
+        | outer_attrs match_arm_patterns match_arm_guard        ()
+match_arm_patterns: match_arm_patterns OR patterns              ()
+                    | OR patterns                               ()
+                    | patterns                                  ()
+match_arm_guard: IF expression                                  ()
+
 
 (* ------type------ *)
 type_no_bounds: type_path                                       ()
