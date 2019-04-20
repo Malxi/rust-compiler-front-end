@@ -45,7 +45,12 @@ fun error(pos, msg) = ErrorMsg.error pos
         | item of Item | vis_item of VisItem | macro_item
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
-        | patterns of Pattern| types of Type
+        | patterns of Pattern | lit_pat | id_pat | binding_mode | wildcard_pat | range_pat | range_pat_bound | reference_pat 
+        | struct_pat | struct_pat_elements | struct_pat_fields | struct_pat_etcetera | struct_pat_field
+        | tuple_struct_pat | tuple_struct_items
+        | tuple_pat | tuple_pat_items
+        | grouped_pat | slice_pat | path_pat
+        | types of Type
         | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility of Visibility
         | where_clause of WhereClause | maybe_where_clause of WhereClause option | where_clause_expansion of WhereClauseItem list
         | where_clause_item of WhereClauseItem | lifetime_where_clause_item of WhereClauseItem | type_bound_where_clause_item of WhereClauseItem
@@ -279,8 +284,7 @@ meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
 meta_item_inner: meta_item                                      (MetaItem(meta_item))
                 | lit_exp                                       (MetaLit(lit_exp))
 
-patterns: IDENT                                                 (Pattern)
-types: IDENT                                                    (Type)
+types: IDENT                                                   (Type)
 
 (* rewrite simple path production*)
 simple_path:  simple_path_segment                               ([simple_path_segment])
@@ -657,10 +661,13 @@ trait_bound: type_path                                          (TraitBound(NONE
                 maybe_for_lifetimes type_path RPARENT           (TraitBound(SOME(Sized), maybe_for_lifetimes, type_path))
 
 
-self_param: AND maybe_mut SELFVALUE                             (SelfParamLT (NONE, maybe_mut))
+self_param: AND SELFVALUE                                       (SelfParamLT (NONE, NonMut))
+            | AND MUT SELFVALUE                                 (SelfParamLT (NONE, Mut))
             | AND lifetime maybe_mut SELFVALUE                  (SelfParamLT (SOME(lifetime), maybe_mut))
-            | maybe_mut SELFVALUE                               (SelfParamTY (maybe_mut, NONE))
-            | maybe_mut SELFVALUE COLON types                   (SelfParamTY (maybe_mut, SOME(types)))
+            | SELFVALUE                                         (SelfParamTY (NonMut, NONE))
+            | MUT SELFVALUE                                     (SelfParamTY (Mut, NONE))
+            | SELFVALUE COLON types                             (SelfParamTY (NonMut, SOME(types)))
+            | MUT SELFVALUE COLON types                         (SelfParamTY (Mut, SOME(types)))
 
 inherent_impl: IMPL maybe_generics types maybe_where_clause
                 LBRACE inner_attrs inherent_impl_items RBRACE   (InherentImpl ({
@@ -753,6 +760,112 @@ named_func_parameters_with_variadics:
                 (* For convenient, this production is rewrote *)
                 named_func_param named_func_parameters_expansion 
                 COMMA DOTDOTDOT                                 (ExternFunctionParameter ({params=named_func_param::rev(named_func_parameters_expansion), var=true}))
+
+(* ------pattern-------- *)
+patterns: 
+        lit_pat                                                 (Pattern)
+        | id_pat                                                (Pattern)
+        | wildcard_pat                                          (Pattern)
+        | range_pat                                             (Pattern)
+        | reference_pat                                         (Pattern)
+        | struct_pat                                            (Pattern)
+        | tuple_struct_pat                                      (Pattern)
+        | tuple_pat                                             (Pattern)
+        | LPARENT RPARENT                                       (Pattern)
+        (* tuple pattern contains group pattern *)
+        (* | grouped_pat                                           (Pattern) *)
+        | slice_pat                                             (Pattern)
+        | path_pat                                              (Pattern)
+
+lit_pat: TRUE                                                   ()
+        | FALSE                                                 ()
+        | CHAR_LIT                                              ()
+        | BYTE_LIT                                              ()
+        | STR_LIT                                               ()
+        | RAW_STR_LIT                                           ()
+        | BYTE_STR_LIT                                          ()
+        | RAW_BYTE_STR_LIT                                      ()
+        | INTEGER_LIT                                           ()
+        | MINUS INTEGER_LIT                                     ()
+        | FLOAT_LIT                                             ()
+        | MINUS FLOAT_LIT                                       ()
+
+id_pat: 
+        (* path pattern contains Identifier *)
+        (* IDENT                                                   () *)
+        binding_mode IDENT                                      ()
+        | IDENT AT patterns                                     ()
+        | binding_mode IDENT AT patterns                        ()
+
+binding_mode: REF                                               ()
+            | REF MUT                                           ()
+            | MUT                                               ()
+
+wildcard_pat: UNDERSCORE                                        ()
+
+range_pat: range_pat_bound DOTDOTEQ range_pat_bound             ()
+            | range_pat_bound DOTDOTDOT range_pat_bound         ()
+range_pat_bound: CHAR_LIT                                       ()
+                | BYTE_LIT                                      ()
+                | INTEGER_LIT                                   ()
+                | MINUS INTEGER_LIT                             ()
+                | FLOAT_LIT                                     ()
+                | MINUS FLOAT_LIT                               ()
+                | path_in_exp                                   ()
+                | qualified_path_in_exp                         ()
+
+reference_pat: AND  patterns                                    ()
+            | ANDAND  patterns                                  ()
+            | AND MUT patterns                                  ()
+            | ANDAND MUT patterns                               ()
+
+struct_pat: path_in_exp LBRACE RBRACE                           ()
+            | path_in_exp LBRACE struct_pat_elements RBRACE     ()
+struct_pat_elements: struct_pat_etcetera                        ()
+                    | struct_pat_fields COMMA                   ()
+                    | struct_pat_fields 
+                        COMMA struct_pat_etcetera               ()
+                    | struct_pat_fields                         ()
+struct_pat_fields: struct_pat_fields COMMA struct_pat_field     ()
+                    | struct_pat_field                          ()
+struct_pat_field: outer_attrs INTEGER_LIT COLON patterns        ()
+                | outer_attrs IDENT COLON patterns              ()
+                | outer_attrs IDENT                             ()
+                | outer_attrs REF IDENT                         ()
+                | outer_attrs REF MUT IDENT                     ()
+                | outer_attrs MUT IDENT                         ()
+struct_pat_etcetera: outer_attrs DOTDOT                         ()
+
+tuple_struct_pat: path_in_exp 
+                LPARENT tuple_pat_items RPARENT                 ()
+                | path_in_exp 
+                LPARENT tuple_pat_items COMMA RPARENT           ()
+                | path_in_exp 
+                LPARENT DOTDOT RPARENT                          ()
+                | path_in_exp 
+                LPARENT tuple_pat_items COMMA DOTDOT RPARENT    ()
+                | path_in_exp 
+                    LPARENT DOTDOT 
+                    COMMA tuple_pat_items maybe_comma RPARENT   ()
+                | path_in_exp 
+                    LPARENT tuple_pat_items COMMA DOTDOT
+                    COMMA tuple_pat_items maybe_comma RPARENT   ()
+
+tuple_pat: LPARENT tuple_pat_items RPARENT                      ()
+            | LPARENT tuple_pat_items COMMA RPARENT             ()
+            | LPARENT DOTDOT RPARENT                            ()
+            | LPARENT tuple_pat_items COMMA DOTDOT RPARENT      ()
+            | LPARENT DOTDOT 
+                COMMA tuple_pat_items maybe_comma RPARENT       ()
+            | LPARENT tuple_pat_items COMMA DOTDOT 
+                COMMA tuple_pat_items maybe_comma RPARENT       ()
+tuple_pat_items: tuple_pat_items COMMA patterns                 ()
+                | patterns                                      ()
+
+slice_pat: LBRACKET tuple_pat_items maybe_comma RBRACKET        ()
+
+path_pat: path_in_exp                                           ()
+        | qualified_path_in_exp                                 ()
 
 (* ------Statements and Expression------ *)
 block_exp: LBRACE inner_attrs RBRACE                            (BlockExpression)
@@ -1030,6 +1143,7 @@ if_let_exp: IF LET patterns EQ exp_nostruct_nolazybop block_exp ()
             ELSE if_exp                                         ()
         | IF LET patterns EQ exp_nostruct_nolazybop block_exp
             ELSE if_let_exp                                     ()
+exp_nostruct_nolazybop: expression                              ()
 
 match_exp: MATCH exp_nostruct LBRACE inner_attrs RBRACE         ()
         | MATCH exp_nostruct 
