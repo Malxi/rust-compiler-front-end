@@ -32,7 +32,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | LBRACE | RBRACE | LBRACKET | RBRACKET | LPARENT | RPARENT
         | INNER_DOC_COMMENT of string | OUTER_DOC_COMMENT of string
         | SHEBANG | SHEBANG_LINE of string
-    | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP | LOWER_THAN_EXPR | LOWER_THAN_COLON
+    | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP | LOWER_THAN_EXPR | LOWER_THAN_COLON | LOWER_THAN_PLUS
     | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
 %nonterm crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
@@ -50,7 +50,8 @@ fun error(pos, msg) = ErrorMsg.error pos
         | tuple_struct_pat | tuple_struct_items
         | tuple_pat | tuple_pat_items
         | grouped_pat | slice_pat | path_pat
-        | types of Type
+        | types of Type | types_expansion 
+        | maybe_named_bare_func_parameters | maybe_named_bare_func_parameters_variadic | maybe_named_param
         | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility of Visibility
         | where_clause of WhereClause | maybe_where_clause of WhereClause option | where_clause_expansion of WhereClauseItem list
         | where_clause_item of WhereClauseItem | lifetime_where_clause_item of WhereClauseItem | type_bound_where_clause_item of WhereClauseItem
@@ -152,6 +153,7 @@ fun error(pos, msg) = ErrorMsg.error pos
 %left CARET
 %left AND
 %left SHL SHR
+%nonassoc LOWER_THAN_PLUS
 %left PLUS MINUS
 %nonassoc AS
 %left STAR SLASH PERCENT
@@ -239,7 +241,7 @@ vis_item: maybe_visibility item_type                            (VisItem(Default
 maybe_visibility: visibility                                    (visibility)
                     |                                           (DefaultVis)
 
-visibility: PUB                                                 (PubVis)
+visibility: PUB %prec LOWER_THAN_LPARENT                        (PubVis)
         | PUB LPARENT CARET RPARENT                             (CrateVis)
         | PUB LPARENT SELFVALUE RPARENT                         (SelfVis)
         | PUB LPARENT SUPER RPARENT                             (SuperVis)
@@ -283,8 +285,6 @@ meta_seq_expansion: LPARENT COMMA meta_item_inner RPARENT
                     |                                           (nil)
 meta_item_inner: meta_item                                      (MetaItem(meta_item))
                 | lit_exp                                       (MetaLit(lit_exp))
-
-types: IDENT                                                   (Type)
 
 (* rewrite simple path production*)
 simple_path:  simple_path_segment                               ([simple_path_segment])
@@ -344,14 +344,15 @@ qualified_path_type: LT types GT                                ()
                     | LT types AS type_path GT                  ()
 
 qualified_path_in_type: qualified_path_type
-                    qualified_path_in_type_expansion            ()
+                    qualified_path_in_type_expansion 
+                    %prec LOWER_THAN_PATHSEP                    ()
 qualified_path_in_type_expansion: qualified_path_in_type_expansion
                                 PATHSEP type_path_segment       ()
                                 | PATHSEP type_path_segment     ()
 
 type_path: type_path_segment                                    (TypePath)
         | PATHSEP type_path_segment                             (TypePath) 
-        | type_path PATHSEP type_path_segment                   (TypePath)
+        | type_path PATHSEP type_path_segment %prec PATHSEP     (TypePath)
 type_path_segment: path_segment PATHSEP generic_args 
                 %prec PATHSEP                                   ()
                 | SELFTYPE PATHSEP generic_args 
@@ -608,7 +609,7 @@ trait_func_decl: func_qualifier FN IDENT maybe_generics
 maybe_trait_func_parameters: trait_func_parameters              (trait_func_parameters)
                                 |                               ([])
 trait_method_decl: func_qualifier FN IDENT maybe_generics
-                    LPARENT self_param 
+                    LPARENT self_param
                     trait_func_parameters_expansion maybe_comma
                     RPARENT maybe_func_return_type
                     maybe_where_clause                          (TraitMethodDecl({
@@ -622,7 +623,7 @@ trait_func_parameters_expansion:
     trait_func_parameters_expansion COMMA trait_func_param      (trait_func_param::trait_func_parameters_expansion)
                             |                                   (nil)
 trait_func_param:  patterns COLON types                         (TraitFunctionParam (SOME(patterns), types))
-                | types                                         (TraitFunctionParam (NONE, types))
+                (* | types                                         (TraitFunctionParam (NONE, types)) *)
 trait_const: CONST IDENT COLON types SEMI                       (TraitConst (Identifer(IDENT), types, NONE))
             | CONST IDENT COLON types EQ expression SEMI        (TraitConst (Identifer(IDENT), types, SOME(expression)))
 trait_type: TYPE IDENT maybe_colon_type_bounds SEMI             (TraitType (Identifer(IDENT), maybe_colon_type_bounds))
@@ -634,7 +635,7 @@ maybe_type_param_bounds: type_param_bounds                      (SOME(type_param
 type_param_bounds_expansion: type_param_bounds_expansion
                             PLUS type_param_bound               (type_param_bound::type_param_bounds_expansion)
                         |                                       (nil) *)
-type_param_bounds: type_param_bounds_expansion                   (TypeParamBounds(rev(type_param_bounds_expansion)))
+type_param_bounds: type_param_bounds_expansion                  (TypeParamBounds(rev(type_param_bounds_expansion)))
                     (* | type_param_bounds_expansion PLUS           (TypeParamBounds(rev(type_param_bounds_expansion))) *)
 type_param_bounds_expansion: type_param_bounds_expansion
                             PLUS type_param_bound               (type_param_bound::type_param_bounds_expansion)
@@ -653,10 +654,11 @@ maybe_lifetime: lifetime                                        ()
 lifetime: (* here are some questions *)
           LIFETIME_OR_LABEL                                     (LifetimeOrLabel(LIFETIME_OR_LABEL))
         | STATICLIFETIME                                        (StaticLifetime)
-trait_bound: type_path                                          (TraitBound(NONE, NONE, type_path))
-            | for_lifetimes type_path                           (TraitBound(NONE, SOME(for_lifetimes), type_path))
+trait_bound: type_path %prec LOWER_THAN_PATHSEP                 (TraitBound(NONE, NONE, type_path))
+            | for_lifetimes type_path %prec LOWER_THAN_PATHSEP  (TraitBound(NONE, SOME(for_lifetimes), type_path))
             | QUESTION maybe_for_lifetimes type_path            (TraitBound(SOME(Sized), maybe_for_lifetimes, type_path))
-            | LPARENT maybe_for_lifetimes type_path RPARENT     (TraitBound(NONE, maybe_for_lifetimes, type_path))
+            | LPARENT type_path RPARENT                         (TraitBound(NONE, NONE, type_path))
+            | LPARENT for_lifetimes type_path RPARENT           (TraitBound(NONE, SOME(for_lifetimes), type_path))
             | LPARENT QUESTION 
                 maybe_for_lifetimes type_path RPARENT           (TraitBound(SOME(Sized), maybe_for_lifetimes, type_path))
 
@@ -867,6 +869,57 @@ slice_pat: LBRACKET tuple_pat_items maybe_comma RBRACKET        ()
 path_pat: path_in_exp                                           ()
         | qualified_path_in_exp                                 ()
 
+(* ------Type------ *)
+types: type_no_bounds                                           (Type)  
+type_no_bounds: 
+                LPARENT types RPARENT %prec LPARENT             ()
+                | IMPL trait_bound                              ()
+                | DYN trait_bound                               ()
+                (* trait_bound contains LPARENT type_path RPARENT *)
+                (* | trait_bound                                   () *)
+                | type_path %prec LOWER_THAN_PATHSEP            ()
+                | LPARENT RPARENT                               ()
+                | LPARENT types COMMA 
+                    types_expansion maybe_comma RPARENT         ()
+                | NOT                                           ()
+                | STAR MUT type_no_bounds                       ()
+                | STAR CONST type_no_bounds                     ()
+                | AND maybe_lifetime maybe_mut type_no_bounds   ()
+                | LBRACKET types SEMI expression RBRACKET       ()
+                | LBRACKET types RBRACKET                       ()
+                | UNDERSCORE                                    ()  
+                (* | qualified_path_in_type                        () *)
+                | maybe_for_lifetimes 
+                    func_qualifier FN LPARENT RPARENT           ()
+                |  maybe_for_lifetimes 
+                    func_qualifier FN LPARENT 
+                    maybe_named_bare_func_parameters maybe_comma 
+                    RPARENT                                     ()
+                |  maybe_for_lifetimes 
+                    func_qualifier FN LPARENT 
+                    maybe_named_bare_func_parameters_variadic 
+                    RPARENT                                     ()
+                | maybe_for_lifetimes 
+                    func_qualifier FN LPARENT RPARENT 
+                    RARROW type_no_bounds                       ()
+                |  maybe_for_lifetimes 
+                    func_qualifier FN LPARENT 
+                    maybe_named_bare_func_parameters maybe_comma 
+                    RPARENT RARROW type_no_bounds               ()
+                |  maybe_for_lifetimes 
+                    func_qualifier FN LPARENT 
+                    maybe_named_bare_func_parameters_variadic 
+                    RPARENT                                     
+                    RARROW type_no_bounds                       ()
+                (* | macro_invocation                              () *)
+types_expansion: types_expansion COMMA types                    ()
+                | types                                         ()                
+maybe_named_bare_func_parameters: 
+                maybe_named_bare_func_parameters 
+                COMMA maybe_named_param                         ()
+                | maybe_named_param                             ()
+maybe_named_bare_func_parameters_variadic: 
+            maybe_named_bare_func_parameters COMMA DOTDOTDOT    ()
 (* ------Statements and Expression------ *)
 block_exp: LBRACE inner_attrs RBRACE                            (BlockExpression)
         | LBRACE inner_attrs statements RBRACE                  (BlockExpression)
@@ -1163,11 +1216,6 @@ match_arm_patterns: match_arm_patterns OR patterns              ()
                     | OR patterns                               ()
                     | patterns                                  ()
 match_arm_guard: IF expression                                  ()
-
-
-(* ------type------ *)
-type_no_bounds: type_path                                       ()
-                | LPARENT RPARENT                               ()
 
 (* -----token------- *)
 token_ep_delim_kleene_dollar: AS                                ()

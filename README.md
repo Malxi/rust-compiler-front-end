@@ -9,6 +9,9 @@ In sml interactive system
 + Fix many productions (replace maybe_productions with terminals to solve shift/reduce conflicts)
 + Literal tokens take original text with suffix
 + SimplePath in Macro conflicts with PathInExpression in Item, so replacing SimplePath with PathInExpression, this idea comes from rust official parser.
++ Productions of Visibility and Type have the same part in TupleFiled which cause a reduce/reduce conflicts. So set the precedence of Visibility production lower than Type production.
++ Productions of Pattern and Type have the same part in trait_func_param, so remove Type sub productions for avoiding reduce/reduce conflicts.
++ Trait Object Type One Bound production must have keyword dyn for avoiding conflicts.
 ### Goal
 + To modify lex comments datatype
 + Add a suffix option for literals
