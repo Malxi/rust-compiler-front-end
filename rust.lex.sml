@@ -1722,7 +1722,7 @@ fun yyAction32 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, yytext); Tokens.CARET(yypos, yypos+size yytext))
+        (lexLog(yypos, yytext); Tokens.CRATE(yypos, yypos+size yytext))
       end
 fun yyAction33 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)

@@ -5,8 +5,7 @@ sig
     and Shebang = Shebang of string option
     and InnerAttribute = InnerAttribute of MetaItem
     and OuterAttribute = OuterAttribute of MetaItem
-    and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaSeq option
-    and MetaSeq = MetaSeq of MetaItemInner list
+    and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaItemInner list
     and LiteralExpression = LiteralExpression of TokenType
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
@@ -136,8 +135,7 @@ struct
     and Shebang = Shebang of string option
     and InnerAttribute = InnerAttribute of MetaItem
     and OuterAttribute = OuterAttribute of MetaItem
-    and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaSeq option
-    and MetaSeq = MetaSeq of MetaItemInner list
+    and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaItemInner list
     and LiteralExpression = LiteralExpression of TokenType
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list

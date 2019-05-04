@@ -47,7 +47,10 @@ struct
                 | MetaItem (A.AttrKVPair(simplePath, literalExpression), d) = 
                     (indent d; out "AttrKVPair ("; SimplePath(simplePath, d); out "="; LiteralExpression(literalExpression, 0); out ")")
                 | MetaItem (A.AttrSubs(simplePath, metaSeq), d) = 
-                    (indent d; out "AttrSubs ("; SimplePath(simplePath, d); out "("; MetaSeq(metaSeq, d); out ")")
+                    (indent d; out "AttrSubs ("; 
+                    SimplePath(simplePath, d); out "("; 
+                    (indent d; outList (0) MetaItemInner metaSeq true);
+                    out ")")
             and SimplePath (A.SimplePath(pathList), d) = 
                 (indent d; out "SimplePath ("; outList (d) PathSeg pathList false; out ")")
             and PathSeg(A.IDPat(id), d) = (Identifer(id, d))
@@ -57,13 +60,6 @@ struct
                 | PathSeg(A.SuperPat, d) = (out ("super"))
                 | PathSeg(A.DefaultPat, d) = (out ("root"))
             and LiteralExpression (A.LiteralExpression(tk), d) = (Token(tk, d))
-            and MetaSeq((SOME metaSeq), d) = 
-                    let 
-                        fun helper((A.MetaSeq metaItemInnerList), d) = (indent d; outList (0) MetaItemInner metaItemInnerList true)
-                    in 
-                        helper(metaSeq, d)
-                    end
-                | MetaSeq ((NONE), d) = ()
             and MetaItemInner(A.MetaItem(metaItem), d) = 
                     (indent d; out "MetaItemInner ("; MetaItem(metaItem, d);out ")")
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
