@@ -48,7 +48,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | patterns of Pattern | lit_pat | id_pat | binding_mode | wildcard_pat | range_pat | range_pat_bound | reference_pat 
         | struct_pat | struct_pat_elements | struct_pat_fields | struct_pat_etcetera | struct_pat_field
         | tuple_struct_pat | tuple_struct_items
-        | tuple_pat | tuple_pat_items
+        | tuple_or_grouped_pat | tuple_pat_items
         | grouped_pat | slice_pat | path_pat
         | types of Type | types_expansion 
         | maybe_named_bare_func_parameters | maybe_named_bare_func_parameters_variadic | maybe_named_param
@@ -135,8 +135,16 @@ fun error(pos, msg) = ErrorMsg.error pos
 %nonassoc PATHSEP
 %nonassoc LOWER_THAN_COLON
 %nonassoc RARROW COLON
+
+(* For solving shift/reduce conflicts in type and lifetime *)
+(*
+    // In where clauses, "for" should have greater precedence when used as
+    // a higher ranked constraint than when used as the beginning of a
+    // for_in_type (which is a ty)
+*)
 %nonassoc FORTYPE
 %nonassoc FOR
+
 %nonassoc QUESTION
 %nonassoc BOX
 %nonassoc DOTDOT
@@ -392,7 +400,7 @@ type_bound_where_clause_item: maybe_for_lifetimes types COLON
 maybe_generics: generics                                        (SOME(generics))
                 |                                               (NONE)
 maybe_for_lifetimes: for_lifetimes                              (SOME(for_lifetimes))
-                    |                                           (NONE)
+                    | %prec FORTYPE                             (NONE)
 for_lifetimes: (* There is no definition in reference, 
             and following production comes from rust repository *)                
             FOR LT lifetime_params GT                           (ForLifetimes(LifetimeParams(rev(lifetime_params))))
@@ -635,7 +643,8 @@ maybe_type_param_bounds: type_param_bounds                      (SOME(type_param
 type_param_bounds_expansion: type_param_bounds_expansion
                             PLUS type_param_bound               (type_param_bound::type_param_bounds_expansion)
                         |                                       (nil) *)
-type_param_bounds: type_param_bounds_expansion                  (TypeParamBounds(rev(type_param_bounds_expansion)))
+type_param_bounds: type_param_bounds_expansion 
+                    %prec LOWER_THAN_PLUS                       (TypeParamBounds(rev(type_param_bounds_expansion)))
                     (* | type_param_bounds_expansion PLUS           (TypeParamBounds(rev(type_param_bounds_expansion))) *)
 type_param_bounds_expansion: type_param_bounds_expansion
                             PLUS type_param_bound               (type_param_bound::type_param_bounds_expansion)
@@ -671,7 +680,11 @@ self_param: AND SELFVALUE                                       (SelfParamLT (NO
             | SELFVALUE COLON types                             (SelfParamTY (NonMut, SOME(types)))
             | MUT SELFVALUE COLON types                         (SelfParamTY (Mut, SOME(types)))
 
-inherent_impl: IMPL maybe_generics types maybe_where_clause
+(* 
+    In inherent implement, to remove reduce/reduce conflicts in generics and types, 
+    requiring users to provide parents delimiter around types.
+*)
+inherent_impl: IMPL maybe_generics LPARENT types RPARENT maybe_where_clause
                 LBRACE inner_attrs inherent_impl_items RBRACE   (InherentImpl ({
                                                                     generic=maybe_generics, ty=types, wh=maybe_where_clause, 
                                                                     innerAttrs=inner_attrs, implItems=inherent_impl_items
@@ -772,7 +785,7 @@ patterns:
         | reference_pat                                         (Pattern)
         | struct_pat                                            (Pattern)
         | tuple_struct_pat                                      (Pattern)
-        | tuple_pat                                             (Pattern)
+        | tuple_or_grouped_pat                                  (Pattern)
         | LPARENT RPARENT                                       (Pattern)
         (* tuple pattern contains group pattern *)
         (* | grouped_pat                                           (Pattern) *)
@@ -853,7 +866,7 @@ tuple_struct_pat: path_in_exp
                     LPARENT tuple_pat_items COMMA DOTDOT
                     COMMA tuple_pat_items maybe_comma RPARENT   ()
 
-tuple_pat: LPARENT tuple_pat_items RPARENT                      ()
+tuple_or_grouped_pat: LPARENT tuple_pat_items RPARENT           ()
             | LPARENT tuple_pat_items COMMA RPARENT             ()
             | LPARENT DOTDOT RPARENT                            ()
             | LPARENT tuple_pat_items COMMA DOTDOT RPARENT      ()
@@ -870,11 +883,23 @@ path_pat: path_in_exp                                           ()
         | qualified_path_in_exp                                 ()
 
 (* ------Type------ *)
-types: type_no_bounds                                           (Type)  
+types: type_no_bounds                                           (Type)
+        (* | IMPL type_param_bounds                                (Type) *)
+        | IMPL lifetime                                         (Type)
+        | IMPL trait_bound PLUS type_param_bounds               (Type)
+        (* | DYN type_param_bounds                                 (Type) *)
+        | DYN lifetime                                          (Type)
+        | DYN trait_bound PLUS type_param_bounds                (Type)
 type_no_bounds: 
                 LPARENT types RPARENT %prec LPARENT             ()
-                | IMPL trait_bound                              ()
-                | DYN trait_bound                               ()
+                (* ImplTraitType contains Impl TraitTypeOneBound  *)
+                | IMPL trait_bound %prec LOWER_THAN_PLUS        ()
+                (* 
+                    Trait Object Type One Bound production must 
+                    have keyword dyn for avoiding conflicts. 
+                *)
+                (* TraitObjectType contains Impl TraitObjectTypeOneBound   *)
+                | DYN trait_bound %prec LOWER_THAN_PLUS         ()
                 (* trait_bound contains LPARENT type_path RPARENT *)
                 (* | trait_bound                                   () *)
                 | type_path %prec LOWER_THAN_PATHSEP            ()
@@ -888,7 +913,7 @@ type_no_bounds:
                 | LBRACKET types SEMI expression RBRACKET       ()
                 | LBRACKET types RBRACKET                       ()
                 | UNDERSCORE                                    ()  
-                (* | qualified_path_in_type                        () *)
+                | qualified_path_in_type                        ()
                 | maybe_for_lifetimes 
                     func_qualifier FN LPARENT RPARENT           ()
                 |  maybe_for_lifetimes 
@@ -912,6 +937,10 @@ type_no_bounds:
                     RPARENT                                     
                     RARROW type_no_bounds                       ()
                 (* | macro_invocation                              () *)
+                (* TypePath contains PathInExpression, 
+                rewrite MarcoInvocation for avoiding conflicts, 
+                maybe need to check TypePathFn. *)
+                | type_path NOT delim_token_tree              ()
 types_expansion: types_expansion COMMA types                    ()
                 | types                                         ()                
 maybe_named_bare_func_parameters: 
@@ -920,6 +949,7 @@ maybe_named_bare_func_parameters:
                 | maybe_named_param                             ()
 maybe_named_bare_func_parameters_variadic: 
             maybe_named_bare_func_parameters COMMA DOTDOTDOT    ()
+
 (* ------Statements and Expression------ *)
 block_exp: LBRACE inner_attrs RBRACE                            (BlockExpression)
         | LBRACE inner_attrs statements RBRACE                  (BlockExpression)

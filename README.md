@@ -12,6 +12,10 @@ In sml interactive system
 + Productions of Visibility and Type have the same part in TupleFiled which cause a reduce/reduce conflicts. So set the precedence of Visibility production lower than Type production.
 + Productions of Pattern and Type have the same part in trait_func_param, so remove Type sub productions for avoiding reduce/reduce conflicts.
 + Trait Object Type One Bound production must have keyword dyn for avoiding conflicts.
++ In where clauses, "for" should have greater precedence when used as a higher ranked constraint than when used as the beginning of a
+for_in_type (which is a ty). This idea comes from rust official parser.
++ In inherent implement, to remove reduce/reduce conflicts in generics and types, requiring users to provide parents delimiter around types.This idea comes from rust official parser.
++ TypePath contains PathInExpression, rewrite MarcoInvocation for avoiding conflicts, maybe need to check TypePathFn.
 ### Goal
 + To modify lex comments datatype
 + Add a suffix option for literals
@@ -57,6 +61,7 @@ generic args: GT-SHR, GT-GE, GT-SHRQG, LT-SHL)
 + Trait
 + Implementations
 + Extern blocks
++ Type
 ### Processing
 + Literal expression
 + Items
