@@ -111,12 +111,12 @@ fun error(pos, msg) = ErrorMsg.error pos
         | continue_exp | break_exp | range_exp 
         | return_exp
         | exp_with_block | block_exp of BlockExpression | unsafe_block_exp 
-        | loop_exp | if_exp | if_let_exp 
+        | loop_exp | maybe_loop_label | if_exp | if_let_exp 
         | match_exp | match_arms | match_arms_expansion | match_arm | match_arm_patterns | match_arm_guard
         | type_no_bounds
 
         | token_trees | token_tree | delim_token_tree
-        | token_ep_delim | token_ep_delim_kleene | token_ep_delim_dollar | token_ep_delim_kleene_dollar
+        | token_no_delim | token_no_delim_kleene | token_no_delim_dollar | token_no_delim_kleene_dollar
 %pos int
 %eop EOF
 %noshift EOF
@@ -183,8 +183,8 @@ crate: SHEBANG_LINE inner_attrs items                          (Crate (Shebang (
 items: items item                                              (item::items)
         |                                                      ([])
 
-item: outer_attrs vis_item                                      (VisItemType (rev(outer_attrs), vis_item))
-    | outer_attrs macro_item                                            (MacroItemType (MacroItem))
+item: outer_attrs vis_item                                     (VisItemType (rev(outer_attrs), vis_item))
+    | outer_attrs macro_item                                               (MacroItemType (MacroItem))
 
 (* -----Macro------ *)
 (* macro_invocation: simple_path NOT delim_token_tree              () *)
@@ -209,13 +209,13 @@ macro_invocation_semi: path_in_exp NOT
 
 token_trees: token_trees token_tree                             ()
             |                                                   ()
-token_tree: token_ep_delim                                      ()
+token_tree: token_no_delim                                      ()
             | delim_token_tree                                  ()
 delim_token_tree: LPARENT token_trees RPARENT                   ()
                 | LBRACKET token_trees RBRACKET                 ()
                 | LBRACE token_trees RBRACE                     ()
 
-(* the simple_path must be [macro_rules] *)
+(* the path_in_exp must be [macro_rules] *)
 (* macro_rules_definition: simple_path NOT IDENT macro_rules_def   () *)
 macro_rules_definition: path_in_exp NOT IDENT macro_rules_def   ()
 macro_rules_def: LPARENT macro_rules RPARENT SEMI               ()
@@ -231,15 +231,16 @@ macro_matcher: LPARENT macro_matches RPARENT                    ()
             | LBRACE macro_matches RBRACE                       ()
 macro_matches: macro_matches macro_match                        ()
             |                                                   ()
-macro_match: token_ep_delim_dollar                              ()
+macro_match: token_no_delim_dollar                              ()
             | macro_matcher                                     ()
             | DOLLAR IDENT COLON macro_frag_spec                ()
+            | DOLLAR SELFVALUE COLON macro_frag_spec                ()
             | DOLLAR LPARENT macro_match macro_matches RPARENT 
                 macro_kleene_op                                 ()
             | DOLLAR LPARENT macro_match macro_matches RPARENT 
                 macro_rep_sep macro_kleene_op                   ()     
 macro_frag_spec: IDENT                                          ()
-macro_rep_sep: token_ep_delim_kleene                            ()
+macro_rep_sep: token_no_delim_kleene                            ()
 macro_kleene_op: STAR                                           ()
                 | PLUS                                          ()
                 | QUESTION                                      ()
@@ -785,19 +786,19 @@ named_func_parameters_with_variadics:
 
 (* ------pattern-------- *)
 patterns: 
-        lit_pat                                                 (Pattern)
-        | id_pat                                                (Pattern)
-        | wildcard_pat                                          (Pattern)
-        | range_pat                                             (Pattern)
-        | reference_pat                                         (Pattern)
-        | struct_pat                                            (Pattern)
-        | tuple_struct_pat                                      (Pattern)
-        | tuple_or_grouped_pat                                  (Pattern)
-        | LPARENT RPARENT                                       (Pattern)
+        lit_pat                                                 (yaccLog("patterns:lit_pat"); Pattern)
+        | id_pat                                                (yaccLog("patterns:id_pat"); Pattern)
+        | wildcard_pat                                          (yaccLog("patterns:wildcard_pat"); Pattern)
+        | range_pat                                             (yaccLog("patterns:range_pat"); Pattern)
+        | reference_pat                                         (yaccLog("patterns:reference_pat"); Pattern)
+        | struct_pat                                            (yaccLog("patterns:struct_pat"); Pattern)
+        | tuple_struct_pat                                      (yaccLog("patterns:tuple_struct_pat"); Pattern)
+        | tuple_or_grouped_pat                                  (yaccLog("patterns:tuple_or_grouped_pat"); Pattern)
+        | LPARENT RPARENT                                       (yaccLog("patterns:unit"); Pattern)
         (* tuple pattern contains group pattern *)
         (* | grouped_pat                                           (Pattern) *)
-        | slice_pat                                             (Pattern)
-        | path_pat                                              (Pattern)
+        | slice_pat                                             (yaccLog("patterns:slice_pat"); Pattern)
+        | path_pat                                              (yaccLog("patterns:path_pat"); Pattern)
 
 lit_pat: TRUE                                                   ()
         | FALSE                                                 ()
@@ -958,8 +959,8 @@ maybe_named_bare_func_parameters_variadic:
             maybe_named_bare_func_parameters COMMA DOTDOTDOT    ()
 
 (* ------Statements and Expression------ *)
-block_exp: LBRACE inner_attrs RBRACE                            (BlockExpression)
-        | LBRACE inner_attrs statements RBRACE                  (BlockExpression)
+block_exp: LBRACE inner_attrs RBRACE                            (yaccLog("block_exp:1"); BlockExpression)
+        | LBRACE inner_attrs statements RBRACE                  (yaccLog("block_exp:2"); BlockExpression)
 statements: statements_expansion                                ()
             | statements_expansion exp_without_block            ()
             | exp_without_block                                 ()
@@ -967,11 +968,13 @@ statements_expansion: statements_expansion statement            ()
                     | statement                                 ()
 statement: (* need to be completed *)
             SEMI                                                ()
-            | item                                              ()
+            (* Use "vis_item" replace "item" for avoiding conflicts. *)
+            (* | item                                              () *)
+            | outer_attrs vis_item                              ()
             | let_statement                                     ()
             | exp_statement                                     ()
             (* item contain macro item *)
-            (* | macro_invocation_semi                             () *)
+            | macro_invocation_semi                             ()
 let_statement: outer_attrs LET patterns SEMI                    ()
             | outer_attrs LET patterns COLON types SEMI         ()
             | outer_attrs LET patterns EQ expression SEMI       ()
@@ -1084,7 +1087,7 @@ exp_without_block: (* outer_attrs before exp *)
                 | break_exp                                     (yaccLog("break_exp hit"))
                 | range_exp                                     ()
                 | return_exp                                    ()
-                (* items contains macro_invocation *)
+                (* macro_invocation_semi contains macro_invocation *)
                 (* | macro_invocation                              () *)
 
 lit_exp: str_lit                                                (LiteralExpression(str_lit))
@@ -1285,43 +1288,154 @@ range_exp: expression DOTDOT expression                         (yaccLog("Range 
 return_exp: RETURN                                              ()
             | RETURN expression                                 ()
 
-exp_with_block: block_exp                                       ()
+exp_with_block: 
+            block_exp                                       ()
             (* | UNSAFE block_exp                                  () *)
             | loop_exp                                          ()
             | if_exp                                            ()
             | if_let_exp                                        ()
             | match_exp                                         ()
 
-loop_exp: LIFETIME_OR_LABEL COLON LOOP block_exp                ()
-        | LOOP block_exp                                        ()
-        (* | LIFETIME_OR_LABEL WHILE exp_nostruct block_exp        ()
-        | WHILE exp_nostruct block_exp                          ()
-        | LIFETIME_OR_LABEL WHILE LET patterns EQ exp_nostruct
-            block_exp                                           ()
-        | WHILE LET patterns EQ exp_nostruct block_exp          ()
-        | LIFETIME_OR_LABEL FOR patterns IN exp_nostruct 
-            block_exp                                           ()
-        | FOR patterns IN exp_nostruct block_exp                ()    *)
+loop_exp: maybe_loop_label LOOP block_exp                       ()
+        | maybe_loop_label WHILE exp_nostruct block_exp         ()
+        | maybe_loop_label 
+            WHILE LET patterns EQ exp_nostruct block_exp        ()
+        | maybe_loop_label 
+            FOR patterns IN exp_nostruct block_exp              ()
+maybe_loop_label: LIFETIME_OR_LABEL COLON                       ()
+                |                                               ()
 
 if_exp: IF exp_nostruct block_exp                               ()
         | IF exp_nostruct block_exp ELSE block_exp              ()
         | IF exp_nostruct block_exp ELSE if_exp                 ()
         | IF exp_nostruct block_exp ELSE if_let_exp             ()
 
-if_let_exp: IF LET patterns EQ exp_nostruct_nolazybop block_exp ()
+if_let_exp: IF LET patterns EQ exp_nostruct_nolazybop block_exp (yaccLog("if_let_exp:1"))
         | IF LET patterns EQ exp_nostruct_nolazybop block_exp
             ELSE block_exp                                      ()
         | IF LET patterns EQ exp_nostruct_nolazybop block_exp
             ELSE if_exp                                         ()
         | IF LET patterns EQ exp_nostruct_nolazybop block_exp
             ELSE if_let_exp                                     ()
-exp_nostruct_nolazybop: expression                              ()
+exp_nostruct_nolazybop: 
+            lit_exp                                             ()
+            | path_exp                                          (yaccLog("exp_nostruct_nolazybop:path_exp"))
+            (* borrow exp_nostruct_nolazybop*)
+            | AND exp_nostruct_nolazybop                        ()
+            | ANDAND exp_nostruct_nolazybop                     ()
+            | AND MUT exp_nostruct_nolazybop                    ()
+            | ANDAND MUT exp_nostruct_nolazybop                 ()
+            (* dereference exp_nostruct_nolazybop*)
+            | STAR exp_nostruct_nolazybop                       ()
+            (* question mark operator *)
+            | exp_nostruct_nolazybop QUESTION                   ()
+            (* negation exp_nostruct *)
+            | MINUS exp_nostruct_nolazybop                      ()
+            | NOT exp_nostruct_nolazybop                        ()
+            (* arithmetic or logical exp_nostruct_nolazybop *)
+            | exp_nostruct_nolazybop 
+                PLUS exp_nostruct_nolazybop                     ()
+            | exp_nostruct_nolazybop 
+                MINUS exp_nostruct_nolazybop                    ()
+            | exp_nostruct_nolazybop 
+                STAR exp_nostruct_nolazybop                     ()
+            | exp_nostruct_nolazybop 
+                SLASH exp_nostruct_nolazybop                    ()
+            | exp_nostruct_nolazybop 
+                PERCENT exp_nostruct_nolazybop                  ()
+            | exp_nostruct_nolazybop 
+                AND exp_nostruct_nolazybop                      ()
+            | exp_nostruct_nolazybop 
+                OR exp_nostruct_nolazybop                       ()
+            | exp_nostruct_nolazybop 
+                CARET exp_nostruct_nolazybop                    ()
+            | exp_nostruct_nolazybop 
+                SHL exp_nostruct_nolazybop                      ()
+            | exp_nostruct_nolazybop 
+                SHR exp_nostruct_nolazybop                      ()
+            (* comparision exp_nostruct_nolazybop  *)
+            | exp_nostruct_nolazybop 
+                EQEQ exp_nostruct_nolazybop                     ()
+            | exp_nostruct_nolazybop 
+                NE exp_nostruct_nolazybop                       ()
+            | exp_nostruct_nolazybop 
+                GT exp_nostruct_nolazybop                       ()
+            | exp_nostruct_nolazybop 
+                LT exp_nostruct_nolazybop                       ()
+            | exp_nostruct_nolazybop 
+                GE exp_nostruct_nolazybop                       ()
+            | exp_nostruct_nolazybop 
+                LE exp_nostruct_nolazybop                       ()
+            (* type case exp_nostruct_nolazybop *)
+            | exp_nostruct_nolazybop 
+                AS type_no_bounds                               ()
+            (* assignment exp_nostruct_nolazybop *)
+            | exp_nostruct_nolazybop 
+                EQ exp_nostruct_nolazybop                       ()
+            (* compound assignment exp_nostruct_nolazybop *)
+            | exp_nostruct_nolazybop 
+                PLUSEQ exp_nostruct_nolazybop                   ()
+            | exp_nostruct_nolazybop 
+                MINUSEQ exp_nostruct_nolazybop                  ()
+            | exp_nostruct_nolazybop 
+                STAREQ exp_nostruct_nolazybop                   ()
+            | exp_nostruct_nolazybop 
+                SLASHEQ exp_nostruct_nolazybop                  ()
+            | exp_nostruct_nolazybop 
+                PERCENTEQ exp_nostruct_nolazybop                ()
+            | exp_nostruct_nolazybop 
+                ANDEQ exp_nostruct_nolazybop                    ()
+            | exp_nostruct_nolazybop 
+                OREQ exp_nostruct_nolazybop                     ()
+            | exp_nostruct_nolazybop 
+                CARETEQ exp_nostruct_nolazybop                  ()
+            | exp_nostruct_nolazybop 
+                SHLEQ exp_nostruct_nolazybop                    ()
+            | exp_nostruct_nolazybop 
+                SHREQ exp_nostruct_nolazybop                    ()
+            | grouped_exp                                       ()
+            | array_exp                                         ()
+            | exp_nostruct_nolazybop 
+                LBRACKET expression RBRACKET                    ()
+            | tuple_exp                                         ()
+            | exp_nostruct_nolazybop DOT INTEGER_LIT            ()
+            | exp_nostruct_nolazybop LPARENT RPARENT            ()
+            | exp_nostruct_nolazybop LPARENT call_params RPARENT()
+            | exp_nostruct_nolazybop DOT IDENT                  ()
+            (* clousre *)
+            | OR OR exp_nostruct_nolazybop                      ()
+            | OR OR RARROW type_no_bounds block_exp             ()
+            | MOVE OR OR exp_nostruct_nolazybop                 ()
+            | MOVE OR OR RARROW type_no_bounds block_exp        ()
+            | OR closure_parameters OR exp_nostruct_nolazybop   ()
+            | OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 ()
+            | MOVE OR closure_parameters 
+                OR exp_nostruct_nolazybop                       ()
+            | MOVE OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 ()
+            
+            | continue_exp                                      ()
+            | break_exp                                         ()
+            (* range *)
+            | exp_nostruct_nolazybop 
+                DOTDOT exp_nostruct_nolazybop                   (yaccLog("Range hit"))
+            | exp_nostruct_nolazybop DOTDOT                     (yaccLog("RangeFrom hit"))
+            | DOTDOT exp_nostruct_nolazybop                     (yaccLog("RangeTo hit"))
+            | DOTDOT                                            (yaccLog("RangeFull hit"))
+            | exp_nostruct_nolazybop 
+                DOTDOTEQ exp_nostruct_nolazybop                 (yaccLog("RangeInclusive hit"))
+            | DOTDOTEQ exp_nostruct_nolazybop                   (yaccLog("RangeToInclusive hit"))
+            | return_exp                                        ()
+            | exp_with_block                                    ()
 
 match_exp: MATCH exp_nostruct LBRACE inner_attrs RBRACE         ()
         | MATCH exp_nostruct 
             LBRACE inner_attrs match_arms RBRACE                ()
 match_arms: match_arms_expansion                                ()
             | match_arms_expansion COMMA                        ()
+
+(* expression conatins block_exp *)
 match_arms_expansion: 
                     (* match_arms_expansion 
                         COMMA match_arm FATARROW block_exp      () *)
@@ -1337,7 +1451,7 @@ match_arm_patterns: match_arm_patterns OR patterns              ()
 match_arm_guard: IF expression                                  ()
 
 (* -----token------- *)
-token_ep_delim_kleene_dollar: AS                                ()
+token_no_delim_kleene_dollar: AS                                ()
             | BREAK                                             ()
             | CONST                                             ()
             | CONTINUE                                          ()
@@ -1448,11 +1562,11 @@ token_ep_delim_kleene_dollar: AS                                ()
             | SHEBANG                                           ()
             | INTEGER_SUFFIX                                    ()
             | FLOAT_SUFFIX                                      ()
-token_ep_delim_kleene: token_ep_delim_kleene_dollar             ()
+token_no_delim_kleene: token_no_delim_kleene_dollar             ()
                     | DOLLAR                                    ()
-token_ep_delim_dollar: token_ep_delim_kleene_dollar             ()
+token_no_delim_dollar: token_no_delim_kleene_dollar             ()
                 | PLUS                                          ()
                 | STAR                                          ()
                 | QUESTION                                      ()
-token_ep_delim: token_ep_delim_dollar                           ()
+token_no_delim: token_no_delim_dollar                           ()
                 | DOLLAR                                        ()

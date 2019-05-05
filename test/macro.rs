@@ -1,3 +1,18 @@
+/// If the next tokens are ill-formed `$ty::` recover them as `<$ty>::`.
+macro_rules! maybe_recover_from_interpolated_ty_qpath {
+    ($self: expr, $allow_qpath_recovery: expr) => {
+        if $allow_qpath_recovery && $self.look_ahead(1, |t| t == &token::ModSep) {
+            if let token::Interpolated(nt) = &$self.token {
+                if let token::NtTy(ty) = &**nt {
+                    let ty = ty.clone();
+                    $self.bump();
+                    return $self.maybe_recover_from_bad_qpath_stage_2($self.prev_span, ty);
+                }
+            }
+        }
+    }
+}
+
 /// Possibly accepts an `token::Interpolated` expression (a pre-parsed expression
 /// dropped into the token stream, which happens while parsing the result of
 /// macro expansion). Placement of these is not as complex as I feared it would

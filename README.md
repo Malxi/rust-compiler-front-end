@@ -16,6 +16,7 @@ In sml interactive system
 for_in_type (which is a ty). This idea comes from rust official parser.
 + In inherent implement, to remove reduce/reduce conflicts in generics and types, requiring users to provide parents delimiter around types.This idea comes from rust official parser.
 + TypePath contains PathInExpression, rewrite MarcoInvocation for avoiding conflicts, maybe need to check TypePathFn.
++ Use "vis_item" replace "item" for avoiding conflicts in Statement production.
 ### Goal
 + To modify lex comments datatype
 + Add a suffix option for literals
