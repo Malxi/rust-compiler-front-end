@@ -15,7 +15,7 @@ struct
                 let
                     fun sep r d = if r then nextLine d else out ""
                     val ind = if r then d else 0
-                    val inc = if r then 1 else 0
+                    val inc = if r then 0 else 0
                     fun travel d f [a] = (f(a, d+inc))
                         | travel d f (h::t) = (f(h, d+inc); out ", "; sep r d; travel (d+inc) f t)
                         | travel d f nil = ()

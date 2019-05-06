@@ -21,7 +21,7 @@ struct
     val lin = ref 1
     val col = ref [1]
     val sourceStream = ref TextIO.stdIn
-    val debug = true
+    val debug = false
 
     fun reset() = (anyErrors:=false;
 		fileName:="";

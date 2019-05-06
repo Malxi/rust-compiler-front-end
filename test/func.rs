@@ -8,7 +8,7 @@ fn x() {
     //let Some(ref mut rhs) = rhs;
     lhs;
 }
-/*
+
 fn maybe_append(mut lhs: Vec<Attribute>, mut rhs: Option<Vec>) -> Vec<Attribute> {
     let Some(ref mut rhs) = rhs;
     if let Some(ref mut rhs) = rhs {
@@ -16,7 +16,7 @@ fn maybe_append(mut lhs: Vec<Attribute>, mut rhs: Option<Vec>) -> Vec<Attribute>
     }
     //lhs
 }
-
+/*
 fn answer_to_life_the_universe_and_everything() -> i32 {
 }
 
