@@ -96,20 +96,44 @@ fn exp() {
 }
 */
 fn x () {
-    Restrictions::empty;
-    a.collect::<TokenStream>();
-    empty();
-    Restrictions::empty();
-    let mut parser = Parser { restrictions: Restrictions::empty(), };
+    // Restrictions::empty;
+    // a.collect::<TokenStream>();
+    // empty();
+    // Restrictions::empty();
+    // let mut parser = Parser { restrictions: Restrictions::empty(), };
 
-    let certainly_not_a_block = || self.look_ahead(1, |t| t.is_ident()) && (
-        // `{ ident, ` cannot start a block
-        self.look_ahead(2, |t| t == &token::Comma) ||
-        self.look_ahead(2, |t| t == &token::Colon) && (
-            // `{ ident: token, ` cannot start a block
-            self.look_ahead(4, |t| t == &token::Comma) ||
-            // `{ ident: ` cannot start a block unless it's a type ascription `ident: Type`
-            self.look_ahead(3, |t| !t.can_begin_type())
-        )
-    );
+    let certainly_not_a_block = move || self.look_ahead(1);
+
+    let certainly_not_a_block = || 
+        self.look_ahead(1, |t| t.is_ident()) && (
+            // `{ ident, ` cannot start a block
+            self.look_ahead(2, |t| t == &token::Comma) ||
+            self.look_ahead(2, |t| t == &token::Colon) && (
+                // `{ ident: token, ` cannot start a block
+                self.look_ahead(4, |t| t == &token::Comma) ||
+                // `{ ident: ` cannot start a block unless it's a type ascription `ident: Type`
+                self.look_ahead(3, |t| !t.can_begin_type())
+            )
+        );
+    impl a {
+        fn parse_assoc_op_cast(&mut self, lhs: P<Expr>, lhs_span: Span,
+                           expr_kind: fn(P<Expr>, P<Ty>) -> ExprKind)
+                           -> PResult<'a, P> {}
+        
+        fn parse_as_ident(&mut self) -> bool {
+        self.look_ahead(1, |t| match *t {
+            token::OpenDelim(token::Paren) | token::OpenDelim(token::Brace) |
+            token::DotDotDot | token::DotDotEq | token::ModSep | token::Not => Some(false),
+            // ensure slice patterns [a, b.., c] and [a, b, c..] don't go into the
+            // range pattern branch
+            token::DotDot => None,
+            _ => Some(true),
+        }).unwrap_or_else(|| self.look_ahead(2, |t| match *t {
+            token::Comma | token::CloseDelim(token::Bracket) => true,
+            _ => false,
+        }))
+    }
+    }
+
+   
 }
