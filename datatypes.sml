@@ -115,10 +115,10 @@ sig
     and Type = Type
     and BlockExpression = BlockExpression
 
-    and TokenType = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
-                | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
-                | IntegerLit of (string * Pos) | FloatLit of (string * Pos)
-                | True of Pos | False of Pos
+    and TokenType = TKStrLit of (string * Pos) | TKRawStrLit of (string * Pos) | TKByteStrLit of (string * Pos) 
+                | TKRawByteStrLit of (string * Pos) | TKCharLit of (string * Pos) | TKByteLit of (string * Pos) 
+                | TKIntegerLit of (string * Pos) | TKFloatLit of (string * Pos)
+                | TKTrue of Pos | TKFalse of Pos
     and Pos = Pos of int
 
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
@@ -245,10 +245,10 @@ struct
     and Type = Type
     and BlockExpression = BlockExpression
 
-    and TokenType = StrLit of (string * Pos) | RawStrLit of (string * Pos) | ByteStrLit of (string * Pos) 
-                | RawByteStrLit of (string * Pos) | CharLit of (string * Pos) | ByteLit of (string * Pos) 
-                | IntegerLit of (string * Pos) | FloatLit of (string * Pos)
-                | True of Pos | False of Pos
+    and TokenType = TKStrLit of (string * Pos) | TKRawStrLit of (string * Pos) | TKByteStrLit of (string * Pos) 
+                | TKRawByteStrLit of (string * Pos) | TKCharLit of (string * Pos) | TKByteLit of (string * Pos) 
+                | TKIntegerLit of (string * Pos) | TKFloatLit of (string * Pos)
+                | TKTrue of Pos | TKFalse of Pos
                 
     and Pos = Pos of int
 

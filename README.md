@@ -17,17 +17,14 @@ for_in_type (which is a ty). This idea comes from rust official parser.
 + In inherent implement, to remove reduce/reduce conflicts in generics and types, requiring users to provide parents delimiter around types.This idea comes from rust official parser.
 + TypePath contains PathInExpression, rewrite MarcoInvocation for avoiding conflicts, maybe need to check TypePathFn.
 + Use "vis_item" replace "item" for avoiding conflicts in Statement production.
++ Ambiguous tokens (generics: GT-SHR;generic args: GT-SHR, GT-GE, GT-SHRQG) are parsed in yacc. 
 ### Goal
 + To modify lex comments datatype
 + Add a suffix option for literals
-+ Solve conflicts of function qualifier
-+ Complete simple path
-+ Extra work for ambiguous tokens
-(generics: GT-SHR;
-generic args: GT-SHR, GT-GE, GT-SHRQG, LT-SHL)
 + Add outer attributes for operator expression will cause shift/reduce conflicts
 + Extra work for ambiguous tokens
 (Float Literal: 1.; Range: 1..2)
++ Ambiguous tokens: LT-SHL
 
 ## Tools
 + convert for encoding and decoding

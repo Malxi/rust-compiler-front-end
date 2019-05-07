@@ -153,6 +153,7 @@ STR | BYTE | SUFFIX | R_STR_END | BLOCK_COMMENT | INNER_LINE_DOC | BR_STR_BEGIN 
 *)
 (* user declarations *)
 open Convert
+structure TK = DataTypes
 type pos = int
 type svalue = Tokens.svalue 
 type ('a, 'b) token = ('a, 'b) Tokens.token
@@ -401,9 +402,9 @@ fun eof(fileName:string) =
 (#"{",#"{",197),
 (#"|",#"|",198),
 (#"}",#"}",199),
-(#"\239",#"\239",200)], [1]), ([(#"\^@",#"\"",434),
-(#"$",#"\255",434),
-(#"#",#"#",435)], []), ([], [96]), ([], [95]), ([], [90, 96]), ([(#"\n",#"\n",24),
+(#"\239",#"\239",200)], [1]), ([(#"\^@",#"\"",431),
+(#"$",#"\255",431),
+(#"#",#"#",432)], []), ([], [96]), ([], [95]), ([], [90, 96]), ([(#"\n",#"\n",24),
 (#" ",#" ",25),
 (#"0",#"0",25),
 (#"\\",#"\\",25),
@@ -507,43 +508,42 @@ fun eof(fileName:string) =
 (#"}",#"}",110)], []), ([], [84]), ([], [85]), ([(#"0",#"9",118),
 (#"A",#"Z",118),
 (#"_",#"_",118),
-(#"a",#"z",118)], [83]), ([], [25]), ([], [22]), ([(#"\n",#"\n",120)], [22, 25]), ([(#"/",#"/",124)], [25]), ([(#"*",#"*",58)], [25]), ([], [15]), ([], [137, 138]), ([], [136, 137]), ([(#"#",#"#",129)], [137, 138]), ([], [138]), ([], [135]), ([], [10]), ([], [9]), ([(#"\n",#"\n",131)], [9, 10]), ([], [105]), ([], [104]), ([], [103, 105]), ([], [102, 105]), ([], [108]), ([], [107]), ([(#"#",#"#",140)], [108]), ([], [106]), ([], [128, 129]), ([], [127, 128]), ([], [126, 128, 129]), ([], [129]), ([], [193]), ([(#"\t",#"\t",433),
-(#" ",#" ",433)], [1, 193]), ([], [0]), ([(#"\n",#"\n",147)], [0, 193]), ([(#"=",#"=",432)], [175, 193]), ([], [89, 193]), ([(#"!",#"!",429)], [173, 193]), ([], [185, 193]), ([(#"=",#"=",428)], [172, 193]), ([(#"&",#"&",426),
-(#"=",#"=",427)], [176, 193]), ([], [81, 193]), ([], [191, 193]), ([], [192, 193]), ([(#"=",#"=",425)], [170, 193]), ([(#"=",#"=",424)], [168, 193]), ([], [182, 193]), ([(#"=",#"=",422),
-(#">",#">",423)], [169, 193]), ([(#".",#".",419)], [167, 193]), ([(#"*",#"*",58),
-(#"/",#"/",414),
-(#"=",#"=",415)], [171, 193]), ([(#".",#".",389),
-(#"0",#"9",390),
-(#"_",#"_",390),
-(#"E",#"E",391),
-(#"e",#"e",391),
-(#"b",#"b",408),
-(#"f",#"f",392),
-(#"i",#"i",393),
-(#"u",#"u",393),
-(#"o",#"o",409),
-(#"x",#"x",410)], [141, 193]), ([(#".",#".",389),
-(#"0",#"9",390),
-(#"_",#"_",390),
-(#"E",#"E",391),
-(#"e",#"e",391),
-(#"f",#"f",392),
-(#"i",#"i",393),
-(#"u",#"u",393)], [141, 193]), ([(#":",#":",388)], [184, 193]), ([], [183, 193]), ([(#"<",#"<",385),
-(#"=",#"=",386)], [180, 193]), ([(#"=",#"=",383),
-(#">",#">",384)], [178, 193]), ([(#"=",#"=",380),
-(#">",#">",381)], [179, 193]), ([], [186, 193]), ([], [181, 193]), ([(#"0",#"9",205),
+(#"a",#"z",118)], [83]), ([], [25]), ([], [22]), ([(#"\n",#"\n",120)], [22, 25]), ([(#"/",#"/",124)], [25]), ([(#"*",#"*",58)], [25]), ([], [15]), ([], [137, 138]), ([], [136, 137]), ([(#"#",#"#",129)], [137, 138]), ([], [138]), ([], [135]), ([], [10]), ([], [9]), ([(#"\n",#"\n",131)], [9, 10]), ([], [105]), ([], [104]), ([], [103, 105]), ([], [102, 105]), ([], [108]), ([], [107]), ([(#"#",#"#",140)], [108]), ([], [106]), ([], [128, 129]), ([], [127, 128]), ([], [126, 128, 129]), ([], [129]), ([], [190]), ([(#"\t",#"\t",430),
+(#" ",#" ",430)], [1, 190]), ([], [0]), ([(#"\n",#"\n",147)], [0, 190]), ([(#"=",#"=",429)], [172, 190]), ([], [89, 190]), ([(#"!",#"!",426)], [170, 190]), ([], [182, 190]), ([(#"=",#"=",425)], [169, 190]), ([(#"&",#"&",423),
+(#"=",#"=",424)], [173, 190]), ([], [81, 190]), ([], [188, 190]), ([], [189, 190]), ([(#"=",#"=",422)], [167, 190]), ([(#"=",#"=",421)], [165, 190]), ([], [179, 190]), ([(#"=",#"=",419),
+(#">",#">",420)], [166, 190]), ([(#".",#".",416)], [164, 190]), ([(#"*",#"*",58),
+(#"/",#"/",411),
+(#"=",#"=",412)], [168, 190]), ([(#".",#".",386),
+(#"0",#"9",387),
+(#"_",#"_",387),
+(#"E",#"E",388),
+(#"e",#"e",388),
+(#"b",#"b",405),
+(#"f",#"f",389),
+(#"i",#"i",390),
+(#"u",#"u",390),
+(#"o",#"o",406),
+(#"x",#"x",407)], [141, 190]), ([(#".",#".",386),
+(#"0",#"9",387),
+(#"_",#"_",387),
+(#"E",#"E",388),
+(#"e",#"e",388),
+(#"f",#"f",389),
+(#"i",#"i",390),
+(#"u",#"u",390)], [141, 190]), ([(#":",#":",385)], [181, 190]), ([], [180, 190]), ([(#"<",#"<",382),
+(#"=",#"=",383)], [177, 190]), ([(#"=",#"=",380),
+(#">",#">",381)], [175, 190]), ([], [176, 190]), ([], [183, 190]), ([], [178, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
-(#"a",#"z",205)], [80, 193]), ([(#"0",#"9",205),
+(#"a",#"z",205)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"d",205),
 (#"f",#"z",205),
-(#"e",#"e",377)], [80, 193]), ([], [189, 193]), ([], [190, 193]), ([(#"=",#"=",376)], [174, 193]), ([(#"0",#"9",205),
+(#"e",#"e",377)], [80, 190]), ([], [186, 190]), ([], [187, 190]), ([(#"=",#"=",376)], [171, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
-(#"a",#"z",205)], [27, 80, 193]), ([(#"0",#"9",205),
+(#"a",#"z",205)], [27, 80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"a",205),
@@ -552,7 +552,7 @@ fun eof(fileName:string) =
 (#"x",#"z",205),
 (#"b",#"b",361),
 (#"s",#"s",362),
-(#"w",#"w",363)], [80, 193]), ([(#"\"",#"\"",346),
+(#"w",#"w",363)], [80, 190]), ([(#"\"",#"\"",346),
 (#"'",#"'",347),
 (#"0",#"9",205),
 (#"A",#"Z",205),
@@ -563,21 +563,21 @@ fun eof(fileName:string) =
 (#"s",#"z",205),
 (#"e",#"e",348),
 (#"o",#"o",349),
-(#"r",#"r",350)], [80, 193]), ([(#"0",#"9",205),
+(#"r",#"r",350)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"n",205),
 (#"p",#"q",205),
 (#"s",#"z",205),
 (#"o",#"o",333),
-(#"r",#"r",334)], [80, 193]), ([(#"0",#"9",205),
+(#"r",#"r",334)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"n",205),
 (#"p",#"x",205),
 (#"z",#"z",205),
 (#"o",#"o",330),
-(#"y",#"y",331)], [80, 193]), ([(#"0",#"9",205),
+(#"y",#"y",331)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"k",205),
@@ -586,7 +586,7 @@ fun eof(fileName:string) =
 (#"y",#"z",205),
 (#"l",#"l",319),
 (#"n",#"n",320),
-(#"x",#"x",321)], [80, 193]), ([(#"0",#"9",205),
+(#"x",#"x",321)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"b",#"h",205),
@@ -595,7 +595,7 @@ fun eof(fileName:string) =
 (#"a",#"a",308),
 (#"i",#"i",309),
 (#"n",#"n",310),
-(#"o",#"o",311)], [80, 193]), ([(#"0",#"9",205),
+(#"o",#"o",311)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"e",205),
@@ -603,14 +603,14 @@ fun eof(fileName:string) =
 (#"o",#"z",205),
 (#"f",#"f",303),
 (#"m",#"m",304),
-(#"n",#"n",305)], [80, 193]), ([(#"0",#"9",205),
+(#"n",#"n",305)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"d",205),
 (#"f",#"n",205),
 (#"p",#"z",205),
 (#"e",#"e",298),
-(#"o",#"o",299)], [80, 193]), ([(#"0",#"9",205),
+(#"o",#"o",299)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"b",#"n",205),
@@ -618,26 +618,26 @@ fun eof(fileName:string) =
 (#"v",#"z",205),
 (#"a",#"a",285),
 (#"o",#"o",286),
-(#"u",#"u",287)], [80, 193]), ([(#"0",#"9",205),
+(#"u",#"u",287)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"u",205),
 (#"w",#"z",205),
-(#"v",#"v",278)], [80, 193]), ([(#"0",#"9",205),
+(#"v",#"v",278)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"q",205),
 (#"s",#"t",205),
 (#"v",#"z",205),
 (#"r",#"r",273),
-(#"u",#"u",274)], [80, 193]), ([(#"\"",#"\"",265),
+(#"u",#"u",274)], [80, 190]), ([(#"\"",#"\"",265),
 (#"#",#"#",266),
 (#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"d",205),
 (#"f",#"z",205),
-(#"e",#"e",267)], [80, 193]), ([(#"0",#"9",205),
+(#"e",#"e",267)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"d",205),
@@ -645,37 +645,37 @@ fun eof(fileName:string) =
 (#"v",#"z",205),
 (#"e",#"e",249),
 (#"t",#"t",250),
-(#"u",#"u",251)], [80, 193]), ([(#"0",#"9",205),
+(#"u",#"u",251)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"q",205),
 (#"s",#"x",205),
 (#"z",#"z",205),
 (#"r",#"r",237),
-(#"y",#"y",238)], [80, 193]), ([(#"0",#"9",205),
+(#"y",#"y",238)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"m",205),
 (#"o",#"r",205),
 (#"t",#"z",205),
 (#"n",#"n",223),
-(#"s",#"s",224)], [80, 193]), ([(#"0",#"9",205),
+(#"s",#"s",224)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"h",205),
 (#"j",#"z",205),
-(#"i",#"i",217)], [80, 193]), ([(#"0",#"9",205),
+(#"i",#"i",217)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"g",205),
 (#"i",#"z",205),
-(#"h",#"h",210)], [80, 193]), ([(#"0",#"9",205),
+(#"h",#"h",210)], [80, 190]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"h",205),
 (#"j",#"z",205),
-(#"i",#"i",206)], [80, 193]), ([], [187, 193]), ([(#"=",#"=",203),
-(#"|",#"|",204)], [177, 193]), ([], [188, 193]), ([(#"\189",#"\189",201)], [193]), ([(#"\191",#"\191",202)], []), ([], [2]), ([], [158]), ([], [148]), ([(#"0",#"9",205),
+(#"i",#"i",206)], [80, 190]), ([], [184, 190]), ([(#"=",#"=",203),
+(#"|",#"|",204)], [174, 190]), ([], [185, 190]), ([(#"\189",#"\189",201)], [190]), ([(#"\191",#"\191",202)], []), ([], [2]), ([], [156]), ([], [147]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"z",205)], [80]), ([(#"0",#"9",205),
@@ -1411,7 +1411,7 @@ fun eof(fileName:string) =
 (#"t",#"t",375)], [80]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
-(#"a",#"z",205)], [64, 80]), ([], [156]), ([(#"0",#"9",205),
+(#"a",#"z",205)], [64, 80]), ([], [154]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
 (#"a",#"k",205),
@@ -1424,55 +1424,55 @@ fun eof(fileName:string) =
 (#"f",#"f",379)], [80]), ([(#"0",#"9",205),
 (#"A",#"Z",205),
 (#"_",#"_",205),
-(#"a",#"z",205)], [52, 80]), ([], [161]), ([(#"=",#"=",382)], [150]), ([], [144]), ([], [159]), ([], [164]), ([(#"=",#"=",387)], [149]), ([], [162]), ([], [143]), ([], [166]), ([(#"0",#"9",407)], [142]), ([(#".",#".",389),
-(#"0",#"9",390),
-(#"_",#"_",390),
-(#"E",#"E",391),
-(#"e",#"e",391),
-(#"f",#"f",392),
-(#"i",#"i",393),
-(#"u",#"u",393)], [141]), ([(#"+",#"+",405),
-(#"-",#"-",405),
-(#"_",#"_",405),
-(#"0",#"9",406)], []), ([(#"3",#"3",402),
-(#"6",#"6",403)], []), ([(#"1",#"1",394),
-(#"3",#"3",395),
-(#"6",#"6",396),
-(#"8",#"8",397),
-(#"s",#"s",398)], []), ([(#"2",#"2",401),
-(#"6",#"6",397)], []), ([(#"2",#"2",397)], []), ([(#"4",#"4",397)], []), ([], [141]), ([(#"i",#"i",399)], []), ([(#"z",#"z",400)], []), ([(#"e",#"e",397)], []), ([(#"8",#"8",397)], []), ([(#"2",#"2",404)], []), ([(#"4",#"4",404)], []), ([], [142]), ([(#"0",#"9",406),
-(#"_",#"_",405)], []), ([(#"0",#"9",406),
-(#"_",#"_",406),
-(#"f",#"f",392)], [142]), ([(#"0",#"9",407),
-(#"_",#"_",407),
-(#"E",#"E",391),
-(#"e",#"e",391),
-(#"f",#"f",392)], [142]), ([(#"0",#"1",413),
-(#"_",#"_",408)], []), ([(#"0",#"7",412),
-(#"_",#"_",409)], []), ([(#"0",#"9",411),
-(#"A",#"F",411),
-(#"a",#"f",411),
-(#"_",#"_",410)], []), ([(#"0",#"9",411),
-(#"A",#"F",411),
-(#"_",#"_",411),
-(#"a",#"f",411),
-(#"i",#"i",393),
-(#"u",#"u",393)], [141]), ([(#"0",#"7",412),
-(#"_",#"_",412),
-(#"i",#"i",393),
-(#"u",#"u",393)], [141]), ([(#"0",#"1",413),
-(#"_",#"_",413),
-(#"i",#"i",393),
-(#"u",#"u",393)], [141]), ([(#"!",#"!",416),
-(#"/",#"/",417)], [11]), ([], [154]), ([], [5]), ([(#"/",#"/",418)], [8]), ([], [11]), ([(#".",#".",420),
-(#"=",#"=",421)], [165]), ([], [145]), ([], [146]), ([], [152]), ([], [163]), ([], [151]), ([], [153]), ([], [147]), ([], [157]), ([], [155]), ([(#"\^@",#"\t",430),
-(#"\v",#"Z",430),
-(#"\\",#"\255",430),
-(#"\n",#"\n",431)], [4]), ([(#"\^@",#"\t",430),
-(#"\v",#"Z",430),
-(#"\\",#"\255",430),
-(#"\n",#"\n",431)], []), ([], [3]), ([], [160]), ([(#"\t",#"\t",433),
-(#" ",#" ",433)], [1]), ([], [140]), ([], [139])]
+(#"a",#"z",205)], [52, 80]), ([], [157]), ([], [161]), ([(#"=",#"=",384)], [148]), ([], [159]), ([], [143]), ([], [163]), ([(#"0",#"9",404)], [142]), ([(#".",#".",386),
+(#"0",#"9",387),
+(#"_",#"_",387),
+(#"E",#"E",388),
+(#"e",#"e",388),
+(#"f",#"f",389),
+(#"i",#"i",390),
+(#"u",#"u",390)], [141]), ([(#"+",#"+",402),
+(#"-",#"-",402),
+(#"_",#"_",402),
+(#"0",#"9",403)], []), ([(#"3",#"3",399),
+(#"6",#"6",400)], []), ([(#"1",#"1",391),
+(#"3",#"3",392),
+(#"6",#"6",393),
+(#"8",#"8",394),
+(#"s",#"s",395)], []), ([(#"2",#"2",398),
+(#"6",#"6",394)], []), ([(#"2",#"2",394)], []), ([(#"4",#"4",394)], []), ([], [141]), ([(#"i",#"i",396)], []), ([(#"z",#"z",397)], []), ([(#"e",#"e",394)], []), ([(#"8",#"8",394)], []), ([(#"2",#"2",401)], []), ([(#"4",#"4",401)], []), ([], [142]), ([(#"0",#"9",403),
+(#"_",#"_",402)], []), ([(#"0",#"9",403),
+(#"_",#"_",403),
+(#"f",#"f",389)], [142]), ([(#"0",#"9",404),
+(#"_",#"_",404),
+(#"E",#"E",388),
+(#"e",#"e",388),
+(#"f",#"f",389)], [142]), ([(#"0",#"1",410),
+(#"_",#"_",405)], []), ([(#"0",#"7",409),
+(#"_",#"_",406)], []), ([(#"0",#"9",408),
+(#"A",#"F",408),
+(#"a",#"f",408),
+(#"_",#"_",407)], []), ([(#"0",#"9",408),
+(#"A",#"F",408),
+(#"_",#"_",408),
+(#"a",#"f",408),
+(#"i",#"i",390),
+(#"u",#"u",390)], [141]), ([(#"0",#"7",409),
+(#"_",#"_",409),
+(#"i",#"i",390),
+(#"u",#"u",390)], [141]), ([(#"0",#"1",410),
+(#"_",#"_",410),
+(#"i",#"i",390),
+(#"u",#"u",390)], [141]), ([(#"!",#"!",413),
+(#"/",#"/",414)], [11]), ([], [152]), ([], [5]), ([(#"/",#"/",415)], [8]), ([], [11]), ([(#".",#".",417),
+(#"=",#"=",418)], [162]), ([], [144]), ([], [145]), ([], [150]), ([], [160]), ([], [149]), ([], [151]), ([], [146]), ([], [155]), ([], [153]), ([(#"\^@",#"\t",427),
+(#"\v",#"Z",427),
+(#"\\",#"\255",427),
+(#"\n",#"\n",428)], [4]), ([(#"\^@",#"\t",427),
+(#"\v",#"Z",427),
+(#"\\",#"\255",427),
+(#"\n",#"\n",428)], []), ([], [3]), ([], [158]), ([(#"\t",#"\t",430),
+(#" ",#" ",430)], [1]), ([], [140]), ([], [139])]
     fun mk yyins = let
         (* current start state *)
         val yyss = ref INITIAL
@@ -2393,297 +2393,279 @@ fun yyAction144 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHREQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTDOT(yypos, yypos+size yytext))
       end
 fun yyAction145 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTDOT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTEQ(yypos, yypos+size yytext))
       end
 fun yyAction146 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.ANDAND(yypos, yypos+size yytext))
       end
 fun yyAction147 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.ANDAND(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OROR(yypos, yypos+size yytext))
       end
 fun yyAction148 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OROR(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHL(yypos, yypos+size yytext))
       end
 fun yyAction149 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHL(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PLUSEQ(yypos, yypos+size yytext))
       end
 fun yyAction150 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHR(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.MINUSEQ(yypos, yypos+size yytext))
       end
 fun yyAction151 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PLUSEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAREQ(yypos, yypos+size yytext))
       end
 fun yyAction152 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.MINUSEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SLASHEQ(yypos, yypos+size yytext))
       end
 fun yyAction153 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAREQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PERCENTEQ(yypos, yypos+size yytext))
       end
 fun yyAction154 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SLASHEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.CARETEQ(yypos, yypos+size yytext))
       end
 fun yyAction155 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PERCENTEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.ANDEQ(yypos, yypos+size yytext))
       end
 fun yyAction156 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.CARETEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OREQ(yypos, yypos+size yytext))
       end
 fun yyAction157 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.ANDEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.EQEQ(yypos, yypos+size yytext))
       end
 fun yyAction158 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OREQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NE(yypos, yypos+size yytext))
       end
 fun yyAction159 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.EQEQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext))
       end
 fun yyAction160 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NE(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.RARROW(yypos, yypos+size yytext))
       end
 fun yyAction161 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GE(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.FATARROW(yypos, yypos+size yytext))
       end
 fun yyAction162 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Tokens.DOTDOT> "^yytext); Tokens.DOTDOT(yypos, yypos+size yytext))
       end
 fun yyAction163 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.RARROW(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PATHSEP(yypos, yypos+size yytext))
       end
 fun yyAction164 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.FATARROW(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOT(yypos, yypos+size yytext))
       end
 fun yyAction165 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Tokens.DOTDOT> "^yytext); Tokens.DOTDOT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PLUS(yypos, yypos+size yytext))
       end
 fun yyAction166 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PATHSEP(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.MINUS(yypos, yypos+size yytext))
       end
 fun yyAction167 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAR(yypos, yypos+size yytext))
       end
 fun yyAction168 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PLUS(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SLASH(yypos, yypos+size yytext))
       end
 fun yyAction169 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.MINUS(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PERCENT(yypos, yypos+size yytext))
       end
 fun yyAction170 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAR(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.POUND(yypos, yypos+ size yytext))
       end
 fun yyAction171 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SLASH(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.CARET(yypos, yypos+size yytext))
       end
 fun yyAction172 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PERCENT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NOT(yypos, yypos+size yytext))
       end
 fun yyAction173 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.POUND(yypos, yypos+ size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AND(yypos, yypos+size yytext))
       end
 fun yyAction174 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.CARET(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OR(yypos, yypos+size yytext))
       end
 fun yyAction175 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NOT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Tokens.EQ> "^yytext); Tokens.EQ(yypos, yypos+size yytext))
       end
 fun yyAction176 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AND(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GT(yypos, yypos+size yytext))
       end
 fun yyAction177 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OR(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LT(yypos, yypos+size yytext))
       end
 fun yyAction178 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Tokens.EQ> "^yytext); Tokens.EQ(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AT(yypos, yypos+size yytext))
       end
 fun yyAction179 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COMMA(yypos, yypos+size yytext))
       end
 fun yyAction180 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SEMI(yypos, yypos+size yytext))
       end
 fun yyAction181 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.AT(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COLON(yypos, yypos+size yytext))
       end
 fun yyAction182 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COMMA(yypos, yypos+size yytext))
+        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOLLAR(yypos, yypos+size yytext))
       end
 fun yyAction183 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SEMI(yypos, yypos+size yytext))
+        (lexLog(yypos, "Tokens.QUESTION "^yytext); Tokens.QUESTION(yypos, yypos+size yytext))
       end
 fun yyAction184 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.COLON(yypos, yypos+size yytext))
+        (lexLog(yypos, "Tokens.LBRACE "^yytext); Tokens.LBRACE(yypos, yypos+size yytext))
       end
 fun yyAction185 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOLLAR(yypos, yypos+size yytext))
+        (lexLog(yypos, "Tokens.RBRACE"^yytext); Tokens.RBRACE(yypos, yypos+size yytext))
       end
 fun yyAction186 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "Tokens.QUESTION "^yytext); Tokens.QUESTION(yypos, yypos+size yytext))
+        (lexLog(yypos, "Tokens.LBRACKET "^yytext); Tokens.LBRACKET(yypos, yypos+size yytext))
       end
 fun yyAction187 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "Tokens.LBRACE "^yytext); Tokens.LBRACE(yypos, yypos+size yytext))
+        (lexLog(yypos, "Tokens.RBRACKET "^yytext); Tokens.RBRACKET(yypos, yypos+size yytext))
       end
 fun yyAction188 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "Tokens.RBRACE"^yytext); Tokens.RBRACE(yypos, yypos+size yytext))
+        (lexLog(yypos, "Tokens.LPARENT "^yytext); Tokens.LPARENT(yypos, yypos+size yytext))
       end
 fun yyAction189 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
-        (lexLog(yypos, "Tokens.LBRACKET "^yytext); Tokens.LBRACKET(yypos, yypos+size yytext))
-      end
-fun yyAction190 (strm, lastMatch : yymatch) = let
-      val yytext = yymktext(strm)
-      in
-        yystrm := strm;
-        (lexLog(yypos, "Tokens.RBRACKET "^yytext); Tokens.RBRACKET(yypos, yypos+size yytext))
-      end
-fun yyAction191 (strm, lastMatch : yymatch) = let
-      val yytext = yymktext(strm)
-      in
-        yystrm := strm;
-        (lexLog(yypos, "Tokens.LPARENT "^yytext); Tokens.LPARENT(yypos, yypos+size yytext))
-      end
-fun yyAction192 (strm, lastMatch : yymatch) = let
-      val yytext = yymktext(strm)
-      in
-        yystrm := strm;
         (lexLog(yypos, "Tokens.RPARENT "^yytext); Tokens.RPARENT(yypos, yypos+size yytext))
       end
-fun yyAction193 (strm, lastMatch : yymatch) = let
+fun yyAction190 (strm, lastMatch : yymatch) = let
       val yytext = yymktext(strm)
       in
         yystrm := strm;
@@ -2720,8 +2702,7 @@ val yyactTable = Vector.fromList([yyAction0, yyAction1, yyAction2, yyAction3,
   yyAction167, yyAction168, yyAction169, yyAction170, yyAction171, yyAction172,
   yyAction173, yyAction174, yyAction175, yyAction176, yyAction177, yyAction178,
   yyAction179, yyAction180, yyAction181, yyAction182, yyAction183, yyAction184,
-  yyAction185, yyAction186, yyAction187, yyAction188, yyAction189, yyAction190,
-  yyAction191, yyAction192, yyAction193])
+  yyAction185, yyAction186, yyAction187, yyAction188, yyAction189, yyAction190])
 in
   if yyInput.eof(!(yystrm))
     then UserDeclarations.eof(yyarg)

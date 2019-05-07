@@ -49,6 +49,7 @@
 *)
 (* user declarations *)
 open Convert
+structure TK = DataTypes
 type pos = int
 type svalue = Tokens.svalue 
 type ('a, 'b) token = ('a, 'b) Tokens.token
@@ -513,14 +514,12 @@ shebang_line = ("#!"([^\[\n])*\n);
                             );
 
 <INITIAL>"<<="             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHLEQ(yypos, yypos+size yytext));
-<INITIAL>">>="             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHREQ(yypos, yypos+size yytext));
 <INITIAL>"..."             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTDOT(yypos, yypos+size yytext));
 <INITIAL>"..="             => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.DOTDOTEQ(yypos, yypos+size yytext));
 
 <INITIAL>"&&"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.ANDAND(yypos, yypos+size yytext));
 <INITIAL>"||"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OROR(yypos, yypos+size yytext));
 <INITIAL>"<<"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHL(yypos, yypos+size yytext));
-<INITIAL>">>"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.SHR(yypos, yypos+size yytext));
 <INITIAL>"+="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.PLUSEQ(yypos, yypos+size yytext));
 <INITIAL>"-="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.MINUSEQ(yypos, yypos+size yytext));
 <INITIAL>"*="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.STAREQ(yypos, yypos+size yytext));
@@ -531,7 +530,6 @@ shebang_line = ("#!"([^\[\n])*\n);
 <INITIAL>"|="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.OREQ(yypos, yypos+size yytext));
 <INITIAL>"=="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.EQEQ(yypos, yypos+size yytext));
 <INITIAL>"!="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.NE(yypos, yypos+size yytext));
-<INITIAL>">="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.GE(yypos, yypos+size yytext));
 <INITIAL>"<="              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.LE(yypos, yypos+size yytext));
 <INITIAL>"->"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.RARROW(yypos, yypos+size yytext));
 <INITIAL>"=>"              => (lexLog(yypos, "<Punctuation> "^yytext); Tokens.FATARROW(yypos, yypos+size yytext));
