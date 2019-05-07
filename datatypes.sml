@@ -5,7 +5,8 @@ sig
     and Shebang = Shebang of string option
     and InnerAttribute = InnerAttribute of MetaItem
     and OuterAttribute = OuterAttribute of MetaItem
-    and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression | AttrSubs of SimplePath * MetaItemInner list
+    and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression 
+                    | AttrSubs of SimplePath * MetaItemInner list
     and LiteralExpression = LiteralExpression of TokenType
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
@@ -51,8 +52,7 @@ sig
     and TupleField = TupleField of (OuterAttribute list * Visibility * Type)
     and ModuleBody = ModuleBody of InnerAttribute list * Item list
     and Visibility = DefaultVis | PubVis | CrateVis | SelfVis | SuperVis | InVis of SimplePath
-    and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) 
-                | UseAlias of (SimplePath * Identifer option)
+    and UseTree = UseAll of SimplePath option | UseList of (SimplePath option * UseTree list) | UseAlias of (SimplePath * Identifer option)
     and MacroItem = MacroInvocationSemi of PathInExpression * TokenTree
                     | MacroInvocation of PathInExpression * TokenTree 
                     | MacroRulesDefinition of PathInExpression * Identifer * MacroRulesDef
@@ -108,7 +108,6 @@ sig
                         wh:WhereClause option}
     and SelfParam = SelfParamLT of (Lifetime option * Mutability) | SelfParamTY of (Mutability * Type option)
 
-
     and Unsafe = Unsafe
 
     and InherentImplItem = InherentImplItemMacro of (OuterAttribute list * MacroItem)
@@ -120,7 +119,7 @@ sig
     and Method = Method of {qualifier:FunctionQualifier list, name:Identifer, generic:Generics option, 
                         selfParam: SelfParam, params:FunctionParam list, ret:Type option, 
                         wh:WhereClause option, be:BlockExpression}
-    
+
     and ExternalItem = ExternalItem of (OuterAttribute list * Visibility * ExternalItemType)
     and ExternalItemType = ExternalStaticItem of (Mutability * Identifer * Type)
                             | ExternalFunctionItem of {name:Identifer, generic:Generics option, 
@@ -128,7 +127,33 @@ sig
     and ExternFunctionParameter = ExternFunctionParameter of {params:NamedFunctionParam list, var:bool}
     and NamedFunctionParam = NamedFunctionParam of (Identifer option * Type)
 
-    and Pattern = Pattern
+    and Pattern = LiteralPattern of Minus option * TokenType * Pos
+                | IdentiferPattern of BindingMode * Identifer * Pattern option
+                | WildcardPattern of Pos
+                | RangePatternDDE of RangePatternBound * RangePatternBound
+                | RangePatternDDD of RangePatternBound * RangePatternBound
+                | ReferencePattern of Borrow * Mutability * Pattern * Pos
+                | StructPattern of PathInExpression * StructPatternElements
+                | TupleStructPattern of PathInExpression * Pattern list
+                | TupleStructPatternDD of PathInExpression * Pattern list * Pattern list
+                | TupleORGroupPattern of Pattern list * Pos 
+                | TupleORGroupPatternDD of Pattern list * Pattern list * Pos
+                | SlicePattern of Pattern list * Pos
+                | PathPat of PathInExpression 
+                | QPathPat of QualifiedPathInExpression
+    and Minus = Minus of Pos
+    and BindingMode = BindingMode of Ref option * Mutability * Pos
+    and Ref = Ref of Pos 
+    and RangePatternBound = RPBLit of Minus option * TokenType * Pos
+                        | RPBPath of PathInExpression 
+                        | RPBQPath of QualifiedPathInExpression
+    and Borrow = BOnce of Pos | BTwice of Pos
+    and StructPatternElements = StructPatternElements of StructPatternField list * StructPatternEtCetera option
+    and StructPatternField = SPFTPIND of OuterAttribute list * TokenType * Pattern * Pos
+                            | SPFIBD of OuterAttribute list * Identifer * Pattern * Pos
+                            | SPFID of OuterAttribute list * Ref option * Mutability * Identifer * Pos
+    and StructPatternEtCetera = StructPatternEtCetera of OuterAttribute list * Pos
+
     and Type = Type
     and BlockExpression = BlockExpression
 
@@ -155,6 +180,7 @@ sig
                 | TKSEMI of Pos| TKCOLON of Pos| TKPATHSEP of Pos| TKRARROW of Pos| TKFATARROW of Pos| TKPOUND of Pos
                 | TKINNER_DOC_COMMENT of string * Pos | TKOUTER_DOC_COMMENT of string * Pos
                 | TKSHEBANG of Pos| TKDOLLAR of Pos| TKPLUS of Pos| TKSTAR of Pos| TKQUESTION of Pos
+                
     and Pos = Pos of int
 
     and Numeric = U8 of Word8.word | U16 of Word.word | U32 of Word32.word 
@@ -293,7 +319,33 @@ struct
     and ExternFunctionParameter = ExternFunctionParameter of {params:NamedFunctionParam list, var:bool}
     and NamedFunctionParam = NamedFunctionParam of (Identifer option * Type)
 
-    and Pattern = Pattern
+    and Pattern = LiteralPattern of Minus option * TokenType * Pos
+                | IdentiferPattern of BindingMode * Identifer * Pattern option
+                | WildcardPattern of Pos
+                | RangePatternDDE of RangePatternBound * RangePatternBound
+                | RangePatternDDD of RangePatternBound * RangePatternBound
+                | ReferencePattern of Borrow * Mutability * Pattern * Pos
+                | StructPattern of PathInExpression * StructPatternElements
+                | TupleStructPattern of PathInExpression * Pattern list
+                | TupleStructPatternDD of PathInExpression * Pattern list * Pattern list
+                | TupleORGroupPattern of Pattern list * Pos 
+                | TupleORGroupPatternDD of Pattern list * Pattern list * Pos
+                | SlicePattern of Pattern list * Pos
+                | PathPat of PathInExpression 
+                | QPathPat of QualifiedPathInExpression
+    and Minus = Minus of Pos
+    and BindingMode = BindingMode of Ref option * Mutability * Pos
+    and Ref = Ref of Pos 
+    and RangePatternBound = RPBLit of Minus option * TokenType * Pos
+                        | RPBPath of PathInExpression 
+                        | RPBQPath of QualifiedPathInExpression
+    and Borrow = BOnce of Pos | BTwice of Pos
+    and StructPatternElements = StructPatternElements of StructPatternField list * StructPatternEtCetera option
+    and StructPatternField = SPFTPIND of OuterAttribute list * TokenType * Pattern * Pos
+                            | SPFIBD of OuterAttribute list * Identifer * Pattern * Pos
+                            | SPFID of OuterAttribute list * Ref option * Mutability * Identifer * Pos
+    and StructPatternEtCetera = StructPatternEtCetera of OuterAttribute list * Pos
+
     and Type = Type
     and BlockExpression = BlockExpression
 

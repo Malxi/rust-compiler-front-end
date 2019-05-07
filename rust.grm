@@ -42,18 +42,24 @@ fun error(pos, msg) = ErrorMsg.error pos
 
         | simple_path of PathSeg list | path_segment of PathSeg
         | path_in_exp of PathInExpression | path_in_exp_with_generic of PathSeg list
-        | qualified_path_in_exp | qualified_path_in_exp_expansion | qualified_path_type | qualified_path_in_type | qualified_path_in_type_expansion
+        | qualified_path_in_exp of QualifiedPathInExpression | qualified_path_in_type of QualifiedPathInType
         | type_path of TypePath | type_path_with_generic_fn of PathSeg list 
         | type_path_fn of TypePathFn | type_path_fn_inputs of Type list | type_path_fn_inputs_expansion of Type list
         
         | item of Item | vis_item of VisItem | macro_item of MacroItem
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
-        | patterns of Pattern | lit_pat | id_pat | binding_mode | wildcard_pat | range_pat | range_pat_bound | reference_pat 
-        | struct_pat | struct_pat_elements | struct_pat_fields | struct_pat_etcetera | struct_pat_field
-        | tuple_struct_pat | tuple_struct_items
-        | tuple_or_grouped_pat | tuple_pat_items
-        | grouped_pat | slice_pat | path_pat
+        | patterns of Pattern | lit_pat of Pattern 
+        | id_pat of Pattern | binding_mode of BindingMode
+        | wildcard_pat of Pattern 
+        | range_pat of Pattern | range_pat_bound of RangePatternBound
+        | reference_pat of Pattern
+        | struct_pat of Pattern | struct_pat_elements of StructPatternElements 
+        | struct_pat_fields of StructPatternField list 
+        | struct_pat_etcetera of StructPatternEtCetera | struct_pat_field of StructPatternField
+        | tuple_struct_pat of Pattern
+        | tuple_or_grouped_pat of Pattern | tuple_pat_items of Pattern list
+        | grouped_pat | slice_pat of Pattern | path_pat of Pattern
         | types of Type | types_expansion | types_noqualified_path_in_type
         | maybe_named_bare_func_parameters | maybe_named_bare_func_parameters_variadic | maybe_named_param
         | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility of Visibility
@@ -782,109 +788,109 @@ named_func_parameters_with_variadics:
 
 (* ------pattern-------- *)
 patterns: 
-        lit_pat                                                 (yaccLog("patterns:lit_pat"); Pattern)
-        | id_pat                                                (yaccLog("patterns:id_pat"); Pattern)
-        | wildcard_pat                                          (yaccLog("patterns:wildcard_pat"); Pattern)
-        | range_pat                                             (yaccLog("patterns:range_pat"); Pattern)
-        | reference_pat                                         (yaccLog("patterns:reference_pat"); Pattern)
-        | struct_pat                                            (yaccLog("patterns:struct_pat"); Pattern)
-        | tuple_struct_pat                                      (yaccLog("patterns:tuple_struct_pat"); Pattern)
-        | tuple_or_grouped_pat                                  (yaccLog("patterns:tuple_or_grouped_pat"); Pattern)
-        | LPARENT RPARENT                                       (yaccLog("patterns:unit"); Pattern)
+        lit_pat                                                 (yaccLog("patterns:lit_pat"); lit_pat)
+        | id_pat                                                (yaccLog("patterns:id_pat"); id_pat)
+        | wildcard_pat                                          (yaccLog("patterns:wildcard_pat"); wildcard_pat)
+        | range_pat                                             (yaccLog("patterns:range_pat"); range_pat)
+        | reference_pat                                         (yaccLog("patterns:reference_pat"); reference_pat)
+        | struct_pat                                            (yaccLog("patterns:struct_pat"); struct_pat)
+        | tuple_struct_pat                                      (yaccLog("patterns:tuple_struct_pat"); tuple_struct_pat)
+        | tuple_or_grouped_pat                                  (yaccLog("patterns:tuple_or_grouped_pat"); tuple_or_grouped_pat)
+        | LPARENT RPARENT                                       (yaccLog("patterns:unit"); TupleORGroupPattern([], Pos(LPARENTleft)))
         (* tuple pattern contains group pattern *)
         (* | grouped_pat                                           (Pattern) *)
-        | slice_pat                                             (yaccLog("patterns:slice_pat"); Pattern)
-        | path_pat                                              (yaccLog("patterns:path_pat"); Pattern)
+        | slice_pat                                             (yaccLog("patterns:slice_pat"); slice_pat)
+        | path_pat                                              (yaccLog("patterns:path_pat"); path_pat)
 
-lit_pat: TRUE                                                   ()
-        | FALSE                                                 ()
-        | CHAR_LIT                                              ()
-        | BYTE_LIT                                              ()
-        | STR_LIT                                               ()
-        | RAW_STR_LIT                                           ()
-        | BYTE_STR_LIT                                          ()
-        | RAW_BYTE_STR_LIT                                      ()
-        | INTEGER_LIT                                           ()
-        | MINUS INTEGER_LIT                                     ()
-        | FLOAT_LIT                                             ()
-        | MINUS FLOAT_LIT                                       ()
+lit_pat: TRUE                                                   (LiteralPattern(NONE, TKTRUE(Pos(TRUEleft)), Pos(TRUEleft)))
+        | FALSE                                                 (LiteralPattern(NONE, TKFALSE(Pos(FALSEleft)), Pos(FALSEleft)))
+        | CHAR_LIT                                              (LiteralPattern(NONE, TKCHAR_LIT(CHAR_LIT, Pos(CHAR_LITleft)), Pos(CHAR_LITleft)))
+        | BYTE_LIT                                              (LiteralPattern(NONE, TKBYTE_LIT(BYTE_LIT, Pos(BYTE_LITleft)), Pos(BYTE_LITleft)))
+        | STR_LIT                                               (LiteralPattern(NONE, TKSTR_LIT(STR_LIT, Pos(STR_LITleft)), Pos(STR_LITleft)))
+        | RAW_STR_LIT                                           (LiteralPattern(NONE, TKRAW_STR_LIT(RAW_STR_LIT, Pos(RAW_STR_LITleft)), Pos(RAW_STR_LITleft)))
+        | BYTE_STR_LIT                                          (LiteralPattern(NONE, TKBYTE_STR_LIT(BYTE_STR_LIT, Pos(BYTE_STR_LITleft)), Pos(BYTE_STR_LITleft)))
+        | RAW_BYTE_STR_LIT                                      (LiteralPattern(NONE, TKRAW_BYTE_STR_LIT(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)), Pos(RAW_BYTE_STR_LITleft)))
+        | INTEGER_LIT                                           (LiteralPattern(NONE, TKINTEGER_LIT(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(INTEGER_LITleft)))
+        | MINUS INTEGER_LIT                                     (LiteralPattern(SOME(Minus(Pos(MINUSleft))), TKINTEGER_LIT(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(INTEGER_LITleft)))
+        | FLOAT_LIT                                             (LiteralPattern(NONE, TKFLOAT_LIT(FLOAT_LIT, Pos(FLOAT_LITleft)), Pos(FLOAT_LITleft)))
+        | MINUS FLOAT_LIT                                       (LiteralPattern(SOME(Minus(Pos(MINUSleft))), TKFLOAT_LIT(FLOAT_LIT, Pos(FLOAT_LITleft)), Pos(FLOAT_LITleft)))
 
 id_pat: 
         (* path pattern contains Identifer *)
         (* IDENT                                                   () *)
-        binding_mode IDENT                                      ()
-        | IDENT AT patterns                                     ()
-        | binding_mode IDENT AT patterns                        ()
+        binding_mode IDENT                                      (IdentiferPattern(binding_mode, Identifer(IDENT), NONE))
+        | IDENT AT patterns                                     (IdentiferPattern(BindingMode(NONE, NonMut, Pos(IDENTleft)), Identifer(IDENT), NONE))
+        | binding_mode IDENT AT patterns                        (IdentiferPattern(binding_mode, Identifer(IDENT), NONE))
 
-binding_mode: REF                                               ()
-            | REF MUT                                           ()
-            | MUT                                               ()
+binding_mode: REF                                               (BindingMode(SOME(Ref(Pos(REFleft))), NonMut, Pos(REFleft)))
+            | REF MUT                                           (BindingMode(SOME(Ref(Pos(REFleft))), Mut, Pos(REFleft)))
+            | MUT                                               (BindingMode(NONE, Mut, Pos(MUTleft)))
 
-wildcard_pat: UNDERSCORE                                        ()
+wildcard_pat: UNDERSCORE                                        (WildcardPattern(Pos(UNDERSCOREleft)))
 
-range_pat: range_pat_bound DOTDOTEQ range_pat_bound             ()
-            | range_pat_bound DOTDOTDOT range_pat_bound         ()
-range_pat_bound: CHAR_LIT                                       ()
-                | BYTE_LIT                                      ()
-                | INTEGER_LIT                                   ()
-                | MINUS INTEGER_LIT                             ()
-                | FLOAT_LIT                                     ()
-                | MINUS FLOAT_LIT                               ()
-                | path_in_exp                                   ()
-                | qualified_path_in_exp                         ()
+range_pat: range_pat_bound DOTDOTEQ range_pat_bound             (RangePatternDDE(range_pat_bound1, range_pat_bound2))
+            | range_pat_bound DOTDOTDOT range_pat_bound         (RangePatternDDD(range_pat_bound1, range_pat_bound2))
+range_pat_bound: CHAR_LIT                                       (RPBLit(NONE, TKCHAR_LIT(CHAR_LIT, Pos(CHAR_LITleft)), Pos(CHAR_LITleft)))
+                | BYTE_LIT                                      (RPBLit(NONE, TKBYTE_LIT(BYTE_LIT, Pos(BYTE_LITleft)), Pos(BYTE_LITleft)))
+                | INTEGER_LIT                                   (RPBLit(NONE, TKINTEGER_LIT(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(INTEGER_LITleft)))
+                | MINUS INTEGER_LIT                             (RPBLit(SOME(Minus(Pos(MINUSleft))), TKINTEGER_LIT(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(INTEGER_LITleft)))
+                | FLOAT_LIT                                     (RPBLit(NONE, TKFLOAT_LIT(FLOAT_LIT, Pos(FLOAT_LITleft)), Pos(FLOAT_LITleft)))
+                | MINUS FLOAT_LIT                               (RPBLit(SOME(Minus(Pos(MINUSleft))), TKFLOAT_LIT(FLOAT_LIT, Pos(FLOAT_LITleft)), Pos(FLOAT_LITleft)))
+                | path_in_exp                                   (RPBPath(path_in_exp))
+                | qualified_path_in_exp                         (RPBQPath(qualified_path_in_exp))
 
-reference_pat: AND  patterns                                    ()
-            | ANDAND  patterns                                  ()
-            | AND MUT patterns                                  ()
-            | ANDAND MUT patterns                               ()
+reference_pat: AND  patterns                                    (ReferencePattern(BOnce(Pos(ANDleft)), NonMut, patterns, Pos(ANDleft)))
+            | ANDAND  patterns                                  (ReferencePattern(BTwice(Pos(ANDANDleft)), NonMut, patterns, Pos(ANDANDleft)))
+            | AND MUT patterns                                  (ReferencePattern(BOnce(Pos(ANDleft)), Mut, patterns, Pos(ANDleft)))
+            | ANDAND MUT patterns                               (ReferencePattern(BTwice(Pos(ANDANDleft)), Mut, patterns, Pos(ANDANDleft)))
 
-struct_pat: path_in_exp LBRACE RBRACE                           ()
-            | path_in_exp LBRACE struct_pat_elements RBRACE     ()
-struct_pat_elements: struct_pat_etcetera                        ()
-                    | struct_pat_fields COMMA                   ()
+struct_pat: path_in_exp LBRACE RBRACE                           (StructPattern(path_in_exp, StructPatternElements([], NONE)))
+            | path_in_exp LBRACE struct_pat_elements RBRACE     (StructPattern(path_in_exp, struct_pat_elements))
+struct_pat_elements: struct_pat_etcetera                        (StructPatternElements([], SOME(struct_pat_etcetera)))
+                    | struct_pat_fields COMMA                   (StructPatternElements(rev(struct_pat_fields), NONE))
                     | struct_pat_fields 
-                        COMMA struct_pat_etcetera               ()
-                    | struct_pat_fields                         ()
-struct_pat_fields: struct_pat_fields COMMA struct_pat_field     ()
-                    | struct_pat_field                          ()
-struct_pat_field: outer_attrs INTEGER_LIT COLON patterns        ()
-                | outer_attrs IDENT COLON patterns              ()
-                | outer_attrs IDENT                             ()
-                | outer_attrs REF IDENT                         ()
-                | outer_attrs REF MUT IDENT                     ()
-                | outer_attrs MUT IDENT                         ()
-struct_pat_etcetera: outer_attrs DOTDOT                         ()
+                        COMMA struct_pat_etcetera               (StructPatternElements(rev(struct_pat_fields), SOME(struct_pat_etcetera)))
+                    | struct_pat_fields                         (StructPatternElements(rev(struct_pat_fields), NONE))
+struct_pat_fields: struct_pat_fields COMMA struct_pat_field     (struct_pat_field::struct_pat_fields)
+                    | struct_pat_field                          ([struct_pat_field])
+struct_pat_field: outer_attrs INTEGER_LIT COLON patterns        (SPFTPIND(outer_attrs, TKINTEGER_LIT(INTEGER_LIT, Pos(INTEGER_LITleft)), patterns, Pos(INTEGER_LITleft)))
+                | outer_attrs IDENT COLON patterns              (SPFIBD(outer_attrs, Identifer(IDENT), patterns, Pos(IDENTleft)))
+                | outer_attrs IDENT                             (SPFID(outer_attrs, NONE, NonMut, Identifer(IDENT), Pos(IDENTleft)))
+                | outer_attrs REF IDENT                         (SPFID(outer_attrs, SOME(Ref(Pos(REFleft))), NonMut, Identifer(IDENT), Pos(REFleft)))
+                | outer_attrs REF MUT IDENT                     (SPFID(outer_attrs, SOME(Ref(Pos(REFleft))), Mut, Identifer(IDENT), Pos(REFleft)))
+                | outer_attrs MUT IDENT                         (SPFID(outer_attrs, NONE, Mut, Identifer(IDENT), Pos(IDENTleft)))
+struct_pat_etcetera: outer_attrs DOTDOT                         (StructPatternEtCetera(outer_attrs, Pos(DOTDOTleft)))
 
 tuple_struct_pat: path_in_exp 
-                LPARENT tuple_pat_items RPARENT                 ()
+                LPARENT tuple_pat_items RPARENT                 (TupleStructPattern(path_in_exp, rev(tuple_pat_items)))
                 | path_in_exp 
-                LPARENT tuple_pat_items COMMA RPARENT           ()
+                LPARENT tuple_pat_items COMMA RPARENT           (TupleStructPattern(path_in_exp, rev(tuple_pat_items)))
                 | path_in_exp 
-                LPARENT DOTDOT RPARENT                          ()
+                LPARENT DOTDOT RPARENT                          (TupleStructPatternDD(path_in_exp, [], []))
                 | path_in_exp 
-                LPARENT tuple_pat_items COMMA DOTDOT RPARENT    ()
+                LPARENT tuple_pat_items COMMA DOTDOT RPARENT    (TupleStructPatternDD(path_in_exp, rev(tuple_pat_items), []))
                 | path_in_exp 
                     LPARENT DOTDOT 
-                    COMMA tuple_pat_items maybe_comma RPARENT   ()
+                    COMMA tuple_pat_items maybe_comma RPARENT   (TupleStructPatternDD(path_in_exp, [], rev(tuple_pat_items)))
                 | path_in_exp 
                     LPARENT tuple_pat_items COMMA DOTDOT
-                    COMMA tuple_pat_items maybe_comma RPARENT   ()
+                    COMMA tuple_pat_items maybe_comma RPARENT   (TupleStructPatternDD(path_in_exp, rev(tuple_pat_items1), rev(tuple_pat_items2)))
 
-tuple_or_grouped_pat: LPARENT tuple_pat_items RPARENT           ()
-            | LPARENT tuple_pat_items COMMA RPARENT             ()
-            | LPARENT DOTDOT RPARENT                            ()
-            | LPARENT tuple_pat_items COMMA DOTDOT RPARENT      ()
+tuple_or_grouped_pat: LPARENT tuple_pat_items RPARENT           (TupleORGroupPattern(rev(tuple_pat_items), Pos(LPARENTleft)))
+            | LPARENT tuple_pat_items COMMA RPARENT             (TupleORGroupPattern(rev(tuple_pat_items), Pos(LPARENTleft)))
+            | LPARENT DOTDOT RPARENT                            (TupleORGroupPatternDD([], [], Pos(LPARENTleft)))
+            | LPARENT tuple_pat_items COMMA DOTDOT RPARENT      (TupleORGroupPatternDD(rev(tuple_pat_items), [], Pos(LPARENTleft)))
             | LPARENT DOTDOT 
-                COMMA tuple_pat_items maybe_comma RPARENT       ()
+                COMMA tuple_pat_items maybe_comma RPARENT       (TupleORGroupPatternDD([], rev(tuple_pat_items), Pos(LPARENTleft)))
             | LPARENT tuple_pat_items COMMA DOTDOT 
-                COMMA tuple_pat_items maybe_comma RPARENT       ()
-tuple_pat_items: tuple_pat_items COMMA patterns                 ()
-                | patterns                                      ()
+                COMMA tuple_pat_items maybe_comma RPARENT       (TupleORGroupPatternDD(rev(tuple_pat_items1), rev(tuple_pat_items2), Pos(LPARENTleft)))
+tuple_pat_items: tuple_pat_items COMMA patterns                 (patterns::tuple_pat_items)
+                | patterns                                      ([patterns])
 
-slice_pat: LBRACKET tuple_pat_items maybe_comma RBRACKET        ()
+slice_pat: LBRACKET tuple_pat_items maybe_comma RBRACKET        (SlicePattern(rev(tuple_pat_items), Pos(LBRACKETleft)))
 
-path_pat: path_in_exp                                           ()
-        | qualified_path_in_exp                                 ()
+path_pat: path_in_exp                                           (PathPat(path_in_exp))
+        | qualified_path_in_exp                                 (QPathPat(qualified_path_in_exp))
 
 (* ------Type------ *)
 types: type_no_bounds                                           (Type)
