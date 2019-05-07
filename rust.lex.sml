@@ -153,7 +153,6 @@ STR | BYTE | SUFFIX | R_STR_END | BLOCK_COMMENT | INNER_LINE_DOC | BR_STR_BEGIN 
 *)
 (* user declarations *)
 open Convert
-structure TK = DataTypes
 type pos = int
 type svalue = Tokens.svalue 
 type ('a, 'b) token = ('a, 'b) Tokens.token

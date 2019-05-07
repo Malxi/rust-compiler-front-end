@@ -11,8 +11,8 @@ struct
         val lexer = LrParser.Stream.streamify (RustLex.makeLexer grab fileName)
         val (absyn, _) = RustParser.parse(30, lexer, parseError, ())
     in
-        TextIO.closeIn file
-        (* PrintAST.print(TextIO.stdOut, absyn) *)
+        TextIO.closeIn file;
+        PrintAST.print(TextIO.stdOut, absyn)
     end
     handle LrParser.ParseError => raise ErrorMsg.Error
 end

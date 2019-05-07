@@ -49,7 +49,6 @@
 *)
 (* user declarations *)
 open Convert
-structure TK = DataTypes
 type pos = int
 type svalue = Tokens.svalue 
 type ('a, 'b) token = ('a, 'b) Tokens.token

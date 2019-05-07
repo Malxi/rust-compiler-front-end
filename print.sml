@@ -27,9 +27,9 @@ struct
                     (out "["; start ind f l; out "]")
                 end
 
-            fun Token(A.StrLit(s, pos), d) = (out s)
-                | Token(A.RawStrLit(s, pos), d) = (out s)
-                | Token(_, d) = ()
+            fun Token(A.TKSTR_LIT(s, pos), d) = (out ("Token.STR_LIT("^s^")"))
+                | Token(A.TKRAW_STR_LIT(s, pos), d) = (out ("Token.RAW_STR_LIT("^s^")"))
+                | Token(_, d) = (out "Token()")
 
             fun Crate(A.Crate(shebang, innerAttrs, items), d) = 
                     (indent d; outln "Crate ("; Shebang(shebang, d+1); outln ","; 
@@ -53,21 +53,51 @@ struct
                     out ")")
             and SimplePath (A.SimplePath(pathList), d) = 
                 (indent d; out "SimplePath ("; outList (d) PathSeg pathList false; out ")")
-            and PathSeg(A.IDPat(id), d) = (Identifer(id, d))
-                | PathSeg(A.SelfPat, d) = (out ("self"))
-                | PathSeg(A.CratePat, d) = (out ("crate"))
-                | PathSeg(A.DCratePat, d) = (out ("$crate"))
-                | PathSeg(A.SuperPat, d) = (out ("super"))
-                | PathSeg(A.DefaultPat, d) = (out ("root"))
+            and PathInExpression(A.PathInExpression(pathList), d) = 
+                (indent d; out "PathInExpression ("; outList (d) PathSeg pathList false; out ")")
+            and QualifiedPathInExpression(A.QualifiedPathInExpression(ty, NONE, pathList), d) =
+                (indent d; out "QualifiedPathInExpression ("; Type(ty, d);outList (d) PathSeg pathList false; out ")")
+                | QualifiedPathInExpression(A.QualifiedPathInExpression(ty, SOME(typ), pathList), d) =
+                (indent d; out "QualifiedPathInExpression ("; Type(ty, d); out "as"; TypePath(typ, d);
+                outList (d) PathSeg pathList false; out ")")
+            and QualifiedPathInType(A.QualifiedPathInExpression(ty, NONE, pathList), d) =
+                (indent d; out "QualifiedPathInType ("; Type(ty, d);outList (d) PathSeg pathList false; out ")")
+                | QualifiedPathInType(A.QualifiedPathInExpression(ty, SOME(typ), pathList), d) =
+                (indent d; out "QualifiedPathInType ("; Type(ty, d); out "as"; TypePath(typ, d);
+                outList (d) PathSeg pathList false; out ")")
+            and PathSeg(A.IDPS(id), d) = (Identifer(id, d))
+                | PathSeg(A.SelfValuePS, d) = (out ("self"))
+                | PathSeg(A.CratePS, d) = (out ("crate"))
+                | PathSeg(A.DCratePS, d) = (out ("$crate"))
+                | PathSeg(A.SuperPS, d) = (out ("super"))
+                | PathSeg(A.DefaultPS, d) = (out ("root"))
+                | PathSeg(A.SelfTypePS, d) = (out ("Self"))
+                | PathSeg(A.GenericPS(genericArgs), d) = GenericArgs(genericArgs, d)
+                | PathSeg(A.TypePathFnPS(typePathfn), d) = (out ("Self"))
+            and GenericArgs(A.GenericArgs(lts, tys, bingds), d) = 
+                (
+                    out "GenericArgs ("; 
+                    outList (d) Lifetime lts false; 
+                    out ",";
+                    outList (d) Type tys false;
+                    out ",";
+                    outList (d) Binding bingds false;
+                    out ")"
+                )
+            and Binding(A.Binding(id, ty), d) = (Identifer(id, d+1); out ":"; Type(ty, d+1))
+            and TypePathFn(A.TypePathFn(tys, NONE), d) = 
+                    (out "TypePathFn ("; outList (d) Type tys false; out ")")
+                | TypePathFn(A.TypePathFn(tys, SOME(ty)), d) = 
+                    (out "TypePathFn ("; outList (d) Type tys false; out "->"; Type(ty, d+1); out ")")
             and LiteralExpression (A.LiteralExpression(tk), d) = (Token(tk, d))
             and MetaItemInner(A.MetaItem(metaItem), d) = 
                     (indent d; out "MetaItemInner ("; MetaItem(metaItem, d);out ")")
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
                     (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
             and Item(A.VisItemType(outerAttrs, visItem), d) = 
-                    (out "VisItemType("; nextLine(d); VisItem(visItem, d+1); out ")")
+                    (out "VisItemType ("; nextLine(d); VisItem(visItem, d+1); out ")")
                 | Item(A.MacroItemType(marcoItem), d) = 
-                    (out "MacroItemType("; out ")")
+                     (out "MacroItemType ("; nextLine(d); MacroItem(marcoItem, d+1); out ")")
             and VisItem(A.VisItem(visibility, itemType), d) =
                 (out "VisItem (";
                 nextLine(d);
@@ -344,7 +374,8 @@ struct
                 | TraitBound(A.TraitBound(SOME(sized), SOME(flt), tyPath), d) =
                     (indent d; out "TraitBound ("; Sized(sized, d); outln ","; ForLifetimes(flt, d); outln ","; TypePath(tyPath, d); out ")")
             and Sized(A.Sized, d) = out "?"
-            and TypePath(A.TypePath, d) = out "type path"
+            and TypePath(A.TypePath(pathList), d) = 
+                (indent d; out "TypePath ("; outList (d) PathSeg pathList false; out ")")
             and Type(A.Type, d) = out "type"
             and ForLifetimes(A.ForLifetimes(ltps), d) =
                 LifetimeParams(ltps, d)
@@ -504,7 +535,7 @@ struct
                     out ",";
                     TypeParamBoundsOption(mtybs, d+1)
                 )
-                | TraitItemType(A.TraitMIS(mis), d) = (MacroInvocationSemi(mis, d+1))
+                | TraitItemType(A.TraitMIS(mis), d) = (MacroItem(mis, d+1))
             and TraitFuncDecl(A.TraitFuncDecl(tfdecl), d) =
                 let
                     val {qualifier=qualifier, name=name, generic=generic, params=params, ret=ret, wh=wh} = tfdecl
@@ -571,7 +602,79 @@ struct
                 | SelfParam(A.SelfParamTY(mut, mty), d) =
                     (Mutability (mut, d+1); TypeOption(mty, d+1))
             and BlockExpression(A.BlockExpression, d) = out "BlockExpression()"
-            and MacroInvocationSemi(A.MacroInvocationSemi, d) = out "MacroInvocationSemi()"
+            and MacroItem(A.MacroInvocationSemi(path, tokenTree), d) = 
+                (
+                    out "MacroInvocationSemi (";
+                    PathInExpression(path, d);
+                    out ",";
+                    TokenTree(tokenTree, d);
+                    out ")"
+                )
+                | MacroItem(A.MacroInvocation(path, tokenTree), d) =
+                (
+                    out "MacroInvocation (";
+                    PathInExpression(path, d);
+                    out ",";
+                    TokenTree(tokenTree, d);
+                    out ")"
+                )
+                | MacroItem(A.MacroRulesDefinition(path, id, mrd), d) =
+                (
+                    out "MacroRulesDefinition (";
+                    PathInExpression(path, d);
+                    out ",";
+                    Identifer(id, d);
+                    out ",";
+                    MacroRulesDef(mrd, d);
+                    out ")"
+                )
+            and MacroRulesDef(A.MacroRulesDef(delim, mrlst), d) =
+                (
+                    Delim(delim, d);
+                    out ",";
+                    outList (d) MacroRule mrlst false
+                )
+            and MacroRule(A.MacroRule(matcher, tokenTree), d) =
+                (
+                    out "MacroRule (";
+                    MacroMatcher(matcher, d);
+                    out ",";
+                    TokenTree(tokenTree, d)
+                )
+            and MacroMatcher(A.MacroMatcher(delim, matchList), d) =
+                (
+                    out "MacroMatcher (";
+                    Delim(delim, d);
+                    out ",";
+                    outList (d) MacroMatch matchList false;
+                    out ")"
+                )
+            and MacroMatch(A.MMTK(tk), d) = Token(tk, d)
+                | MacroMatch(A.MMer(matcher), d) = MacroMatcher(matcher, d)
+                | MacroMatch(A.MMBD(id1, id2), d) = (Identifer(id1, d); out ":"; Identifer(id2, d))
+                | MacroMatch(A.MMs(matchList, NONE, kleene), d) =
+                (
+                    outList (d) MacroMatch matchList false;
+                    out ",";
+                    MacroKleeneOp(kleene, d)
+                )
+                | MacroMatch(A.MMs(matchList, SOME(tk), kleene), d) =
+                (
+                    outList (d) MacroMatch matchList false;
+                    out ",";
+                    Token(tk, d);
+                    out ",";
+                    MacroKleeneOp(kleene, d)
+                )
+            and MacroKleeneOp(A.KleeneStar, d) = out "*"
+                | MacroKleeneOp(A.KleenePlus, d) = out "+"
+                | MacroKleeneOp(A.KleeneQues, d) = out "?"
+            and Delim(A.ParentDelim, d) = out "ParentDelim"
+                | Delim(A.BracketDelim, d) = out "BracketDelim"
+                | Delim(A.BraceDelim, d) = out "BraceDelim"
+            and TokenTree(A.DTokenTree(delim, tokenTreeList), d) = 
+                (outList (d) TokenTree tokenTreeList false)
+                | TokenTree(A.SToken(tk), d) = Token(tk, d)
             and InherentImplItem(A.InherentImplItemMacro(outerAttr, mis), d) = 
                 (
                     out "InherentImplItemMacro (";
@@ -579,7 +682,7 @@ struct
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
                     nextLine(d);
-                    MacroInvocationSemi(mis, d+1);
+                    MacroItem(mis, d+1);
                     nextLine(d);
                     out ")"
                 )
@@ -619,7 +722,7 @@ struct
                     outList (d+1) OuterAttribute outerAttr false;
                     out ",";
                     nextLine(d);
-                    MacroInvocationSemi(mis, d+1);
+                    MacroItem(mis, d+1);
                     nextLine(d);
                     out ")"
                 )
