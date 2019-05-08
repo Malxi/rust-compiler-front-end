@@ -7,7 +7,7 @@ sig
     and OuterAttribute = OuterAttribute of MetaItem
     and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression 
                     | AttrSubs of SimplePath * MetaItemInner list
-    and LiteralExpression = LiteralExpression of TokenType
+    and LiteralExpression = LiteralExpression of Token
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathInExpression = PathInExpression of PathSeg list
@@ -56,13 +56,13 @@ sig
     and MacroItem = MacroInvocationSemi of PathInExpression * TokenTree
                     | MacroInvocation of PathInExpression * TokenTree 
                     | MacroRulesDefinition of PathInExpression * Identifer * MacroRulesDef
-    and TokenTree = DTokenTree of Delim * TokenTree list | SToken of TokenType
+    and TokenTree = DTokenTree of Delim * TokenTree list | SToken of Token
     and Delim = ParentDelim | BracketDelim | BraceDelim
     and MacroRulesDef = MacroRulesDef of Delim * MacroRule list
     and MacroRule = MacroRule of MacroMatcher * TokenTree
     and MacroMatcher = MacroMatcher of Delim * MacroMatch list
-    and MacroMatch = MMTK of TokenType | MMer of MacroMatcher 
-                | MMBD of Identifer * Identifer | MMs of MacroMatch list * TokenType option * MacroKleeneOp
+    and MacroMatch = MMTK of Token | MMer of MacroMatcher 
+                | MMBD of Identifer * Identifer | MMs of MacroMatch list * Token option * MacroKleeneOp
     and MacroKleeneOp = KleeneStar | KleenePlus | KleeneQues
     and Identifer = Identifer of string
     and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
@@ -127,7 +127,7 @@ sig
     and ExternFunctionParameter = ExternFunctionParameter of {params:NamedFunctionParam list, var:bool}
     and NamedFunctionParam = NamedFunctionParam of (Identifer option * Type)
 
-    and Pattern = LiteralPattern of Minus option * TokenType * Pos
+    and Pattern = LiteralPattern of Minus option * Token * Pos
                 | IdentiferPattern of BindingMode * Identifer * Pattern option
                 | WildcardPattern of Pos
                 | RangePatternDDE of RangePatternBound * RangePatternBound
@@ -144,20 +144,41 @@ sig
     and Minus = Minus of Pos
     and BindingMode = BindingMode of Ref option * Mutability * Pos
     and Ref = Ref of Pos 
-    and RangePatternBound = RPBLit of Minus option * TokenType * Pos
+    and RangePatternBound = RPBLit of Minus option * Token * Pos
                         | RPBPath of PathInExpression 
                         | RPBQPath of QualifiedPathInExpression
     and Borrow = BOnce of Pos | BTwice of Pos
     and StructPatternElements = StructPatternElements of StructPatternField list * StructPatternEtCetera option
-    and StructPatternField = SPFTPIND of OuterAttribute list * TokenType * Pattern * Pos
+    and StructPatternField = SPFTPIND of OuterAttribute list * Token * Pattern * Pos
                             | SPFIBD of OuterAttribute list * Identifer * Pattern * Pos
                             | SPFID of OuterAttribute list * Ref option * Mutability * Identifer * Pos
     and StructPatternEtCetera = StructPatternEtCetera of OuterAttribute list * Pos
 
-    and Type = Type
+    and Type = TypeNoBounds of TypeNoBoundsType
+                | ImplTraitType of TypeParamBounds * Pos
+                | TraitObjectType of TypeParamBounds * Pos
+    and TypeNoBoundsType = ParenthesizedType of Type * Pos
+                        | ImplTraitTypeOneBound of TraitBound * Pos 
+                        | TraitObjectTypeOneBound of TraitBound * Pos
+                        | TNBTypePath of TypePath
+                        | TupleType of Type list * Pos
+                        | NeverTuple of Pos
+                        | RawPointerType of RawPointerTypeMod * TypeNoBoundsType * Pos
+                        | ReferenceType of Lifetime option * Mutability * TypeNoBoundsType * Pos
+                        | ArrayType of Type * Expression * Pos
+                        | SliceType of Type * Pos
+                        | InferredType of Pos
+                        | TNBQPathInType of QualifiedPathInType
+                        | BareFunctionType of {forlifetimes: ForLifetimes option, qualifier:FunctionQualifier list, 
+                                            params:MaybeNamedParam list, var:bool, ret:TypeNoBoundsType option}
+                        | TNBMacro of TypePath * TokenTree
+    and RawPointerTypeMod = ConstMod of Pos | MutMod of Pos
+    and MaybeNamedParam  = MaybeNamedParamID  of Identifer * Type * Pos | MaybeNamedParamWD of Wildcard * Type * Pos
+                        | MaybeNamedParamTY of Type
+    and Wildcard = Wildcard of Pos
     and BlockExpression = BlockExpression
 
-    and TokenType = TKAS of Pos | TKBREAK of Pos | TKCONST of Pos | TKCONTINUE of Pos | TKCRATE of Pos
+    and Token = TKAS of Pos | TKBREAK of Pos | TKCONST of Pos | TKCONTINUE of Pos | TKCRATE of Pos
                 | TKELSE of Pos | TKENUM of Pos | TKEXTERN of Pos | TKFALSE of Pos | TKFN of Pos
                 | TKFOR of Pos | TKIF of Pos | TKIMPL of Pos | TKIN of Pos| TKLET of Pos| TKLOOP of Pos
                 | TKMATCH of Pos| TKMOD of Pos| TKMOVE of Pos| TKMUT of Pos| TKPUB of Pos| TKREF of Pos
@@ -199,7 +220,7 @@ struct
     and OuterAttribute = OuterAttribute of MetaItem
     and MetaItem = AttrName of SimplePath | AttrKVPair of SimplePath * LiteralExpression 
                     | AttrSubs of SimplePath * MetaItemInner list
-    and LiteralExpression = LiteralExpression of TokenType
+    and LiteralExpression = LiteralExpression of Token
     and MetaItemInner = MetaItem of MetaItem | MetaLit of LiteralExpression
     and SimplePath = SimplePath of PathSeg list
     and PathInExpression = PathInExpression of PathSeg list
@@ -248,13 +269,13 @@ struct
     and MacroItem = MacroInvocationSemi of PathInExpression * TokenTree
                     | MacroInvocation of PathInExpression * TokenTree 
                     | MacroRulesDefinition of PathInExpression * Identifer * MacroRulesDef
-    and TokenTree = DTokenTree of Delim * TokenTree list | SToken of TokenType
+    and TokenTree = DTokenTree of Delim * TokenTree list | SToken of Token
     and Delim = ParentDelim | BracketDelim | BraceDelim
     and MacroRulesDef = MacroRulesDef of Delim * MacroRule list
     and MacroRule = MacroRule of MacroMatcher * TokenTree
     and MacroMatcher = MacroMatcher of Delim * MacroMatch list
-    and MacroMatch = MMTK of TokenType | MMer of MacroMatcher 
-                | MMBD of Identifer * Identifer | MMs of MacroMatch list * TokenType option * MacroKleeneOp
+    and MacroMatch = MMTK of Token | MMer of MacroMatcher 
+                | MMBD of Identifer * Identifer | MMs of MacroMatch list * Token option * MacroKleeneOp
     and MacroKleeneOp = KleeneStar | KleenePlus | KleeneQues
     and Identifer = Identifer of string
     and FunctionQualifier = ConstFQ | UnsafeFQ | ExternFQ of Abi option
@@ -319,7 +340,7 @@ struct
     and ExternFunctionParameter = ExternFunctionParameter of {params:NamedFunctionParam list, var:bool}
     and NamedFunctionParam = NamedFunctionParam of (Identifer option * Type)
 
-    and Pattern = LiteralPattern of Minus option * TokenType * Pos
+    and Pattern = LiteralPattern of Minus option * Token * Pos
                 | IdentiferPattern of BindingMode * Identifer * Pattern option
                 | WildcardPattern of Pos
                 | RangePatternDDE of RangePatternBound * RangePatternBound
@@ -336,20 +357,41 @@ struct
     and Minus = Minus of Pos
     and BindingMode = BindingMode of Ref option * Mutability * Pos
     and Ref = Ref of Pos 
-    and RangePatternBound = RPBLit of Minus option * TokenType * Pos
+    and RangePatternBound = RPBLit of Minus option * Token * Pos
                         | RPBPath of PathInExpression 
                         | RPBQPath of QualifiedPathInExpression
     and Borrow = BOnce of Pos | BTwice of Pos
     and StructPatternElements = StructPatternElements of StructPatternField list * StructPatternEtCetera option
-    and StructPatternField = SPFTPIND of OuterAttribute list * TokenType * Pattern * Pos
+    and StructPatternField = SPFTPIND of OuterAttribute list * Token * Pattern * Pos
                             | SPFIBD of OuterAttribute list * Identifer * Pattern * Pos
                             | SPFID of OuterAttribute list * Ref option * Mutability * Identifer * Pos
     and StructPatternEtCetera = StructPatternEtCetera of OuterAttribute list * Pos
 
-    and Type = Type
+    and Type = TypeNoBounds of TypeNoBoundsType
+                | ImplTraitType of TypeParamBounds * Pos
+                | TraitObjectType of TypeParamBounds * Pos
+    and TypeNoBoundsType = ParenthesizedType of Type * Pos
+                        | ImplTraitTypeOneBound of TraitBound * Pos 
+                        | TraitObjectTypeOneBound of TraitBound * Pos
+                        | TNBTypePath of TypePath
+                        | TupleType of Type list * Pos
+                        | NeverTuple of Pos
+                        | RawPointerType of RawPointerTypeMod * TypeNoBoundsType * Pos
+                        | ReferenceType of Lifetime option * Mutability * TypeNoBoundsType * Pos
+                        | ArrayType of Type * Expression * Pos
+                        | SliceType of Type * Pos
+                        | InferredType of Pos
+                        | TNBQPathInType of QualifiedPathInType
+                        | BareFunctionType of {forlifetimes: ForLifetimes option, qualifier:FunctionQualifier list, 
+                                            params:MaybeNamedParam list, var:bool, ret:TypeNoBoundsType option}
+                        | TNBMacro of TypePath * TokenTree
+    and RawPointerTypeMod = ConstMod of Pos | MutMod of Pos
+    and MaybeNamedParam  = MaybeNamedParamID  of Identifer * Type * Pos | MaybeNamedParamWD of Wildcard * Type * Pos
+                        | MaybeNamedParamTY of Type
+    and Wildcard = Wildcard of Pos
     and BlockExpression = BlockExpression
-
-    and TokenType = TKAS of Pos | TKBREAK of Pos | TKCONST of Pos | TKCONTINUE of Pos | TKCRATE of Pos
+    
+    and Token = TKAS of Pos | TKBREAK of Pos | TKCONST of Pos | TKCONTINUE of Pos | TKCRATE of Pos
                 | TKELSE of Pos | TKENUM of Pos | TKEXTERN of Pos | TKFALSE of Pos | TKFN of Pos
                 | TKFOR of Pos | TKIF of Pos | TKIMPL of Pos | TKIN of Pos| TKLET of Pos| TKLOOP of Pos
                 | TKMATCH of Pos| TKMOD of Pos| TKMOVE of Pos| TKMUT of Pos| TKPUB of Pos| TKREF of Pos

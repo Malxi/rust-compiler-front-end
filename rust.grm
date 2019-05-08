@@ -34,7 +34,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | SHEBANG | SHEBANG_LINE of string
     | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP | LOWER_THAN_EXPR | LOWER_THAN_COLON | LOWER_THAN_PLUS
     | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
-%nonterm shr of TokenType | ge of TokenType | shreq of TokenType
+%nonterm shr of Token | ge of Token | shreq of Token
         | crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
@@ -60,8 +60,9 @@ fun error(pos, msg) = ErrorMsg.error pos
         | tuple_struct_pat of Pattern
         | tuple_or_grouped_pat of Pattern | tuple_pat_items of Pattern list
         | grouped_pat | slice_pat of Pattern | path_pat of Pattern
-        | types of Type | types_expansion | types_noqualified_path_in_type
-        | maybe_named_bare_func_parameters | maybe_named_bare_func_parameters_variadic | maybe_named_param
+        | types of Type | types_expansion of Type list | types_noqpt of Type
+        | maybe_named_bare_func_parameters of MaybeNamedParam list 
+        | maybe_named_bare_func_parameters_variadic of MaybeNamedParam list | maybe_named_param of MaybeNamedParam
         | generics of Generics | maybe_generics of Generics option | generic_params of GenericParams | maybe_visibility of Visibility
         | where_clause of WhereClause | maybe_where_clause of WhereClause option | where_clause_expansion of WhereClauseItem list
         | where_clause_item of WhereClauseItem | lifetime_where_clause_item of WhereClauseItem | type_bound_where_clause_item of WhereClauseItem
@@ -81,7 +82,8 @@ fun error(pos, msg) = ErrorMsg.error pos
         | type_alias of ItemType | constant_item of ItemType
         | maybe_type_param_bounds of TypeParamBounds option | type_param_bounds of TypeParamBounds
         | type_param_bounds_expansion of TypeParamBound list | type_param_bound of TypeParamBound
-        | lifetime of Lifetime | lifetime_bounds of LifetimeBounds | lifetime_bounds_expansion of Lifetime list | maybe_lifetime
+        | lifetime of Lifetime | lifetime_bounds of LifetimeBounds | lifetime_bounds_expansion of Lifetime list
+        | maybe_lifetime of Lifetime option
         | trait_bound of TraitBound | for_lifetimes of ForLifetimes | maybe_for_lifetimes of ForLifetimes option
         | trait_items of TraitItem list | trait_item of TraitItem 
         | trait_func of TraitItemType | trait_method of TraitItemType | trait_const of TraitItemType | trait_type of TraitItemType
@@ -91,7 +93,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | macro_rules of MacroRule list | macro_rules_expansion of MacroRule list 
         | macro_rule of MacroRule | macro_matcher of MacroMatcher | macro_transcriber of TokenTree 
         | macro_match of MacroMatch | macro_matches of MacroMatch list
-        | macro_frag_spec of Identifer | macro_rep_sep of TokenType | macro_kleene_op of MacroKleeneOp
+        | macro_frag_spec of Identifer | macro_rep_sep of Token | macro_kleene_op of MacroKleeneOp
         | trait_func_parameters of TraitFunctionParam list | trait_func_param of TraitFunctionParam 
         | maybe_trait_func_parameters of TraitFunctionParam list | trait_func_parameters_expansion of TraitFunctionParam list
         | self_param of SelfParam| maybe_and_or_lifetime | maybe_mut of Mutability
@@ -107,7 +109,7 @@ fun error(pos, msg) = ErrorMsg.error pos
 
         | maybe_statements | statements |statements_expansion | statement | let_statement | exp_statement 
         | expressions | expression of Expression | exp_nostruct | exp_nostruct_nolazybop
-        | exp_without_block | lit_exp of LiteralExpression | str_lit of TokenType | bool_lit of TokenType
+        | exp_without_block | lit_exp of LiteralExpression | str_lit of Token | bool_lit of Token
         | generic_args of GenericArgs | generic_args_lifetimes of Lifetime list
         | generic_args_types of Type list | generic_args_bindings of Binding list
         | generic_args_binding of Binding
@@ -129,13 +131,13 @@ fun error(pos, msg) = ErrorMsg.error pos
         | match_exp | match_arms | match_arms_expansion 
         | match_arms_clauses | match_arms_clause | noblock_match_clause | block_match_clause
         | match_arm | match_arm_patterns | match_arm_guard
-        | type_no_bounds
+        | type_no_bounds of TypeNoBoundsType | types_noqpt_no_bounds of TypeNoBoundsType
 
         | noblock_exp | full_block_exp | exp_with_block_dot
 
         | token_trees of TokenTree list | token_tree of TokenTree | delim_token_tree of TokenTree
-        | token_no_delim of TokenType | token_no_delim_kleene of TokenType 
-        | token_no_delim_dollar of TokenType | token_no_delim_kleene_dollar of TokenType
+        | token_no_delim of Token | token_no_delim_kleene of Token 
+        | token_no_delim_dollar of Token | token_no_delim_kleene_dollar of Token
 %pos int
 %eop EOF
 %noshift EOF
@@ -662,8 +664,8 @@ lifetime_bounds: lifetime_bounds_expansion                      (LifetimeBounds(
 lifetime_bounds_expansion: lifetime_bounds_expansion
                     lifetime PLUS                               (lifetime::lifetime_bounds_expansion)
                     |                                           (nil)
-maybe_lifetime: lifetime                                        ()
-                |                                               ()
+maybe_lifetime: lifetime                                        (SOME(lifetime))
+                |                                               (NONE)
 
 lifetime: (* here are some questions *)
           LIFETIME_OR_LABEL                                     (LifetimeOrLabel(LIFETIME_OR_LABEL))
@@ -694,9 +696,9 @@ inherent_impl: IMPL maybe_generics LPARENT types RPARENT maybe_where_clause
                                                                     generic=maybe_generics, ty=types, wh=maybe_where_clause, 
                                                                     innerAttrs=inner_attrs, implItems=inherent_impl_items
                                                                 }))
-            | IMPL maybe_generics types_noqualified_path_in_type maybe_where_clause
+            | IMPL maybe_generics types_noqpt maybe_where_clause
                 LBRACE inner_attrs inherent_impl_items RBRACE   (InherentImpl ({
-                                                                    generic=maybe_generics, ty=Type, wh=maybe_where_clause, 
+                                                                    generic=maybe_generics, ty=types_noqpt, wh=maybe_where_clause, 
                                                                     innerAttrs=inner_attrs, implItems=inherent_impl_items
                                                                 }))
 inherent_impl_items: inherent_impl_items inherent_impl_item     (inherent_impl_item::inherent_impl_items)
@@ -893,124 +895,185 @@ path_pat: path_in_exp                                           (PathPat(path_in
         | qualified_path_in_exp                                 (QPathPat(qualified_path_in_exp))
 
 (* ------Type------ *)
-types: type_no_bounds                                           (Type)
-        (* | IMPL type_param_bounds                                (Type) *)
-        |IMPL lifetime                                         (Type)
-        | IMPL trait_bound PLUS type_param_bounds               (Type)
-        (* | DYN type_param_bounds                                 (Type) *)
-        | DYN lifetime                                          (Type)
-        | DYN trait_bound PLUS type_param_bounds                (Type)
+types: type_no_bounds                                           (TypeNoBounds(type_no_bounds))
+        | IMPL lifetime                                         (ImplTraitType(TypeParamBounds([LTB(lifetime)]), Pos(IMPLleft)))
+        | IMPL trait_bound PLUS type_param_bounds               (ImplTraitType(
+                                                                    TypeParamBounds(rev(TB(trait_bound)::((fn TypeParamBounds(lst) => rev(lst)) type_param_bounds))), 
+                                                                    Pos(IMPLleft)
+                                                                ))
+        | DYN lifetime                                          (TraitObjectType(TypeParamBounds([LTB(lifetime)]), Pos(DYNleft)))
+        | DYN trait_bound PLUS type_param_bounds                (TraitObjectType(
+                                                                    TypeParamBounds(rev(TB(trait_bound)::((fn TypeParamBounds(lst) => rev(lst)) type_param_bounds))), 
+                                                                    Pos(DYNleft)
+                                                                ))
 type_no_bounds: 
-                LPARENT types RPARENT %prec LPARENT             ()
+                LPARENT types RPARENT %prec LPARENT             (ParenthesizedType(types, Pos(LPARENTleft)))
                 (* ImplTraitType contains Impl TraitTypeOneBound  *)
-                | IMPL trait_bound %prec LOWER_THAN_PLUS        ()
+                | IMPL trait_bound %prec LOWER_THAN_PLUS        (ImplTraitTypeOneBound(trait_bound, Pos(IMPLleft)))
                 (* 
                     Trait Object Type One Bound production must 
                     have keyword dyn for avoiding conflicts. 
                 *)
                 (* TraitObjectType contains Impl TraitObjectTypeOneBound   *)
-                | DYN trait_bound %prec LOWER_THAN_PLUS         ()
+                | DYN trait_bound %prec LOWER_THAN_PLUS         (TraitObjectTypeOneBound(trait_bound, Pos(DYNleft)))
                 (* trait_bound contains LPARENT type_path RPARENT *)
                 (* | trait_bound                                   () *)
-                | type_path %prec LOWER_THAN_PATHSEP            ()
-                | LPARENT RPARENT                               ()
+                | type_path %prec LOWER_THAN_PATHSEP            (TNBTypePath(type_path))
+                | LPARENT RPARENT                               (TupleType([], Pos(LPARENTleft)))
                 | LPARENT types COMMA 
-                    types_expansion maybe_comma RPARENT         ()
-                | NOT                                           ()
-                | STAR MUT type_no_bounds                       ()
-                | STAR CONST type_no_bounds                     ()
-                | AND maybe_lifetime maybe_mut type_no_bounds   ()
-                | LBRACKET types SEMI expression RBRACKET       ()
-                | LBRACKET types RBRACKET                       ()
-                | UNDERSCORE                                    ()  
-                | qualified_path_in_type                        ()
+                    types_expansion maybe_comma RPARENT         (TupleType(rev(types::types_expansion), Pos(LPARENTleft)))
+                | NOT                                           (NeverTuple(Pos(NOTleft)))
+                | STAR MUT type_no_bounds                       (RawPointerType(MutMod(Pos(MUTleft)), type_no_bounds, Pos(STARleft)))
+                | STAR CONST type_no_bounds                     (RawPointerType(ConstMod(Pos(CONSTleft)), type_no_bounds, Pos(STARleft)))
+                | AND maybe_lifetime maybe_mut type_no_bounds   (ReferenceType(maybe_lifetime, maybe_mut, type_no_bounds, Pos(ANDleft)))
+                | LBRACKET types SEMI expression RBRACKET       (ArrayType(types, expression, Pos(LBRACKETleft)))
+                | LBRACKET types RBRACKET                       (SliceType(types, Pos(LBRACKETleft)))
+                | UNDERSCORE                                    (InferredType(Pos(UNDERSCOREleft)))  
+                | qualified_path_in_type                        (TNBQPathInType(qualified_path_in_type))
                 | maybe_for_lifetimes 
-                    func_qualifier FN LPARENT RPARENT           ()
+                    func_qualifier FN LPARENT RPARENT           (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=[], var=false, ret=NONE
+                                                                }))
                 |  maybe_for_lifetimes 
                     func_qualifier FN LPARENT 
                     maybe_named_bare_func_parameters maybe_comma 
-                    RPARENT                                     ()
+                    RPARENT                                     (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters), var=false, ret=NONE
+                                                                }))
                 |  maybe_for_lifetimes 
                     func_qualifier FN LPARENT 
                     maybe_named_bare_func_parameters_variadic 
-                    RPARENT                                     ()
+                    RPARENT                                     (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters_variadic), 
+                                                                    var=true, ret=NONE
+                                                                }))
                 | maybe_for_lifetimes 
                     func_qualifier FN LPARENT RPARENT 
-                    RARROW type_no_bounds                       ()
+                    RARROW type_no_bounds                       (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=[], var=false, ret=SOME(type_no_bounds)
+                                                                }))
                 |  maybe_for_lifetimes 
                     func_qualifier FN LPARENT 
                     maybe_named_bare_func_parameters maybe_comma 
-                    RPARENT RARROW type_no_bounds               ()
+                    RPARENT RARROW type_no_bounds               (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters),
+                                                                    var=false, ret=SOME(type_no_bounds)
+                                                                }))
                 |  maybe_for_lifetimes 
                     func_qualifier FN LPARENT 
                     maybe_named_bare_func_parameters_variadic 
                     RPARENT                                     
-                    RARROW type_no_bounds                       ()
+                    RARROW type_no_bounds                       (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters_variadic),
+                                                                    var=true, ret=SOME(type_no_bounds)
+                                                                }))
                 (* | macro_invocation                              () *)
                 (* TypePath contains PathInExpression, 
                 rewrite MarcoInvocation for avoiding conflicts, 
                 maybe need to check TypePathFn. *)
-                | type_path NOT delim_token_tree              ()
-types_expansion: types_expansion COMMA types                    ()
-                | types                                         ()                
+                | type_path NOT delim_token_tree              (TNBMacro(type_path, delim_token_tree))
+                (* | macro_invocation                              () *)
+types_expansion: types_expansion COMMA types                    (types::types_expansion)
+                | types                                         ([types])                
 maybe_named_bare_func_parameters: 
                 maybe_named_bare_func_parameters 
-                COMMA maybe_named_param                         ()
-                | maybe_named_param                             ()
+                COMMA maybe_named_param                         (maybe_named_param::maybe_named_bare_func_parameters)
+                | maybe_named_param                             ([maybe_named_param])
 maybe_named_bare_func_parameters_variadic: 
-            maybe_named_bare_func_parameters COMMA DOTDOTDOT    ()
-maybe_named_param: types                                        ()
-                | IDENT COLON types                             ()
-                | UNDERSCORE COLON types                        ()
+            maybe_named_bare_func_parameters COMMA DOTDOTDOT    (maybe_named_bare_func_parameters)
+maybe_named_param: types                                        (MaybeNamedParamTY(types))
+                | IDENT COLON types                             (MaybeNamedParamID(Identifer(IDENT), types, Pos(IDENTleft)))
+                | UNDERSCORE COLON types                        (MaybeNamedParamWD(Wildcard(Pos(UNDERSCOREleft)), types, Pos(UNDERSCOREleft)))
 
-types_noqualified_path_in_type:
-        IMPL trait_bound %prec LOWER_THAN_PLUS        ()
-        | DYN trait_bound %prec LOWER_THAN_PLUS         ()
-        | type_path %prec LOWER_THAN_PATHSEP            ()
-        | LPARENT RPARENT                               ()
+types_noqpt:
+        types_noqpt_no_bounds                (TypeNoBounds(types_noqpt_no_bounds))
+        | IMPL lifetime                                         (ImplTraitType(TypeParamBounds([LTB(lifetime)]), Pos(IMPLleft)))
+        | IMPL trait_bound PLUS type_param_bounds               (ImplTraitType(
+                                                                    TypeParamBounds(rev(TB(trait_bound)::((fn TypeParamBounds(lst) => rev(lst)) type_param_bounds))), 
+                                                                    Pos(IMPLleft)
+                                                                ))
+        | DYN lifetime                                          (TraitObjectType(TypeParamBounds([LTB(lifetime)]), Pos(DYNleft)))
+        | DYN trait_bound PLUS type_param_bounds                (TraitObjectType(
+                                                                    TypeParamBounds(rev(TB(trait_bound)::((fn TypeParamBounds(lst) => rev(lst)) type_param_bounds))), 
+                                                                    Pos(DYNleft)
+                                                                ))
+types_noqpt_no_bounds: 
+        (* ImplTraitType contains Impl TraitTypeOneBound  *)
+        IMPL trait_bound %prec LOWER_THAN_PLUS                  (ImplTraitTypeOneBound(trait_bound, Pos(IMPLleft)))
+        (* 
+            Trait Object Type One Bound production must 
+            have keyword dyn for avoiding conflicts. 
+        *)
+        (* TraitObjectType contains Impl TraitObjectTypeOneBound   *)
+        | DYN trait_bound %prec LOWER_THAN_PLUS                 (TraitObjectTypeOneBound(trait_bound, Pos(DYNleft)))
+        (* trait_bound contains LPARENT type_path RPARENT *)
+        (* | trait_bound                                   () *)
+        | type_path %prec LOWER_THAN_PATHSEP                    (TNBTypePath(type_path))
+        | LPARENT RPARENT                                       (TupleType([], Pos(LPARENTleft)))
         | LPARENT types COMMA 
-            types_expansion maybe_comma RPARENT         ()
-        | NOT                                           ()
-        | STAR MUT type_no_bounds                       ()
-        | STAR CONST type_no_bounds                     ()
-        | AND maybe_lifetime maybe_mut type_no_bounds   ()
-        | LBRACKET types SEMI expression RBRACKET       ()
-        | LBRACKET types RBRACKET                       ()
-        | UNDERSCORE                                    ()  
+            types_expansion maybe_comma RPARENT                 (TupleType(rev(types::types_expansion), Pos(LPARENTleft)))
+        | NOT                                                   (NeverTuple(Pos(NOTleft)))
+        | STAR MUT type_no_bounds                               (RawPointerType(MutMod(Pos(MUTleft)), type_no_bounds, Pos(STARleft)))
+        | STAR CONST type_no_bounds                             (RawPointerType(ConstMod(Pos(CONSTleft)), type_no_bounds, Pos(STARleft)))
+        | AND maybe_lifetime maybe_mut type_no_bounds           (ReferenceType(maybe_lifetime, maybe_mut, type_no_bounds, Pos(ANDleft)))
+        | LBRACKET types SEMI expression RBRACKET               (ArrayType(types, expression, Pos(LBRACKETleft)))
+        | LBRACKET types RBRACKET                               (SliceType(types, Pos(LBRACKETleft)))
+        | UNDERSCORE                                            (InferredType(Pos(UNDERSCOREleft)))  
         | maybe_for_lifetimes 
-            func_qualifier FN LPARENT RPARENT           ()
+            func_qualifier FN LPARENT RPARENT                   (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=[], var=false, ret=NONE
+                                                                }))
         |  maybe_for_lifetimes 
             func_qualifier FN LPARENT 
             maybe_named_bare_func_parameters maybe_comma 
-            RPARENT                                     ()
+            RPARENT                                             (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters), var=false, ret=NONE
+                                                                }))
         |  maybe_for_lifetimes 
             func_qualifier FN LPARENT 
             maybe_named_bare_func_parameters_variadic 
-            RPARENT                                     ()
+            RPARENT                                             (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters_variadic), 
+                                                                    var=true, ret=NONE
+                                                                }))
         | maybe_for_lifetimes 
             func_qualifier FN LPARENT RPARENT 
-            RARROW type_no_bounds                       ()
+            RARROW type_no_bounds                               (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=[], var=false, ret=SOME(type_no_bounds)
+                                                                }))
         |  maybe_for_lifetimes 
             func_qualifier FN LPARENT 
             maybe_named_bare_func_parameters maybe_comma 
-            RPARENT RARROW type_no_bounds               ()
+            RPARENT RARROW type_no_bounds                       (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters),
+                                                                    var=false, ret=SOME(type_no_bounds)
+                                                                }))
         |  maybe_for_lifetimes 
             func_qualifier FN LPARENT 
             maybe_named_bare_func_parameters_variadic 
             RPARENT                                     
-            RARROW type_no_bounds                       ()
+            RARROW type_no_bounds                               (BareFunctionType({
+                                                                    forlifetimes=maybe_for_lifetimes, qualifier=func_qualifier, 
+                                                                    params=rev(maybe_named_bare_func_parameters_variadic),
+                                                                    var=true, ret=SOME(type_no_bounds)
+                                                                }))
         (* | macro_invocation                              () *)
         (* TypePath contains PathInExpression, 
         rewrite MarcoInvocation for avoiding conflicts, 
         maybe need to check TypePathFn. *)
-        | type_path NOT delim_token_tree              ()
-        (* | IMPL type_param_bounds                                (Type) *)
-        |IMPL lifetime                                         (Type)
-        | IMPL trait_bound PLUS type_param_bounds               (Type)
-        (* | DYN type_param_bounds                                 (Type) *)
-        | DYN lifetime                                          (Type)
-        | DYN trait_bound PLUS type_param_bounds                (Type)
-
+        | type_path NOT delim_token_tree                    (TNBMacro(type_path, delim_token_tree))
+    
 (* ------Statements and Expression------ *)
 block_exp: LBRACE inner_attrs RBRACE                            (yaccLog("block_exp:1"); BlockExpression)
         | LBRACE inner_attrs statements RBRACE                  (yaccLog("block_exp:2"); BlockExpression)

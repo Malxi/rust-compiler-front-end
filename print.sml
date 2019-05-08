@@ -60,9 +60,9 @@ struct
                 | QualifiedPathInExpression(A.QualifiedPathInExpression(ty, SOME(typ), pathList), d) =
                 (indent d; out "QualifiedPathInExpression ("; Type(ty, d); out "as"; TypePath(typ, d);
                 outList (d) PathSeg pathList false; out ")")
-            and QualifiedPathInType(A.QualifiedPathInExpression(ty, NONE, pathList), d) =
+            and QualifiedPathInType(A.QualifiedPathInType(ty, NONE, pathList), d) =
                 (indent d; out "QualifiedPathInType ("; Type(ty, d);outList (d) PathSeg pathList false; out ")")
-                | QualifiedPathInType(A.QualifiedPathInExpression(ty, SOME(typ), pathList), d) =
+                | QualifiedPathInType(A.QualifiedPathInType(ty, SOME(typ), pathList), d) =
                 (indent d; out "QualifiedPathInType ("; Type(ty, d); out "as"; TypePath(typ, d);
                 outList (d) PathSeg pathList false; out ")")
             and PathSeg(A.IDPS(id), d) = (Identifer(id, d))
@@ -376,12 +376,303 @@ struct
             and Sized(A.Sized, d) = out "?"
             and TypePath(A.TypePath(pathList), d) = 
                 (indent d; out "TypePath ("; outList (d) PathSeg pathList false; out ")")
-            and Type(A.Type, d) = out "type"
+            and Type(A.TypeNoBounds(tnbt), d) = 
+                (
+                    TypeNoBoundsType(tnbt, d)
+                )
+                | Type(A.ImplTraitType(tpbs, pos), d) = 
+                (
+                    out "ImplTraitType (";
+                    TypeParamBounds(tpbs, d);
+                    out ")"
+                )
+                | Type(A.TraitObjectType(tpbs, pos), d) = 
+                (
+                    out "TraitObjectType (";
+                    TypeParamBounds(tpbs, d);
+                    out ")"
+                )
+            and TypeNoBoundsType(A.ParenthesizedType(typ, pos), d) =
+                (
+                    out "ParenthesizedType (";
+                    Type(typ, d);
+                    out ")"
+                )
+                | TypeNoBoundsType(A.ImplTraitTypeOneBound(tb, pos), d) =
+                (
+                    out "ImplTraitTypeOneBound (";
+                    TraitBound(tb, d);
+                    out ")"
+                )
+                | TypeNoBoundsType(A.TraitObjectTypeOneBound(tb, pos), d) =
+                (
+                    out "TraitObjectTypeOneBound (";
+                    TraitBound(tb, d);
+                    out ")"
+                )
+                | TypeNoBoundsType(A.TNBTypePath(typath), d) =
+                (
+                    TypePath(typath, d)
+                )
+                | TypeNoBoundsType(A.TupleType(typList, pos), d) =
+                (
+                    out "TupleType (";
+                    outList (d) Type typList false;
+                    out ")"
+                )
+                | TypeNoBoundsType(A.NeverTuple(pos), d) =
+                (
+                    out "NeverTuple ()"
+                )
+                | TypeNoBoundsType(A.RawPointerType(rptm, tndt, pos), d) =
+                (
+                    out "RawPointerType (";
+                    (fn A.ConstMod(pos) => out "const" | A.MutMod(pos) => out "mut") rptm;
+                    out " ";
+                    TypeNoBoundsType(tndt, d);
+                    out ")"
+                )
+                | TypeNoBoundsType(A.ReferenceType(mlt, mut, tndt, pos), d) =
+                (
+                    out "ReferenceType (";
+                    (fn SOME(lt) => (Lifetime(lt, d); out " ") | NONE => ()) mlt;
+                    TypeNoBoundsType(tndt, d);
+                    out ")"
+                )
+                | TypeNoBoundsType(A.ArrayType(ty, expr, pos), d) =
+                (
+                    out "ArrayType (";
+                    Type(ty, d);
+                    Expression(expr, d);
+                    out ")"
+                )
+                | TypeNoBoundsType(A.SliceType(ty, pos), d) =
+                (
+                    out "SliceType (";
+                    Type(ty, d);
+                    out ")"
+                )
+                | TypeNoBoundsType(A.InferredType(pos), d) =
+                (
+                    out "InferredType ()"
+                )
+                | TypeNoBoundsType(A.TNBQPathInType(qpath), d) =
+                (
+                    QualifiedPathInType(qpath, d)
+                )
+                | TypeNoBoundsType(A.BareFunctionType(bft), d) =
+                    let
+                        val {forlifetimes=forlifetimes, qualifier=qualifier, params=params, var=var, ret=ret} = bft
+                    in
+                        out "BareFunctionType (";
+                        out ",";
+                        ForLifetimesOption(forlifetimes, d);
+                        out ",";
+                        outList (d) FunctionQualifier qualifier false;
+                        out ",";
+                        outList (d) MaybeNamedParam params false;
+                        out ",";
+                        (fn true => out "var" | false => out "nonvar") var;
+                        out ",";
+                        (fn SOME(tbdt) => TypeNoBoundsType(tbdt, d) | NONE => ()) ret;
+                        out ")"
+                    end
+                | TypeNoBoundsType(A.TNBMacro(typath, tokenTree), d) =
+                (
+                    out "MacroInvocation (";
+                    TypePath(typath, d);
+                    out ",";
+                    TokenTree(tokenTree, d);
+                    out ")"
+                )
+            and MaybeNamedParam(A.MaybeNamedParamID(id, ty, pos), d) =
+                (
+                    out "MaybeNamedParam (";
+                    Identifer(id, d);
+                    out ":";
+                    Type(ty, d);
+                    out ")"
+                )
+                | MaybeNamedParam(A.MaybeNamedParamWD(wc, ty, pos), d) =
+                (
+                    out "MaybeNamedParam (";
+                    out "_";
+                    out ":";
+                    Type(ty, d);
+                    out ")"
+                )
+                | MaybeNamedParam(A.MaybeNamedParamTY(ty), d) =
+                (
+                    out "MaybeNamedParam (";
+
+                    Type(ty, d);
+                    out ")"
+                )
             and ForLifetimes(A.ForLifetimes(ltps), d) =
                 LifetimeParams(ltps, d)
             and FunctionParam(A.FunctionParam(pat, ty), d) =
                 (Pattern(pat, d); out ":"; Type(ty, d))
-            and Pattern(A.Pattern, d) = out "pattern"
+            and Pattern(A.LiteralPattern(mminus, tk, pos), d) =
+                (
+                    out "LiteralPattern (";
+                    (fn SOME(minus) => out "-" | NONE => ()) mminus;
+                    Token(tk, d);
+                    out ")"
+                )
+                | Pattern(A.IdentiferPattern(bdm, id, mpat), d) =
+                (
+                    out "IdentiferPattern (";
+                    BindingMode(bdm, d);
+                    Identifer(id, d);
+                    (fn SOME(pat) => Pattern(pat, d) | NONE => ()) mpat;
+                    out ")"
+                )
+                | Pattern(A.WildcardPattern(pos), d) =
+                (
+                    out "WildcardPattern ()"
+                )
+                | Pattern(A.RangePatternDDE(rpb1, rpb2), d) =
+                (
+                    out "RangePattern (";
+                    RangePatternBound(rpb1, d);
+                    out "..=";
+                    RangePatternBound(rpb2, d);
+                    out ")"
+                )
+                | Pattern(A.RangePatternDDD(rpb1, rpb2), d) =
+                (
+                    out "RangePattern (";
+                    RangePatternBound(rpb1, d);
+                    out "...";
+                    RangePatternBound(rpb2, d);
+                    out ")"
+                )
+                | Pattern(A.ReferencePattern(borrow, mut, pat, pos), d) =
+                (
+                    out "ReferencePattern (";
+                    Borrow(borrow, d);
+                    Mutability(mut, d);
+                    Pattern(pat, d);
+                    out ")"
+                )
+                | Pattern(A.StructPattern(path, spes), d) =
+                (
+                    out "StructPattern (";
+                    PathInExpression(path, d);
+                    out ",";
+                    StructPatternElements(spes, d);
+                    out ")"
+                )
+                | Pattern(A.TupleStructPattern(path, patterns), d) =
+                (
+                    out "TupleStructPattern (";
+                    PathInExpression(path, d);
+                    out ",";
+                    outList (d) Pattern patterns false;
+                    out ")"
+                )
+                | Pattern(A.TupleStructPatternDD(path, patterns1, patterns2), d) =
+                (
+                    out "TupleStructPattern (";
+                    PathInExpression(path, d);
+                    out ",";
+                    outList (d) Pattern patterns1 false;
+                    out "..";
+                    outList (d) Pattern patterns2 false;
+                    out ")"
+                )
+                | Pattern(A.TupleORGroupPattern(patterns, pos), d) =
+                (
+                    out "TupleORGroupPattern (";
+                    outList (d) Pattern patterns false;
+                    out ")"
+                )
+                | Pattern(A.TupleORGroupPatternDD(patterns1, patterns2, pos), d) =
+                (
+                    out "TupleORGroupPattern (";
+                    outList (d) Pattern patterns1 false;
+                    out "..";
+                    outList (d) Pattern patterns2 false;
+                    out ")"
+                )
+                | Pattern(A.SlicePattern(patterns, pos), d) =
+                (
+                    out "SlicePattern (";
+                    outList (d) Pattern patterns false;
+                    out ")"
+                )
+                | Pattern(A.PathPat(path), d) =
+                (
+                    out "PathPattern  (";
+                    PathInExpression(path, d);
+                    out ")"
+                )
+                | Pattern(A.QPathPat(path), d) =
+                (
+                    out "PathPattern  (";
+                    QualifiedPathInExpression(path, d);
+                    out ")"
+                )
+            and BindingMode(A.BindingMode(mr, mut, pos), d) =
+                (
+                    (fn SOME(r) => out "ref " | NONE => ()) mr;
+                    Mutability(mut, d)
+                )
+            and RangePatternBound(A.RPBLit(mminus, tk, pos), d) =
+                (
+                    (fn SOME(minus) => out "-" | NONE => ()) mminus;
+                    Token(tk, d)
+                )
+                | RangePatternBound(A.RPBPath(path), d) =
+                (
+                    PathInExpression(path, d)
+                )
+                | RangePatternBound(A.RPBQPath(path), d) =
+                (
+                    QualifiedPathInExpression(path, d)
+                )
+            and Borrow(A.BOnce(pos), d) = out "&"
+                | Borrow(A.BTwice(pos), d) = out "&&"
+            and StructPatternElements(A.StructPatternElements(spfs, mcetera), d) =
+                (
+                    outList (d) StructPatternField spfs false;
+                    out ",";
+                    (fn SOME(cetera) => StructPatternEtCetera(cetera, d) | NONE => ()) mcetera
+                )
+            and StructPatternField(A.SPFTPIND(outerAttrs, tk, pat, pos), d) = 
+                (
+                    out "StructPatternField (";
+                    outList (d) OuterAttribute outerAttrs false;
+                    out ",";
+                    Token(tk, d);
+                    out ":";
+                    Pattern(pat, d);
+                    out ")"
+                )
+                | StructPatternField(A.SPFIBD(outerAttrs, id, pat, pos), d) = 
+                (
+                    out "StructPatternField (";
+                    outList (d) OuterAttribute outerAttrs false;
+                    out ",";
+                    Identifer(id, d);
+                    out ":";
+                    Pattern(pat, d);
+                    out ")"
+                )
+                | StructPatternField(A.SPFID(outerAttrs, mr, mut, id, pos), d) = 
+                (
+                    out "StructPatternField (";
+                    (fn SOME(r) => out "ref " | NONE => ()) mr;
+                    Mutability(mut, d);
+                    Identifer(id, d);
+                    out ")"
+                )
+            and StructPatternEtCetera(A.StructPatternEtCetera(outerAttrs, pos), d) =
+                (
+                    out "StructPatternEtCetera (";
+                    outList (d) OuterAttribute outerAttrs false;
+                    out ")"
+                )
             and WhereClause(A.WhereClause(wciList), d) =
                 (outList (d+1) WhereClauseItem wciList false)
             and WhereClauseItem(A.LifetimeWhereClauseItem(lt, ltbs), d) =
