@@ -27,9 +27,119 @@ struct
                     (out "["; start ind f l; out "]")
                 end
 
-            fun Token(A.TKSTR_LIT(s, pos), d) = (out ("Token.STR_LIT("^s^")"))
-                | Token(A.TKRAW_STR_LIT(s, pos), d) = (out ("Token.RAW_STR_LIT("^s^")"))
-                | Token(_, d) = (out "Token()")
+            fun Token(A.TKAS ( pos ), d) = 					        (out ("Token.AS"))
+                | Token(A.TKBREAK ( pos ), d) = 					(out ("Token.BREAK"))
+                | Token(A.TKCONST ( pos ), d) = 					(out ("Token.CONST"))
+                | Token(A.TKCONTINUE ( pos ), d) = 					(out ("Token.CONTINUE"))
+                | Token(A.TKCRATE ( pos), d) = 					    (out ("Token.CRATE"))
+                | Token(A.TKELSE ( pos ), d) = 					    (out ("Token.ELSE"))
+                | Token(A.TKENUM ( pos ), d) = 					    (out ("Token.ENUM"))
+                | Token(A.TKEXTERN ( pos ), d) = 					(out ("Token.EXTERN"))
+                | Token(A.TKFALSE ( pos ), d) = 					(out ("Token.FALSE"))
+                | Token(A.TKFN ( pos), d) = 					    (out ("Token.FN"))
+                | Token(A.TKFOR ( pos ), d) = 					    (out ("Token.FOR"))
+                | Token(A.TKIF ( pos ), d) = 					    (out ("Token.IF"))
+                | Token(A.TKIMPL ( pos ), d) = 					    (out ("Token.IMPL"))
+                | Token(A.TKIN ( pos), d) = 					    (out ("Token.IN"))
+                | Token(A.TKLET ( pos), d) = 					    (out ("Token.LET"))
+                | Token(A.TKLOOP ( pos), d) = 					    (out ("Token.LOOP"))
+                | Token(A.TKMATCH ( pos), d) = 					    (out ("Token.MATCH"))
+                | Token(A.TKMOD ( pos), d) = 					    (out ("Token.MOD"))
+                | Token(A.TKMOVE ( pos), d) = 					    (out ("Token.MOVE"))
+                | Token(A.TKMUT ( pos), d) = 					    (out ("Token.MUT"))
+                | Token(A.TKPUB ( pos), d) = 					    (out ("Token.PUB"))
+                | Token(A.TKREF ( pos), d) = 					    (out ("Token.REF"))
+                | Token(A.TKRETURN ( pos), d) = 					(out ("Token.RETURN"))
+                | Token(A.TKSELFVALUE ( pos), d) = 					(out ("Token.SELFVALUE"))
+                | Token(A.TKSELFTYPE ( pos), d) = 					(out ("Token.SELFTYPE"))
+                | Token(A.TKSTATIC ( pos), d) = 					(out ("Token.STATIC"))
+                | Token(A.TKSTRUCT ( pos), d) = 					(out ("Token.STRUCT"))
+                | Token(A.TKSUPER ( pos), d) = 					    (out ("Token.SUPER"))
+                | Token(A.TKTRAIT ( pos), d) = 					    (out ("Token.TRAIT"))
+                | Token(A.TKTRUE ( pos), d) = 					    (out ("Token.TRUE"))
+                | Token(A.TKTYPE ( pos), d) = 					    (out ("Token.TYPE"))
+                | Token(A.TKUNSAFE ( pos), d) = 					(out ("Token.UNSAFE"))
+                | Token(A.TKUSE ( pos), d) = 					    (out ("Token.USE"))
+                | Token(A.TKWHERE ( pos), d) = 					    (out ("Token.WHERE"))
+                | Token(A.TKWHILE ( pos), d) = 					    (out ("Token.WHILE"))
+                | Token(A.TKDYN ( pos), d) = 					    (out ("Token.DYN"))
+                | Token(A.TKABSTRACT ( pos), d) = 					(out ("Token.ABSTRACT"))
+                | Token(A.TKBECOME ( pos), d) = 					(out ("Token.BECOME"))
+                | Token(A.TKBOX ( pos), d) = 					    (out ("Token.BOX"))
+                | Token(A.TKDO ( pos), d) = 					    (out ("Token.DO"))
+                | Token(A.TKFINAL ( pos), d) = 					    (out ("Token.FINAL"))
+                | Token(A.TKMACRO ( pos ), d) = 					(out ("Token.MACRO"))
+                | Token(A.TKOVERRIDE ( pos), d) = 					(out ("Token.OVERRIDE"))
+                | Token(A.TKPRIV ( pos), d) = 					    (out ("Token.PRIV"))
+                | Token(A.TKTYPEOF ( pos), d) = 					(out ("Token.TYPEOF"))
+                | Token(A.TKUNSIZED ( pos), d) = 					(out ("Token.UNSIZED"))
+                | Token(A.TKVIRTUAL ( pos), d) = 					(out ("Token.VIRTUAL"))
+                | Token(A.TKYIELD ( pos), d) = 					    (out ("Token.YIELD"))
+                | Token(A.TKASYNC ( pos), d) = 					    (out ("Token.ASYNC"))
+                | Token(A.TKAWAIT ( pos ), d) = 					(out ("Token.AWAIT"))
+                | Token(A.TKTRY ( pos), d) = 					    (out ("Token.TRY"))
+                | Token(A.TKUNION ( pos ), d) = 					(out ("Token.UNION"))
+                | Token(A.TKSTATICLIFETIME ( pos), d) = 		    (out ("Token.STATICLIFETIME"))
+                | Token(A.TKIDENT ( s , pos ), d) = 				(out ("Token.IDENT("^s^")"))
+                | Token(A.TKCHAR_LIT ( s , pos ), d) = 				(out ("Token.CHAR_LIT("^s^")"))
+                | Token(A.TKSTR_LIT ( s ,  pos), d) = 				(out ("Token.STR_LIT("^s^")"))
+                | Token(A.TKRAW_STR_LIT ( s ,  pos), d) = 			(out ("Token.RAW_STR_LIT("^s^")"))
+                | Token(A.TKBYTE_LIT ( s , pos), d) = 				(out ("Token.BYTE_LIT("^s^")"))
+                | Token(A.TKBYTE_STR_LIT ( s , pos), d) = 			(out ("Token.BYTE_STR_LIT("^s^")"))
+                | Token(A.TKRAW_BYTE_STR_LIT ( s , pos), d) = 	    (out ("Token.RAW_BYTE_STR_LIT("^s^")"))
+                | Token(A.TKINTEGER_LIT ( s , pos), d) = 			(out ("Token.INTEGER_LIT("^s^")"))
+                | Token(A.TKTUPLE_INDEX ( s , pos ), d) = 			(out ("Token.TUPLE_INDEX("^s^")"))
+                | Token(A.TKFLOAT_LIT ( s , pos), d) = 				(out ("Token.FLOAT_LIT("^s^")"))
+                | Token(A.TKLIFETIME_OR_LABEL ( s , pos), d) = 		(out ("Token.LIFETIME_OR_LABEL("^s^")"))
+                | Token(A.TKLIFETIME_TOKEN ( s , pos), d) = 		(out ("Token.LIFETIME_TOKEN("^s^")"))
+                | Token(A.TKMINUS ( pos), d) = 					    (out ("Token.MINUS"))
+                | Token(A.TKSLASH ( pos), d) = 					    (out ("Token.SLASH"))
+                | Token(A.TKPERCENT ( pos), d) = 					(out ("Token.PERCENT"))
+                | Token(A.TKCARET ( pos ), d) = 					(out ("Token.CARET"))
+                | Token(A.TKNOT ( pos), d) = 					    (out ("Token.NOT"))
+                | Token(A.TKAND ( pos), d) = 					    (out ("Token.AND"))
+                | Token(A.TKOR ( pos), d) = 					    (out ("Token.OR"))
+                | Token(A.TKANDAND ( pos), d) = 					(out ("Token.ANDAND"))
+                | Token(A.TKOROR ( pos), d) = 					    (out ("Token.OROR"))
+                | Token(A.TKSHL ( pos), d) = 					    (out ("Token.SHL"))
+                | Token(A.TKSHR ( pos), d) = 					    (out ("Token.SHR"))
+                | Token(A.TKPLUSEQ ( pos), d) = 					(out ("Token.PLUSEQ"))
+                | Token(A.TKMINUSEQ ( pos), d) = 					(out ("Token.MINUSEQ"))
+                | Token(A.TKSTAREQ ( pos), d) = 					(out ("Token.STAREQ"))
+                | Token(A.TKSLASHEQ ( pos), d) = 					(out ("Token.SLASHEQ"))
+                | Token(A.TKPERCENTEQ ( pos), d) = 					(out ("Token.PERCENTEQ"))
+                | Token(A.TKCARETEQ ( pos), d) = 					(out ("Token.CARETEQ"))
+                | Token(A.TKANDEQ ( pos), d) = 					    (out ("Token.ANDEQ"))
+                | Token(A.TKOREQ ( pos), d) = 					    (out ("Token.OREQ"))
+                | Token(A.TKSHLEQ ( pos), d) = 					    (out ("Token.SHLEQ"))
+                | Token(A.TKSHREQ ( pos), d) = 					    (out ("Token.SHREQ"))
+                | Token(A.TKEQ ( pos), d) = 					    (out ("Token.EQ"))
+                | Token(A.TKEQEQ ( pos), d) = 					    (out ("Token.EQEQ"))
+                | Token(A.TKNE ( pos), d) = 					    (out ("Token.NE"))
+                | Token(A.TKGT ( pos), d) = 					    (out ("Token.GT"))
+                | Token(A.TKLT ( pos), d) = 					    (out ("Token.LT"))
+                | Token(A.TKGE ( pos), d) = 					    (out ("Token.GE"))
+                | Token(A.TKLE ( pos), d) = 					    (out ("Token.LE"))
+                | Token(A.TKAT ( pos), d) = 					    (out ("Token.AT"))
+                | Token(A.TKUNDERSCORE ( pos), d) = 				(out ("Token.UNDERSCORE"))
+                | Token(A.TKDOT ( pos), d) = 					    (out ("Token.DOT"))
+                | Token(A.TKDOTDOT ( pos), d) = 					(out ("Token.DOTDOT"))
+                | Token(A.TKDOTDOTDOT ( pos), d) = 					(out ("Token.DOTDOTDOT"))
+                | Token(A.TKDOTDOTEQ ( pos), d) = 					(out ("Token.DOTDOTEQ"))
+                | Token(A.TKCOMMA ( pos), d) = 					    (out ("Token.COMMA"))
+                | Token(A.TKSEMI ( pos), d) = 					    (out ("Token.SEMI"))
+                | Token(A.TKCOLON ( pos), d) = 					    (out ("Token.COLON"))
+                | Token(A.TKPATHSEP ( pos), d) = 					(out ("Token.PATHSEP"))
+                | Token(A.TKRARROW ( pos), d) = 					(out ("Token.RARROW"))
+                | Token(A.TKFATARROW ( pos), d) = 					(out ("Token.FATARROW"))
+                | Token(A.TKPOUND ( pos), d) = 					    (out ("Token.POUND"))
+                | Token(A.TKINNER_DOC_COMMENT ( s , pos ), d) = 	(out ("Token.INNER_DOC_COMMENT("^s^")"))
+                | Token(A.TKOUTER_DOC_COMMENT ( s , pos), d) = 		(out ("Token.OUTER_DOC_COMMENT("^s^")"))
+                | Token(A.TKSHEBANG ( pos), d) = 					(out ("Token.SHEBANG"))
+                | Token(A.TKDOLLAR ( pos), d) = 					(out ("Token.DOLLAR"))
+                | Token(A.TKPLUS ( pos), d) = 					    (out ("Token.PLUS"))
+                | Token(A.TKSTAR ( pos), d) = 					    (out ("Token.STAR"))
+                | Token(A.TKQUESTION ( pos), d) = 					(out ("Token.QUESTION"))
 
             fun Crate(A.Crate(shebang, innerAttrs, items), d) = 
                     (indent d; outln "Crate ("; Shebang(shebang, d+1); outln ","; 
@@ -890,58 +1000,519 @@ struct
                     (Mutability (mut, d+1))
                 | SelfParam(A.SelfParamTY(mut, mty), d) =
                     (Mutability (mut, d+1); TypeOption(mty, d+1))
-            and Expression(A.BlockExpr, d) = out "BlockExpr()"
-                | Expression(_, d) = out "Expression()"
+            and Expression(A.LiteralExpr(tk), d) = 
+                (
+                    out "LiteralExpr (";
+                    Token(tk, d);
+                    out ")"
+                )
+                | Expression(A.PathExpr(path), d) = 
+                (
+                    out "PathExpr (";
+                    PathInExpression(path, d);
+                    out ")"
+                )
+                | Expression(A.QPathExpr(path), d) = 
+                (
+                    out "PathExpr (";
+                    QualifiedPathInExpression(path, d);
+                    out ")"
+                )
+                | Expression(A.BorrowExpr(borrow, mut, expr, pos), d) = 
+                (
+                    out "BorrowExpr (";
+                    Borrow(borrow, d);
+                    Mutability(mut, d);
+                    Expression(expr, d);
+                    out ")"
+                )
+                | Expression(A.DereferenceExpr(expr, pos), d) = 
+                (
+                    out "DereferenceExpr (";
+                    Expression(expr, d);
+                    out ")"
+                )
+                | Expression(A.ErrorPropagationExpr(expr, pos), d) = 
+                (
+                    out "ErrorPropagationExpr (";
+                    Expression(expr, d);
+                    out ")"
+                )
+                | Expression(A.NegExpr(expr, pos), d) = 
+                (
+                    out "NegExpr (";
+                    Expression(expr, d);
+                    out ")"
+                )
+                | Expression(A.NotExpr(expr, pos), d) = 
+                (
+                    out "NotExpr (";
+                    Expression(expr, d);
+                    out ")"
+                )
+                | Expression(A.ArithmeticOrLogicalExpr(expr1, oper, expr2, pos), d) = 
+                (
+                    out "ArithmeticOrLogicalExpr (";
+                    Expression(expr1, d);
+                    out ",";
+                    Operator(oper, d);
+                    out ",";
+                    Expression(expr2, d);
+                    out ")"
+                )
+                | Expression(A.ComparisonExpr(expr1, oper, expr2, pos), d) = 
+                (
+                    out "ComparisonExpr (";
+                    Expression(expr1, d);
+                    out ",";
+                    Operator(oper, d);
+                    out ",";
+                    Expression(expr2, d);
+                    out ")"
+                )
+                | Expression(A.LazyBooleanExpr(expr1, oper, expr2, pos), d) = 
+                (
+                    out "LazyBooleanExpr (";
+                    Expression(expr1, d);
+                    out ",";
+                    Operator(oper, d);
+                    out ",";
+                    Expression(expr2, d);
+                    out ")"
+                )
+                | Expression(A.TypeCastExpr(expr, tnd, pos), d) = 
+                (
+                    out "TypeCastExpr (";
+                    Expression(expr, d);
+                    out " as ";
+                    TypeNoBounds(tnd, d);
+                    out ")"
+                )
+                | Expression(A.AssignmentExpr(expr1, expr2, pos), d) = 
+                (
+                    out "AssignmentExpr (";
+                    Expression(expr1, d);
+                    out " = ";
+                    Expression(expr2, d);
+                    out ")"
+                )
+                | Expression(A.CompoundAssignmentExpr(expr1, oper, expr2, pos), d) = 
+                (
+                    out "CompoundAssignmentExpr (";
+                    Expression(expr1, d);
+                    out ",";
+                    Operator(oper, d);
+                    out ",";
+                    Expression(expr2, d);
+                    out ")"
+                )
+                | Expression(A.GroupedExpr(innerAttrs, expr, pos), d) = 
+                (
+                    out "GroupedExpr (";
+                    outList (d) InnerAttribute innerAttrs false;
+                    out ",";
+                    Expression(expr, d);
+                    out ")"
+                )
+                | Expression(A.ArrayExpr(innerAttrs, exprs, pos), d) = 
+                (
+                    out "ArrayExpr (";
+                    outList (d) InnerAttribute innerAttrs false;
+                    out ",";
+                    outList (d) Expression exprs false;
+                    out ")"
+                )
+                | Expression(A.ArrayInitExpr(innerAttrs, expr1, expr2, pos), d) = 
+                (
+                    out "ArrayExpr (";
+                    outList (d) InnerAttribute innerAttrs false;
+                    out ",";
+                    Expression(expr1, d);
+                    out ",";
+                    Expression(expr2, d);
+                    out ")"
+                )
+                | Expression(A.IndexExpr(expr1, expr2, pos), d) = 
+                (
+                    out "IndexExpr (";
+                    Expression(expr1, d);
+                    out ",";
+                    Expression(expr2, d);
+                    out ")"
+                )
+                | Expression(A.TupleExpr(innerAttrs, exprs, pos), d) = 
+                (
+                    out "TupleExpr (";
+                    outList (d) InnerAttribute innerAttrs false;
+                    out ",";
+                    outList (d) Expression exprs false;
+                    out ")"
+                )
+                | Expression(A.TupleIndexingExpr(expr, tk, pos), d) = 
+                (
+                    out "TupleIndexingExpr (";
+                    Expression(expr, d);
+                    out ",";
+                    Token(tk, d);
+                    out ")"
+                )
+                | Expression(A.StructOrEnumExpr(path, innerAttrs, soeefs, msb), d) = 
+                (
+                    out "StructOrEnumExpr (";
+                    PathInExpression(path, d);
+                    out ",";
+                    outList (d) InnerAttribute innerAttrs false;
+                    out ",";
+                    outList (d) StructOrEnumExprField soeefs false;
+                    (fn SOME(sb) => (out ","; StructBase(sb, d)) | NONE => ()) msb;
+                    out ")"
+                )
+                | Expression(A.CallExpr(expr, exprs, pos), d) = 
+                (
+                    out "CallExpr (";
+                    Expression(expr, d);
+                    out ",";
+                    outList (d) Expression exprs false;
+                    out ")"
+                )
+                | Expression(A.MethodCallExpr(expr, psList, exprs), d) = 
+                (
+                    out "MethodCallExpr (";
+                    Expression(expr, d);
+                    out ",";
+                    outList (d) PathSeg psList false;
+                    out ",";
+                    outList (d) Expression exprs false;
+                    out ")"
+                )
+                | Expression(A.FieldExpr(expr, psList, pos), d) = 
+                (
+                    out "FieldExpr (";
+                    Expression(expr, d);
+                    out ",";
+                    outList (d) PathSeg psList false;
+                    out ")"
+                )
+                | Expression(A.ClosureExpr(mv, cpList, mtnb, expr, pos), d) = 
+                (
+                    out "ClosureExpr (";
+                    (fn SOME(m) => out "move," | NONE => ()) mv;
+                    outList (d) ClosureParam cpList false;
+                    out ",";
+                    (fn SOME(tnb) => (TypeNoBounds(tnb, d); out ",") | NONE => ()) mtnb;
+                    Expression(expr, d);
+                    out ")"
+                )
+                | Expression(A.ContinueExpr(mtk, pos), d) = 
+                (
+                    out "ContinueExpr (";
+                    (fn SOME(tk) => (Token(tk, d)) | NONE => ()) mtk;
+                    out ")"
+                )
+                | Expression(A.BreakExpr(mtk, mexpr, pos), d) = 
+                (
+                    out "BreakExpr (";
+                    (fn SOME(tk) => (Token(tk, d); out ",") | NONE => ()) mtk;
+                    (fn SOME(expr) => Expression(expr, d) | NONE => ()) mexpr;
+                    out ")"
+                )
+                | Expression(A.RangeExpr(expr1, expr2, pos), d) = 
+                (
+                    out "RangeExpr (";
+                    Expression(expr1, d);
+                    out ",";
+                    Expression(expr2, d+1);
+                    out ")"
+                )
+                | Expression(A.RangeFormExpr(expr, pos), d) = 
+                (
+                    out "RangeFormExpr (";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+                | Expression(A.RangeToExpr(expr, pos), d) = 
+                (
+                    out "RangeToExpr (";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+                | Expression(A.RangeFullExpr(pos), d) = 
+                (
+                    out "RangeFullExpr (";
+                    out ")"
+                )
+                | Expression(A.RangeInclusiveExpr(expr1, expr2, pos), d) = 
+                (
+                    out "RangeInclusiveExpr (";
+                    Expression(expr1, d+1);
+                    out ",";
+                    Expression(expr2, d+1);
+                    out ")"
+                )
+                | Expression(A.RangeToInclusiveExpr(expr, pos), d) = 
+                (
+                    out "RangeToInclusiveExpr (";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+                | Expression(A.RetrunExpr(mexpr, pos), d) = 
+                (
+                    out "RetrunExpr (";
+                    (fn SOME(expr) => Expression(expr, d) | NONE => ()) mexpr;
+                    out ")"
+                )
+                | Expression(A.MacroExpr(macro), d) = 
+                (
+                    out "MacroExpr (";
+                    MacroItem(macro, d+1);
+                    out ")"
+                )
+                | Expression(A.BlockExpr(innerAttrs, stmtList, pos), d) = 
+                (
+                    out "BlockExpr (";
+                    outList (d) InnerAttribute innerAttrs false;
+                    out ",";
+                    outList (d) Statement stmtList false;
+                    out ")"
+                )
+                | Expression(A.UnsafeBlockExpr, d) = 
+                (
+                    out "UnsafeBlockExpr (";
+                    out ")"
+                )
+                | Expression(A.InfiniteLoopExpr(mll, expr, pos), d) = 
+                (
+                    out "InfiniteLoopExpr (";
+                    (fn SOME(ll) => (LoopLabel(ll, d+1);out ",") | NONE => ()) mll;
+                    Expression(expr, d+1);
+                    out ")"
+                )
+                | Expression(A.PredicateLoopExpr(mll, expr1, expr2, pos), d) = 
+                (
+                    out "PredicateLoopExpr (";
+                    (fn SOME(ll) => (LoopLabel(ll, d+1);out ",") | NONE => ()) mll;
+                    Expression(expr1, d+1);
+                    out ",";
+                    Expression(expr2, d+1);
+                    out ")"
+                )
+                | Expression(A.PredicatePatLoopExpr(mll, pat, expr1, expr2, pos), d) = 
+                (
+                    out "PredicatePatLoopExpr (";
+                    (fn SOME(ll) => (LoopLabel(ll, d+1);out ",") | NONE => ()) mll;
+                    Pattern(pat, d+1);
+                    out ",";
+                    Expression(expr1, d+1);
+                    out ",";
+                    Expression(expr2, d+1);
+                    out ")"
+                )
+                | Expression(A.IteratorLoopExpr(mll, pat, expr1, expr2, pos), d) = 
+                (
+                    out "IteratorLoopExpr (";
+                    (fn SOME(ll) => (LoopLabel(ll, d+1);out ",") | NONE => ()) mll;
+                    Pattern(pat, d+1);
+                    out ",";
+                    Expression(expr1, d+1);
+                    out ",";
+                    Expression(expr2, d+1);
+                    out ")"
+                )
+                | Expression(A.IfExpr(expr1, expr2, mexpr, pos), d) = 
+                (
+                    out "IfExpr (";
+                    Expression(expr1, d+1);
+                    out ",";
+                    Expression(expr2, d+1);
+                    out ",";
+                    (fn SOME(e) => (Expression(e, d)) | NONE => ()) mexpr;
+                    out ")"
+                )
+                | Expression(A.IfLetExpr(pat, expr1, expr2, mexpr, pos), d) = 
+                (
+                    out "IfLetExpr (";
+                    Pattern(pat, d+1);
+                    out ",";
+                    Expression(expr1, d+1);
+                    out ",";
+                    Expression(expr2, d+1);
+                    out ",";
+                    (fn SOME(e) => (Expression(e, d)) | NONE => ()) mexpr;
+                    out ")"
+                )
+                | Expression(A.MatchExpr(expr, innerAttrs, maList, pos), d) = 
+                (
+                    out "MatchExpr (";
+                    Expression(expr, d+1);
+                    out ",";
+                    outList (d+1) InnerAttribute innerAttrs false;
+                    out ",";
+                    outList (d+1) MatchArm maList false;
+                    out ")"
+                )
+            and  Operator(A.AddOp, d) = out "AddOp"
+                | Operator(A.SubOp, d) = out "SubOp"
+                | Operator(A.MultOp, d) = out "MultOp"
+                | Operator(A.DiviOp, d) = out "DiviOp"
+                | Operator(A.RemainderOp, d) = out "RemainderOp"   
+                | Operator(A.AndOp, d) = out "AndOp"
+                | Operator(A.OrOp, d) = out "OrOp"
+                | Operator(A.XorOp, d) = out "XorOp"
+                | Operator(A.LShiftOp, d) = out "LShiftOp"
+                | Operator(A.RShiftOp, d) = out "RShiftOp"
+                | Operator(A.EqOp, d) = out "EqOp"
+                | Operator(A.NeqOp, d) = out "NeqOp"
+                | Operator(A.GtOp, d) = out "GtOp"
+                | Operator(A.LtOp, d) = out "LtOp"
+                | Operator(A.GeOp, d) = out "GeOp"
+                | Operator(A.LeOp, d) = out "LeOp"
+                | Operator(A.LazyOrOp, d) = out "LazyOrOp"
+                | Operator(A.LazyAndOp, d) = out "LazyAndOp" 
+                | Operator(A.AddEqOp, d) = out "AddEqOp"
+                | Operator(A.SubEqOp, d) = out "SubEqOp"
+                | Operator(A.MultEqOp, d) = out "MultEqOp"
+                | Operator(A.DiviEqOp, d) = out "DiviEqOp"
+                | Operator(A.RemainderEqOp, d) = out "RemainderEqOp"
+                | Operator(A.AndEqOp, d) = out "AndEqOp"
+                | Operator(A.OrEqOp, d) = out "OrEqOp"
+                | Operator(A.XorEqOp, d) = out "XorEqOp"
+                | Operator(A.LShiftEqOp, d) = out "LShiftEqOp"
+                | Operator(A.RShiftEqOp, d) = out "RShiftEqOp"
+            and StructOrEnumExprField(A.StructOrEnumExprFieldID(id, pos), d) =
+                (
+                    out "StructOrEnumExprField (";
+                    Identifer(id, d+1);
+                    out ")"
+                )
+                | StructOrEnumExprField(A.StructOrEnumExprFieldBD(id, expr, pos), d) =
+                (
+                    out "StructOrEnumExprField (";
+                    Identifer(id, d+1);
+                    out ":";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+                | StructOrEnumExprField(A.StructOrEnumExprFieldTI(tk, expr, pos), d) =
+                (
+                    out "StructOrEnumExprField (";
+                    Token(tk, d+1);
+                    out ":";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+            and StructBase(A.StructBase(expr, pos), d) =
+                (
+                    out "StructBase (";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+            and MatchArm(A.MatchArm(outerAttrs, pats, mmag, expr), d) =
+                (
+                    out "MatchArm (";
+                    outList (d) OuterAttribute outerAttrs false;
+                    out ",";
+                    outList (d) Pattern pats false;
+                    (fn SOME(mag) => (out ","; MatchArmGuard(mag, d)) | NONE => ()) mmag;
+                    out ",";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+            and MatchArmGuard(A.MatchArmGuard(expr, pos), d) =
+                (
+                    out "MatchArmGuard (";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+            and ClosureParam(A.ClosureParam(pat, mty), d) =
+                (
+                    out "ClosureParam (";
+                    Pattern(pat, d+1);
+                    (fn SOME(ty) => (out ":"; Type(ty, d)) | NONE => ()) mty;
+                    out ")"
+                )
+            and Statement(A.STMTSemi, d) =
+                (
+                    out "Statement (;)"
+                )
+                | Statement(A.STMTItem(item), d) =
+                (
+                    out "Statement (";
+                    Item(item, d+1);
+                    out ")"
+                )
+                | Statement(A.STMLet(letstatm), d) =
+                (
+                    out "Statement (";
+                    LetStatement(letstatm, d+1);
+                    out ")"
+                )
+                | Statement(A.STMTExpression(expr), d) =
+                (
+                    out "Statement (";
+                    Expression(expr, d+1);
+                    out ")"
+                )
+            and LetStatement(A.LetStatement(outerAttrs, pat, mty, mexpr, pos), d) =
+                (
+                    out "LetStatement (";
+                    outList (d) OuterAttribute outerAttrs false;
+                    out ",";
+                    Pattern(pat, d+1);
+                    (fn SOME(ty) => (out ":"; Type(ty, d+1); out ",") | NONE => (out ",")) mty;
+                    (fn SOME(expr) => Expression(expr, d) | NONE => ()) mexpr;
+                    out ")"
+                )
+            and LoopLabel(A.LoopLabel(tk), d) = Token(tk, d)
             and MacroItem(A.MacroInvocationSemi(path, tokenTree), d) = 
                 (
                     out "MacroInvocationSemi (";
-                    PathInExpression(path, d);
+                    PathInExpression(path, d+1);
                     out ",";
-                    TokenTree(tokenTree, d);
+                    TokenTree(tokenTree, d+1);
                     out ")"
                 )
                 | MacroItem(A.MacroInvocation(path, tokenTree), d) =
                 (
                     out "MacroInvocation (";
-                    PathInExpression(path, d);
+                    PathInExpression(path, d+1);
                     out ",";
-                    TokenTree(tokenTree, d);
+                    TokenTree(tokenTree, d+1);
                     out ")"
                 )
                 | MacroItem(A.MacroRulesDefinition(path, id, mrd), d) =
                 (
                     out "MacroRulesDefinition (";
-                    PathInExpression(path, d);
+                    PathInExpression(path, d+1);
                     out ",";
-                    Identifer(id, d);
+                    Identifer(id, d+1);
                     out ",";
-                    MacroRulesDef(mrd, d);
+                    MacroRulesDef(mrd, d+1);
                     out ")"
                 )
             and MacroRulesDef(A.MacroRulesDef(delim, mrlst), d) =
                 (
-                    Delim(delim, d);
+                    Delim(delim, d+1);
                     out ",";
                     outList (d) MacroRule mrlst false
                 )
             and MacroRule(A.MacroRule(matcher, tokenTree), d) =
                 (
                     out "MacroRule (";
-                    MacroMatcher(matcher, d);
+                    MacroMatcher(matcher, d+1);
                     out ",";
                     TokenTree(tokenTree, d)
                 )
             and MacroMatcher(A.MacroMatcher(delim, matchList), d) =
                 (
                     out "MacroMatcher (";
-                    Delim(delim, d);
+                    Delim(delim, d+1);
                     out ",";
                     outList (d) MacroMatch matchList false;
                     out ")"
                 )
             and MacroMatch(A.MMTK(tk), d) = Token(tk, d)
                 | MacroMatch(A.MMer(matcher), d) = MacroMatcher(matcher, d)
-                | MacroMatch(A.MMBD(id1, id2), d) = (Identifer(id1, d); out ":"; Identifer(id2, d))
+                | MacroMatch(A.MMBD(id1, id2), d) = (Identifer(id1, d+1); out ":"; Identifer(id2, d))
                 | MacroMatch(A.MMs(matchList, NONE, kleene), d) =
                 (
                     outList (d) MacroMatch matchList false;
@@ -952,7 +1523,7 @@ struct
                 (
                     outList (d) MacroMatch matchList false;
                     out ",";
-                    Token(tk, d);
+                    Token(tk, d+1);
                     out ",";
                     MacroKleeneOp(kleene, d)
                 )
