@@ -45,7 +45,7 @@ struct
             and MetaItem(A.AttrName simplePath, d) = 
                     (indent d; out "AttrName ("; SimplePath(simplePath, d); out ")")
                 | MetaItem (A.AttrKVPair(simplePath, literalExpression), d) = 
-                    (indent d; out "AttrKVPair ("; SimplePath(simplePath, d); out "="; LiteralExpression(literalExpression, 0); out ")")
+                    (indent d; out "AttrKVPair ("; SimplePath(simplePath, d); out "="; Expression(literalExpression, 0); out ")")
                 | MetaItem (A.AttrSubs(simplePath, metaSeq), d) = 
                     (indent d; out "AttrSubs ("; 
                     SimplePath(simplePath, d); out "("; 
@@ -89,11 +89,10 @@ struct
                     (out "TypePathFn ("; outList (d) Type tys false; out ")")
                 | TypePathFn(A.TypePathFn(tys, SOME(ty)), d) = 
                     (out "TypePathFn ("; outList (d) Type tys false; out "->"; Type(ty, d+1); out ")")
-            and LiteralExpression (A.LiteralExpression(tk), d) = (Token(tk, d))
             and MetaItemInner(A.MetaItem(metaItem), d) = 
                     (indent d; out "MetaItemInner ("; MetaItem(metaItem, d);out ")")
                 | MetaItemInner(A.MetaLit(literalExpression), d) = 
-                    (indent d; out "MetaItemInner ("; LiteralExpression(literalExpression, d) ;out ")")
+                    (indent d; out "MetaItemInner ("; Expression(literalExpression, d) ;out ")")
             and Item(A.VisItemType(outerAttrs, visItem), d) = 
                     (out "VisItemType ("; nextLine(d); VisItem(visItem, d+1); out ")")
                 | Item(A.MacroItemType(marcoItem), d) = 
@@ -155,7 +154,7 @@ struct
                         nextLine(d);
                         out "be: ";
                         nextLine(d);
-                        BlockExpression(be, d+1);
+                        Expression(be, d+1);
                         nextLine(d);
                         out ")"
                         )
@@ -376,9 +375,9 @@ struct
             and Sized(A.Sized, d) = out "?"
             and TypePath(A.TypePath(pathList), d) = 
                 (indent d; out "TypePath ("; outList (d) PathSeg pathList false; out ")")
-            and Type(A.TypeNoBounds(tnbt), d) = 
+            and Type(A.TypeNoBoundsT(tnbt), d) = 
                 (
-                    TypeNoBoundsType(tnbt, d)
+                    TypeNoBounds(tnbt, d)
                 )
                 | Type(A.ImplTraitType(tpbs, pos), d) = 
                 (
@@ -392,75 +391,75 @@ struct
                     TypeParamBounds(tpbs, d);
                     out ")"
                 )
-            and TypeNoBoundsType(A.ParenthesizedType(typ, pos), d) =
+            and TypeNoBounds(A.ParenthesizedType(typ, pos), d) =
                 (
                     out "ParenthesizedType (";
                     Type(typ, d);
                     out ")"
                 )
-                | TypeNoBoundsType(A.ImplTraitTypeOneBound(tb, pos), d) =
+                | TypeNoBounds(A.ImplTraitTypeOneBound(tb, pos), d) =
                 (
                     out "ImplTraitTypeOneBound (";
                     TraitBound(tb, d);
                     out ")"
                 )
-                | TypeNoBoundsType(A.TraitObjectTypeOneBound(tb, pos), d) =
+                | TypeNoBounds(A.TraitObjectTypeOneBound(tb, pos), d) =
                 (
                     out "TraitObjectTypeOneBound (";
                     TraitBound(tb, d);
                     out ")"
                 )
-                | TypeNoBoundsType(A.TNBTypePath(typath), d) =
+                | TypeNoBounds(A.TNBTypePath(typath), d) =
                 (
                     TypePath(typath, d)
                 )
-                | TypeNoBoundsType(A.TupleType(typList, pos), d) =
+                | TypeNoBounds(A.TupleType(typList, pos), d) =
                 (
                     out "TupleType (";
                     outList (d) Type typList false;
                     out ")"
                 )
-                | TypeNoBoundsType(A.NeverTuple(pos), d) =
+                | TypeNoBounds(A.NeverTuple(pos), d) =
                 (
                     out "NeverTuple ()"
                 )
-                | TypeNoBoundsType(A.RawPointerType(rptm, tndt, pos), d) =
+                | TypeNoBounds(A.RawPointerType(rptm, tndt, pos), d) =
                 (
                     out "RawPointerType (";
                     (fn A.ConstMod(pos) => out "const" | A.MutMod(pos) => out "mut") rptm;
                     out " ";
-                    TypeNoBoundsType(tndt, d);
+                    TypeNoBounds(tndt, d);
                     out ")"
                 )
-                | TypeNoBoundsType(A.ReferenceType(mlt, mut, tndt, pos), d) =
+                | TypeNoBounds(A.ReferenceType(mlt, mut, tndt, pos), d) =
                 (
                     out "ReferenceType (";
                     (fn SOME(lt) => (Lifetime(lt, d); out " ") | NONE => ()) mlt;
-                    TypeNoBoundsType(tndt, d);
+                    TypeNoBounds(tndt, d);
                     out ")"
                 )
-                | TypeNoBoundsType(A.ArrayType(ty, expr, pos), d) =
+                | TypeNoBounds(A.ArrayType(ty, expr, pos), d) =
                 (
                     out "ArrayType (";
                     Type(ty, d);
                     Expression(expr, d);
                     out ")"
                 )
-                | TypeNoBoundsType(A.SliceType(ty, pos), d) =
+                | TypeNoBounds(A.SliceType(ty, pos), d) =
                 (
                     out "SliceType (";
                     Type(ty, d);
                     out ")"
                 )
-                | TypeNoBoundsType(A.InferredType(pos), d) =
+                | TypeNoBounds(A.InferredType(pos), d) =
                 (
                     out "InferredType ()"
                 )
-                | TypeNoBoundsType(A.TNBQPathInType(qpath), d) =
+                | TypeNoBounds(A.TNBQPathInType(qpath), d) =
                 (
                     QualifiedPathInType(qpath, d)
                 )
-                | TypeNoBoundsType(A.BareFunctionType(bft), d) =
+                | TypeNoBounds(A.BareFunctionType(bft), d) =
                     let
                         val {forlifetimes=forlifetimes, qualifier=qualifier, params=params, var=var, ret=ret} = bft
                     in
@@ -474,10 +473,10 @@ struct
                         out ",";
                         (fn true => out "var" | false => out "nonvar") var;
                         out ",";
-                        (fn SOME(tbdt) => TypeNoBoundsType(tbdt, d) | NONE => ()) ret;
+                        (fn SOME(tbdt) => TypeNoBounds(tbdt, d) | NONE => ()) ret;
                         out ")"
                     end
-                | TypeNoBoundsType(A.TNBMacro(typath, tokenTree), d) =
+                | TypeNoBounds(A.TNBMacro(typath, tokenTree), d) =
                 (
                     out "MacroInvocation (";
                     TypePath(typath, d);
@@ -788,7 +787,6 @@ struct
                     Identifer(id, d);
                     out ")"
                 )
-            and Expression(A.Expression, d) = (out "Expression ()")
             and Mutability(A.Mut, d) = (out "mut")
                 | Mutability(A.NonMut, d) = (out "non-mut")
             and Unsafe(A.Unsafe, d) = out "unsafe"
@@ -806,13 +804,13 @@ struct
                 (
                     TraitFuncDecl(tfdecl, d+1);
                     nextLine(d);
-                    BlockExpressionOption(mbexp, d+1)
+                    ExpressionOption(mbexp, d+1)
                 )
                 | TraitItemType(A.TraitMethod(tmdecl, mbexp), d) = 
                 (
                     TraitMethodDecl(tmdecl, d+1);
                     nextLine(d);
-                    BlockExpressionOption(mbexp, d+1)
+                    ExpressionOption(mbexp, d+1)
                 )
                 | TraitItemType(A.TraitConst(id, ty, mexp), d) = (
                     Identifer(id, d+1);
@@ -892,7 +890,8 @@ struct
                     (Mutability (mut, d+1))
                 | SelfParam(A.SelfParamTY(mut, mty), d) =
                     (Mutability (mut, d+1); TypeOption(mty, d+1))
-            and BlockExpression(A.BlockExpression, d) = out "BlockExpression()"
+            and Expression(A.BlockExpr, d) = out "BlockExpr()"
+                | Expression(_, d) = out "Expression()"
             and MacroItem(A.MacroInvocationSemi(path, tokenTree), d) = 
                 (
                     out "MacroInvocationSemi (";
@@ -1074,7 +1073,7 @@ struct
                     nextLine(d);
                     out "be: ";
                     nextLine(d);
-                    BlockExpression(be, d+1);
+                    Expression(be, d+1);
                     nextLine(d);
                     out ")"
                 end
@@ -1137,10 +1136,8 @@ struct
                     (fn SOME(id) => (Identifer(id, d+1); out ":") | NONE => ()) mid;
                     Type(ty, d+1)
                 )
-            and ExpressionOption(SOME(exp), d) = Expression(exp, d)
+            and ExpressionOption(SOME(be), d) = Expression(be, d)
                 | ExpressionOption(NONE, d) = ()
-            and BlockExpressionOption(SOME(be), d) = BlockExpression(be, d)
-                | BlockExpressionOption(NONE, d) = ()
             and UnsafeOption(SOME(s), d) = Unsafe(s, d)
                 | UnsafeOption(NONE, d) = ()
             and OuterAttributeOption(SOME(outAttr), d) = (OuterAttribute(outAttr, d))

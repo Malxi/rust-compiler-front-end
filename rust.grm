@@ -34,7 +34,7 @@ fun error(pos, msg) = ErrorMsg.error pos
         | SHEBANG | SHEBANG_LINE of string
     | LOWER_THAN_LPARENT | LOWER_THAN_PATHSEP | LOWER_THAN_EXPR | LOWER_THAN_COLON | LOWER_THAN_PLUS
     | LAMBDA | SHIFTPLUS | FORTYPE | RANGE
-%nonterm shr of Token | ge of Token | shreq of Token
+%nonterm shr of int | ge of int | shreq of int
         | crate of Crate | inner_attrs of InnerAttribute list | items of Item list
         | outer_attrs of OuterAttribute list
         | inner_attr of InnerAttribute | outer_attr of OuterAttribute | meta_item of MetaItem 
@@ -45,7 +45,10 @@ fun error(pos, msg) = ErrorMsg.error pos
         | qualified_path_in_exp of QualifiedPathInExpression | qualified_path_in_type of QualifiedPathInType
         | type_path of TypePath | type_path_with_generic_fn of PathSeg list 
         | type_path_fn of TypePathFn | type_path_fn_inputs of Type list | type_path_fn_inputs_expansion of Type list
-        
+        | generic_args of GenericArgs | generic_args_lifetimes of Lifetime list
+        | generic_args_types of Type list | generic_args_bindings of Binding list
+        | generic_args_binding of Binding
+
         | item of Item | vis_item of VisItem | macro_item of MacroItem
         | visibility of Visibility | item_type of ItemType
         | use_tree of UseTree | use_tree_multi of UseTree list | use_tree_multi_expansion of UseTree list
@@ -107,33 +110,39 @@ fun error(pos, msg) = ErrorMsg.error pos
         | named_func_parameters of ExternFunctionParameter | named_func_parameters_expansion of NamedFunctionParam list
         | named_func_parameters_with_variadics of ExternFunctionParameter| named_func_param of NamedFunctionParam
 
-        | maybe_statements | statements |statements_expansion | statement | let_statement | exp_statement 
-        | expressions | expression of Expression | exp_nostruct | exp_nostruct_nolazybop
-        | exp_without_block | lit_exp of LiteralExpression | str_lit of Token | bool_lit of Token
-        | generic_args of GenericArgs | generic_args_lifetimes of Lifetime list
-        | generic_args_types of Type list | generic_args_bindings of Binding list
-        | generic_args_binding of Binding
-        | op_exp | grouped_exp 
-        | path_exp 
-        | array_exp | array_elements | array_elements_expansion | index_exp 
-        | tuple_exp | tuple_elements | tuple_elements_expansion | tuple_index_exp 
-        | struct_exp | struct_exp_struct | struct_exp_tuple | struct_exp_unit
-        | struct_exp_fields | struct_exp_fields_expansion | struct_base | struct_exp_field
+        | maybe_statements of Statement list| statements of Statement list
+        | statements_expansion of Statement list| statement of Statement 
+        | let_statement of LetStatement | exp_statement of Expression
+        | expressions of Expression list | expression of Expression | exp_nostruct of Expression 
+        | exp_nostruct_nolazybop of Expression
+        | exp_without_block of Expression 
+        | lit_exp of Expression | str_lit of Token | bool_lit of Token
+        | op_exp of Expression | grouped_exp of Expression
+        | array_exp of Expression | array_elements of Expression list 
+        | index_exp of Expression
+        | tuple_exp of Expression | tuple_elements of Expression list | tuple_elements_expansion of Expression list 
+        | tuple_index_exp of Expression
+        | struct_exp of Expression| struct_exp_struct of Expression | struct_exp_tuple | struct_exp_unit
+        | struct_exp_fields of StructOrEnumExprField list | struct_base of StructBase | struct_exp_field of StructOrEnumExprField
         | enum_var_exp | enum_exp_struct | enum_exp_tuple | enum_exp_field_less 
         | enum_exp_fields | enum_exp_fields_expansion | enum_exp_field
-        | call_exp | call_params | maybe_call_params | call_params_expansion 
-        | method_call_exp | field_exp 
-        | closure_exp | closure_parameters | closure_param | closure_parameters_expansion
-        | continue_exp | break_exp | range_exp 
-        | return_exp
-        | exp_with_block | block_exp of BlockExpression | unsafe_block_exp 
-        | loop_exp | maybe_loop_label | if_exp | if_let_exp 
-        | match_exp | match_arms | match_arms_expansion 
-        | match_arms_clauses | match_arms_clause | noblock_match_clause | block_match_clause
-        | match_arm | match_arm_patterns | match_arm_guard
-        | type_no_bounds of TypeNoBoundsType | types_noqpt_no_bounds of TypeNoBoundsType
+        | call_exp of Expression | call_params of Expression list 
+        | maybe_call_params of Expression list | call_params_expansion of Expression list
+        | method_call_exp of Expression | field_exp of Expression
+        | closure_exp of Expression | closure_parameters of ClosureParam list
+        | closure_param of ClosureParam | closure_parameters_expansion of ClosureParam list
+        | continue_exp of Expression | break_exp of Expression | range_exp of Expression
+        | return_exp of Expression
+        | exp_with_block of Expression | block_exp of Expression 
+        | unsafe_block_exp of Expression
+        | loop_exp of Expression | maybe_loop_label of LoopLabel option | if_exp of Expression| if_let_exp of Expression
+        | match_exp of Expression | match_arms of MatchArm list | match_arms_expansion of MatchArm list
+        | match_arms_clauses of MatchArm list | match_arms_clause of MatchArm 
+        | noblock_match_clause of MatchArm | block_match_clause of MatchArm
+        | match_arm of MatchArm | match_arm_patterns of Pattern list| match_arm_guard of MatchArmGuard
+        | type_no_bounds of TypeNoBounds | types_noqpt_no_bounds of TypeNoBounds
 
-        | noblock_exp | full_block_exp | exp_with_block_dot
+        | noblock_exp of Expression | full_block_exp of Expression | exp_with_block_dot of Expression
 
         | token_trees of TokenTree list | token_tree of TokenTree | delim_token_tree of TokenTree
         | token_no_delim of Token | token_no_delim_kleene of Token 
@@ -895,7 +904,7 @@ path_pat: path_in_exp                                           (PathPat(path_in
         | qualified_path_in_exp                                 (QPathPat(qualified_path_in_exp))
 
 (* ------Type------ *)
-types: type_no_bounds                                           (TypeNoBounds(type_no_bounds))
+types: type_no_bounds                                           (TypeNoBoundsT(type_no_bounds))
         | IMPL lifetime                                         (ImplTraitType(TypeParamBounds([LTB(lifetime)]), Pos(IMPLleft)))
         | IMPL trait_bound PLUS type_param_bounds               (ImplTraitType(
                                                                     TypeParamBounds(rev(TB(trait_bound)::((fn TypeParamBounds(lst) => rev(lst)) type_param_bounds))), 
@@ -992,7 +1001,7 @@ maybe_named_param: types                                        (MaybeNamedParam
                 | UNDERSCORE COLON types                        (MaybeNamedParamWD(Wildcard(Pos(UNDERSCOREleft)), types, Pos(UNDERSCOREleft)))
 
 types_noqpt:
-        types_noqpt_no_bounds                (TypeNoBounds(types_noqpt_no_bounds))
+        types_noqpt_no_bounds                                   (TypeNoBoundsT(types_noqpt_no_bounds))
         | IMPL lifetime                                         (ImplTraitType(TypeParamBounds([LTB(lifetime)]), Pos(IMPLleft)))
         | IMPL trait_bound PLUS type_param_bounds               (ImplTraitType(
                                                                     TypeParamBounds(rev(TB(trait_bound)::((fn TypeParamBounds(lst) => rev(lst)) type_param_bounds))), 
@@ -1075,16 +1084,16 @@ types_noqpt_no_bounds:
         | type_path NOT delim_token_tree                    (TNBMacro(type_path, delim_token_tree))
     
 (* ------Statements and Expression------ *)
-block_exp: LBRACE inner_attrs RBRACE                            (yaccLog("block_exp:1"); BlockExpression)
-        | LBRACE inner_attrs statements RBRACE                  (yaccLog("block_exp:2"); BlockExpression)
+block_exp: LBRACE inner_attrs RBRACE                            (BlockExpr(inner_attrs, [], Pos(LBRACEleft)))
+        | LBRACE inner_attrs statements RBRACE                  (BlockExpr(inner_attrs, statements, Pos(LBRACEleft)))
 (* statements: statements_expansion                                ()
             | statements_expansion exp_without_block            ()
             | exp_without_block                                 () *)
-statements: statements_expansion                                ()
-            | statements_expansion noblock_exp                  ()
-            | noblock_exp                                       ()
-statements_expansion: statements_expansion statement            ()
-                    | statement                                 ()
+statements: statements_expansion                                (rev(statements_expansion))
+            | statements_expansion noblock_exp                  (rev(STMTExpression(noblock_exp)::statements_expansion))
+            | noblock_exp                                       ([STMTExpression(noblock_exp)])
+statements_expansion: statements_expansion statement            (statement::statements_expansion)
+                    | statement                                 ([statement])
 (* statement: (* need to be completed *)
             SEMI                                                ()
             (* Use "vis_item" replace "item" for avoiding conflicts. *)
@@ -1094,307 +1103,53 @@ statements_expansion: statements_expansion statement            ()
             | exp_statement                                     ()
             (* item contain macro item *)
             | macro_invocation_semi                             () *)
-statement:  SEMI                                                ()
-            | let_statement                                     ()
+statement:  SEMI                                                (STMTSemi)
+            | let_statement                                     (STMLet(let_statement))
             (* | macro_invocation_semi                             () *)
-            | outer_attrs vis_item                              ()
-            | full_block_exp                                    ()
-            | noblock_exp SEMI                                  ()
-noblock_exp: lit_exp                                            ()
-            (* | path_exp %prec IDENT                                         (yaccLog("noblock_exp:path_exp")) *)
-            | path_in_exp %prec IDENT                           (yaccLog("noblock_exp:path_exp:1"))
-            | qualified_path_in_exp %prec IDENT                 (yaccLog("noblock_exp:path_exp:2"))
-            (* borrow noblock_exp*)
-            | AND expression                                    ()
-            | ANDAND expression                                 ()
-            | AND MUT expression                                ()
-            | ANDAND MUT expression                             ()
-            (* dereference noblock_exp*)
-            | STAR expression                                   ()
-            (* question mark operator *)
-            | noblock_exp QUESTION                              ()
-            (* negation noblock_exp *)
-            | MINUS expression                                  ()
-            | NOT expression                                    ()
-            (* arithmetic or logical noblock_exp *)
-            | noblock_exp PLUS expression                       ()
-            | noblock_exp MINUS expression                      ()
-            | noblock_exp STAR expression                       ()
-            | noblock_exp SLASH expression                      ()
-            | noblock_exp PERCENT expression                    ()
-            | noblock_exp AND expression                        ()
-            | noblock_exp OR expression                         ()
-            | noblock_exp CARET expression                      ()
-            | noblock_exp SHL expression                        ()
-            | noblock_exp shr expression %prec SHR              ()
-            (* comparision noblock_exp  *)
-            | noblock_exp EQEQ expression                       ()
-            | noblock_exp NE expression                         ()
-            | noblock_exp GT expression                         ()
-            | noblock_exp LT expression                         ()
-            | noblock_exp ge expression %prec GE                ()
-            | noblock_exp LE expression                         ()
-            (* lazy boolean noblock_exp *)
-            | noblock_exp OROR expression                       ()
-            | noblock_exp ANDAND expression                     ()
-            (* type case noblock_exp *)
-            | noblock_exp AS type_no_bounds                     ()
-            (* assignment noblock_exp *)
-            | noblock_exp EQ expression                         ()
-            (* compound assignment noblock_exp *)
-            | noblock_exp PLUSEQ expression                     ()
-            | noblock_exp MINUSEQ expression                    ()
-            | noblock_exp STAREQ expression                     ()
-            | noblock_exp SLASHEQ expression                    ()
-            | noblock_exp PERCENTEQ expression                  ()
-            | noblock_exp ANDEQ expression                      ()
-            | noblock_exp OREQ expression                       ()
-            | noblock_exp CARETEQ expression                    ()
-            | noblock_exp SHLEQ expression                      ()
-            | noblock_exp shreq expression %prec SHREQ          ()
-            | grouped_exp                                       ()
-            | array_exp                                         ()
-            | noblock_exp LBRACKET expression RBRACKET          ()
-            | tuple_exp                                         ()
-            (* method call *)
-            | noblock_exp DOT IDENT LPARENT
-                    maybe_call_params RPARENT                   ()
-            | noblock_exp DOT SUPER LPARENT
-                maybe_call_params RPARENT                       ()
-            | noblock_exp DOT SELFVALUE LPARENT
-                maybe_call_params RPARENT                       ()
-            | noblock_exp DOT SELFTYPE LPARENT
-                maybe_call_params RPARENT                       ()
-            | noblock_exp DOT CRATE LPARENT
-                maybe_call_params RPARENT                       ()
-            | noblock_exp DOT DOLLAR CRATE LPARENT
-                maybe_call_params RPARENT                       ()
-            | noblock_exp DOT IDENT PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | noblock_exp DOT SUPER PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | noblock_exp DOT SELFVALUE PATHSEP generic_args 
-                LPARENT maybe_call_params RPARENT               ()
-            | noblock_exp DOT SELFTYPE PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | noblock_exp DOT CRATE PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | noblock_exp DOT DOLLAR CRATE PATHSEP generic_args 
-                LPARENT maybe_call_params RPARENT               ()
-            | noblock_exp DOT INTEGER_LIT                       ()
-            | noblock_exp LPARENT RPARENT                       (yaccLog("noblock_exp:call_exp"))
-            | noblock_exp LPARENT call_params RPARENT           (yaccLog("noblock_exp:call_exp"))
-            | noblock_exp DOT IDENT                             ()
-            (* clousre *)
-            | OROR expression                                  ()
-            | OROR RARROW type_no_bounds block_exp             ()
-            | MOVE OROR expression                             ()
-            | MOVE OROR RARROW type_no_bounds block_exp        ()
-            | OR closure_parameters OR expression               ()
-            | OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-            | MOVE OR closure_parameters OR expression          ()
-            | MOVE OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-            | struct_exp                                        (yaccLog("struct_exp hit"))
-            | continue_exp                                      ()
-            | break_exp                                         ()
-            (* range *)
-            | noblock_exp DOTDOT expression                     (yaccLog("Range hit"))
-            | noblock_exp DOTDOT                                (yaccLog("RangeFrom hit"))
-            | DOTDOT expression                                 (yaccLog("RangeTo hit"))
-            | DOTDOT                                            (yaccLog("RangeFull hit"))
-            | noblock_exp DOTDOTEQ expression                   (yaccLog("RangeInclusive hit"))
-            | DOTDOTEQ expression                               (yaccLog("RangeToInclusive hit"))
-            | return_exp                                        ()
-            | macro_invocation                                  ()
-full_block_exp: exp_with_block                                  ()
-                | exp_with_block_dot                            ()
-exp_with_block_dot: exp_with_block 
-                    DOT path_in_exp_with_generic                ()
-                | exp_with_block_dot 
-                    DOT path_in_exp_with_generic                ()
-                | exp_with_block 
-                    DOT path_in_exp_with_generic 
-                    LBRACKET RBRACKET                           ()
-                | exp_with_block_dot 
-                    DOT path_in_exp_with_generic
-                    LBRACKET RBRACKET                           ()
-                | exp_with_block 
-                    DOT path_in_exp_with_generic 
-                    LBRACKET expression RBRACKET                ()
-                | exp_with_block_dot 
-                    DOT path_in_exp_with_generic
-                    LBRACKET expression RBRACKET                ()
-                | exp_with_block 
-                    DOT path_in_exp_with_generic 
-                    LPARENT RPARENT                             ()
-                | exp_with_block_dot 
-                    DOT path_in_exp_with_generic
-                    LPARENT RPARENT                             ()
-                | exp_with_block 
-                    DOT path_in_exp_with_generic 
-                    LPARENT expression RPARENT                  ()
-                | exp_with_block_dot 
-                    DOT path_in_exp_with_generic
-                    LPARENT expression RPARENT                  ()
-                | exp_with_block 
-                    DOT INTEGER_LIT                             ()
-                | exp_with_block_dot 
-                    DOT INTEGER_LIT                             ()
-
-
-let_statement: outer_attrs LET patterns SEMI                    ()
-            | outer_attrs LET patterns COLON types SEMI         ()
-            | outer_attrs LET patterns EQ expression SEMI       ()
+            | outer_attrs vis_item                              (STMTItem(VisItemType(outer_attrs, vis_item)))
+            | full_block_exp                                    (STMTExpression(full_block_exp))
+            | noblock_exp SEMI                                  (STMTExpression(noblock_exp))
+let_statement: outer_attrs LET patterns SEMI                    (LetStatement(outer_attrs, patterns, NONE, NONE, Pos(LETleft)))
+            | outer_attrs LET patterns COLON types SEMI         (LetStatement(outer_attrs, patterns, SOME(types), NONE, Pos(LETleft)))
+            | outer_attrs LET patterns EQ expression SEMI       (LetStatement(outer_attrs, patterns, NONE, SOME(expression), Pos(LETleft)))
             | outer_attrs LET patterns 
-                COLON types EQ expression SEMI                  ()
+                COLON types EQ expression SEMI                  (LetStatement(outer_attrs, patterns, SOME(types), SOME(expression), Pos(LETleft)))
+
 (* exp_statement: exp_without_block SEMI                           ()
             | exp_with_block                                    () *)
-expression: exp_without_block                                   (Expression)
-            | exp_with_block                                    (Expression)
-
-exp_nostruct: lit_exp                                           ()
-            (* | path_exp %prec IDENT                                         (yaccLog("exp_nostruct:path_exp")) *)
-            | path_in_exp                                       (yaccLog("exp_nostruct:path_exp:1"))
-            | qualified_path_in_exp                             (yaccLog("exp_nostruct:path_exp:2"))
-            (* borrow exp_nostruct*)
-            | AND exp_nostruct                                  ()
-            | ANDAND exp_nostruct                               ()
-            | AND MUT exp_nostruct                              ()
-            | ANDAND MUT exp_nostruct                           ()
-            (* dereference exp_nostruct*)
-            | STAR exp_nostruct                                 ()
-            (* question mark operator *)
-            | exp_nostruct QUESTION                             ()
-            (* negation exp_nostruct *)
-            | MINUS exp_nostruct                                ()
-            | NOT exp_nostruct                                  ()
-            (* arithmetic or logical exp_nostruct *)
-            | exp_nostruct PLUS exp_nostruct                    ()
-            | exp_nostruct MINUS exp_nostruct                   ()
-            | exp_nostruct STAR exp_nostruct                    ()
-            | exp_nostruct SLASH exp_nostruct                   ()
-            | exp_nostruct PERCENT exp_nostruct                 ()
-            | exp_nostruct AND exp_nostruct                     ()
-            | exp_nostruct OR exp_nostruct                      ()
-            | exp_nostruct CARET exp_nostruct                   ()
-            | exp_nostruct SHL exp_nostruct                     ()
-            | exp_nostruct shr exp_nostruct %prec SHR                     ()
-            (* comparision exp_nostruct  *)
-            | exp_nostruct EQEQ exp_nostruct                    ()
-            | exp_nostruct NE exp_nostruct                      ()
-            | exp_nostruct GT exp_nostruct                      ()
-            | exp_nostruct LT exp_nostruct                      ()
-            | exp_nostruct ge exp_nostruct %prec GE             ()
-            | exp_nostruct LE exp_nostruct                      ()
-            (* lazy boolean exp_nostruct *)
-            | exp_nostruct OROR exp_nostruct                    ()
-            | exp_nostruct ANDAND exp_nostruct                  ()
-            (* type case exp_nostruct *)
-            | exp_nostruct AS type_no_bounds                    ()
-            (* assignment exp_nostruct *)
-            | exp_nostruct EQ exp_nostruct                      ()
-            (* compound assignment exp_nostruct *)
-            | exp_nostruct PLUSEQ exp_nostruct                  ()
-            | exp_nostruct MINUSEQ exp_nostruct                 ()
-            | exp_nostruct STAREQ exp_nostruct                  ()
-            | exp_nostruct SLASHEQ exp_nostruct                 ()
-            | exp_nostruct PERCENTEQ exp_nostruct               ()
-            | exp_nostruct ANDEQ exp_nostruct                   ()
-            | exp_nostruct OREQ exp_nostruct                    ()
-            | exp_nostruct CARETEQ exp_nostruct                 ()
-            | exp_nostruct SHLEQ exp_nostruct                   ()
-            | exp_nostruct shreq exp_nostruct %prec SHREQ       ()
-            | grouped_exp                                       ()
-            | array_exp                                         ()
-            | exp_nostruct LBRACKET expression RBRACKET         ()
-            | tuple_exp                                         ()
-            (* method call *)
-            | exp_nostruct DOT IDENT LPARENT
-                    maybe_call_params RPARENT                   ()
-            | exp_nostruct DOT SUPER LPARENT
-                maybe_call_params RPARENT                       ()
-            | exp_nostruct DOT SELFVALUE LPARENT
-                maybe_call_params RPARENT                       ()
-            | exp_nostruct DOT SELFTYPE LPARENT
-                maybe_call_params RPARENT                       ()
-            | exp_nostruct DOT CRATE LPARENT
-                maybe_call_params RPARENT                       ()
-            | exp_nostruct DOT DOLLAR CRATE LPARENT
-                maybe_call_params RPARENT                       ()
-            | exp_nostruct DOT IDENT PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | exp_nostruct DOT SUPER PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | exp_nostruct DOT SELFVALUE PATHSEP generic_args 
-                LPARENT maybe_call_params RPARENT               ()
-            | exp_nostruct DOT SELFTYPE PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | exp_nostruct DOT CRATE PATHSEP generic_args
-                LPARENT maybe_call_params RPARENT               ()
-            | exp_nostruct DOT DOLLAR CRATE PATHSEP generic_args 
-                LPARENT maybe_call_params RPARENT               ()
-            | exp_nostruct DOT INTEGER_LIT                      ()
-            | exp_nostruct LPARENT RPARENT                      (yaccLog("exp_nostruct:call_exp"))
-            | exp_nostruct LPARENT call_params RPARENT          (yaccLog("exp_nostruct:call_exp"))
-            | exp_nostruct DOT IDENT                            ()
-            (* clousre *)
-            | OROR exp_nostruct                                ()
-            | OROR RARROW type_no_bounds block_exp             ()
-            | MOVE OROR exp_nostruct                           ()
-            | MOVE OROR RARROW type_no_bounds block_exp        ()
-            | OR closure_parameters OR exp_nostruct             ()
-            | OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-            | MOVE OR closure_parameters OR exp_nostruct        ()
-            | MOVE OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-            
-            | continue_exp                                      ()
-            | break_exp                                         ()
-            (* range *)
-            | exp_nostruct DOTDOT exp_nostruct                  (yaccLog("Range hit"))
-            | exp_nostruct DOTDOT                               (yaccLog("RangeFrom hit"))
-            | DOTDOT exp_nostruct                               (yaccLog("RangeTo hit"))
-            | DOTDOT                                            (yaccLog("RangeFull hit"))
-            | exp_nostruct DOTDOTEQ exp_nostruct                (yaccLog("RangeInclusive hit"))
-            | DOTDOTEQ exp_nostruct                             (yaccLog("RangeToInclusive hit"))
-            | return_exp                                        ()
-            | exp_with_block                                    ()
-            | macro_invocation                                  ()
+expression: exp_without_block                                   (exp_without_block)
+            | exp_with_block                                    (exp_with_block)
 
 exp_without_block: (* outer_attrs before exp *)
-                 lit_exp                                        ()
-                (* | path_exp %prec IDENT                                     (yaccLog("exp_without_block:path_exp")) *)
-                | path_in_exp %prec IDENT                       (yaccLog("exp_without_block:path_exp:1"))
-                | qualified_path_in_exp %prec IDENT             (yaccLog("exp_without_block:path_exp:2"))
-                | op_exp                                        ()
-                | grouped_exp                                   ()
-                | array_exp                                     (yaccLog("array_exp hit"))
-                | index_exp                                     (yaccLog("index_exp hit"))
-                | tuple_exp                                     ()
-                | tuple_index_exp                               ()
-                | struct_exp                                    (yaccLog("struct_exp hit"))
+                 lit_exp                                        (lit_exp)
+                | path_in_exp %prec IDENT                       (PathExpr(path_in_exp))
+                | qualified_path_in_exp %prec IDENT             (QPathExpr(qualified_path_in_exp))
+                | op_exp                                        (op_exp)
+                | grouped_exp                                   (grouped_exp)
+                | array_exp                                     (array_exp)
+                | index_exp                                     (index_exp)
+                | tuple_exp                                     (tuple_exp)
+                | tuple_index_exp                               (tuple_index_exp)
+                | struct_exp                                    (struct_exp)
                 (* struct exp contains enum *)
                 (* | enum_var_exp                                  () *)
-                | call_exp                                      (yaccLog("exp_without_block:call_exp"))
-                | method_call_exp                               ()
-                | field_exp                                     ()
-                | closure_exp                                   (yaccLog("closure_exp hit"))
-                | continue_exp                                  ()
-                | break_exp                                     (yaccLog("break_exp hit"))
-                | range_exp                                     ()
-                | return_exp                                    ()
+                | call_exp                                      (call_exp)
+                | method_call_exp                               (method_call_exp)
+                | field_exp                                     (field_exp)
+                | closure_exp                                   (closure_exp)
+                | continue_exp                                  (continue_exp)
+                | break_exp                                     (break_exp)
+                | range_exp                                     (range_exp)
+                | return_exp                                    (return_exp)
                 (* macro_invocation_semi contains macro_invocation *)
-                | macro_invocation                              ()
+                | macro_invocation                              (MacroExpr(macro_invocation))
 
-lit_exp: str_lit                                                (LiteralExpression(str_lit))
-        | bool_lit                                              (LiteralExpression(bool_lit))
-        | CHAR_LIT                                              (LiteralExpression(TKCHAR_LIT(CHAR_LIT, Pos(CHAR_LITleft))))
-        | BYTE_LIT                                              (LiteralExpression(TKBYTE_LIT(BYTE_LIT, Pos(BYTE_LITleft))))
-        | INTEGER_LIT                                           (LiteralExpression(TKINTEGER_LIT(INTEGER_LIT, Pos(INTEGER_LITleft))))
-        | FLOAT_LIT                                             (LiteralExpression(TKFLOAT_LIT(FLOAT_LIT, Pos(FLOAT_LITleft))))
+lit_exp: str_lit                                                (LiteralExpr(str_lit))
+        | bool_lit                                              (LiteralExpr(bool_lit))
+        | CHAR_LIT                                              (LiteralExpr(TKCHAR_LIT(CHAR_LIT, Pos(CHAR_LITleft))))
+        | BYTE_LIT                                              (LiteralExpr(TKBYTE_LIT(BYTE_LIT, Pos(BYTE_LITleft))))
+        | INTEGER_LIT                                           (LiteralExpr(TKINTEGER_LIT(INTEGER_LIT, Pos(INTEGER_LITleft))))
+        | FLOAT_LIT                                             (LiteralExpr(TKFLOAT_LIT(FLOAT_LIT, Pos(FLOAT_LITleft))))
 bool_lit: TRUE                                                  (TKTRUE(Pos(TRUEleft)))
         | FALSE                                                 (TKFALSE(Pos(FALSEleft)))
 str_lit: STR_LIT                                                (TKSTR_LIT(STR_LIT, Pos(STR_LITleft)))
@@ -1402,114 +1157,113 @@ str_lit: STR_LIT                                                (TKSTR_LIT(STR_L
         | BYTE_STR_LIT                                          (TKBYTE_STR_LIT(BYTE_STR_LIT, Pos(BYTE_STR_LITleft)))
         | RAW_BYTE_STR_LIT                                      (TKRAW_BYTE_STR_LIT(RAW_BYTE_STR_LIT, Pos(RAW_BYTE_STR_LITleft)))
 
-path_exp: path_in_exp                                           (yaccLog("path_exp:1"))
-        | qualified_path_in_exp                                 (yaccLog("path_exp:2"))
-
 
 op_exp: (* borrow expression*)
-        AND expression                                          ()
-        | ANDAND expression                                     ()
-        | AND MUT expression                                    ()
-        | ANDAND MUT expression                                 ()
+        AND expression                                          (BorrowExpr(BOnce(Pos(ANDleft)), NonMut, expression, Pos(ANDleft)))
+        | ANDAND expression                                     (BorrowExpr(BTwice(Pos(ANDANDleft)), NonMut, expression, Pos(ANDANDleft)))
+        | AND MUT expression                                    (BorrowExpr(BOnce(Pos(ANDleft)), Mut, expression, Pos(ANDleft)))
+        | ANDAND MUT expression                                 (BorrowExpr(BTwice(Pos(ANDANDleft)), Mut, expression, Pos(ANDANDleft)))
         (* dereference expression*)
-        | STAR expression                                       ()
+        | STAR expression                                       (DereferenceExpr(expression, Pos(STARleft)))
         (* question mark operator *)
-        | expression QUESTION                                   ()
+        | expression QUESTION                                   (ErrorPropagationExpr(expression, Pos(QUESTIONleft)))
         (* negation expression *)
-        | MINUS expression                                      ()
-        | NOT expression                                        ()
+        | MINUS expression                                      (NegExpr(expression, Pos(MINUSleft)))
+        | NOT expression                                        (NotExpr(expression, Pos(NOTleft)))
         (* arithmetic or logical expression *)
-        | expression PLUS expression                            ()
-        | expression MINUS expression                           ()
-        | expression STAR expression                            ()
-        | expression SLASH expression                           ()
-        | expression PERCENT expression                         ()
-        | expression AND expression                             ()
-        | expression OR expression                              ()
-        | expression CARET expression                           ()
-        | expression SHL expression                             ()
-        | expression shr expression %prec SHR                   ()
+        | expression PLUS expression                            (ArithmeticOrLogicalExpr(expression1, AddOp, expression2, Pos(PLUSleft)))
+        | expression MINUS expression                           (ArithmeticOrLogicalExpr(expression1, SubOp, expression2, Pos(MINUSleft)))
+        | expression STAR expression                            (ArithmeticOrLogicalExpr(expression1, MultOp, expression2, Pos(STARleft)))
+        | expression SLASH expression                           (ArithmeticOrLogicalExpr(expression1, DiviOp, expression2, Pos(SLASHleft)))
+        | expression PERCENT expression                         (ArithmeticOrLogicalExpr(expression1, RemainderOp, expression2, Pos(PERCENTleft)))
+        | expression AND expression                             (ArithmeticOrLogicalExpr(expression1, AndOp, expression2, Pos(ANDleft)))
+        | expression OR expression                              (ArithmeticOrLogicalExpr(expression1, OrOp, expression2, Pos(ORleft)))
+        | expression CARET expression                           (ArithmeticOrLogicalExpr(expression1, XorOp, expression2, Pos(CARETleft)))
+        | expression SHL expression                             (ArithmeticOrLogicalExpr(expression1, LShiftOp, expression2, Pos(SHLleft)))
+        | expression shr expression %prec SHR                   (ArithmeticOrLogicalExpr(expression1, RShiftOp, expression2, Pos(shr)))
         (* comparision expression  *)
-        | expression EQEQ expression                            ()
-        | expression NE expression                              ()
-        | expression GT expression                              ()
-        | expression LT expression                              ()
-        | expression ge expression %prec GE                     ()
-        | expression LE expression                              ()
+        | expression EQEQ expression                            (ComparisonExpr(expression1, EqOp, expression2, Pos(EQEQleft)))
+        | expression NE expression                              (ComparisonExpr(expression1, NeqOp, expression2, Pos(NEleft)))
+        | expression GT expression                              (ComparisonExpr(expression1, GtOp, expression2, Pos(GTleft)))
+        | expression LT expression                              (ComparisonExpr(expression1, LtOp, expression2, Pos(LTleft)))
+        | expression ge expression %prec GE                     (ComparisonExpr(expression1, GeOp, expression2, Pos(ge)))
+        | expression LE expression                              (ComparisonExpr(expression1, LeOp, expression2, Pos(LEleft)))
         (* lazy boolean expression *)
-        | expression OROR expression                            ()
-        | expression ANDAND expression                          ()
+        | expression OROR expression                            (LazyBooleanExpr(expression1, LazyOrOp,expression2, Pos(ORORleft)))
+        | expression ANDAND expression                          (LazyBooleanExpr(expression1, LazyAndOp,expression2, Pos(ANDANDleft)))
         (* type case expression *)
-        | expression AS type_no_bounds                          ()
+        | expression AS type_no_bounds                          (TypeCastExpr(expression, type_no_bounds, Pos(ASleft)))
         (* assignment expression *)
-        | expression EQ expression                              ()
+        | expression EQ expression                              (AssignmentExpr(expression1, expression2, Pos(EQleft)))
         (* compound assignment expression *)
-        | expression PLUSEQ expression                          ()
-        | expression MINUSEQ expression                         ()
-        | expression STAREQ expression                          ()
-        | expression SLASHEQ expression                         ()
-        | expression PERCENTEQ expression                       ()
-        | expression ANDEQ expression                           ()
-        | expression OREQ expression                            ()
-        | expression CARETEQ expression                         ()
-        | expression SHLEQ expression                           ()
-        | expression shreq expression %prec SHREQ               ()
+        | expression PLUSEQ expression                          (CompoundAssignmentExpr(expression1, AddEqOp,expression2, Pos(PLUSEQleft)))
+        | expression MINUSEQ expression                         (CompoundAssignmentExpr(expression1, SubEqOp,expression2, Pos(MINUSEQleft)))
+        | expression STAREQ expression                          (CompoundAssignmentExpr(expression1, MultEqOp,expression2, Pos(STAREQleft)))
+        | expression SLASHEQ expression                         (CompoundAssignmentExpr(expression1, DiviEqOp,expression2, Pos(SLASHEQleft)))
+        | expression PERCENTEQ expression                       (CompoundAssignmentExpr(expression1, RemainderEqOp,expression2, Pos(PERCENTEQleft)))
+        | expression ANDEQ expression                           (CompoundAssignmentExpr(expression1, AndEqOp,expression2, Pos(ANDEQleft)))
+        | expression OREQ expression                            (CompoundAssignmentExpr(expression1, OrEqOp,expression2, Pos(OREQleft)))
+        | expression CARETEQ expression                         (CompoundAssignmentExpr(expression1, XorEqOp,expression2, Pos(CARETEQleft)))
+        | expression SHLEQ expression                           (CompoundAssignmentExpr(expression1, LShiftEqOp,expression2, Pos(SHLEQleft)))
+        | expression shreq expression %prec SHREQ               (CompoundAssignmentExpr(expression1, RShiftEqOp,expression2, Pos(shreq)))
 
-grouped_exp: LPARENT inner_attrs expression RPARENT             ()
+grouped_exp: LPARENT inner_attrs expression RPARENT             (GroupedExpr(inner_attrs, expression, Pos(LPARENTleft)))
 
-array_exp: LBRACKET inner_attrs array_elements RBRACKET         ()
-            | LBRACKET inner_attrs RBRACKET                     ()
-array_elements: expression SEMI expression                      ()
-            | array_elements_expansion maybe_comma              ()
-array_elements_expansion: array_elements_expansion 
-                        COMMA expression                        ()
-                        | expression                            () 
+array_exp: LBRACKET inner_attrs RBRACKET                        (ArrayExpr(inner_attrs, [], Pos(LBRACKETleft)))
+        | LBRACKET inner_attrs 
+            expression SEMI expression RBRACKET                 (ArrayInitExpr(inner_attrs, expression1, expression2, Pos(LBRACKETleft)))
+        | LBRACKET inner_attrs 
+            array_elements maybe_comma  RBRACKET                (ArrayExpr(inner_attrs, rev(array_elements), Pos(LBRACKETleft)))
+array_elements: array_elements COMMA expression                 (expression::array_elements)
+                | expression                                    ([expression]) 
 
-index_exp: expression LBRACKET expression RBRACKET              ()
+index_exp: expression LBRACKET expression RBRACKET              (IndexExpr(expression1, expression2, Pos(LBRACKETleft)))
 
-tuple_exp: LPARENT inner_attrs RPARENT                          ()
-            | LPARENT inner_attrs tuple_elements RPARENT        ()
-tuple_elements: tuple_elements_expansion                        ()
-            | tuple_elements_expansion expression               ()
+tuple_exp: LPARENT inner_attrs RPARENT                          (TupleExpr(inner_attrs, [], Pos(LPARENTleft)))
+            | LPARENT inner_attrs tuple_elements RPARENT        (TupleExpr(inner_attrs, tuple_elements, Pos(LPARENTleft)))
+tuple_elements: tuple_elements_expansion                        (rev(tuple_elements_expansion))
+            | tuple_elements_expansion expression               (rev(expression::tuple_elements_expansion))
 tuple_elements_expansion: tuple_elements_expansion 
-                        expression COMMA                        ()
-                        | expression COMMA                      ()
+                        expression COMMA                        (expression::tuple_elements_expansion)
+                        | expression COMMA                      ([expression])
 
-tuple_index_exp: expression DOT INTEGER_LIT                     ()
+tuple_index_exp: expression DOT INTEGER_LIT                     (TupleIndexingExpr(expression, TKTUPLE_INDEX(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(DOTleft)))
 
-struct_exp: struct_exp_struct                                   ()
+struct_exp: struct_exp_struct                                   (struct_exp_struct)
             (* | struct_exp_tuple                                  () *)
             (* path_in_exp is ambigous with path exp *)
             (* | struct_exp_unit                                   () *)
-struct_exp_struct: path_in_exp 
-                LBRACE inner_attrs struct_exp_fields RBRACE     ()        
-                | path_in_exp 
-                LBRACE inner_attrs struct_base RBRACE           ()
-                | path_in_exp LBRACE inner_attrs RBRACE         ()
-struct_exp_fields: struct_exp_fields_expansion                  ()
-                | struct_exp_fields_expansion COMMA             ()
-                | struct_exp_fields_expansion COMMA struct_base ()
-struct_exp_fields_expansion: struct_exp_fields_expansion
-                            COMMA struct_exp_field              ()
-                            | struct_exp_field                  ()
-struct_exp_field: IDENT                                         ()
-                | IDENT COLON expression                        ()
-                | INTEGER_LIT COLON expression                  ()
-struct_base: DOTDOT expression                                  ()
-struct_exp_tuple: path_in_exp 
+struct_exp_struct: 
+                path_in_exp LBRACE inner_attrs RBRACE           (StructOrEnumExpr(path_in_exp, inner_attrs, [], NONE))
+                | path_in_exp LBRACE inner_attrs 
+                    struct_exp_fields RBRACE                    (StructOrEnumExpr(path_in_exp, inner_attrs, rev(struct_exp_fields), NONE))  
+                | path_in_exp LBRACE inner_attrs 
+                    struct_exp_fields COMMA RBRACE              (StructOrEnumExpr(path_in_exp, inner_attrs, rev(struct_exp_fields), NONE))              
+                | path_in_exp LBRACE inner_attrs 
+                    struct_base RBRACE                          (StructOrEnumExpr(path_in_exp, inner_attrs, [], SOME(struct_base)))
+                | path_in_exp LBRACE inner_attrs 
+                    struct_exp_fields COMMA struct_base RBRACE  (StructOrEnumExpr(path_in_exp, inner_attrs, rev(struct_exp_fields), SOME(struct_base)))
+struct_exp_fields: struct_exp_fields
+                    COMMA struct_exp_field                      (struct_exp_field::struct_exp_fields)
+                    | struct_exp_field                          ([struct_exp_field])
+struct_exp_field: IDENT                                         (StructOrEnumExprFieldID(Identifer(IDENT), Pos(IDENTleft)))
+                | IDENT COLON expression                        (StructOrEnumExprFieldBD(Identifer(IDENT), expression, Pos(IDENTleft)))
+                | INTEGER_LIT COLON expression                  (StructOrEnumExprFieldTI(TKTUPLE_INDEX(INTEGER_LIT, Pos(INTEGER_LITleft)), expression, Pos(INTEGER_LITleft)))
+struct_base: DOTDOT expression                                  (StructBase (expression, Pos(DOTDOTleft)))
+(* struct_exp_tuple: path_in_exp 
             LPARENT inner_attrs expressions RPARENT             ()
             | path_in_exp 
-            LPARENT inner_attrs expressions COMMA RPARENT       ()
-expressions: expressions COMMA expression                       ()
-            | expression                                        ()
-struct_exp_unit: path_in_exp                                    ()
+            LPARENT inner_attrs expressions COMMA RPARENT       () *)
+expressions: expressions COMMA expression                       (expression::expressions)
+            | expression                                        ([expression])
+(* struct_exp_unit: path_in_exp                                    () *)
 
-call_exp: expression LPARENT RPARENT                            ()
-        | expression LPARENT call_params RPARENT                ()
-call_params: call_params_expansion                              ()
-            | call_params_expansion COMMA                       ()
-call_params_expansion: call_params_expansion COMMA expression   ()
-                    | expression                                ()
+call_exp: expression LPARENT RPARENT                            (CallExpr(expression, [], Pos(LPARENTleft)))
+        | expression LPARENT call_params RPARENT                (CallExpr(expression, call_params, Pos(LPARENTleft)))
+call_params: call_params_expansion                              (rev(call_params_expansion))
+            | call_params_expansion COMMA                       (rev(call_params_expansion))
+call_params_expansion: call_params_expansion COMMA expression   (expression::call_params_expansion)
+                    | expression                                ([expression])
 
 (* method_call_exp: expression DOT path_exp_segment LPARENT RPARENT 
                     %prec LPARENT                               ()
@@ -1518,227 +1272,117 @@ call_params_expansion: call_params_expansion COMMA expression   ()
                     %prec LPARENT                               () *)
 
 method_call_exp: expression DOT IDENT LPARENT
-                    maybe_call_params RPARENT                   ()
+                    maybe_call_params RPARENT                   (MethodCallExpr(expression, [IDPS(Identifer(IDENT))], maybe_call_params))
                 | expression DOT SUPER LPARENT
-                    maybe_call_params RPARENT                   ()
+                    maybe_call_params RPARENT                   (MethodCallExpr(expression, [SuperPS], maybe_call_params))
                 | expression DOT SELFVALUE LPARENT
-                    maybe_call_params RPARENT                   ()
+                    maybe_call_params RPARENT                   (MethodCallExpr(expression, [SelfValuePS], maybe_call_params))
                 | expression DOT SELFTYPE LPARENT
-                    maybe_call_params RPARENT                   ()
+                    maybe_call_params RPARENT                   (MethodCallExpr(expression, [SelfTypePS], maybe_call_params))
                 | expression DOT CRATE LPARENT
-                    maybe_call_params RPARENT                   ()
+                    maybe_call_params RPARENT                   (MethodCallExpr(expression, [CratePS], maybe_call_params))
                 | expression DOT DOLLAR CRATE LPARENT
-                    maybe_call_params RPARENT                   ()
+                    maybe_call_params RPARENT                   (MethodCallExpr(expression, [DCratePS], maybe_call_params))
                 | expression DOT IDENT PATHSEP generic_args
-                    LPARENT maybe_call_params RPARENT           ()
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(expression, [IDPS(Identifer(IDENT)), GenericPS(generic_args)], maybe_call_params))
                 | expression DOT SUPER PATHSEP generic_args
-                    LPARENT maybe_call_params RPARENT           ()
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(expression, [SuperPS, GenericPS(generic_args)], maybe_call_params))
                 | expression DOT SELFVALUE PATHSEP generic_args 
-                    LPARENT maybe_call_params RPARENT           ()
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(expression, [SelfValuePS, GenericPS(generic_args)], maybe_call_params))
                 | expression DOT SELFTYPE PATHSEP generic_args
-                    LPARENT maybe_call_params RPARENT           ()
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(expression, [SelfTypePS, GenericPS(generic_args)], maybe_call_params))
                 | expression DOT CRATE PATHSEP generic_args
-                    LPARENT maybe_call_params RPARENT           ()
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(expression, [CratePS, GenericPS(generic_args)], maybe_call_params))
                 | expression DOT DOLLAR CRATE PATHSEP generic_args 
-                    LPARENT maybe_call_params RPARENT           ()
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(expression, [DCratePS, GenericPS(generic_args)], maybe_call_params))
 
-maybe_call_params: call_params                                  ()
-                |                                               ()
+maybe_call_params: call_params                                  (call_params)
+                |                                               ([])
 
-field_exp: expression DOT IDENT                                 ()
+field_exp: expression DOT IDENT                                 (FieldExpr(expression, [IDPS(Identifer(IDENT))], Pos(DOTleft)))
 
-closure_exp: OROR expression                                   ()
-            | OROR RARROW type_no_bounds block_exp             ()
-            | MOVE OROR expression                             ()
-            | MOVE OROR RARROW type_no_bounds block_exp        ()
-            | OR closure_parameters OR expression               ()
+closure_exp: OROR expression                                    (ClosureExpr(NONE, [], NONE, expression, Pos(ORORleft)))
+            | OROR RARROW type_no_bounds block_exp              (ClosureExpr(NONE, [], SOME(type_no_bounds), block_exp, Pos(ORORleft)))
+            | MOVE OROR expression                              (ClosureExpr(SOME(Move), [], NONE, expression, Pos(MOVEleft)))
+            | MOVE OROR RARROW type_no_bounds block_exp         (ClosureExpr(SOME(Move), [], SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+            | OR closure_parameters OR expression               (ClosureExpr(NONE, closure_parameters, NONE, expression, Pos(ORleft)))
             | OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-            | MOVE OR closure_parameters OR expression          ()
+                RARROW type_no_bounds block_exp                 (ClosureExpr(NONE, closure_parameters, SOME(type_no_bounds), block_exp, Pos(ORleft)))
+            | MOVE OR closure_parameters OR expression          (ClosureExpr(SOME(Move), closure_parameters, NONE, expression, Pos(MOVEleft)))
             | MOVE OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-closure_parameters: closure_param closure_parameters_expansion  ()
+                RARROW type_no_bounds block_exp                 (ClosureExpr(SOME(Move), closure_parameters, SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+closure_parameters: closure_param closure_parameters_expansion  (rev(closure_param::rev(closure_parameters_expansion)))
                     | closure_param 
-                        closure_parameters_expansion COMMA      ()
+                        closure_parameters_expansion COMMA      (rev(closure_param::rev(closure_parameters_expansion)))
 closure_parameters_expansion: closure_parameters_expansion 
-                            COMMA closure_param                 ()
-                            |                                   ()
-closure_param: patterns                                         ()
-                | patterns COLON types                          ()
+                            COMMA closure_param                 (closure_param::closure_parameters_expansion)
+                            |                                   (nil)
+closure_param: patterns                                         (ClosureParam(patterns, NONE))
+                | patterns COLON types                          (ClosureParam(patterns, SOME(types)))
 
-continue_exp: CONTINUE                                          ()
-            | CONTINUE LIFETIME_OR_LABEL                        ()
+continue_exp: CONTINUE                                          (ContinueExpr(NONE, Pos(CONTINUEleft)))
+            | CONTINUE LIFETIME_OR_LABEL                        (ContinueExpr(
+                                                                    SOME(TKLIFETIME_OR_LABEL(LIFETIME_OR_LABEL, Pos(LIFETIME_OR_LABELleft))),
+                                                                    Pos(CONTINUEleft)
+                                                                ))
 
-break_exp: BREAK %prec LOWER_THAN_EXPR                          ()
-        | BREAK LIFETIME_OR_LABEL %prec LOWER_THAN_EXPR         ()
-        | BREAK expression %prec LOWER_THAN_EXPR                ()
+break_exp: BREAK %prec LOWER_THAN_EXPR                          (BreakExpr(NONE, NONE, Pos(BREAKleft)))
+        | BREAK LIFETIME_OR_LABEL %prec LOWER_THAN_EXPR         (BreakExpr(SOME(TKLIFETIME_OR_LABEL(LIFETIME_OR_LABEL, Pos(LIFETIME_OR_LABELleft))), NONE, Pos(BREAKleft)))
+        | BREAK expression %prec LOWER_THAN_EXPR                (BreakExpr(NONE, SOME(expression), Pos(BREAKleft)))
         | BREAK LIFETIME_OR_LABEL expression 
-            %prec LOWER_THAN_EXPR                               ()
+            %prec LOWER_THAN_EXPR                               (BreakExpr(SOME(TKLIFETIME_OR_LABEL(LIFETIME_OR_LABEL, Pos(LIFETIME_OR_LABELleft))), SOME(expression), Pos(BREAKleft)))
 
-range_exp: expression DOTDOT expression                         (yaccLog("Range hit"))
-        | expression DOTDOT                                     (yaccLog("RangeFrom hit"))
-        | DOTDOT expression                                     (yaccLog("RangeTo hit"))
-        | DOTDOT                                                (yaccLog("RangeFull hit"))
-        | expression DOTDOTEQ expression                        (yaccLog("RangeInclusive hit"))
-        | DOTDOTEQ expression                                   (yaccLog("RangeToInclusive hit"))
+range_exp: expression DOTDOT expression                         (RangeExpr(expression1, expression2, Pos(DOTDOTleft)))
+        | expression DOTDOT                                     (RangeFormExpr(expression, Pos(DOTDOTleft)))
+        | DOTDOT expression                                     (RangeToExpr(expression, Pos(DOTDOTleft)))
+        | DOTDOT                                                (RangeFullExpr(Pos(DOTDOTleft)))
+        | expression DOTDOTEQ expression                        (RangeInclusiveExpr(expression1, expression2, Pos(DOTDOTEQleft)))
+        | DOTDOTEQ expression                                   (RangeToInclusiveExpr(expression, Pos(DOTDOTEQleft)))
 
-return_exp: RETURN                                              ()
-            | RETURN expression                                 ()
+return_exp: RETURN                                              (RetrunExpr(NONE, Pos(RETURNleft)))
+            | RETURN expression                                 (RetrunExpr(SOME(expression), Pos(RETURNleft)))
 
 exp_with_block: 
-            block_exp                                       ()
+            block_exp                                           (block_exp)
             (* | UNSAFE block_exp                                  () *)
-            | loop_exp                                          ()
-            | if_exp                                            ()
-            | if_let_exp                                        ()
-            | match_exp                                         ()
+            | loop_exp                                          (loop_exp)
+            | if_exp                                            (if_exp)
+            | if_let_exp                                        (if_let_exp)
+            | match_exp                                         (match_exp)
 
-loop_exp: maybe_loop_label LOOP block_exp                       ()
-        | maybe_loop_label WHILE exp_nostruct block_exp         ()
+loop_exp: maybe_loop_label LOOP block_exp                       (InfiniteLoopExpr(maybe_loop_label, block_exp, Pos(LOOPleft)))
+        | maybe_loop_label WHILE exp_nostruct block_exp         (PredicateLoopExpr(maybe_loop_label, exp_nostruct, block_exp, Pos(WHILEleft)))
         | maybe_loop_label 
-            WHILE LET patterns EQ exp_nostruct block_exp        ()
+            WHILE LET patterns EQ exp_nostruct block_exp        (PredicatePatLoopExpr(maybe_loop_label, patterns, exp_nostruct, block_exp, Pos(WHILEleft)))
         | maybe_loop_label 
-            FOR patterns IN exp_nostruct block_exp              ()
-maybe_loop_label: LIFETIME_OR_LABEL COLON                       ()
-                |                                               ()
+            FOR patterns IN exp_nostruct block_exp              (IteratorLoopExpr(maybe_loop_label, patterns, exp_nostruct, block_exp, Pos(FORleft)))
+maybe_loop_label: LIFETIME_OR_LABEL COLON                       (SOME(LoopLabel(TKLIFETIME_OR_LABEL(LIFETIME_OR_LABEL, Pos(LIFETIME_OR_LABELleft)))))
+                |                                               (NONE)
 
-if_exp: IF exp_nostruct block_exp                               ()
-        | IF exp_nostruct block_exp ELSE block_exp              ()
-        | IF exp_nostruct block_exp ELSE if_exp                 ()
-        | IF exp_nostruct block_exp ELSE if_let_exp             ()
+if_exp: IF exp_nostruct block_exp                               (IfExpr(exp_nostruct, block_exp, NONE, Pos(IFleft)))
+        | IF exp_nostruct block_exp ELSE block_exp              (IfExpr(exp_nostruct, block_exp, SOME(block_exp), Pos(IFleft)))
+        | IF exp_nostruct block_exp ELSE if_exp                 (IfExpr(exp_nostruct, block_exp, SOME(if_exp), Pos(IFleft)))
+        | IF exp_nostruct block_exp ELSE if_let_exp             (IfExpr(exp_nostruct, block_exp, SOME(if_let_exp), Pos(IFleft)))
 
-if_let_exp: IF LET patterns EQ exp_nostruct_nolazybop block_exp (yaccLog("if_let_exp:1"))
+if_let_exp: IF LET patterns EQ exp_nostruct_nolazybop block_exp (IfLetExpr(patterns, exp_nostruct_nolazybop, block_exp, NONE, Pos(IFleft)))
         | IF LET patterns EQ exp_nostruct_nolazybop block_exp
-            ELSE block_exp                                      ()
+            ELSE block_exp                                      (IfLetExpr(patterns, exp_nostruct_nolazybop, block_exp1, SOME(block_exp2), Pos(IFleft)))
         | IF LET patterns EQ exp_nostruct_nolazybop block_exp
-            ELSE if_exp                                         ()
+            ELSE if_exp                                         (IfLetExpr(patterns, exp_nostruct_nolazybop, block_exp, SOME(if_exp), Pos(IFleft)))
         | IF LET patterns EQ exp_nostruct_nolazybop block_exp
-            ELSE if_let_exp                                     ()
-exp_nostruct_nolazybop: 
-            lit_exp                                             ()
-            (* | path_exp %prec IDENT                                         (yaccLog("exp_nostruct_nolazybop:path_exp")) *)
-            | path_in_exp %prec IDENT                 (yaccLog("path_exp:1"))
-            | qualified_path_in_exp %prec IDENT                                (yaccLog("path_exp:2"))
-            (* borrow exp_nostruct_nolazybop*)
-            | AND exp_nostruct_nolazybop                        ()
-            | ANDAND exp_nostruct_nolazybop                     ()
-            | AND MUT exp_nostruct_nolazybop                    ()
-            | ANDAND MUT exp_nostruct_nolazybop                 ()
-            (* dereference exp_nostruct_nolazybop*)
-            | STAR exp_nostruct_nolazybop                       ()
-            (* question mark operator *)
-            | exp_nostruct_nolazybop QUESTION                   ()
-            (* negation exp_nostruct *)
-            | MINUS exp_nostruct_nolazybop                      ()
-            | NOT exp_nostruct_nolazybop                        ()
-            (* arithmetic or logical exp_nostruct_nolazybop *)
-            | exp_nostruct_nolazybop 
-                PLUS exp_nostruct_nolazybop                     ()
-            | exp_nostruct_nolazybop 
-                MINUS exp_nostruct_nolazybop                    ()
-            | exp_nostruct_nolazybop 
-                STAR exp_nostruct_nolazybop                     ()
-            | exp_nostruct_nolazybop 
-                SLASH exp_nostruct_nolazybop                    ()
-            | exp_nostruct_nolazybop 
-                PERCENT exp_nostruct_nolazybop                  ()
-            | exp_nostruct_nolazybop 
-                AND exp_nostruct_nolazybop                      ()
-            | exp_nostruct_nolazybop 
-                OR exp_nostruct_nolazybop                       ()
-            | exp_nostruct_nolazybop 
-                CARET exp_nostruct_nolazybop                    ()
-            | exp_nostruct_nolazybop 
-                SHL exp_nostruct_nolazybop                      ()
-            | exp_nostruct_nolazybop 
-                shr exp_nostruct_nolazybop %prec SHR            ()
-            (* comparision exp_nostruct_nolazybop  *)
-            | exp_nostruct_nolazybop 
-                EQEQ exp_nostruct_nolazybop                     ()
-            | exp_nostruct_nolazybop 
-                NE exp_nostruct_nolazybop                       ()
-            | exp_nostruct_nolazybop 
-                GT exp_nostruct_nolazybop                       ()
-            | exp_nostruct_nolazybop 
-                LT exp_nostruct_nolazybop                       ()
-            | exp_nostruct_nolazybop 
-                ge exp_nostruct_nolazybop %prec GE              ()
-            | exp_nostruct_nolazybop 
-                LE exp_nostruct_nolazybop                       ()
-            (* type case exp_nostruct_nolazybop *)
-            | exp_nostruct_nolazybop 
-                AS type_no_bounds                               ()
-            (* assignment exp_nostruct_nolazybop *)
-            | exp_nostruct_nolazybop 
-                EQ exp_nostruct_nolazybop                       ()
-            (* compound assignment exp_nostruct_nolazybop *)
-            | exp_nostruct_nolazybop 
-                PLUSEQ exp_nostruct_nolazybop                   ()
-            | exp_nostruct_nolazybop 
-                MINUSEQ exp_nostruct_nolazybop                  ()
-            | exp_nostruct_nolazybop 
-                STAREQ exp_nostruct_nolazybop                   ()
-            | exp_nostruct_nolazybop 
-                SLASHEQ exp_nostruct_nolazybop                  ()
-            | exp_nostruct_nolazybop 
-                PERCENTEQ exp_nostruct_nolazybop                ()
-            | exp_nostruct_nolazybop 
-                ANDEQ exp_nostruct_nolazybop                    ()
-            | exp_nostruct_nolazybop 
-                OREQ exp_nostruct_nolazybop                     ()
-            | exp_nostruct_nolazybop 
-                CARETEQ exp_nostruct_nolazybop                  ()
-            | exp_nostruct_nolazybop 
-                SHLEQ exp_nostruct_nolazybop                    ()
-            | exp_nostruct_nolazybop 
-                shreq exp_nostruct_nolazybop %prec SHREQ        ()
-            | grouped_exp                                       ()
-            | array_exp                                         ()
-            | exp_nostruct_nolazybop 
-                LBRACKET expression RBRACKET                    ()
-            | tuple_exp                                         ()
-            | exp_nostruct_nolazybop DOT INTEGER_LIT            ()
-            | exp_nostruct_nolazybop LPARENT RPARENT            ()
-            | exp_nostruct_nolazybop LPARENT call_params RPARENT()
-            | exp_nostruct_nolazybop DOT IDENT                  ()
-            (* clousre *)
-            | OROR exp_nostruct_nolazybop                      ()
-            | OROR RARROW type_no_bounds block_exp             ()
-            | MOVE OROR exp_nostruct_nolazybop                 ()
-            | MOVE OROR RARROW type_no_bounds block_exp        ()
-            | OR closure_parameters OR exp_nostruct_nolazybop   ()
-            | OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-            | MOVE OR closure_parameters 
-                OR exp_nostruct_nolazybop                       ()
-            | MOVE OR closure_parameters OR 
-                RARROW type_no_bounds block_exp                 ()
-            
-            | continue_exp                                      ()
-            | break_exp                                         ()
-            (* range *)
-            | exp_nostruct_nolazybop 
-                DOTDOT exp_nostruct_nolazybop                   (yaccLog("Range hit"))
-            | exp_nostruct_nolazybop DOTDOT                     (yaccLog("RangeFrom hit"))
-            | DOTDOT exp_nostruct_nolazybop                     (yaccLog("RangeTo hit"))
-            | DOTDOT                                            (yaccLog("RangeFull hit"))
-            | exp_nostruct_nolazybop 
-                DOTDOTEQ exp_nostruct_nolazybop                 (yaccLog("RangeInclusive hit"))
-            | DOTDOTEQ exp_nostruct_nolazybop                   (yaccLog("RangeToInclusive hit"))
-            | return_exp                                        ()
-            | exp_with_block                                    ()
+            ELSE if_let_exp                                     (IfLetExpr(patterns, exp_nostruct_nolazybop, block_exp, SOME(if_let_exp), Pos(IFleft)))
 
 (* match_exp: MATCH exp_nostruct LBRACE inner_attrs RBRACE         ()
         | MATCH exp_nostruct 
             LBRACE inner_attrs match_arms RBRACE                () *)
-match_exp: MATCH exp_nostruct LBRACE inner_attrs RBRACE         ()
+match_exp: MATCH exp_nostruct LBRACE inner_attrs RBRACE         (MatchExpr(exp_nostruct, inner_attrs, [], Pos(MATCHleft)))
         | MATCH exp_nostruct 
-            LBRACE inner_attrs match_arms_clauses RBRACE        ()
+            LBRACE inner_attrs match_arms_clauses RBRACE        (MatchExpr(exp_nostruct, inner_attrs, rev(match_arms_clauses), Pos(MATCHleft)))
         | MATCH exp_nostruct 
             LBRACE inner_attrs match_arms_clauses 
-            noblock_match_clause RBRACE                         ()
+            noblock_match_clause RBRACE                         (MatchExpr(exp_nostruct, inner_attrs, rev(noblock_match_clause::rev(match_arms_clauses)), Pos(MATCHleft)))
         | MATCH exp_nostruct 
-            LBRACE inner_attrs noblock_match_clause RBRACE      ()
+            LBRACE inner_attrs noblock_match_clause RBRACE      (MatchExpr(exp_nostruct, inner_attrs, [noblock_match_clause], Pos(MATCHleft)))
 (* match_arms: match_arms_expansion                                ()
             | match_arms_expansion exp_without_block            () *)
 (* expression conatins block_exp *)
@@ -1750,21 +1394,391 @@ match_exp: MATCH exp_nostruct LBRACE inner_attrs RBRACE         ()
                     (* | match_arm FATARROW block_exp              () *)
                     | match_arm FATARROW expression             () *)
                  
-match_arms_clauses: match_arms_clauses match_arms_clause        ()
-                    | match_arms_clause                         ()
-match_arms_clause: noblock_match_clause COMMA                   ()
-                | block_match_clause                            ()
-                | block_match_clause COMMA                      ()
-noblock_match_clause: match_arm FATARROW noblock_exp            ()
-                    | match_arm FATARROW exp_with_block_dot     ()
-block_match_clause: match_arm FATARROW exp_with_block           ()
+match_arms_clauses: match_arms_clauses match_arms_clause        (match_arms_clause::match_arms_clauses)
+                    | match_arms_clause                         ([match_arms_clause])
+match_arms_clause: noblock_match_clause COMMA                   (noblock_match_clause)
+                | block_match_clause                            (block_match_clause)
+                | block_match_clause COMMA                      (block_match_clause)
+noblock_match_clause: outer_attrs match_arm_patterns 
+                        FATARROW noblock_exp                    (MatchArm(outer_attrs, rev(match_arm_patterns), NONE, noblock_exp))
+                    | outer_attrs match_arm_patterns 
+                        FATARROW exp_with_block_dot             (MatchArm(outer_attrs, rev(match_arm_patterns), NONE, exp_with_block_dot))
+                    | outer_attrs match_arm_patterns 
+                        match_arm_guard FATARROW noblock_exp    (MatchArm(outer_attrs, rev(match_arm_patterns), SOME(match_arm_guard), noblock_exp))
+                    | outer_attrs match_arm_patterns 
+                        match_arm_guard FATARROW 
+                        exp_with_block_dot                      (MatchArm(outer_attrs, rev(match_arm_patterns), SOME(match_arm_guard), exp_with_block_dot))
+block_match_clause: outer_attrs match_arm_patterns 
+                        FATARROW exp_with_block                 (MatchArm(outer_attrs, rev(match_arm_patterns), NONE, exp_with_block))
+                    | outer_attrs match_arm_patterns 
+                        match_arm_guard FATARROW 
+                        exp_with_block                          (MatchArm(outer_attrs, rev(match_arm_patterns), SOME(match_arm_guard), exp_with_block))
 
-match_arm: outer_attrs match_arm_patterns                       ()
-        | outer_attrs match_arm_patterns match_arm_guard        ()
-match_arm_patterns: match_arm_patterns OR patterns              ()
-                    | OR patterns                               ()
-                    | patterns                                  ()
-match_arm_guard: IF expression                                  ()
+(* match_arm: outer_attrs match_arm_patterns                       ()
+        | outer_attrs match_arm_patterns match_arm_guard        () *)
+match_arm_patterns: match_arm_patterns OR patterns              (patterns::match_arm_patterns)
+                    | OR patterns                               ([patterns])
+                    | patterns                                  ([patterns])
+match_arm_guard: IF expression                                  (MatchArmGuard(expression, Pos(IFleft)))
+
+noblock_exp: lit_exp                                            (lit_exp)
+            (* | path_exp %prec IDENT                                         (yaccLog("noblock_exp:path_exp")) *)
+            | path_in_exp %prec IDENT                           (PathExpr(path_in_exp))
+            | qualified_path_in_exp %prec IDENT                 (QPathExpr(qualified_path_in_exp))
+            (* borrow noblock_exp*)
+            | AND expression                                    (BorrowExpr(BOnce(Pos(ANDleft)), NonMut, expression, Pos(ANDleft)))
+            | ANDAND expression                                 (BorrowExpr(BTwice(Pos(ANDANDleft)), NonMut, expression, Pos(ANDANDleft)))
+            | AND MUT expression                                (BorrowExpr(BOnce(Pos(ANDleft)), Mut, expression, Pos(ANDleft)))
+            | ANDAND MUT expression                             (BorrowExpr(BTwice(Pos(ANDANDleft)), Mut, expression, Pos(ANDANDleft)))
+            (* dereference expression*)
+            | STAR expression                                   (DereferenceExpr(expression, Pos(STARleft)))
+            (* question mark operator *)
+            | noblock_exp QUESTION                              (ErrorPropagationExpr(noblock_exp, Pos(QUESTIONleft)))
+            (* negation expression *)
+            | MINUS expression                                  (NegExpr(expression, Pos(MINUSleft)))
+            | NOT expression                                    (NotExpr(expression, Pos(NOTleft)))
+            (* arithmetic or logical expression *)
+            | noblock_exp PLUS expression                       (ArithmeticOrLogicalExpr(noblock_exp, AddOp, expression, Pos(PLUSleft)))
+            | noblock_exp MINUS expression                      (ArithmeticOrLogicalExpr(noblock_exp, SubOp, expression, Pos(MINUSleft)))
+            | noblock_exp STAR expression                       (ArithmeticOrLogicalExpr(noblock_exp, MultOp, expression, Pos(STARleft)))
+            | noblock_exp SLASH expression                      (ArithmeticOrLogicalExpr(noblock_exp, DiviOp, expression, Pos(SLASHleft)))
+            | noblock_exp PERCENT expression                    (ArithmeticOrLogicalExpr(noblock_exp, RemainderOp, expression, Pos(PERCENTleft)))
+            | noblock_exp AND expression                        (ArithmeticOrLogicalExpr(noblock_exp, AndOp, expression, Pos(ANDleft)))
+            | noblock_exp OR expression                         (ArithmeticOrLogicalExpr(noblock_exp, OrOp, expression, Pos(ORleft)))
+            | noblock_exp CARET expression                      (ArithmeticOrLogicalExpr(noblock_exp, XorOp, expression, Pos(CARETleft)))
+            | noblock_exp SHL expression                        (ArithmeticOrLogicalExpr(noblock_exp, LShiftOp, expression, Pos(SHLleft)))
+            | noblock_exp shr expression %prec SHR              (ArithmeticOrLogicalExpr(noblock_exp, RShiftOp, expression, Pos(shr)))
+            (* comparision expression  *)
+            | noblock_exp EQEQ expression                       (ComparisonExpr(noblock_exp, EqOp, expression, Pos(EQEQleft)))
+            | noblock_exp NE expression                         (ComparisonExpr(noblock_exp, NeqOp, expression, Pos(NEleft)))
+            | noblock_exp GT expression                         (ComparisonExpr(noblock_exp, GtOp, expression, Pos(GTleft)))
+            | noblock_exp LT expression                         (ComparisonExpr(noblock_exp, LtOp, expression, Pos(LTleft)))
+            | noblock_exp ge expression %prec GE                (ComparisonExpr(noblock_exp, GeOp, expression, Pos(ge)))
+            | noblock_exp LE expression                         (ComparisonExpr(noblock_exp, LeOp, expression, Pos(LEleft)))
+            (* lazy boolean expression *)
+            | noblock_exp OROR expression                       (LazyBooleanExpr(noblock_exp, LazyOrOp,expression, Pos(ORORleft)))
+            | noblock_exp ANDAND expression                     (LazyBooleanExpr(noblock_exp, LazyAndOp,expression, Pos(ANDANDleft)))
+            (* type case noblock_exp *)
+            | noblock_exp AS type_no_bounds                     (TypeCastExpr(noblock_exp, type_no_bounds, Pos(ASleft)))
+            (* assignment noblock_exp *)
+            | noblock_exp EQ expression                         (AssignmentExpr(noblock_exp, expression, Pos(EQleft)))
+            (* compound assignment expression *)
+            | noblock_exp PLUSEQ expression                     (CompoundAssignmentExpr(noblock_exp, AddEqOp,expression, Pos(PLUSEQleft)))
+            | noblock_exp MINUSEQ expression                    (CompoundAssignmentExpr(noblock_exp, SubEqOp,expression, Pos(MINUSEQleft)))
+            | noblock_exp STAREQ expression                     (CompoundAssignmentExpr(noblock_exp, MultEqOp,expression, Pos(STAREQleft)))
+            | noblock_exp SLASHEQ expression                    (CompoundAssignmentExpr(noblock_exp, DiviEqOp,expression, Pos(SLASHEQleft)))
+            | noblock_exp PERCENTEQ expression                  (CompoundAssignmentExpr(noblock_exp, RemainderEqOp,expression, Pos(PERCENTEQleft)))
+            | noblock_exp ANDEQ expression                      (CompoundAssignmentExpr(noblock_exp, AndEqOp,expression, Pos(ANDEQleft)))
+            | noblock_exp OREQ expression                       (CompoundAssignmentExpr(noblock_exp, OrEqOp,expression, Pos(OREQleft)))
+            | noblock_exp CARETEQ expression                    (CompoundAssignmentExpr(noblock_exp, XorEqOp,expression, Pos(CARETEQleft)))
+            | noblock_exp SHLEQ expression                      (CompoundAssignmentExpr(noblock_exp, LShiftEqOp,expression, Pos(SHLEQleft)))
+            | noblock_exp shreq expression %prec SHREQ          (CompoundAssignmentExpr(noblock_exp, RShiftEqOp,expression, Pos(shreq)))
+            | grouped_exp                                       (grouped_exp)
+            | array_exp                                         (array_exp)
+            | noblock_exp LBRACKET expression RBRACKET          (IndexExpr(noblock_exp, expression, Pos(LBRACKETleft)))
+            | tuple_exp                                         (tuple_exp)
+            (* Method Call *)
+            | noblock_exp DOT IDENT LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(noblock_exp, [IDPS(Identifer(IDENT))], maybe_call_params))
+            | noblock_exp DOT SUPER LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(noblock_exp, [SuperPS], maybe_call_params))
+            | noblock_exp DOT SELFVALUE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(noblock_exp, [SelfValuePS], maybe_call_params))
+            | noblock_exp DOT SELFTYPE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(noblock_exp, [SelfTypePS], maybe_call_params))
+            | noblock_exp DOT CRATE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(noblock_exp, [CratePS], maybe_call_params))
+            | noblock_exp DOT DOLLAR CRATE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(noblock_exp, [DCratePS], maybe_call_params))
+            | noblock_exp DOT IDENT PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(noblock_exp, [IDPS(Identifer(IDENT)), GenericPS(generic_args)], maybe_call_params))
+            | noblock_exp DOT SUPER PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(noblock_exp, [SuperPS, GenericPS(generic_args)], maybe_call_params))
+            | noblock_exp DOT SELFVALUE PATHSEP generic_args 
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(noblock_exp, [SelfValuePS, GenericPS(generic_args)], maybe_call_params))
+            | noblock_exp DOT SELFTYPE PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(noblock_exp, [SelfTypePS, GenericPS(generic_args)], maybe_call_params))
+            | noblock_exp DOT CRATE PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(noblock_exp, [CratePS, GenericPS(generic_args)], maybe_call_params))
+            | noblock_exp DOT DOLLAR CRATE PATHSEP generic_args 
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(noblock_exp, [DCratePS, GenericPS(generic_args)], maybe_call_params))
+            (* tuple index *)
+            | noblock_exp DOT INTEGER_LIT                       (TupleIndexingExpr(noblock_exp, TKTUPLE_INDEX(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(DOTleft)))
+            (* call *)
+            | noblock_exp LPARENT RPARENT                       (CallExpr(noblock_exp, [], Pos(LPARENTleft)))
+            | noblock_exp LPARENT call_params RPARENT           (CallExpr(noblock_exp, call_params, Pos(LPARENTleft)))
+            (* field *)
+            | noblock_exp DOT IDENT                             (FieldExpr(noblock_exp, [IDPS(Identifer(IDENT))], Pos(DOTleft)))
+            (* clousre *)
+            | OROR expression                                   (ClosureExpr(NONE, [], NONE, expression, Pos(ORORleft)))
+            | OROR RARROW type_no_bounds block_exp              (ClosureExpr(NONE, [], SOME(type_no_bounds), block_exp, Pos(ORORleft)))
+            | MOVE OROR expression                              (ClosureExpr(SOME(Move), [], NONE, expression, Pos(MOVEleft)))
+            | MOVE OROR RARROW type_no_bounds block_exp         (ClosureExpr(SOME(Move), [], SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+            | OR closure_parameters OR expression               (ClosureExpr(NONE, closure_parameters, NONE, expression, Pos(ORleft)))
+            | OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 (ClosureExpr(NONE, closure_parameters, SOME(type_no_bounds), block_exp, Pos(ORleft)))
+            | MOVE OR closure_parameters OR expression          (ClosureExpr(SOME(Move), closure_parameters, NONE, expression, Pos(MOVEleft)))
+            | MOVE OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 (ClosureExpr(SOME(Move), closure_parameters, SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+            | struct_exp                                        (struct_exp)
+            | continue_exp                                      (continue_exp)
+            | break_exp                                         (break_exp)
+            (* range *)
+            | noblock_exp DOTDOT expression                     (RangeExpr(noblock_exp, expression, Pos(DOTDOTleft)))
+            | noblock_exp DOTDOT                                (RangeFormExpr(noblock_exp, Pos(DOTDOTleft)))
+            | DOTDOT expression                                 (RangeToExpr(expression, Pos(DOTDOTleft)))
+            | DOTDOT                                            (RangeFullExpr(Pos(DOTDOTleft)))
+            | noblock_exp DOTDOTEQ expression                   (RangeInclusiveExpr(noblock_exp, expression, Pos(DOTDOTEQleft)))
+            | DOTDOTEQ expression                               (RangeToInclusiveExpr(expression, Pos(DOTDOTEQleft)))
+            | return_exp                                        (return_exp)
+            | macro_invocation                                  (MacroExpr(macro_invocation))
+full_block_exp: exp_with_block                                  (exp_with_block)
+                | exp_with_block_dot                            (exp_with_block_dot)
+exp_with_block_dot: exp_with_block 
+                    DOT path_in_exp_with_generic                (FieldExpr(exp_with_block, path_in_exp_with_generic, Pos(DOTleft)))
+                | exp_with_block_dot 
+                    DOT path_in_exp_with_generic                (FieldExpr(exp_with_block_dot, path_in_exp_with_generic, Pos(DOTleft)))
+                | exp_with_block 
+                    DOT path_in_exp_with_generic 
+                    LBRACKET expression RBRACKET                (IndexExpr(FieldExpr(exp_with_block, path_in_exp_with_generic, Pos(DOTleft)), expression, Pos(LBRACKETleft)))
+                | exp_with_block_dot 
+                    DOT path_in_exp_with_generic
+                    LBRACKET expression RBRACKET                (IndexExpr(FieldExpr(exp_with_block_dot, path_in_exp_with_generic, Pos(DOTleft)), expression, Pos(LBRACKETleft)))
+                | exp_with_block 
+                    DOT path_in_exp_with_generic 
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(exp_with_block, path_in_exp_with_generic, maybe_call_params))
+                | exp_with_block_dot 
+                    DOT path_in_exp_with_generic
+                    LPARENT maybe_call_params RPARENT           (MethodCallExpr(exp_with_block_dot, path_in_exp_with_generic, maybe_call_params))
+                | exp_with_block 
+                    DOT INTEGER_LIT                             (TupleIndexingExpr(exp_with_block, TKTUPLE_INDEX(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(DOTleft)))
+                | exp_with_block_dot 
+                    DOT INTEGER_LIT                             (TupleIndexingExpr(exp_with_block_dot, TKTUPLE_INDEX(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(DOTleft)))
+
+exp_nostruct: lit_exp                                           (lit_exp)
+            (* | path_exp %prec IDENT                                         (yaccLog("exp_nostruct:path_exp")) *)
+            | path_in_exp %prec IDENT                           (PathExpr(path_in_exp))
+            | qualified_path_in_exp %prec IDENT                 (QPathExpr(qualified_path_in_exp))
+            (* borrow exp_nostruct*)
+            | AND exp_nostruct                                  (BorrowExpr(BOnce(Pos(ANDleft)), NonMut, exp_nostruct, Pos(ANDleft)))
+            | ANDAND exp_nostruct                               (BorrowExpr(BTwice(Pos(ANDANDleft)), NonMut, exp_nostruct, Pos(ANDANDleft)))
+            | AND MUT exp_nostruct                              (BorrowExpr(BOnce(Pos(ANDleft)), Mut, exp_nostruct, Pos(ANDleft)))
+            | ANDAND MUT exp_nostruct                           (BorrowExpr(BTwice(Pos(ANDANDleft)), Mut, exp_nostruct, Pos(ANDANDleft)))
+            (* dereference exp_nostruct*)
+            | STAR exp_nostruct                                 (DereferenceExpr(exp_nostruct, Pos(STARleft)))
+            (* question mark operator *)
+            | exp_nostruct QUESTION                             (ErrorPropagationExpr(exp_nostruct, Pos(QUESTIONleft)))
+            (* negation exp_nostruct *)
+            | MINUS exp_nostruct                                (NegExpr(exp_nostruct, Pos(MINUSleft)))
+            | NOT exp_nostruct                                  (NotExpr(exp_nostruct, Pos(NOTleft)))
+            (* arithmetic or logical expression *)
+            | exp_nostruct PLUS exp_nostruct                    (ArithmeticOrLogicalExpr(exp_nostruct1, AddOp, exp_nostruct2, Pos(PLUSleft)))
+            | exp_nostruct MINUS exp_nostruct                   (ArithmeticOrLogicalExpr(exp_nostruct1, SubOp, exp_nostruct2, Pos(MINUSleft)))
+            | exp_nostruct STAR exp_nostruct                    (ArithmeticOrLogicalExpr(exp_nostruct1, MultOp, exp_nostruct2, Pos(STARleft)))
+            | exp_nostruct SLASH exp_nostruct                   (ArithmeticOrLogicalExpr(exp_nostruct1, DiviOp, exp_nostruct2, Pos(SLASHleft)))
+            | exp_nostruct PERCENT exp_nostruct                 (ArithmeticOrLogicalExpr(exp_nostruct1, RemainderOp, exp_nostruct2, Pos(PERCENTleft)))
+            | exp_nostruct AND exp_nostruct                     (ArithmeticOrLogicalExpr(exp_nostruct1, AndOp, exp_nostruct2, Pos(ANDleft)))
+            | exp_nostruct OR exp_nostruct                      (ArithmeticOrLogicalExpr(exp_nostruct1, OrOp, exp_nostruct2, Pos(ORleft)))
+            | exp_nostruct CARET exp_nostruct                   (ArithmeticOrLogicalExpr(exp_nostruct1, XorOp, exp_nostruct2, Pos(CARETleft)))
+            | exp_nostruct SHL exp_nostruct                     (ArithmeticOrLogicalExpr(exp_nostruct1, LShiftOp, exp_nostruct2, Pos(SHLleft)))
+            | exp_nostruct shr exp_nostruct %prec SHR           (ArithmeticOrLogicalExpr(exp_nostruct1, RShiftOp, exp_nostruct2, Pos(shr)))
+            (* comparision expression  *)
+            | exp_nostruct EQEQ exp_nostruct                    (ComparisonExpr(exp_nostruct1, EqOp, exp_nostruct2, Pos(EQEQleft)))
+            | exp_nostruct NE exp_nostruct                      (ComparisonExpr(exp_nostruct1, NeqOp, exp_nostruct2, Pos(NEleft)))
+            | exp_nostruct GT exp_nostruct                      (ComparisonExpr(exp_nostruct1, GtOp, exp_nostruct2, Pos(GTleft)))
+            | exp_nostruct LT exp_nostruct                      (ComparisonExpr(exp_nostruct1, LtOp, exp_nostruct2, Pos(LTleft)))
+            | exp_nostruct ge exp_nostruct %prec GE             (ComparisonExpr(exp_nostruct1, GeOp, exp_nostruct2, Pos(ge)))
+            | exp_nostruct LE exp_nostruct                      (ComparisonExpr(exp_nostruct1, LeOp, exp_nostruct2, Pos(LEleft)))
+            (* lazy boolean expression *)
+            | exp_nostruct OROR exp_nostruct                    (LazyBooleanExpr(exp_nostruct1, LazyOrOp,exp_nostruct2, Pos(ORORleft)))
+            | exp_nostruct ANDAND exp_nostruct                  (LazyBooleanExpr(exp_nostruct1, LazyAndOp,exp_nostruct2, Pos(ANDANDleft)))
+            (* type case exp_nostruct *)
+            | exp_nostruct AS type_no_bounds                    (TypeCastExpr(exp_nostruct, type_no_bounds, Pos(ASleft)))
+            (* assignment exp_nostruct *)
+            | exp_nostruct EQ exp_nostruct                      (AssignmentExpr(exp_nostruct1, exp_nostruct2, Pos(EQleft)))
+            (* compound assignment expression *)
+            | exp_nostruct PLUSEQ exp_nostruct                  (CompoundAssignmentExpr(exp_nostruct1, AddEqOp,exp_nostruct2, Pos(PLUSEQleft)))
+            | exp_nostruct MINUSEQ exp_nostruct                 (CompoundAssignmentExpr(exp_nostruct1, SubEqOp,exp_nostruct2, Pos(MINUSEQleft)))
+            | exp_nostruct STAREQ exp_nostruct                  (CompoundAssignmentExpr(exp_nostruct1, MultEqOp,exp_nostruct2, Pos(STAREQleft)))
+            | exp_nostruct SLASHEQ exp_nostruct                 (CompoundAssignmentExpr(exp_nostruct1, DiviEqOp,exp_nostruct2, Pos(SLASHEQleft)))
+            | exp_nostruct PERCENTEQ exp_nostruct               (CompoundAssignmentExpr(exp_nostruct1, RemainderEqOp,exp_nostruct2, Pos(PERCENTEQleft)))
+            | exp_nostruct ANDEQ exp_nostruct                   (CompoundAssignmentExpr(exp_nostruct1, AndEqOp,exp_nostruct2, Pos(ANDEQleft)))
+            | exp_nostruct OREQ exp_nostruct                    (CompoundAssignmentExpr(exp_nostruct1, OrEqOp,exp_nostruct2, Pos(OREQleft)))
+            | exp_nostruct CARETEQ exp_nostruct                 (CompoundAssignmentExpr(exp_nostruct1, XorEqOp,exp_nostruct2, Pos(CARETEQleft)))
+            | exp_nostruct SHLEQ exp_nostruct                   (CompoundAssignmentExpr(exp_nostruct1, LShiftEqOp,exp_nostruct2, Pos(SHLEQleft)))
+            | exp_nostruct shreq exp_nostruct %prec SHREQ       (CompoundAssignmentExpr(exp_nostruct1, RShiftEqOp,exp_nostruct2, Pos(shreq)))
+            | grouped_exp                                       (grouped_exp)
+            | array_exp                                         (array_exp)
+            | exp_nostruct LBRACKET expression RBRACKET         (IndexExpr(exp_nostruct, expression, Pos(LBRACKETleft)))
+            | tuple_exp                                         (tuple_exp)
+            (* Method Call *)
+            | exp_nostruct DOT IDENT LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [IDPS(Identifer(IDENT))], maybe_call_params))
+            | exp_nostruct DOT SUPER LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [SuperPS], maybe_call_params))
+            | exp_nostruct DOT SELFVALUE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [SelfValuePS], maybe_call_params))
+            | exp_nostruct DOT SELFTYPE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [SelfTypePS], maybe_call_params))
+            | exp_nostruct DOT CRATE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [CratePS], maybe_call_params))
+            | exp_nostruct DOT DOLLAR CRATE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [DCratePS], maybe_call_params))
+            | exp_nostruct DOT IDENT PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [IDPS(Identifer(IDENT)), GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT SUPER PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [SuperPS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT SELFVALUE PATHSEP generic_args 
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [SelfValuePS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT SELFTYPE PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [SelfTypePS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT CRATE PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [CratePS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT DOLLAR CRATE PATHSEP generic_args 
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [DCratePS, GenericPS(generic_args)], maybe_call_params))
+            (* tuple index *)
+            | exp_nostruct DOT INTEGER_LIT                      (TupleIndexingExpr(exp_nostruct, TKTUPLE_INDEX(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(DOTleft)))
+            (* call *)
+            | exp_nostruct LPARENT RPARENT                      (CallExpr(exp_nostruct, [], Pos(LPARENTleft)))
+            | exp_nostruct LPARENT call_params RPARENT          (CallExpr(exp_nostruct, call_params, Pos(LPARENTleft)))
+            (* field *)
+            | exp_nostruct DOT IDENT                            (FieldExpr(exp_nostruct, [IDPS(Identifer(IDENT))], Pos(DOTleft)))
+            (* clousre *)
+            | OROR exp_nostruct                                 (ClosureExpr(NONE, [], NONE, exp_nostruct, Pos(ORORleft)))
+            | OROR RARROW type_no_bounds block_exp              (ClosureExpr(NONE, [], SOME(type_no_bounds), block_exp, Pos(ORORleft)))
+            | MOVE OROR exp_nostruct                            (ClosureExpr(SOME(Move), [], NONE, exp_nostruct, Pos(MOVEleft)))
+            | MOVE OROR RARROW type_no_bounds block_exp         (ClosureExpr(SOME(Move), [], SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+            | OR closure_parameters OR exp_nostruct             (ClosureExpr(NONE, closure_parameters, NONE, exp_nostruct, Pos(ORleft)))
+            | OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 (ClosureExpr(NONE, closure_parameters, SOME(type_no_bounds), block_exp, Pos(ORleft)))
+            | MOVE OR closure_parameters OR exp_nostruct        (ClosureExpr(SOME(Move), closure_parameters, NONE, exp_nostruct, Pos(MOVEleft)))
+            | MOVE OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 (ClosureExpr(SOME(Move), closure_parameters, SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+            | continue_exp                                      (continue_exp)
+            | break_exp                                         (break_exp)
+            (* range *)
+            | exp_nostruct DOTDOT exp_nostruct                  (RangeExpr(exp_nostruct1, exp_nostruct2, Pos(DOTDOTleft)))
+            | exp_nostruct DOTDOT                               (RangeFormExpr(exp_nostruct, Pos(DOTDOTleft)))
+            | DOTDOT exp_nostruct                               (RangeToExpr(exp_nostruct, Pos(DOTDOTleft)))
+            | DOTDOT                                            (RangeFullExpr(Pos(DOTDOTleft)))
+            | exp_nostruct DOTDOTEQ exp_nostruct                (RangeInclusiveExpr(exp_nostruct1, exp_nostruct2, Pos(DOTDOTEQleft)))
+            | DOTDOTEQ exp_nostruct                             (RangeToInclusiveExpr(exp_nostruct, Pos(DOTDOTEQleft)))
+            | return_exp                                        (return_exp)
+            | exp_with_block                                    (exp_with_block)
+            | macro_invocation                                  (MacroExpr(macro_invocation))
+
+exp_nostruct_nolazybop: 
+             lit_exp                                            (lit_exp)
+            (* | path_exp %prec IDENT                                         (yaccLog("exp_nostruct:path_exp")) *)
+            | path_in_exp %prec IDENT                           (PathExpr(path_in_exp))
+            | qualified_path_in_exp %prec IDENT                 (QPathExpr(qualified_path_in_exp))
+            (* borrow exp_nostruct*)
+            | AND exp_nostruct                                  (BorrowExpr(BOnce(Pos(ANDleft)), NonMut, exp_nostruct, Pos(ANDleft)))
+            | ANDAND exp_nostruct                               (BorrowExpr(BTwice(Pos(ANDANDleft)), NonMut, exp_nostruct, Pos(ANDANDleft)))
+            | AND MUT exp_nostruct                              (BorrowExpr(BOnce(Pos(ANDleft)), Mut, exp_nostruct, Pos(ANDleft)))
+            | ANDAND MUT exp_nostruct                           (BorrowExpr(BTwice(Pos(ANDANDleft)), Mut, exp_nostruct, Pos(ANDANDleft)))
+            (* dereference exp_nostruct*)
+            | STAR exp_nostruct                                 (DereferenceExpr(exp_nostruct, Pos(STARleft)))
+            (* question mark operator *)
+            | exp_nostruct QUESTION                             (ErrorPropagationExpr(exp_nostruct, Pos(QUESTIONleft)))
+            (* negation exp_nostruct *)
+            | MINUS exp_nostruct                                (NegExpr(exp_nostruct, Pos(MINUSleft)))
+            | NOT exp_nostruct                                  (NotExpr(exp_nostruct, Pos(NOTleft)))
+            (* arithmetic or logical expression *)
+            | exp_nostruct PLUS exp_nostruct                    (ArithmeticOrLogicalExpr(exp_nostruct1, AddOp, exp_nostruct2, Pos(PLUSleft)))
+            | exp_nostruct MINUS exp_nostruct                   (ArithmeticOrLogicalExpr(exp_nostruct1, SubOp, exp_nostruct2, Pos(MINUSleft)))
+            | exp_nostruct STAR exp_nostruct                    (ArithmeticOrLogicalExpr(exp_nostruct1, MultOp, exp_nostruct2, Pos(STARleft)))
+            | exp_nostruct SLASH exp_nostruct                   (ArithmeticOrLogicalExpr(exp_nostruct1, DiviOp, exp_nostruct2, Pos(SLASHleft)))
+            | exp_nostruct PERCENT exp_nostruct                 (ArithmeticOrLogicalExpr(exp_nostruct1, RemainderOp, exp_nostruct2, Pos(PERCENTleft)))
+            | exp_nostruct AND exp_nostruct                     (ArithmeticOrLogicalExpr(exp_nostruct1, AndOp, exp_nostruct2, Pos(ANDleft)))
+            | exp_nostruct OR exp_nostruct                      (ArithmeticOrLogicalExpr(exp_nostruct1, OrOp, exp_nostruct2, Pos(ORleft)))
+            | exp_nostruct CARET exp_nostruct                   (ArithmeticOrLogicalExpr(exp_nostruct1, XorOp, exp_nostruct2, Pos(CARETleft)))
+            | exp_nostruct SHL exp_nostruct                     (ArithmeticOrLogicalExpr(exp_nostruct1, LShiftOp, exp_nostruct2, Pos(SHLleft)))
+            | exp_nostruct shr exp_nostruct %prec SHR           (ArithmeticOrLogicalExpr(exp_nostruct1, RShiftOp, exp_nostruct2, Pos(shr)))
+            (* comparision expression  *)
+            | exp_nostruct EQEQ exp_nostruct                    (ComparisonExpr(exp_nostruct1, EqOp, exp_nostruct2, Pos(EQEQleft)))
+            | exp_nostruct NE exp_nostruct                      (ComparisonExpr(exp_nostruct1, NeqOp, exp_nostruct2, Pos(NEleft)))
+            | exp_nostruct GT exp_nostruct                      (ComparisonExpr(exp_nostruct1, GtOp, exp_nostruct2, Pos(GTleft)))
+            | exp_nostruct LT exp_nostruct                      (ComparisonExpr(exp_nostruct1, LtOp, exp_nostruct2, Pos(LTleft)))
+            | exp_nostruct ge exp_nostruct %prec GE             (ComparisonExpr(exp_nostruct1, GeOp, exp_nostruct2, Pos(ge)))
+            | exp_nostruct LE exp_nostruct                      (ComparisonExpr(exp_nostruct1, LeOp, exp_nostruct2, Pos(LEleft)))
+            (* lazy boolean expression *)
+            (* | exp_nostruct OROR exp_nostruct                    (LazyBooleanExpr(exp_nostruct1, LazyOrOp,exp_nostruct2, Pos(ORORleft)))
+            | exp_nostruct ANDAND exp_nostruct                  (LazyBooleanExpr(exp_nostruct1, LazyAndOp,exp_nostruct2, Pos(ANDANDleft))) *)
+            (* type case exp_nostruct *)
+            | exp_nostruct AS type_no_bounds                    (TypeCastExpr(exp_nostruct, type_no_bounds, Pos(ASleft)))
+            (* assignment exp_nostruct *)
+            | exp_nostruct EQ exp_nostruct                      (AssignmentExpr(exp_nostruct1, exp_nostruct2, Pos(EQleft)))
+            (* compound assignment expression *)
+            | exp_nostruct PLUSEQ exp_nostruct                  (CompoundAssignmentExpr(exp_nostruct1, AddEqOp,exp_nostruct2, Pos(PLUSEQleft)))
+            | exp_nostruct MINUSEQ exp_nostruct                 (CompoundAssignmentExpr(exp_nostruct1, SubEqOp,exp_nostruct2, Pos(MINUSEQleft)))
+            | exp_nostruct STAREQ exp_nostruct                  (CompoundAssignmentExpr(exp_nostruct1, MultEqOp,exp_nostruct2, Pos(STAREQleft)))
+            | exp_nostruct SLASHEQ exp_nostruct                 (CompoundAssignmentExpr(exp_nostruct1, DiviEqOp,exp_nostruct2, Pos(SLASHEQleft)))
+            | exp_nostruct PERCENTEQ exp_nostruct               (CompoundAssignmentExpr(exp_nostruct1, RemainderEqOp,exp_nostruct2, Pos(PERCENTEQleft)))
+            | exp_nostruct ANDEQ exp_nostruct                   (CompoundAssignmentExpr(exp_nostruct1, AndEqOp,exp_nostruct2, Pos(ANDEQleft)))
+            | exp_nostruct OREQ exp_nostruct                    (CompoundAssignmentExpr(exp_nostruct1, OrEqOp,exp_nostruct2, Pos(OREQleft)))
+            | exp_nostruct CARETEQ exp_nostruct                 (CompoundAssignmentExpr(exp_nostruct1, XorEqOp,exp_nostruct2, Pos(CARETEQleft)))
+            | exp_nostruct SHLEQ exp_nostruct                   (CompoundAssignmentExpr(exp_nostruct1, LShiftEqOp,exp_nostruct2, Pos(SHLEQleft)))
+            | exp_nostruct shreq exp_nostruct %prec SHREQ       (CompoundAssignmentExpr(exp_nostruct1, RShiftEqOp,exp_nostruct2, Pos(shreq)))
+            | grouped_exp                                       (grouped_exp)
+            | array_exp                                         (array_exp)
+            | exp_nostruct LBRACKET expression RBRACKET         (IndexExpr(exp_nostruct, expression, Pos(LBRACKETleft)))
+            | tuple_exp                                         (tuple_exp)
+            (* Method Call *)
+            | exp_nostruct DOT IDENT LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [IDPS(Identifer(IDENT))], maybe_call_params))
+            | exp_nostruct DOT SUPER LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [SuperPS], maybe_call_params))
+            | exp_nostruct DOT SELFVALUE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [SelfValuePS], maybe_call_params))
+            | exp_nostruct DOT SELFTYPE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [SelfTypePS], maybe_call_params))
+            | exp_nostruct DOT CRATE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [CratePS], maybe_call_params))
+            | exp_nostruct DOT DOLLAR CRATE LPARENT
+                maybe_call_params RPARENT                       (MethodCallExpr(exp_nostruct, [DCratePS], maybe_call_params))
+            | exp_nostruct DOT IDENT PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [IDPS(Identifer(IDENT)), GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT SUPER PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [SuperPS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT SELFVALUE PATHSEP generic_args 
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [SelfValuePS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT SELFTYPE PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [SelfTypePS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT CRATE PATHSEP generic_args
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [CratePS, GenericPS(generic_args)], maybe_call_params))
+            | exp_nostruct DOT DOLLAR CRATE PATHSEP generic_args 
+                LPARENT maybe_call_params RPARENT               (MethodCallExpr(exp_nostruct, [DCratePS, GenericPS(generic_args)], maybe_call_params))
+            (* tuple index *)
+            | exp_nostruct DOT INTEGER_LIT                      (TupleIndexingExpr(exp_nostruct, TKTUPLE_INDEX(INTEGER_LIT, Pos(INTEGER_LITleft)), Pos(DOTleft)))
+            (* call *)
+            | exp_nostruct LPARENT RPARENT                      (CallExpr(exp_nostruct, [], Pos(LPARENTleft)))
+            | exp_nostruct LPARENT call_params RPARENT          (CallExpr(exp_nostruct, call_params, Pos(LPARENTleft)))
+            (* field *)
+            | exp_nostruct DOT IDENT                            (FieldExpr(exp_nostruct, [IDPS(Identifer(IDENT))], Pos(DOTleft)))
+            (* clousre *)
+            | OROR exp_nostruct                                 (ClosureExpr(NONE, [], NONE, exp_nostruct, Pos(ORORleft)))
+            | OROR RARROW type_no_bounds block_exp              (ClosureExpr(NONE, [], SOME(type_no_bounds), block_exp, Pos(ORORleft)))
+            | MOVE OROR exp_nostruct                            (ClosureExpr(SOME(Move), [], NONE, exp_nostruct, Pos(MOVEleft)))
+            | MOVE OROR RARROW type_no_bounds block_exp         (ClosureExpr(SOME(Move), [], SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+            | OR closure_parameters OR exp_nostruct             (ClosureExpr(NONE, closure_parameters, NONE, exp_nostruct, Pos(ORleft)))
+            | OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 (ClosureExpr(NONE, closure_parameters, SOME(type_no_bounds), block_exp, Pos(ORleft)))
+            | MOVE OR closure_parameters OR exp_nostruct        (ClosureExpr(SOME(Move), closure_parameters, NONE, exp_nostruct, Pos(MOVEleft)))
+            | MOVE OR closure_parameters OR 
+                RARROW type_no_bounds block_exp                 (ClosureExpr(SOME(Move), closure_parameters, SOME(type_no_bounds), block_exp, Pos(MOVEleft)))
+            | continue_exp                                      (continue_exp)
+            | break_exp                                         (break_exp)
+            (* range *)
+            | exp_nostruct DOTDOT exp_nostruct                  (RangeExpr(exp_nostruct1, exp_nostruct2, Pos(DOTDOTleft)))
+            | exp_nostruct DOTDOT                               (RangeFormExpr(exp_nostruct, Pos(DOTDOTleft)))
+            | DOTDOT exp_nostruct                               (RangeToExpr(exp_nostruct, Pos(DOTDOTleft)))
+            | DOTDOT                                            (RangeFullExpr(Pos(DOTDOTleft)))
+            | exp_nostruct DOTDOTEQ exp_nostruct                (RangeInclusiveExpr(exp_nostruct1, exp_nostruct2, Pos(DOTDOTEQleft)))
+            | DOTDOTEQ exp_nostruct                             (RangeToInclusiveExpr(exp_nostruct, Pos(DOTDOTEQleft)))
+            | return_exp                                        (return_exp)
+            | exp_with_block                                    (exp_with_block)
+            | macro_invocation                                  (MacroExpr(macro_invocation))
 
 (* -----token------- *)
 token_no_delim_kleene_dollar: 
@@ -1843,7 +1857,7 @@ token_no_delim_kleene_dollar:
             | ANDAND                                            (TKANDAND(Pos(ANDANDleft)))
             | OROR                                              (TKOROR(Pos(ORORleft)))
             | SHL                                               (TKSHL(Pos(SHLleft)))
-            | shr                                               (shr)
+            | shr                                               (TKSHR(Pos(shr)))
             | PLUSEQ                                            (TKPLUSEQ(Pos(PLUSEQleft)))
             | MINUSEQ                                           (TKMINUSEQ(Pos(MINUSEQleft)))
             | STAREQ                                            (TKSTAREQ(Pos(STAREQleft)))
@@ -1853,13 +1867,13 @@ token_no_delim_kleene_dollar:
             | ANDEQ                                             (TKANDEQ(Pos(ANDEQleft)))
             | OREQ                                              (TKOREQ(Pos(OREQleft)))
             | SHLEQ                                             (TKSHLEQ(Pos(SHLEQleft)))
-            | shreq                                             (shreq)
+            | shreq                                             (TKSHREQ(Pos(shreq)))
             | EQ                                                (TKEQ(Pos(EQleft)))
             | EQEQ                                              (TKEQEQ(Pos(EQEQleft)))
             | NE                                                (TKNE(Pos(NEleft)))
             | GT                                                (TKGT(Pos(GTleft)))
             | LT                                                (TKLT(Pos(LTleft)))
-            | ge                                                (ge)
+            | ge                                                (TKGE(Pos(ge)))
             | LE                                                (TKLE(Pos(LEleft)))
             | AT                                                (TKAT(Pos(ATleft)))
             | UNDERSCORE                                        (TKUNDERSCORE(Pos(UNDERSCOREleft)))
@@ -1886,7 +1900,7 @@ token_no_delim_dollar: token_no_delim_kleene_dollar             (token_no_delim_
 token_no_delim: token_no_delim_dollar                           (token_no_delim_dollar)
                 | DOLLAR                                        (TKDOLLAR(Pos(DOLLARleft)))
 (* syntax token *)
-shr: GT GT                                                      (TKSHR(Pos(GT1left)))
-ge: GT EQ                                                       (TKGE(Pos(GTleft)))
-shreq: GT GT EQ                                                 (TKSHREQ(Pos(GT1left)))
+shr: GT GT                                                      (GT1left)
+ge: GT EQ                                                       (GTleft)
+shreq: GT GT EQ                                                 (GT1left)
 (* shl: LT LT                                                      ((LT1left, LT2right)) *)
